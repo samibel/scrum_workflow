@@ -1,0 +1,100 @@
+# Estimation Reference Data
+# Used by /create-ticket to generate initial story point estimates
+# Story points represent relative effort, complexity, and uncertainty
+
+# Story Point Scale (Modified Fibonacci)
+story_point_scale:
+  - points: 1
+    label: "Trivial"
+    description: "Simple, well-understood change with no unknowns"
+    examples:
+      - "Update a configuration value"
+      - "Fix a typo in documentation"
+      - "Add a simple validation rule"
+    typical_duration: "Less than half a day"
+
+  - points: 2
+    label: "Small"
+    description: "Straightforward change with minimal complexity"
+    examples:
+      - "Add a new field to an existing form"
+      - "Create a simple utility function"
+      - "Add a new route with existing patterns"
+    typical_duration: "Half a day to one day"
+
+  - points: 3
+    label: "Medium-Small"
+    description: "Moderate change requiring some design thought"
+    examples:
+      - "Implement a new API endpoint with validation"
+      - "Add a new component with state management"
+      - "Create a database migration with data transformation"
+    typical_duration: "One to two days"
+
+  - points: 5
+    label: "Medium"
+    description: "Significant feature requiring design and integration"
+    examples:
+      - "Implement authentication flow"
+      - "Build a CRUD module with UI and API"
+      - "Integrate a third-party service"
+    typical_duration: "Two to four days"
+
+  - points: 8
+    label: "Large"
+    description: "Complex feature with multiple integration points"
+    examples:
+      - "Build a multi-step workflow with state management"
+      - "Implement real-time data synchronization"
+      - "Create a reporting module with data aggregation"
+    typical_duration: "One to two weeks"
+
+  - points: 13
+    label: "Very Large"
+    description: "Highly complex feature - consider splitting into smaller stories"
+    examples:
+      - "Full module rewrite with migration"
+      - "Cross-system integration with multiple APIs"
+      - "Performance overhaul with architectural changes"
+    typical_duration: "Two or more weeks"
+    recommendation: "Stories of this size should be split into smaller stories"
+
+# Complexity Factors
+# Agents should consider these factors when estimating
+complexity_factors:
+  - factor: "unknowns"
+    description: "Degree of technical uncertainty or unfamiliar technology"
+    impact: "High unknowns increase estimate by 1-2 levels"
+
+  - factor: "dependencies"
+    description: "Number of external dependencies or integration points"
+    impact: "Each major dependency adds complexity"
+
+  - factor: "testing_requirements"
+    description: "Breadth and depth of testing needed"
+    impact: "Complex test scenarios increase estimate"
+
+  - factor: "data_migration"
+    description: "Need to transform or migrate existing data"
+    impact: "Data migrations add significant risk and effort"
+
+  - factor: "cross_cutting_concerns"
+    description: "Changes that affect multiple system layers"
+    impact: "Cross-cutting changes multiply complexity"
+
+  - factor: "security_sensitivity"
+    description: "Features handling sensitive data or authentication"
+    impact: "Security requirements add review and testing overhead"
+
+  - factor: "performance_requirements"
+    description: "Specific performance targets or optimization needs"
+    impact: "Performance work often requires iterative profiling"
+
+# Estimation Guidelines
+estimation_guidelines:
+  - "Estimate relative to other stories in the same project"
+  - "Include time for testing, code review, and documentation"
+  - "Account for complexity factors when adjusting base estimate"
+  - "When uncertain, estimate higher rather than lower"
+  - "Stories estimated at 13 points should be flagged for splitting"
+  - "Re-estimate after refinement when new information surfaces"

@@ -1,0 +1,77 @@
+# generated: 2026-03-25
+# last_updated: 2026-03-25 (updated by dev-story for 2-1)
+# project: scrum_workflow
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: {project-root}/_bmad-output/implementation-artifacts
+
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog → in-progress: Automatically when first story is created (via create-story)
+#   - in-progress → done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - SM typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+
+generated: 2026-03-25
+last_updated: 2026-03-25 (updated by code review for 4-3 - clean review)
+project: scrum_workflow
+project_key: NOKEY
+tracking_system: file-system
+story_location: "{project-root}/_bmad-output/implementation-artifacts"
+
+development_status:
+  # Epic 1: Framework Setup & Project Onboarding
+  epic-1: done
+  1-1-framework-directory-structure-and-default-configuration: done
+  1-2-agent-definitions-in-skill-md-format: done
+  1-3-platform-adapter-contract-and-claude-code-adapter: done
+  1-4-output-templates-for-all-workflow-phases: done
+  1-5-create-project-context-command-and-workflow: done
+  1-6-workflow-skill-definitions: done
+  epic-1-retrospective: optional
+
+  # Epic 2: Spec-First Ticket Creation
+  epic-2: done
+  2-1-story-file-schema-and-sprint-folder-conventions: done
+  2-2-create-ticket-command-and-workflow: done
+  2-3-guided-mode-for-vague-input: done
+  2-4-story-file-integrity-validation-and-workflow-recovery: done
+  epic-2-retrospective: optional
+
+  # Epic 3: Multi-Agent Story Refinement
+  epic-3: done
+  3-1-refine-ticket-command-and-agent-spawning: done
+  3-2-agent-perspectives-with-distinct-output: done
+  3-3-perspective-synthesis-and-story-update: done
+  3-4-lightweight-feedback-and-quality-tracking: done
+  3-5-readiness-check-gate: done
+  epic-3-retrospective: optional
+
+  # Epic 4: Development, Review & Approval
+  epic-4: done
+  4-1-dev-story-command-and-implementation-workflow: done
+  4-2-code-review-with-structured-findings: done
+  4-3-human-approval-gate-and-story-completion: done
+  epic-4-retrospective: optional

@@ -120,32 +120,32 @@ The workflow is platform-agnostic by design. MVP targets GitHub Copilot, expandi
 
 **Who:** Sami, a developer working on a feature. No Scrum Master, no separate QA team — just him and his agentic workflow.
 
-**Opening Scene:** Sami has an idea for a new feature. Normally, he'd open his editor, start coding, realize halfway through he missed edge cases, rewrite, then discover during review that the architecture doesn't fit. Instead, he types `/create-ticket "User authentication with OAuth2 support"`.
+**Opening Scene:** Sami has an idea for a new feature. Normally, he'd open his editor, start coding, realize halfway through he missed edge cases, rewrite, then discover during review that the architecture doesn't fit. Instead, he types `/scrum-create-ticket "User authentication with OAuth2 support"`.
 
 **Rising Action:**
 1. The system generates a structured story file — description, acceptance criteria, initial estimation. Sami reviews it: the spec captures what he meant, no prompt-engineering needed.
-2. He runs `/refine-ticket story-1.1`. Four agent perspectives come back in parallel:
+2. He runs `/scrum-refine-ticket story-1.1`. Four agent perspectives come back in parallel:
    - Architect warns: "OAuth2 requires token refresh handling — consider session management impact"
    - UX asks: "What happens when a token expires mid-session? Redirect or silent refresh?"
    - Dev flags: "Dependency on auth library v3 — check compatibility with current stack"
    - QA proposes: "Testable acceptance criteria: valid login, expired token, invalid credentials, rate limiting"
 3. Sami sees each perspective clearly separated. He accepts 3 of 4 suggestions, adjusts one. The story file updates with a clean plan, estimation, and subtasks.
-4. He checks progress with `/status story-1.1` — shows: `Refinement ✓ → Readiness Check: PASS → Ready for Dev`
+4. He checks progress with `/scrum-status story-1.1` — shows: `Refinement ✓ → Readiness Check: PASS → Ready for Dev`
 5. Readiness check: PASS. The plan is fixed.
-6. He runs `/dev-story story-1.1 1` — implementation begins on subtask 1.
+6. He runs `/scrum-dev-story story-1.1 1` — implementation begins on subtask 1.
 
-**Climax:** After implementation, he runs `/dev-story story-1.1 review`. The review finds 2 findings. Dev fixes them. Second review: 0 findings. `/status story-1.1` shows: `Review ✓ → Awaiting Approval`. Story DONE.
+**Climax:** After implementation, he runs `/scrum-dev-story story-1.1 review`. The review finds 2 findings. Dev fixes them. Second review: 0 findings. `/scrum-status story-1.1` shows: `Review ✓ → Awaiting Approval`. Story DONE.
 
 **Resolution:** Sami approves the story at the human approval gate. He never wrote a prompt longer than one sentence. He never lost context between planning and coding. It felt like working with a team that already understood the codebase.
 
 ### Journey 2: Sami — Review Loop Failure (Edge Case)
 
-**Opening Scene:** Sami runs `/dev-story story-2.3 review` after the third fix iteration. The reviewer still finds findings — the implementation approach has a fundamental flaw.
+**Opening Scene:** Sami runs `/scrum-dev-story story-2.3 review` after the third fix iteration. The reviewer still finds findings — the implementation approach has a fundamental flaw.
 
 **Rising Action:**
 1. Iteration 3 review: 2 findings remain. The system halts: "Max iterations reached. Creating follow-up ticket."
 2. A follow-up ticket is auto-generated with **full failure context**: the attempted approach, findings from each iteration (10 → 5 → 2), and the reason the loop couldn't converge — not just "2 findings remain" but "token refresh architecture conflicts with stateless session design, attempted 3 different middleware configurations."
-3. The original story is marked as blocked. Sami runs `/refine-ticket story-2.3-followup`. The agent team now discusses the root problem — armed with the failure context, they don't repeat the same approach.
+3. The original story is marked as blocked. Sami runs `/scrum-refine-ticket story-2.3-followup`. The agent team now discusses the root problem — armed with the failure context, they don't repeat the same approach.
 
 **Climax:** The follow-up ticket produces a fundamentally different plan. Architect identifies the design flaw immediately because the failure context documented what was already tried. Dev proposes a stateful session approach instead. QA adjusts acceptance criteria.
 
@@ -157,10 +157,10 @@ The workflow is platform-agnostic by design. MVP targets GitHub Copilot, expandi
 
 **Rising Action:**
 1. He installs the workflow configuration for OpenCode.
-2. He types `/create-ticket "dark mode"` — too vague. The system enters **guided mode**: "Can you tell me more? Who is this for? What problem does it solve? Where in the app should this appear?" Like a good Scrum Master that asks follow-up questions instead of accepting a half-baked story.
+2. He types `/scrum-create-ticket "dark mode"` — too vague. The system enters **guided mode**: "Can you tell me more? Who is this for? What problem does it solve? Where in the app should this appear?" Like a good Scrum Master that asks follow-up questions instead of accepting a half-baked story.
 3. Sami elaborates: "Add dark mode toggle to settings page for users who work at night." The story file appears: clean, structured, with estimation. He thinks: "That's what I meant."
-4. He runs `/refine-ticket`. Four perspectives come back. He's surprised — QA already thought about accessibility contrast ratios. Architect notes it should use the existing theme system.
-5. Readiness check passes. He runs `/dev-story` and watches the implementation + review loop.
+4. He runs `/scrum-refine-ticket`. Four perspectives come back. He's surprised — QA already thought about accessibility contrast ratios. Architect notes it should use the existing theme system.
+5. Readiness check passes. He runs `/scrum-dev-story` and watches the implementation + review loop.
 
 **Climax:** Within 30 minutes of first use, he has a fully refined, implemented, and reviewed feature — the guided mode ensured quality from the very first interaction.
 
@@ -171,10 +171,10 @@ The workflow is platform-agnostic by design. MVP targets GitHub Copilot, expandi
 **Opening Scene:** Sami creates a ticket for a domain-specific feature — integrating a proprietary internal API that the agents have no knowledge about.
 
 **Rising Action:**
-1. He runs `/refine-ticket story-3.1`. The agent perspectives come back, but they're generic — the Architect suggests REST best practices that don't apply, QA proposes standard API tests that miss the proprietary protocol.
+1. He runs `/scrum-refine-ticket story-3.1`. The agent perspectives come back, but they're generic — the Architect suggests REST best practices that don't apply, QA proposes standard API tests that miss the proprietary protocol.
 2. Sami rejects the refinement: "None of this applies — this is our internal binary protocol, not REST."
 3. The system recognizes the rejection and prompts: "It seems I'm missing context about your internal API. Can you provide documentation, constraints, or key details so I can re-refine with the right context?"
-4. Sami pastes a brief description of the protocol and its constraints. He runs `/refine-ticket story-3.1` again.
+4. Sami pastes a brief description of the protocol and its constraints. He runs `/scrum-refine-ticket story-3.1` again.
 5. Second refinement: Architect now warns about binary serialization overhead, Dev flags the custom client dependency, QA proposes protocol-specific test scenarios.
 
 **Climax:** The re-refinement is accurate because Sami provided the missing domain context. The agents adapted instead of repeating generic advice.
@@ -192,7 +192,7 @@ The workflow is platform-agnostic by design. MVP targets GitHub Copilot, expandi
 | Lightweight feedback (accept/reject per perspective) | Journey 1 |
 | **Refinement rejection + re-refine with added context** | Journey 4 |
 | Readiness check gate | Journey 1, 3 |
-| **`/status` command — real-time story status tracking** | Journey 1, 2 |
+| **`/scrum-status` command — real-time story status tracking** | Journey 1, 2 |
 | Dev → Review → Fix reflection loop | Journey 1, 2 |
 | Max 3 iteration cap with auto follow-up ticket | Journey 2 |
 | **Follow-up ticket includes failure context** (attempted approach, findings per iteration, root cause) | Journey 2 |
@@ -305,7 +305,7 @@ tickets:
     followup_from: SW-099
 ```
 
-Central index enables `/status` without folder scanning and provides sprint-level traceability.
+Central index enables `/scrum-status` without folder scanning and provides sprint-level traceability.
 
 ### Context Management
 
@@ -338,11 +338,11 @@ When a review loop fails after 3 iterations:
 
 | Command | Input | Output | Description |
 |---|---|---|---|
-| `/create-ticket SW-103 "idea"` | Ticket number + natural language | `sprints/SW-103/story.md` | Spec-first ticket creation with guided mode |
-| `/refine-ticket SW-103` | Ticket number | `sprints/SW-103/refinement.md` | Parallel multi-agent refinement |
-| `/dev-story SW-103 [subtask\|review]` | Ticket number + mode | Code or `review-N.md` | Development and reflection loop |
-| `/status SW-103` | Ticket number (optional) | Status display | Story status or sprint overview |
-| `/cancel SW-103` | Ticket number | Status → cancelled | Abort a story in progress |
+| `/scrum-create-ticket SW-103 "idea"` | Ticket number + natural language | `sprints/SW-103/story.md` | Spec-first ticket creation with guided mode |
+| `/scrum-refine-ticket SW-103` | Ticket number | `sprints/SW-103/refinement.md` | Parallel multi-agent refinement |
+| `/scrum-dev-story SW-103 [subtask\|review]` | Ticket number + mode | Code or `review-N.md` | Development and reflection loop |
+| `/scrum-status SW-103` | Ticket number (optional) | Status display | Story status or sprint overview |
+| `/scrum-cancel SW-103` | Ticket number | Status → cancelled | Abort a story in progress |
 
 ### Documentation & Tutorials
 
@@ -382,11 +382,11 @@ Each workflow phase maps to a validated agentic pattern from agentic-patterns.co
 | **Overall Architecture** | [**Discrete Phase Separation**](https://www.agentic-patterns.com/patterns/discrete-phase-separation) | emerging | Each phase runs in isolated context. Only synthesized results (story.md, refinement.md, etc.) pass between phases. Prevents context contamination |
 | **Overall Architecture** | [**Filesystem-Based Agent State**](https://www.agentic-patterns.com/patterns/filesystem-based-agent-state) | established | Sprint folder = agent state. Checkpoints after each phase. Enables resumption after interruption |
 | **Overall Architecture** | [**Agent-Friendly Workflow Design**](https://www.agentic-patterns.com/patterns/agent-friendly-workflow-design) | best practice | Clear handoff protocols between phases. Planning-execution separation. Structured interfaces. Iterative feedback |
-| **Phase 1: /create-ticket** | [**Specification-Driven Agent Development**](https://www.agentic-patterns.com/patterns/specification-driven-agent-development) | proposed | Story file = spec = source of truth. No code before spec PASS. Every artifact traces back to spec clause |
-| **Phase 2: /refine-ticket** | [**Iterative Multi-Agent Brainstorming**](https://www.agentic-patterns.com/patterns/iterative-multi-agent-brainstorming) | experimental | 2-4 parallel agents with distinct perspectives. Coordinator synthesizes. Max 4 agents due to exponential overhead |
-| **Phase 2: /refine-ticket** | [**Sub-Agent Spawning**](https://www.agentic-patterns.com/patterns/sub-agent-spawning) | validated | Architect, Dev, QA as sub-agents with isolated context. Subject hygiene: each agent receives only relevant files |
+| **Phase 1: /scrum-create-ticket** | [**Specification-Driven Agent Development**](https://www.agentic-patterns.com/patterns/specification-driven-agent-development) | proposed | Story file = spec = source of truth. No code before spec PASS. Every artifact traces back to spec clause |
+| **Phase 2: /scrum-refine-ticket** | [**Iterative Multi-Agent Brainstorming**](https://www.agentic-patterns.com/patterns/iterative-multi-agent-brainstorming) | experimental | 2-4 parallel agents with distinct perspectives. Coordinator synthesizes. Max 4 agents due to exponential overhead |
+| **Phase 2: /scrum-refine-ticket** | [**Sub-Agent Spawning**](https://www.agentic-patterns.com/patterns/sub-agent-spawning) | validated | Architect, Dev, QA as sub-agents with isolated context. Subject hygiene: each agent receives only relevant files |
 | **Phase 3: Readiness Check** | [**Plan-Then-Execute**](https://www.agentic-patterns.com/patterns/plan-then-execute-pattern) | established | Plan phase generates fixed sequence. Execution follows exactly. +40-70% task completion, -60% hallucinations |
-| **Phase 4: /dev-story review** | [**Reflection Loop**](https://www.agentic-patterns.com/patterns/reflection) | established | Generate → Evaluate → Critique → Revise → Repeat. Max 2-3 iterations optimal. Stable scoring rubrics |
+| **Phase 4: /scrum-dev-story review** | [**Reflection Loop**](https://www.agentic-patterns.com/patterns/reflection) | established | Generate → Evaluate → Critique → Revise → Repeat. Max 2-3 iterations optimal. Stable scoring rubrics |
 | **Phase 5: Approval** | [**Human-in-the-Loop Approval**](https://www.agentic-patterns.com/patterns/human-in-loop-approval-framework) | validated | Risk classification + approval workflow. Timeout = default deny. Audit trail for all decisions |
 | **Context Management** | [**Curated File Context Window**](https://www.agentic-patterns.com/patterns/curated-file-context-window) | best practice | `context_files` array = curated context. Only relevant files per phase. Prevents token bloat and hallucinations |
 
@@ -401,10 +401,10 @@ Each workflow phase maps to a validated agentic pattern from agentic-patterns.co
 | # | Capability | Simplification vs. Full Vision |
 |---|---|---|
 | 1 | **Story file format** — YAML frontmatter + Markdown template | Full — this is the foundation, no shortcuts |
-| 2 | `/create-ticket SW-XXX "idea"` — spec-first ticket creation | Full — with **guided mode** for vague input |
-| 3 | `/refine-ticket SW-XXX` — multi-agent refinement | **Simplified: 3 agents (Architect, Dev, QA)** via sub-agent spawning — no UX agent in MVP |
+| 2 | `/scrum-create-ticket SW-XXX "idea"` — spec-first ticket creation | Full — with **guided mode** for vague input |
+| 3 | `/scrum-refine-ticket SW-XXX` — multi-agent refinement | **Simplified: 3 agents (Architect, Dev, QA)** via sub-agent spawning — no UX agent in MVP |
 | 4 | Readiness check — plan-then-execute gate | Simple pass/fail on story file completeness |
-| 5 | `/dev-story SW-XXX` — implementation | Full — agent implements based on plan |
+| 5 | `/scrum-dev-story SW-XXX` — implementation | Full — agent implements based on plan |
 | 6 | Review — **single pass, no loop** | One review, findings listed. User fixes manually. No automatic loop |
 | 7 | Approval gate — human sign-off | Manual — user marks story as done |
 | 8 | Sprint folder structure — `sprints/SW-XXX/**` | Basic — story.md + refinement.md + review.md per ticket |
@@ -412,7 +412,7 @@ Each workflow phase maps to a validated agentic pattern from agentic-patterns.co
 | 10 | Platform abstraction — clean interfaces | Architectural only — runs on **GitHub Copilot** only |
 
 **Explicitly NOT in MVP:**
-- `/status` command, `/cancel` command
+- `/scrum-status` command, `/scrum-cancel` command
 - `index.yaml` sprint index
 - UX agent perspective
 - Review loop (max 3 iterations), follow-up ticket creation
@@ -423,7 +423,7 @@ Each workflow phase maps to a validated agentic pattern from agentic-patterns.co
 
 - Review loop (Dev → Review → Fix, max 3 iterations) — **Reflection Loop pattern**
 - Follow-up ticket creation with failure context on loop exhaustion
-- `/status` and `/cancel` commands
+- `/scrum-status` and `/scrum-cancel` commands
 - `index.yaml` sprint index (auto-maintained)
 - Guided mode improvements + refinement rejection + re-refine with added context
 - `context_files` array per phase — **Curated File Context Window pattern**
@@ -468,7 +468,7 @@ Each workflow phase maps to a validated agentic pattern from agentic-patterns.co
 
 | Risk | Mitigation |
 |---|---|
-| MVP scope creep | Hard rule: no `/status`, no loop, no guided mode improvements in MVP. Phase 2 only after 10 stories |
+| MVP scope creep | Hard rule: no `/scrum-status`, no loop, no guided mode improvements in MVP. Phase 2 only after 10 stories |
 | Burnout from building everything solo | Phase 1 is minimal. Ship, validate, then decide what's next |
 
 ## Functional Requirements

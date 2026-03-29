@@ -17,3 +17,9 @@
 - [ ] **Fehlende Validierung für Agent-Output-Format** [scrum_workflow/workflows/refinement.md] - Pre-existing issue: Keine automatische Validierung des Agent-Output-Formats im Workflow. Empfehlung: Validierungs-Schritt im refinement-Workflow hinzufügen (zukünftige Story für automatische Qualitätsprüfung)
 
 - [ ] **Token-Limit Validierung fehlt** [scrum_workflow/workflows/refinement.md] - Pre-existing issue: Keine Laufzeit-Validierung für Token-Limits (NFR11). Empfehlung: Token-Zähler nach Agent-Ausführung hinzufügen (zukünftige Story für NFR11 Compliance-Verbesserung)
+
+## Deferred from: code review of story 5-4 (2026-03-28)
+
+- Invalid platform code silently ignored in path-resolver.js -- if `config.platforms` contains a code not in the registry, no warning is emitted. Low risk since config comes from constrained multiselect, but a CLI override could bypass this.
+- templateSourceDir not validated for existence before copySync -- if the npm package is published without `templates/scrum_workflow/`, copySync throws an unhandled error. Relevant to Story 5.9 npm distribution.
+- Overwrite is additive, not clean-slate -- `copySync` does not remove stale files from a previous install. By design for Story 5.7 update flow, but the overwrite prompt may mislead users expecting a clean replacement.

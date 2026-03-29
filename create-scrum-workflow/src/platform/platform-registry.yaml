@@ -1,0 +1,57 @@
+# Platform Registry — Config-Driven Platform Definitions
+# Adding a new platform requires only a new YAML entry here. Zero code changes.
+#
+# Required fields per entry:
+#   display_name  — Human-readable name shown in prompts
+#   category      — cli | ide | universal
+#   target_dir    — Primary skill directory (relative to project root)
+#   skill_format  — Skill file format (currently always skill-md)
+#
+# Optional fields:
+#   preferred          — true if this is the recommended default platform
+#   cross_compat_scan  — true if other platforms scan this platform's target_dir
+#   fallback_scan      — Array of directories this platform also scans for skills
+#   note               — Free-text annotation for documentation
+
+platforms:
+  claude-code:
+    display_name: Claude Code
+    category: cli
+    target_dir: .claude/skills
+    skill_format: skill-md
+    preferred: true
+    cross_compat_scan: true
+
+  cursor:
+    display_name: Cursor
+    category: ide
+    target_dir: .cursor/skills
+    skill_format: skill-md
+    fallback_scan: [.claude/skills, .agents/skills]
+
+  windsurf:
+    display_name: Windsurf
+    category: ide
+    target_dir: .windsurf/skills
+    skill_format: skill-md
+    fallback_scan: [.claude/skills, .agents/skills]
+
+  github-copilot:
+    display_name: GitHub Copilot
+    category: ide
+    target_dir: .github/skills
+    skill_format: skill-md
+
+  cline:
+    display_name: Cline
+    category: ide
+    target_dir: .cline/skills
+    skill_format: skill-md
+    fallback_scan: [.claude/skills]
+
+  agents-universal:
+    display_name: Universal (.agents/)
+    category: universal
+    target_dir: .agents/skills
+    skill_format: skill-md
+    note: Cross-platform convention, scanned by Cursor, Windsurf, Codex

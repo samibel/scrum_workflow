@@ -171,10 +171,10 @@ platform: github-copilot  # was: claude-code
 
 **Files Created:**
 - `.claude/instructions.md` - Adapter instruction file
-- `.claude/skills/create-project-context.md` - Command registration
-- `.claude/skills/create-ticket.md` - Command registration
-- `.claude/skills/refine-ticket.md` - Command registration
-- `.claude/skills/dev-story.md` - Command registration
+- `.claude/skills/scrum-create-project-context/SKILL.md` - Command registration
+- `.claude/skills/scrum-create-ticket/SKILL.md` - Command registration
+- `.claude/skills/scrum-refine-ticket/SKILL.md` - Command registration
+- `.claude/skills/scrum-dev-story/SKILL.md` - Command registration
 
 **Verification:**
 - All files use `{framework_path}` placeholder
@@ -193,9 +193,9 @@ To add a new platform (e.g., GitHub Copilot):
 ## References
 
 **Source Documents:**
-- Architecture Decision Document: [Source: _bmad-output/planning-artifacts/architecture.md#Decision-6-Platform-Adapter-Contract]
-- Framework Distribution: [Source: _bmad-output/planning-artifacts/architecture.md#Decision-7-Framework-Distribution-Path-Referencing]
-- Three-Layer Separation: [Source: _bmad-output/planning-artifacts/architecture.md#Three-Layer-Separation]
+- Architecture Decision Document: [Source: _scrum-output/planning-artifacts/architecture.md#Decision-6-Platform-Adapter-Contract]
+- Framework Distribution: [Source: _scrum-output/planning-artifacts/architecture.md#Decision-7-Framework-Distribution-Path-Referencing]
+- Three-Layer Separation: [Source: _scrum-output/planning-artifacts/architecture.md#Three-Layer-Separation]
 
 **Related Stories:**
 - Story 1.3: Platform Adapter Contract and Claude Code Adapter (implementation)

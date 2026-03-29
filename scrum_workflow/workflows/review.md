@@ -14,12 +14,12 @@ Step-by-step workflow for reviewing implemented code against story specification
 ### Step 1.1: Verify Review Command
 
 Check if command includes `review` trigger:
-- Input format: `/dev-story SW-XXX review`
+- Input format: `/scrum-dev-story SW-XXX review`
 - Trigger indicates code review is requested
 
 **If review trigger not detected**, halt with error:
 ```
-Error: Review trigger not found. Use '/dev-story SW-XXX review' to trigger code review.
+Error: Review trigger not found. Use '/scrum-dev-story SW-XXX review' to trigger code review.
 Fix: Append 'review' to the dev-story command.
 ```
 

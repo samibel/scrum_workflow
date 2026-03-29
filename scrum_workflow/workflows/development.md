@@ -21,7 +21,7 @@ Check if `sprints/SW-XXX/story.md` exists.
 **If file does not exist**, halt with error:
 ```
 Error: Story file 'sprints/SW-XXX/story.md' not found
-Fix: Create story using /create-ticket command
+Fix: Create story using /scrum-create-ticket command
 ```
 
 **If identifier format is invalid**, halt with error:
@@ -36,8 +36,8 @@ Read the `status` field from story.md YAML frontmatter.
 
 **If status is not `ready`**, halt with error:
 ```
-Error: Story SW-XXX is in status 'current_status', but '/dev-story' requires 'ready'
-Fix: Stories must pass readiness check before implementation. Run '/refine-ticket SW-XXX' to complete refinement and readiness check.
+Error: Story SW-XXX is in status 'current_status', but '/scrum-dev-story' requires 'ready'
+Fix: Stories must pass readiness check before implementation. Run '/scrum-refine-ticket SW-XXX' to complete refinement and readiness check.
 ```
 
 **Critical:** There is NO flag or option to bypass this guard condition. The only path to `in-dev` is through `ready` (refinement → ready → in-dev).
@@ -106,7 +106,7 @@ Parse the subtasks table to understand:
 **Validate Tasks section exists:** If story.md has no Tasks/Subtasks section or it is empty, halt with error:
 ```
 Error: No tasks found in story.md - cannot implement without task specification
-Fix: Add Tasks/Subtasks section to story.md before running /dev-story
+Fix: Add Tasks/Subtasks section to story.md before running /scrum-dev-story
 ```
 
 **Dependency Resolution:**
@@ -297,7 +297,7 @@ Before each file write:
 ### Step 7.1: Detect Review Command
 
 Check if command includes `review` trigger:
-- Input format: `/dev-story SW-XXX review`
+- Input format: `/scrum-dev-story SW-XXX review`
 - Trigger indicates implementation is complete and ready for review
 
 ### Step 7.2: Validate Completion
@@ -375,4 +375,4 @@ Story implementation is complete when:
 4. File List includes all changed files
 5. Story status transitions to `in-review` (via review trigger)
 
-**Note:** Regular `/dev-story SW-XXX` updates status to `in-dev` and begins implementation. `/dev-story SW-XXX review` updates status to `in-review` after implementation is complete.
+**Note:** Regular `/scrum-dev-story SW-XXX` updates status to `in-dev` and begins implementation. `/scrum-dev-story SW-XXX review` updates status to `in-review` after implementation is complete.

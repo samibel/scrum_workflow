@@ -298,11 +298,11 @@ The story status state machine defines the lifecycle of a story from creation to
 
 | Status | Set By | Guard | Meaning |
 |---|---|---|---|
-| `draft` | /create-ticket | -- | Story created, not yet refined |
-| `refinement` | /refine-ticket | status == draft | Multi-agent refinement in progress |
+| `draft` | /scrum-create-ticket | -- | Story created, not yet refined |
+| `refinement` | /scrum-refine-ticket | status == draft | Multi-agent refinement in progress |
 | `ready` | Readiness check | PASS result | Spec approved, implementation allowed |
-| `in-dev` | /dev-story | status == ready (FR17) | Implementation in progress |
-| `in-review` | /dev-story review | status == in-dev | Single review pass (MVP) |
+| `in-dev` | /scrum-dev-story | status == ready (FR17) | Implementation in progress |
+| `in-review` | /scrum-dev-story review | status == in-dev | Single review pass (MVP) |
 | `done` | User approval | explicit sign-off (FR28) | Human approval complete |
 
 ### Valid Transitions
@@ -311,11 +311,11 @@ All transitions are explicit and guarded. No implicit status changes are permitt
 
 | From | To | Trigger | Guard Condition |
 |---|---|---|---|
-| `draft` | `refinement` | /refine-ticket | status == draft |
+| `draft` | `refinement` | /scrum-refine-ticket | status == draft |
 | `refinement` | `ready` | Readiness check | Readiness check result == PASS |
 | `refinement` | `draft` | Readiness check | Readiness check result == FAIL |
-| `ready` | `in-dev` | /dev-story | status == ready |
-| `in-dev` | `in-review` | /dev-story review | status == in-dev |
+| `ready` | `in-dev` | /scrum-dev-story | status == ready |
+| `in-dev` | `in-review` | /scrum-dev-story review | status == in-dev |
 | `in-review` | `done` | User approval | Explicit user sign-off (FR28) |
 
 ### State Transition Diagram
@@ -328,8 +328,9 @@ All transitions are explicit and guarded. No implicit status changes are permitt
                ┌───────┐    ┌────────────┐    ┌───────┐    ┌────────┐    ┌───────────┐    ┌──────┐
                │ draft │───▶│ refinement │───▶│ ready │───▶│ in-dev │───▶│ in-review │───▶│ done │
                └───────┘    └────────────┘    └───────┘    └────────┘    └───────────┘    └──────┘
-                  /refine-     PASS via          /dev-story   /dev-story     User
-                  ticket       readiness                      review         approval
+                  /scrum-      PASS via          /scrum-      /scrum-        User
+                  refine-      readiness         dev-story    dev-story      approval
+                  ticket       check                          review
                                check                                        (FR28)
 ```
 
@@ -351,17 +352,17 @@ Commands **MUST** use actionable error messages following these templates when g
 | Situation | Error Message Pattern |
 |---|---|
 | Wrong status | `"Story SW-XXX is in status 'current', but '/command' requires 'required'"` |
-| Missing file | `"File 'sprints/SW-XXX/story.md' not found. Run '/create-ticket SW-XXX' first"` |
+| Missing file | `"File 'sprints/SW-XXX/story.md' not found. Run '/scrum-create-ticket SW-XXX' first"` |
 | Invalid frontmatter | `"Invalid frontmatter in story.md: field 'status' missing"` |
 | Interrupted workflow | Recovery: read `status` from frontmatter, resume from that phase |
 
 **Examples:**
 
 ```
-Error: Story SW-042 is in status 'draft', but '/dev-story' requires 'ready'
-Fix: Run '/refine-ticket SW-042' to refine the story, then pass readiness check
+Error: Story SW-042 is in status 'draft', but '/scrum-dev-story' requires 'ready'
+Fix: Run '/scrum-refine-ticket SW-042' to refine the story, then pass readiness check
 
-Error: File 'sprints/SW-101/story.md' not found. Run '/create-ticket SW-101' first
+Error: File 'sprints/SW-101/story.md' not found. Run '/scrum-create-ticket SW-101' first
 Fix: Create the story file before attempting refinement
 
 Error: Invalid frontmatter in story.md: field 'status' missing
@@ -397,10 +398,10 @@ Each ticket folder `sprints/SW-XXX/` may contain the following files:
 
 | File | Purpose | Created By | Write Boundary |
 |---|---|---|---|
-| `story.md` | Story definition with YAML frontmatter and acceptance criteria | /create-ticket | /create-ticket, /refine-ticket (update), Readiness check (status), Approval (status -> done) |
-| `refinement.md` | Multi-agent refinement feedback and analysis | /refine-ticket | /refine-ticket only |
+| `story.md` | Story definition with YAML frontmatter and acceptance criteria | /scrum-create-ticket | /scrum-create-ticket, /scrum-refine-ticket (update), Readiness check (status), Approval (status -> done) |
+| `refinement.md` | Multi-agent refinement feedback and analysis | /scrum-refine-ticket | /scrum-refine-ticket only |
 | `plan.md` | Implementation plan generated from readiness check | Readiness check | Readiness check only |
-| `review-N.md` | Code review findings (N = review number, e.g., `review-1.md`) | /dev-story | /dev-story only |
+| `review-N.md` | Code review findings (N = review number, e.g., `review-1.md`) | /scrum-dev-story | /scrum-dev-story only |
 | `approval.md` | Human approval record and sign-off | Approval workflow | Approval workflow only |
 
 ### Write Boundary Rules
@@ -409,10 +410,10 @@ Each command has strict write boundaries. A command may only create or modify fi
 
 | Command | May Write | May NOT Write |
 |---|---|---|
-| /create-ticket | `story.md` | `refinement.md`, `plan.md`, `review-*.md`, `approval.md` |
-| /refine-ticket | `refinement.md`, `story.md` (update) | `plan.md`, `review-*.md`, `approval.md` |
+| /scrum-create-ticket | `story.md` | `refinement.md`, `plan.md`, `review-*.md`, `approval.md` |
+| /scrum-refine-ticket | `refinement.md`, `story.md` (update) | `plan.md`, `review-*.md`, `approval.md` |
 | Readiness check | `plan.md`, `story.md` (status update) | `refinement.md`, `review-*.md`, `approval.md` |
-| /dev-story | Code files, `review-1.md` | `story.md`, `refinement.md`, `plan.md`, `approval.md` |
+| /scrum-dev-story | Code files, `review-1.md` | `story.md`, `refinement.md`, `plan.md`, `approval.md` |
 | Approval | `approval.md`, `story.md` (status -> done) | `refinement.md`, `plan.md`, `review-*.md` |
 
 ### Markdown-Only Constraint

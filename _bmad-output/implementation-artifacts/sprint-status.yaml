@@ -1,5 +1,5 @@
 # generated: 2026-03-25
-# last_updated: 2026-03-25 (updated by dev-story for 2-1)
+# last_updated: 2026-03-28 (updated by create-story for 5-8)
 # project: scrum_workflow
 # project_key: NOKEY
 # tracking_system: file-system
@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-03-25
-last_updated: 2026-03-25 (updated by code review for 4-3 - clean review)
+last_updated: 2026-03-28 (updated by create-story for 5-8)
 project: scrum_workflow
 project_key: NOKEY
 tracking_system: file-system
@@ -75,3 +75,16 @@ development_status:
   4-2-code-review-with-structured-findings: done
   4-3-human-approval-gate-and-story-completion: done
   epic-4-retrospective: optional
+
+  # Epic 5: create-scrum-workflow — Standalone Local Installer
+  epic-5: in-progress
+  5-1-project-scaffolding-and-cli-entry-point: ready-for-dev
+  5-2-config-driven-platform-registry: ready-for-dev
+  5-3-interactive-user-configuration-prompts: ready-for-dev
+  5-4-framework-verbatim-copy-pipeline: done
+  5-5-skill-registration-per-platform: ready-for-dev
+  5-6-lock-file-and-installation-manifest: ready-for-dev
+  5-7-update-command-with-backup-restore: ready-for-dev
+  5-8-status-command-and-diagnostics: ready-for-dev
+  5-9-npm-distribution-and-ci-cd-pipeline: backlog  # Optional — Phase 3
+  epic-5-retrospective: optional

@@ -1,0 +1,43 @@
+# scrum_workflow Default Configuration
+# This file provides framework-level defaults
+# Projects can override these values in their project-root/config.yaml
+#
+# REQUIRED FIELDS:
+#   - platform: Must be one of: claude-code, github-copilot, opencode, windsurf
+#
+# OPTIONAL FIELDS (with defaults):
+#   - active_agents: Array of agent names (default: architect, developer, qa)
+#   - token_budgets: Platform-specific token limits (default values provided below)
+#   - framework_version: Version string for copy-based updates (default: 1.0.0)
+
+# Target platform: claude-code, github-copilot, opencode, windsurf
+# Determines which AI coding assistant will interpret the framework
+platform: claude-code
+
+# Active agents for MVP (matches files in agents/)
+# These are the agent roles available in the framework
+active_agents:
+  - architect
+  - developer
+  - qa
+
+# Token budgets per platform (tokens)
+# coordination: Budget for primary model that orchestrates workflows
+# sub_agent: Budget for lighter models used for parallel perspectives and analysis
+token_budgets:
+  claude-code:
+    coordination: 4000      # Primary model for orchestration
+    sub_agent: 2000         # Lighter models for perspectives
+  github-copilot:
+    coordination: 8000
+    sub_agent: 4000
+  opencode:
+    coordination: 8000
+    sub_agent: 4000
+  windsurf:
+    coordination: 8000
+    sub_agent: 4000
+
+# Framework version (for copy-based updates)
+# Used to track framework version for distribution and migration
+framework_version: 1.0.0

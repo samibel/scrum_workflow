@@ -71,6 +71,20 @@ create-scrum-workflow install -d /path/to/project -p claude-code cursor -y
 
 # Install for all platforms
 create-scrum-workflow install -p claude-code cursor windsurf github-copilot cline agents-universal -y
+
+
+
+  cd /Users/SBELAKH/Desktop/dev/mars/scrum_workflow/create-scrum-workflow
+  npm link
+  Then you can run:
+  create-scrum-workflow install -d /Users/SBELAKH/Desktop/dev/mars/MARS -p claude-code cursor copilot -y
+
+  Option 2: Run directly with node
+  node /Users/SBELAKH/Desktop/dev/mars/scrum_workflow/create-scrum-workflow/bin/create-scrum-workflow.js install -d /Users/SBELAKH/Desktop/dev/mars/MARS -p claude-code cursor copilot -y
+
+  Option 3: Use npx from the project directory
+  cd /Users/SBELAKH/Desktop/dev/mars/scrum_workflow/create-scrum-workflow
+  npx . install -d /Users/SBELAKH/Desktop/dev/mars/MARS -p claude-code cursor copilot -y
 ```
 
 If the framework directory already exists, the installer prompts for confirmation before overwriting (or overwrites automatically with `-y`).

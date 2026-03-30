@@ -125,8 +125,8 @@ The AI platform resolves this to the absolute path at runtime.
 
 **Example:**
 ```
-Adapter: framework_command: {framework_path}/scrum_workflow/commands/create-ticket.md
-Resolved: framework_command: /Users/user/shared/scrum_workflow/commands/create-ticket.md
+Adapter: framework_command: {framework_path}/scrum_workflow/commands/scrum-create-ticket.md
+Resolved: framework_command: /Users/user/shared/scrum_workflow/commands/scrum-create-ticket.md
 ```
 
 ## Platform Switching Procedure

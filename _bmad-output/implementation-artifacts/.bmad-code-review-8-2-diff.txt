@@ -1,0 +1,32 @@
+diff --git a/create-scrum-workflow/.scrum-workflow-lock.json b/create-scrum-workflow/.scrum-workflow-lock.json
+index 5809afb..0a50bf0 100644
+--- a/create-scrum-workflow/.scrum-workflow-lock.json
++++ b/create-scrum-workflow/.scrum-workflow-lock.json
+@@ -1,16 +1,25 @@
+ {
+   "version": "1.0.0",
+   "installed": "2026-03-29T20:45:05.443Z",
+-  "updated": "2026-03-29T20:45:05.443Z",
++  "updated": "2026-03-30T13:19:10.155Z",
+   "platforms": [
+-    "claude-code"
++    "claude-code",
++    "cursor"
+   ],
+   "framework_path": "scrum_workflow",
+   "files": {
++    ".claude/skills/scrum-create-architecture-docs/SKILL.md": "sha256:4bd42f0dd2ee5e2340f39917be20cdc131a816b9af8e93f799345aa762593d04",
+     ".claude/skills/scrum-create-project-context/SKILL.md": "sha256:eb8db3aeee6cc0f19ac68c394e576c0370d8ff55cf3beb0c88b457ddf1233dc2",
++    ".claude/skills/scrum-create-project-docs/SKILL.md": "sha256:ff2cb74047f3c0826a512cb2f7a3e6141313ad575ed808769231c8e911caa8d2",
+     ".claude/skills/scrum-create-ticket/SKILL.md": "sha256:ba75842169814019d4d4745e4ee2f174a949e76394f53e62fcdfdfb9b7f316d6",
+     ".claude/skills/scrum-dev-story/SKILL.md": "sha256:bd3784fe21af3658fe8e7e88f96726683dbcb0403c3b958fd5ad09458f08bc76",
+     ".claude/skills/scrum-refine-ticket/SKILL.md": "sha256:f7c37694d38defd5cc1aeaed0faf7c179c81035ee588a7a489bb9553497fc38e",
++    ".cursor/skills/scrum-create-architecture-docs/SKILL.md": "sha256:4bd42f0dd2ee5e2340f39917be20cdc131a816b9af8e93f799345aa762593d04",
++    ".cursor/skills/scrum-create-project-context/SKILL.md": "sha256:eb8db3aeee6cc0f19ac68c394e576c0370d8ff55cf3beb0c88b457ddf1233dc2",
++    ".cursor/skills/scrum-create-project-docs/SKILL.md": "sha256:ff2cb74047f3c0826a512cb2f7a3e6141313ad575ed808769231c8e911caa8d2",
++    ".cursor/skills/scrum-create-ticket/SKILL.md": "sha256:ba75842169814019d4d4745e4ee2f174a949e76394f53e62fcdfdfb9b7f316d6",
++    ".cursor/skills/scrum-dev-story/SKILL.md": "sha256:bd3784fe21af3658fe8e7e88f96726683dbcb0403c3b958fd5ad09458f08bc76",
++    ".cursor/skills/scrum-refine-ticket/SKILL.md": "sha256:f7c37694d38defd5cc1aeaed0faf7c179c81035ee588a7a489bb9553497fc38e",
+     "scrum_workflow/agents/README.md": "sha256:60c183ead9079ef8e6541fce0544d02da8143d9c006b5ab9ded67afa508872b7",
+     "scrum_workflow/agents/architect.md": "sha256:ef06209791e046fe52947d30de0fa449e3588024089dcbb1d0e92902936e378f",
+     "scrum_workflow/agents/developer.md": "sha256:d53d1afc6ac38d567c358ef8a003444632d62547dcdd4483407f4c7dea82374d",

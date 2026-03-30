@@ -158,6 +158,32 @@ create-scrum-workflow status
 
 Claude Code is the default and recommended platform. Cursor, Windsurf, and Cline also scan `.claude/skills/` as a fallback, so installing to Claude Code alone covers multiple platforms.
 
+## Platform-Specific Quirks
+
+### GitHub Copilot
+**Issue**: GitHub Copilot has stricter directory conventions. Skills must be in `.github/skills/` with exact naming.
+**Impact**: No workaround needed - the installer handles this correctly.
+**Notes**: GitHub Copilot does not support fallback scan, so skills must be installed to the primary directory.
+
+### Cline
+**Issue**: Cline may require restart after skill installation for skills to be discovered.
+**Workaround**: Restart Cline or use the "Reload Skills" command after installation.
+**Notes**: Cline supports fallback scan from `.claude/skills/`, so skills are discoverable even if not installed to `.cline/skills/`.
+
+### Cursor
+**Issue**: Cursor's primary directory `.cursor/skills/` may not exist by default.
+**Workaround**: None - fallback scan from `.claude/skills/` works correctly.
+**Notes**: Cursor scans both `.claude/skills/` and `.agents/skills/` as fallback directories.
+
+### Windsurf
+**Issue**: Windsurf's primary directory `.windsurf/skills/` may not exist by default.
+**Workaround**: None - fallback scan from `.claude/skills/` works correctly.
+**Notes**: Windsurf scans both `.claude/skills/` and `.agents/skills/` as fallback directories.
+
+### Universal (.agents/)
+**Issue**: This is a cross-platform convention directory, not a specific platform.
+**Notes**: Scanned by Cursor, Windsurf, and Codex as a fallback directory. Useful for universal skill distribution.
+
 ## What Gets Installed
 
 The installer copies the following into your project:

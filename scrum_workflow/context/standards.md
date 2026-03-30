@@ -328,9 +328,8 @@ All transitions are explicit and guarded. No implicit status changes are permitt
                ┌───────┐    ┌────────────┐    ┌───────┐    ┌────────┐    ┌───────────┐    ┌──────┐
                │ draft │───▶│ refinement │───▶│ ready │───▶│ in-dev │───▶│ in-review │───▶│ done │
                └───────┘    └────────────┘    └───────┘    └────────┘    └───────────┘    └──────┘
-                  /scrum-      PASS via          /scrum-      /scrum-        User
-                  refine-      readiness         dev-story    dev-story      approval
-                  ticket       check                          review
+                  /refine-     PASS via          /scrum-dev-story   /scrum-dev-story     User
+                  ticket       readiness                      review         approval
                                check                                        (FR28)
 ```
 

@@ -1,35 +1,36 @@
-# BMAD Scrum Workflow
+# Scrum Workflow
 
 **Version:** 1.0.0
-**Status:** Production Ready ✅
+**Status:** Production Ready
 
 A spec-first, AI-assisted development workflow with human oversight at critical gates. Built for Claude Code and compatible AI coding assistants.
 
 ---
 
-## 🚀 Quick Start
+## Quick Start
 
 ```bash
-# 1. Install framework (choose method)
-cp -r /path/to/scrum_workflow/scrum_workflow ./scrum_workflow
-cp -r /path/to/scrum_workflow/.claude/skills/bmad-* .claude/skills/
+# 1. Link CLI locally (from the create-scrum-workflow directory)
+cd create-scrum-workflow && npm link
 
-# 2. Create directories
-mkdir -p _bmad-output/{planning-artifacts,implementation-artifacts}
-mkdir -p sprints
+# 2. Install into your project (interactive prompts guide you)
+cd /path/to/your-project
+create-scrum-workflow install
 
 # 3. Generate project context (Phase 0)
-/create-project-context  # Analyze project, create context files
+/scrum-create-project-context
 
 # 4. Create first story
-/create-ticket  # Create story from epic requirements
+/scrum-create-ticket
 ```
 
-**📖 Full Installation Guide:** [docs/01-installation.md](scrum_workflow/docs/01-installation.md)
+The installer handles everything: framework files, skill registration, output directories, and platform configuration.
+
+**Full Installation Guide:** [docs/01-installation.md](scrum_workflow/docs/01-installation.md)
 
 ---
 
-## ✨ Features
+## Features
 
 - **Spec-First Development**: Story fully specified before coding starts
 - **Multi-Agent Refinement**: Backend, Frontend, QA, Architecture perspectives
@@ -38,10 +39,12 @@ mkdir -p sprints
 - **Complete Audit Trail**: Every phase generates documented output
 - **Atomic Writes**: NFR1 compliance for concurrent safety
 - **Write Boundary Rules**: Phase isolation prevents unauthorized modifications
+- **Multi-Platform Support**: Claude Code, Cursor, Windsurf, GitHub Copilot, Cline, Universal
+- **Smart Updates**: `npx create-scrum-workflow update` preserves your customizations
 
 ---
 
-## 📋 Workflow Overview
+## Workflow Overview
 
 ```mermaid
 flowchart LR
@@ -51,7 +54,7 @@ flowchart LR
     C -->|FAIL| B
     D --> E[Code Review]
     E --> F{Human Approval}
-    F -->|APPROVE| G[DONE ✅]
+    F -->|APPROVE| G[DONE]
     F -->|REJECT| E
 ```
 
@@ -59,25 +62,72 @@ flowchart LR
 
 | Command | Purpose |
 |---------|---------|
-| `/create-project-context` | **Phase 0**: Generate project context files |
-| `/create-ticket` | Phase 1: Create story from epic |
-| `/refine-ticket SW-XXX` | Phase 2: Multi-agent refinement |
-| `/dev-story SW-XXX` | Phase 3: Implement story (requires: ready) |
-| `/dev-story SW-XXX review` | Phase 4: Code review |
+| `/scrum-create-project-context` | **Phase 0**: Generate project context files |
+| `/scrum-create-ticket` | Phase 1: Create story from epic |
+| `/scrum-refine-ticket SW-XXX` | Phase 2: Multi-agent refinement |
+| `/scrum-dev-story SW-XXX` | Phase 3: Implement story (requires: ready) |
+| `/scrum-dev-story SW-XXX review` | Phase 4: Code review |
+| `/scrum-create-project-docs` | Generate business logic documentation |
+| `/scrum-create-architecture-docs` | Generate architecture documentation |
 | Human approval | Phase 5: Final gate |
 
-**📖 Full Documentation:** [docs/00-index.md](scrum_workflow/docs/00-index.md)
+**Full Documentation:** [docs/00-index.md](scrum_workflow/docs/00-index.md)
 
 ---
 
-## 📁 Project Structure
+## Installation
+
+### Install from npm (once published)
+
+```bash
+npx create-scrum-workflow install
+```
+
+### Install from local source (development)
+
+```bash
+# 1. Link the CLI globally from the installer directory
+cd create-scrum-workflow
+npm link
+
+# 2. Run the installer in your target project
+cd /path/to/your-project
+create-scrum-workflow install
+```
+
+The interactive installer prompts for:
+- **Target directory** — where to install (defaults to current directory)
+- **Project name** — auto-detected from directory name
+- **Platforms** — Claude Code, Cursor, Windsurf, GitHub Copilot, Cline, Universal
+- **Framework directory** — where to place framework files (default: `scrum_workflow`)
+
+### Update
+
+```bash
+npx create-scrum-workflow update
+```
+
+Smart updates preserve your customizations — modified files are backed up, framework files are refreshed, and a new lock file is generated.
+
+### Status
+
+```bash
+npx create-scrum-workflow status
+```
+
+Shows installation integrity: unchanged, modified, or missing files.
+
+---
+
+## Project Structure
+
+After installation, your project will contain:
 
 ```
 your-project/
-├── .claude/
-│   └── skills/           # BMAD workflow skills
-├── _bmad-output/
-│   ├── planning-artifacts/      # Epics, PRD, Architecture
+├── .claude/skills/         # Registered workflow skills (platform-dependent)
+├── _scrum-output/
+│   ├── planning-artifacts/       # Epics, PRD, Architecture
 │   └── implementation-artifacts/ # Story files
 ├── scrum_workflow/
 │   ├── agents/           # Agent definitions
@@ -86,12 +136,13 @@ your-project/
 │   ├── templates/        # Output templates
 │   ├── context/          # Domain context
 │   └── docs/             # Documentation
-└── sprints/              # SW-101, SW-102, etc.
+├── sprints/              # SW-101, SW-102, etc.
+└── .scrum-workflow-lock.json  # Installation integrity tracking
 ```
 
 ---
 
-## 🎯 Status Transitions
+## Status Transitions
 
 ```
 draft → refinement → ready → in-dev → in-review → done
@@ -101,13 +152,13 @@ draft → refinement → ready → in-dev → in-review → done
 ```
 
 **Critical Rules:**
-- `/dev-story` requires `status: ready` (STRICT)
+- `/scrum-dev-story` requires `status: ready` (STRICT)
 - No automatic `done` transition (human gate)
 - Each phase writes only specific files
 
 ---
 
-## 📚 Documentation
+## Documentation
 
 | Document | Description |
 |----------|-------------|
@@ -119,24 +170,7 @@ draft → refinement → ready → in-dev → in-review → done
 
 ---
 
-## 🔧 Configuration
-
-Create `config.yaml` in project root:
-
-```yaml
-platform: claude-code
-project_name: "Your Project"
-project_key: "PREFIX"  # for story IDs like PREFIX-101
-
-active_agents:
-  - architect
-  - developer
-  - qa
-```
-
----
-
-## 🛡️ Guard Conditions
+## Guard Conditions
 
 **Before Development:**
 - Story must be `status: ready`
@@ -150,16 +184,33 @@ active_agents:
 
 ---
 
-## 📊 Completed Epics
+## Supported Platforms
 
-✅ **Epic 1:** Framework Setup & Project Onboarding
-✅ **Epic 2:** Spec-First Ticket Creation
-✅ **Epic 3:** Multi-Agent Story Refinement
-✅ **Epic 4:** Development, Review & Approval
+| Platform | Skill Directory |
+|----------|----------------|
+| Claude Code (recommended) | `.claude/skills` |
+| Cursor | `.cursor/skills` |
+| Windsurf | `.windsurf/skills` |
+| GitHub Copilot | `.github/skills` |
+| Cline | `.cline/skills` |
+| Universal | `.agents/skills` |
 
 ---
 
-## 🤝 Contributing
+## Completed Epics
+
+- **Epic 1:** Framework Setup & Project Onboarding
+- **Epic 2:** Spec-First Ticket Creation
+- **Epic 3:** Multi-Agent Story Refinement
+- **Epic 4:** Development, Review & Approval
+- **Epic 5:** Standalone CLI Installer (`create-scrum-workflow`)
+- **Epic 6:** Business Logic Documentation Agent
+- **Epic 7:** Architecture Documentation Agent
+- **Epic 8:** Installer Integration (Epic 6 & 7 Skills)
+
+---
+
+## Contributing
 
 This framework is designed to be extended. See:
 - [Extension Points](scrum_workflow/docs/14-extension-points.md)
@@ -167,12 +218,12 @@ This framework is designed to be extended. See:
 
 ---
 
-## 📝 License
+## License
 
 [Your License Here]
 
 ---
 
 **Version:** 1.0.0
-**Last Updated:** 2026-03-25
+**Last Updated:** 2026-03-30
 **Documentation:** [scrum_workflow/docs/00-index.md](scrum_workflow/docs/00-index.md)

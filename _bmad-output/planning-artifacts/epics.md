@@ -75,6 +75,30 @@ FR46: User can reject a refinement and provide additional context for re-refinem
 FR47: UX agent provides user flow and edge case perspectives during refinement
 FR48: Review loop repeats up to 3 iterations (Dev → Review → Fix) with exit condition: findings = 0
 
+**Business Logic Documentation (Epic 6):**
+FR60: User can generate comprehensive business logic documentation for any existing project by running a single command
+FR61: System scans codebase and identifies business rules, validations, guard clauses, and decision logic
+FR62: System scans codebase and identifies workflows, state machines, event handlers, and process flows
+FR63: System scans codebase and identifies domain entities, relationships, and data structures
+FR64: Each generated document includes Mermaid diagrams (flowchart, stateDiagram-v2, sequenceDiagram, classDiagram, erDiagram)
+FR65: System can incrementally update existing documentation by comparing current code against previously documented state
+FR66: Update mode shows a diff summary of what changed before writing, requiring user confirmation
+FR67: System maintains a scan state file to track what was documented and enable incremental updates
+FR68: Generated documentation includes source code references (file:line) for traceability
+FR69: Documentation agent is language-agnostic — works with any programming language via grep-based analysis
+
+**Architecture Documentation (Epic 7):**
+FR70: User can generate comprehensive architecture documentation for any existing project by running a single command
+FR71: System scans codebase and documents backend architecture (API endpoints, event systems, schedulers, message queues, middleware, services)
+FR72: System scans codebase and documents frontend architecture (component hierarchy, state management, routing, build pipeline)
+FR73: System scans codebase and documents DevOps architecture (CI/CD pipelines, Docker, Kubernetes, cloud infrastructure, monitoring)
+FR74: System scans codebase and documents local development environment (docker-compose services, Wiremock stubs, env files, seed data, local ports)
+FR75: System scans codebase and documents testing architecture (test pyramid, frameworks, coverage config, E2E setup, fixture patterns)
+FR76: Each generated architecture document includes Mermaid diagrams (graph TD, flowchart LR, sequenceDiagram)
+FR77: System can incrementally update existing architecture docs by comparing current code against previously documented state
+FR78: Architecture documentation agent is language-agnostic — works with any programming language via grep-based analysis
+FR79: Architecture scan state is managed independently from business logic scan state (separate .arch-scan-state.json)
+
 **Installer (Epic 5):**
 FR49: User can install scrum_workflow into any project by running a single CLI command
 FR50: Installer copies all framework files verbatim to the target project directory
@@ -195,6 +219,26 @@ FR56: Epic 5 - Update detects modified files via hash comparison + backup/restor
 FR57: Epic 5 - Status command shows installation info
 FR58: Epic 5 - Non-interactive mode via CLI flags
 FR59: Epic 5 - Standalone CLI with zero BMAD dependency
+FR60: Epic 6 - User generates business logic docs via single command
+FR61: Epic 6 - System identifies business rules, validations, guards
+FR62: Epic 6 - System identifies workflows, state machines, events
+FR63: Epic 6 - System identifies domain entities and relationships
+FR64: Epic 6 - Generated docs include Mermaid diagrams
+FR65: Epic 6 - Incremental update mode compares code vs. existing docs
+FR66: Epic 6 - Update mode shows diff and requires user confirmation
+FR67: Epic 6 - Scan state file tracks documentation state
+FR68: Epic 6 - Source code references (file:line) in docs
+FR69: Epic 6 - Language-agnostic via grep-based analysis
+FR70: Epic 7 - User generates architecture docs via single command
+FR71: Epic 7 - System documents backend architecture (API, events, schedulers)
+FR72: Epic 7 - System documents frontend architecture (components, state, routing)
+FR73: Epic 7 - System documents DevOps architecture (CI/CD, Docker, K8s)
+FR74: Epic 7 - System documents local dev environment (Wiremock, compose, env)
+FR75: Epic 7 - System documents testing architecture (pyramid, frameworks, coverage)
+FR76: Epic 7 - Generated docs include Mermaid diagrams
+FR77: Epic 7 - Incremental update mode for architecture docs
+FR78: Epic 7 - Language-agnostic via grep-based analysis
+FR79: Epic 7 - Independent scan state (.arch-scan-state.json)
 
 ## Epic List
 
@@ -224,6 +268,20 @@ After this epic, the user can install the scrum_workflow framework into any proj
 **Research basis:** `_bmad-output/planning-artifacts/research/technical-bmad-install-script-analysis-research-2026-03-27.md`
 **Architecture patterns:** Config-driven platform registry, verbatim copy pipeline, SHA-256 lock file integrity, backup/restore on update
 **Constraint:** Zero BMAD dependency — standalone project, own codebase, no shared code (NFR19)
+
+### Epic 6: Business Logic Documentation Agent
+After this epic, the user can run `/scrum-create-project-docs` to generate comprehensive business logic documentation for any existing project — including Mermaid diagrams — and incrementally update docs as the codebase evolves.
+**FRs covered:** FR60, FR61, FR62, FR63, FR64, FR65, FR66, FR67, FR68, FR69
+**Research basis:** `_bmad-output/planning-artifacts/research/technical-agentic-project-documentation-patterns-research-2026-03-30.md`
+**Architecture patterns:** Two-Mode Scan (full + update), Template-Driven Output, Grep-based language-agnostic analysis, Reflection Pattern for update diffs, Scan State Management
+**Key design decisions:** Single agent (no multi-agent overhead), Mermaid-first documentation, business logic focus only (architecture is a separate agent)
+
+### Epic 7: Architecture Documentation Agent
+After this epic, the user can run `/scrum-create-architecture-docs` to generate comprehensive architecture documentation for any existing project — covering backend, frontend, DevOps, local dev environment, and testing — with inline Mermaid diagrams, and incrementally update docs as the codebase evolves.
+**FRs covered:** FR70, FR71, FR72, FR73, FR74, FR75, FR76, FR77, FR78, FR79
+**Research basis:** `_bmad-output/planning-artifacts/research/technical-agentic-project-documentation-patterns-research-2026-03-30.md`
+**Architecture patterns:** Two-Mode Scan (full + update), Template-Driven Output, Grep-based language-agnostic analysis, Multi-Stage Pipeline Pattern, Scan State Management (independent from Epic 6)
+**Key design decisions:** Single agent (no multi-agent overhead), Mermaid-first documentation, architecture structure focus only (business logic is Epic 6), separate scan state from business logic agent
 
 ## Epic 1: Framework Setup & Project Onboarding
 
@@ -739,3 +797,457 @@ So that the framework is easily discoverable and installable with zero setup.
 **And** `.github/workflows/release.yml` exists with a CI pipeline that runs tests and publishes to npm on tagged releases
 **And** users can invoke via `npx create-scrum-workflow` or `npm create scrum-workflow`
 **And** `npx create-scrum-workflow@latest` always fetches the newest version (documented in README to avoid stale npx cache)
+
+## Epic 6: Business Logic Documentation Agent
+
+After this epic, the user can run `/scrum-create-project-docs` to generate comprehensive business logic documentation for any existing project — with inline Mermaid diagrams — and incrementally update docs as the codebase evolves. The agent is language-agnostic and works with any programming language through grep-based code analysis.
+
+**Story Dependency Map:**
+- Story 6.1 has no dependencies (agent definition)
+- Story 6.2 depends on 6.1 (command + workflow skeleton)
+- Stories 6.3, 6.4, and 6.5 depend on 6.2 and can be worked in **parallel** (three independent analysis dimensions)
+- Story 6.6 depends on 6.3, 6.4, and 6.5 (update mode needs all three doc types to exist)
+- Story 6.7 depends on 6.2 (state management is used by both modes)
+
+### Story 6.1: `documentarian` Agent Definition
+
+As a developer,
+I want a dedicated documentation agent defined in SKILL.md format,
+So that the agent has a clear identity, instructions, and output format for generating business logic documentation.
+
+**Acceptance Criteria:**
+
+**Given** the `scrum_workflow/agents/` directory exists with `architect.md`, `developer.md`, `qa.md`
+**When** the documentarian agent is created
+**Then** `scrum_workflow/agents/documentarian.md` exists in SKILL.md format with YAML frontmatter: `name: documentarian`, `display_name: Documentarian`, `role: Business logic documentation specialist`, `active_in: [create-project-docs]`, `model: claude-sonnet-4`, `max_tokens: 4000`
+**And** the Identity section defines the agent as a business logic analyst that reads existing codebases and generates structured documentation with Mermaid diagrams
+**And** the Instructions section specifies the agent must: (1) scan codebase systematically, (2) identify business rules/validations/guards, (3) trace workflows and state machines, (4) extract domain entities and relationships, (5) generate documentation with inline Mermaid diagrams, (6) include source references (file:line) for all documented logic
+**And** the Instructions section specifies the agent is language-agnostic — uses Glob and Grep patterns to find business logic in any language (FR69)
+**And** the Output Format section defines the three document types: `business-logic.md`, `workflows.md`, `domain-model.md` — each with required sections and Mermaid diagram types (FR64)
+**And** the Context Rules section specifies the agent reads `context/index.md` to understand the project domain before scanning
+**And** the agent definition follows the exact same structure as `architect.md` (frontmatter + Identity + Instructions + Output Format + Context Rules)
+
+### Story 6.2: `/scrum-create-project-docs` Command & Workflow Skeleton
+
+As a developer,
+I want to run `/scrum-create-project-docs` to trigger business logic documentation generation,
+So that I have a single command that orchestrates the full documentation workflow.
+
+**Acceptance Criteria:**
+
+**Given** the documentarian agent from Story 6.1 exists
+**When** the command and workflow are created
+**Then** `scrum_workflow/commands/create-project-docs.md` exists in SKILL.md command format with `trigger: /create-project-docs`, `requires_status: null`, `sets_status: null`, `spawns_agents: [documentarian]`
+**And** `scrum_workflow/workflows/project-documentation.md` exists with the two-mode workflow: `full-scan` (default) and `update` (triggered by `--update` flag)
+**And** the workflow defines the documentation output directory as `docs/generated/` relative to project root
+**And** the workflow loads the documentarian agent definition and project context before starting analysis
+**And** in `full-scan` mode, the workflow orchestrates: (1) project structure scan, (2) business logic analysis → `business-logic.md`, (3) workflow analysis → `workflows.md`, (4) domain model analysis → `domain-model.md`, (5) scan state persistence → `.scan-state.json`
+**And** in `update` mode, the workflow orchestrates: (1) load existing `.scan-state.json`, (2) identify changed files, (3) re-analyze changed areas, (4) show diff summary to user, (5) update docs upon user confirmation
+**And** the command reads `context/index.md` to determine project domain and tech stack
+**And** if `docs/generated/` does not exist, the workflow creates it
+**And** if `docs/generated/` already exists and mode is `full-scan`, the workflow warns: "Existing docs found. This will overwrite. Continue? [y/N]"
+**And** a `.claude/skills/create-project-docs.md` adapter skill is created that references the framework command
+
+### Story 6.3: Business Logic Analysis & `business-logic.md` Generation
+
+As a developer,
+I want the agent to identify and document all business rules, validations, and decision logic in my codebase,
+So that I have a comprehensive reference of what the system enforces and why.
+
+**Acceptance Criteria:**
+
+**Given** the `/scrum-create-project-docs` command from Story 6.2 is functional
+**When** the agent runs business logic analysis
+**Then** the agent scans the codebase using Grep patterns to identify business rules (FR61):
+  - Conditional logic with domain terms (`if/else`, `switch/case`, `match`)
+  - Validation functions (`validate*`, `check*`, `ensure*`, `assert*`, `is_valid*`)
+  - Guard clauses (`throw`, `reject`, `deny`, `forbidden`, `unauthorized`, `abort`)
+  - Policy/Rule/Strategy patterns (`*Policy`, `*Rule`, `*Strategy`, `*Validator`)
+  - Constants and enums with business meaning (`MAX_*`, `MIN_*`, `ALLOWED_*`, `STATUS_*`)
+**And** `scrum_workflow/templates/business-logic.md` exists as the output template with sections: Overview, Business Rules (grouped by domain area), Validation Rules, Guard Clauses & Access Control, Business Constants & Configuration
+**And** the generated `docs/generated/business-logic.md` follows the template structure
+**And** each documented rule includes: (1) rule name/description, (2) where it's enforced (file:line reference), (3) what it enforces (plain language), (4) a Mermaid `flowchart` showing the decision tree for complex rules (FR64, FR68)
+**And** rules are grouped by domain area (e.g., "Authentication", "Billing", "Permissions") based on file paths and context
+**And** the agent does NOT document infrastructure logic (logging, error handling, database queries) — only business-domain logic
+
+### Story 6.4: Workflow & State Machine Documentation with `workflows.md`
+
+As a developer,
+I want the agent to trace and document all workflows, state machines, and process flows in my codebase,
+So that I can see how data and control flow through the system's business processes.
+
+**Acceptance Criteria:**
+
+**Given** the `/scrum-create-project-docs` command from Story 6.2 is functional
+**When** the agent runs workflow analysis
+**Then** the agent scans the codebase using Grep patterns to identify workflows (FR62):
+  - State machines and status transitions (`status`, `state`, `transition`, `FSM`, `machine`)
+  - Event handlers (`on*`, `handle*`, `emit`, `dispatch`, `subscribe`, `publish`)
+  - Pipeline and middleware chains (`pipe`, `use`, `middleware`, `chain`, `step`)
+  - Process orchestration (`saga`, `workflow`, `process`, `orchestrat*`)
+  - Async flows (`then`, `await`, `promise`, `callback`, `queue`, `job`)
+**And** `scrum_workflow/templates/workflows-doc.md` exists as the output template with sections: Overview, State Machines, Event Flows, Process Pipelines, Async Workflows
+**And** the generated `docs/generated/workflows.md` follows the template structure
+**And** each documented workflow includes: (1) workflow name/description, (2) trigger/entry point (file:line), (3) steps in sequence, (4) exit conditions/outcomes (FR68)
+**And** state machines are documented with a Mermaid `stateDiagram-v2` showing all states and transitions (FR64)
+**And** event flows are documented with a Mermaid `sequenceDiagram` showing participants and message flow (FR64)
+**And** process pipelines are documented with a Mermaid `flowchart LR` showing the pipeline stages (FR64)
+
+### Story 6.5: Domain Model Extraction & `domain-model.md` Generation
+
+As a developer,
+I want the agent to extract and document all domain entities, their relationships, and data structures,
+So that I have a clear picture of the system's domain model with visual diagrams.
+
+**Acceptance Criteria:**
+
+**Given** the `/scrum-create-project-docs` command from Story 6.2 is functional
+**When** the agent runs domain model analysis
+**Then** the agent scans the codebase using Grep patterns to identify domain entities (FR63):
+  - Model/Entity/Schema definitions (`class`, `interface`, `type`, `struct`, `model`, `schema`, `entity`)
+  - Relationships (`hasMany`, `belongsTo`, `references`, `extends`, `implements`, `association`)
+  - Data transfer objects (`*DTO`, `*Request`, `*Response`, `*Payload`)
+  - Enums and value objects with domain meaning
+  - Database schema definitions (migrations, ORM models)
+**And** `scrum_workflow/templates/domain-model.md` exists as the output template with sections: Overview, Core Entities, Entity Relationships, Value Objects & Enums, Data Flow Structures
+**And** the generated `docs/generated/domain-model.md` follows the template structure
+**And** each documented entity includes: (1) entity name, (2) location (file:line), (3) key attributes/fields, (4) relationships to other entities (FR68)
+**And** the overall domain model is visualized with a Mermaid `classDiagram` showing entities and their relationships (FR64)
+**And** if database schemas are detected, an `erDiagram` is included showing table relationships (FR64)
+**And** entities are grouped by bounded context / domain area based on directory structure and naming
+
+### Story 6.6: Incremental Update Mode
+
+As a developer,
+I want to update existing documentation incrementally when my code changes,
+So that my docs stay in sync without regenerating everything from scratch.
+
+**Acceptance Criteria:**
+
+**Given** `docs/generated/` exists with `business-logic.md`, `workflows.md`, `domain-model.md`, and `.scan-state.json` from a previous full scan
+**When** the user runs `/scrum-create-project-docs --update`
+**Then** the agent reads `.scan-state.json` to determine which files were previously scanned and their timestamps/hashes (FR67)
+**And** the agent identifies files that have been modified since the last scan by comparing current file timestamps/hashes against the stored state (FR65)
+**And** the agent re-analyzes ONLY the changed files — not the entire codebase
+**And** the agent compares new findings against existing documentation content
+**And** the agent presents a **diff summary** to the user before writing: "Changed business rules: +3 new, ~2 modified, -1 removed" (FR66)
+**And** the user must confirm the update before any docs are modified: "Apply these changes? [y/N]"
+**And** if confirmed, the agent updates the relevant sections in the affected documents while preserving unchanged sections
+**And** the agent updates `.scan-state.json` with new timestamps/hashes after successful update
+**And** if no changes are detected, the agent reports: "No business logic changes detected since last scan."
+**And** if `.scan-state.json` does not exist, the agent falls back to full-scan mode with a warning: "No previous scan state found. Running full scan."
+
+### Story 6.7: Scan State Management & Resume Capability
+
+As a developer,
+I want the system to track what has been documented and enable resumption of interrupted scans,
+So that I never lose progress on large codebase documentation.
+
+**Acceptance Criteria:**
+
+**Given** the `/scrum-create-project-docs` workflow from Story 6.2 is functional
+**When** a scan is executed (full or update)
+**Then** `docs/generated/.scan-state.json` is created/updated with: `scan_date`, `scan_mode` (full/update), `files_scanned` (array of `{path, hash, timestamp}`), `documents_generated` (array of doc paths), `scan_duration`, `scan_status` (complete/interrupted) (FR67)
+**And** the hash for each file is computed from file content to detect modifications reliably
+**And** if a scan is interrupted (e.g., user cancels, context window limit reached), `scan_status` is set to `interrupted` and `last_completed_file` is recorded
+**And** when a scan resumes after interruption, the agent reads `.scan-state.json` and continues from `last_completed_file` — skipping already-processed files
+**And** the state file is updated incrementally during the scan — not only at the end — so progress is never lost
+**And** running a `full-scan` when a previous scan exists resets the state file (after user confirmation per Story 6.2)
+**And** the state file is valid JSON and human-readable for debugging
+**And** the state file is included in `.gitignore` recommendations (scan state is local, not committed)
+
+## Epic 7: Architecture Documentation Agent
+
+After this epic, the user can run `/scrum-create-architecture-docs` to generate comprehensive architecture documentation for any existing project — covering backend, frontend, DevOps, local dev environment, and testing — with inline Mermaid diagrams, and incrementally update docs as the codebase evolves. The agent is language-agnostic and complements the business logic documentarian (Epic 6) by focusing on **structural** rather than **behavioral** aspects.
+
+**Story Dependency Map:**
+- Story 7.1 has no dependencies (agent definition)
+- Story 7.2 depends on 7.1 (command + workflow skeleton)
+- Stories 7.3, 7.4, 7.5, 7.6, and 7.7 depend on 7.2 and can be worked in **parallel** (five independent analysis dimensions)
+- Story 7.8 depends on 7.3-7.7 (update mode needs all five doc types to exist)
+- Story 7.9 depends on 7.2 (state management is used by both modes)
+
+### Story 7.1: `architect-doc` Agent Definition
+
+As a developer,
+I want a dedicated architecture documentation agent defined in SKILL.md format,
+So that the agent has a clear identity, instructions, and output format for generating architecture documentation with Mermaid diagrams.
+
+**Acceptance Criteria:**
+
+**Given** the `scrum_workflow/agents/` directory exists with `architect.md`, `developer.md`, `qa.md`, `documentarian.md`
+**When** the architect-doc agent is created
+**Then** `scrum_workflow/agents/architect-doc.md` exists in SKILL.md format with YAML frontmatter: `name: architect-doc`, `display_name: Architecture Documentarian`, `role: Architecture documentation specialist`, `active_in: [create-architecture-docs]`, `model: claude-sonnet-4`, `max_tokens: 4000`
+**And** the Identity section defines the agent as an architecture analyst that reads existing codebases and generates structured architecture documentation with Mermaid diagrams — focusing on system structure, not business logic
+**And** the Instructions section specifies the agent must: (1) scan codebase systematically via Glob and Grep, (2) identify backend components (API endpoints, event systems, schedulers, middleware, services), (3) identify frontend structure (components, state management, routing), (4) identify DevOps infrastructure (CI/CD, Docker, Kubernetes), (5) identify local dev environment (docker-compose, Wiremock, env files, seed data), (6) identify testing architecture (frameworks, pyramid, coverage, fixtures), (7) generate documentation with inline Mermaid diagrams, (8) include source references (file:line)
+**And** the Instructions section includes concrete grep patterns for each architecture dimension (FR78):
+  - Backend: `@Get`, `@Post`, `router.get`, `EventEmitter`, `@Scheduled`, `cron`, `middleware`, `interceptor`
+  - Frontend: `Component`, `.tsx`, `.vue`, `store`, `reducer`, `Route`, `router`
+  - DevOps: `Dockerfile`, `docker-compose`, `.github/workflows/`, `deployment.yaml`, `.tf`
+  - Local Dev: `docker-compose.yml`, `wiremock`, `.env`, `seed`, `fixtures`, `factory`
+  - Testing: `jest.config`, `pytest.ini`, `vitest.config`, `playwright.config`, `coverageThreshold`
+**And** the Output Format section defines five document types with required sections and Mermaid diagram types (FR76)
+**And** the Context Rules section specifies context loading order: `context/index.md`, domain context files, `config.yaml`, source code discovered via Glob/Grep
+**And** the file follows the exact same structure as `architect.md`: frontmatter -> Identity -> Instructions -> Output Format -> Context Rules
+
+### Story 7.2: `/scrum-create-architecture-docs` Command & Workflow Skeleton
+
+As a developer,
+I want to run `/scrum-create-architecture-docs` to trigger architecture documentation generation,
+So that I have a single command that orchestrates the full architecture documentation workflow.
+
+**Acceptance Criteria:**
+
+**Given** the architect-doc agent from Story 7.1 exists
+**When** the command and workflow are created
+**Then** `scrum_workflow/commands/create-architecture-docs.md` exists in SKILL.md command format with `trigger: /create-architecture-docs`, `requires_status: null`, `sets_status: null`, `spawns_agents: [architect-doc]`
+**And** `scrum_workflow/workflows/architecture-documentation.md` exists with the two-mode workflow: `full-scan` (default) and `update` (triggered by `--update` flag)
+**And** the workflow defines the documentation output directory as `docs/generated/` relative to project root (same directory as Epic 6 output)
+**And** the workflow loads the architect-doc agent definition and project context before starting analysis
+**And** in `full-scan` mode, the workflow orchestrates: (1) project structure scan, (2) backend analysis -> `backend-architecture.md`, (3) frontend analysis -> `frontend-architecture.md`, (4) DevOps analysis -> `devops-architecture.md`, (5) local dev environment analysis -> `local-dev-environment.md`, (6) testing analysis -> `testing-architecture.md`, (7) scan state persistence -> `.arch-scan-state.json`
+**And** in `update` mode, the workflow orchestrates: (1) load existing `.arch-scan-state.json`, (2) identify changed files, (3) re-analyze changed areas, (4) show diff summary to user, (5) update docs upon user confirmation
+**And** the command reads `context/index.md` to determine project domain and tech stack
+**And** if `docs/generated/` does not exist, the workflow creates it
+**And** if architecture docs already exist and mode is `full-scan`, the workflow warns: "Existing architecture docs found. This will overwrite. Continue? [y/N]"
+**And** a `.claude/skills/create-architecture-docs.md` adapter skill is created that references the framework command
+
+### Story 7.3: Backend Architecture Analysis & `backend-architecture.md` Generation
+
+As a developer,
+I want the agent to identify and document all backend architectural components,
+So that I have a comprehensive reference of APIs, events, schedulers, middleware, and service structure.
+
+**Acceptance Criteria:**
+
+**Given** the `/scrum-create-architecture-docs` command from Story 7.2 is functional
+**When** the agent runs backend architecture analysis
+**Then** the agent scans the codebase using Grep patterns to identify backend components (FR71):
+  - API endpoints and route definitions (`@Get`, `@Post`, `@Put`, `@Delete`, `router.get`, `router.post`, `app.use`, `@RequestMapping`, `@Controller`)
+  - Event systems (`EventEmitter`, `@EventHandler`, `emit`, `on`, `subscribe`, `publish`, `queue`, `topic`, `exchange`, `channel`)
+  - Schedulers and cron jobs (`@Scheduled`, `cron`, `setInterval`, `agenda`, `bull`, `schedule`)
+  - Middleware and interceptors (`middleware`, `interceptor`, `guard`, `filter`, `pipe`, `@UseGuards`, `@UseInterceptors`)
+  - Service layer (`@Service`, `@Injectable`, `@Component`, `Provider`, `Repository`)
+  - Database access (`@Entity`, `@Table`, `Schema`, `migration`, `sequelize`, `prisma`, `typeorm`)
+**And** `scrum_workflow/templates/backend-architecture.md` exists as the output template with sections: Overview, API Endpoints (grouped by resource/domain), Event System, Scheduled Tasks, Middleware Pipeline, Service Layer, Database Access Layer
+**And** the generated `docs/generated/backend-architecture.md` follows the template structure
+**And** API endpoints are documented with: HTTP method, path, controller/handler file:line, request/response types if discoverable
+**And** event flows are documented with a Mermaid `sequenceDiagram` showing publishers and subscribers (FR76)
+**And** the middleware pipeline is documented with a Mermaid `flowchart LR` showing the request processing chain (FR76)
+**And** the service layer is documented with a Mermaid `graph TD` showing service dependencies (FR76)
+
+### Story 7.4: Frontend Architecture Analysis & `frontend-architecture.md` Generation
+
+As a developer,
+I want the agent to identify and document all frontend architectural components,
+So that I have a clear picture of component hierarchy, state management, and routing structure.
+
+**Acceptance Criteria:**
+
+**Given** the `/scrum-create-architecture-docs` command from Story 7.2 is functional
+**When** the agent runs frontend architecture analysis
+**Then** the agent scans the codebase using Grep patterns to identify frontend components (FR72):
+  - Component definitions (`.tsx`, `.jsx`, `.vue`, `.svelte` files, `Component`, `FC`, `defineComponent`)
+  - State management (`store`, `reducer`, `action`, `selector`, `signal`, `atom`, `createStore`, `createSlice`, `Vuex`, `Pinia`, `Zustand`)
+  - Routing (`Route`, `Router`, `path`, `navigate`, `Link`, `useRouter`, `createBrowserRouter`)
+  - Build pipeline (`webpack.config`, `vite.config`, `next.config`, `tsconfig.json`, `babel.config`)
+  - Shared utilities and hooks (`use*`, `utils/`, `helpers/`, `hooks/`, `composables/`)
+**And** `scrum_workflow/templates/frontend-architecture.md` exists as the output template with sections: Overview, Component Hierarchy, State Management, Routing Structure, Build Pipeline, Shared Utilities
+**And** the generated `docs/generated/frontend-architecture.md` follows the template structure
+**And** the component hierarchy is documented with a Mermaid `graph TD` showing parent-child component relationships (FR76)
+**And** state management is documented with a Mermaid `flowchart` showing store structure and data flow (FR76)
+**And** routing is documented with a table listing all routes, their components, and guards/middleware
+**And** if no frontend is detected (no `.tsx`, `.jsx`, `.vue`, `.svelte` files), the document is skipped with a note in the scan state
+
+### Story 7.5: DevOps Architecture Analysis & `devops-architecture.md` Generation
+
+As a developer,
+I want the agent to identify and document all DevOps infrastructure and CI/CD pipelines,
+So that I understand the deployment pipeline, container setup, and infrastructure configuration.
+
+**Acceptance Criteria:**
+
+**Given** the `/scrum-create-architecture-docs` command from Story 7.2 is functional
+**When** the agent runs DevOps architecture analysis
+**Then** the agent scans the codebase using Grep patterns to identify DevOps components (FR73):
+  - CI/CD pipelines (`.github/workflows/*.yml`, `.gitlab-ci.yml`, `Jenkinsfile`, `.circleci/config.yml`, `azure-pipelines.yml`)
+  - Container configuration (`Dockerfile`, `docker-compose.yml`, `docker-compose.yaml`, `.dockerignore`)
+  - Kubernetes (`deployment.yaml`, `service.yaml`, `ingress.yaml`, `configmap.yaml`, `kustomization.yaml`, `helm/`)
+  - Infrastructure as Code (`.tf` files, `Pulumi.yaml`, `cloudformation.yaml`, `cdk.json`)
+  - Monitoring and observability (`prometheus.yml`, `grafana/`, `datadog.yaml`, `sentry.properties`)
+**And** `scrum_workflow/templates/devops-architecture.md` exists as the output template with sections: Overview, CI/CD Pipelines, Container Configuration, Orchestration (K8s), Infrastructure as Code, Monitoring & Observability
+**And** the generated `docs/generated/devops-architecture.md` follows the template structure
+**And** CI/CD pipelines are documented with a Mermaid `flowchart LR` showing pipeline stages (build -> test -> deploy) (FR76)
+**And** container setup is documented with a Mermaid `graph TD` showing service dependencies from docker-compose (FR76)
+**And** each documented component includes file:line references for traceability
+**And** if no DevOps configuration is detected, the document is skipped with a note in the scan state
+
+### Story 7.6: Local Dev Environment Analysis & `local-dev-environment.md` Generation
+
+As a developer,
+I want the agent to document the complete local development environment setup,
+So that new team members can get the project running locally within minutes.
+
+**Acceptance Criteria:**
+
+**Given** the `/scrum-create-architecture-docs` command from Story 7.2 is functional
+**When** the agent runs local dev environment analysis
+**Then** the agent scans the codebase using Grep patterns to identify local dev components (FR74):
+  - Docker Compose services (`docker-compose.yml`, `docker-compose.override.yml`, `docker-compose.local.yml`)
+  - Mock services (`wiremock`, `__files/`, `mappings/`, `mockserver`, `prism`, `json-server`)
+  - Environment files (`.env`, `.env.local`, `.env.example`, `.env.development`, `.env.test`)
+  - Seed and fixture data (`seed.*`, `fixtures/`, `factory.*`, `testdata/`, `__fixtures__/`)
+  - Local tooling (`Makefile`, `justfile`, `Taskfile.yml`, `scripts/`)
+  - Port mappings and service URLs (extracted from docker-compose ports, .env files)
+**And** `scrum_workflow/templates/local-dev-environment.md` exists as the output template with sections: Overview, Prerequisites, Services (with ports and URLs), Mock Services, Environment Variables, Seed Data, Common Commands
+**And** the generated `docs/generated/local-dev-environment.md` follows the template structure
+**And** services are documented with a Mermaid `graph TD` showing local service topology with port numbers (FR76)
+**And** environment variables are documented in a table: variable name, source file, description/purpose, example value
+**And** common commands are listed (start, stop, reset, seed) with exact shell commands
+**And** if no local dev configuration is detected (no docker-compose, no .env), the document is skipped with a note in the scan state
+
+### Story 7.7: Testing Architecture Analysis & `testing-architecture.md` Generation
+
+As a developer,
+I want the agent to document the testing architecture, frameworks, and coverage configuration,
+So that I understand how tests are organized and what testing standards the project follows.
+
+**Acceptance Criteria:**
+
+**Given** the `/scrum-create-architecture-docs` command from Story 7.2 is functional
+**When** the agent runs testing architecture analysis
+**Then** the agent scans the codebase using Grep patterns to identify testing components (FR75):
+  - Test frameworks and config (`jest.config.*`, `vitest.config.*`, `pytest.ini`, `pyproject.toml [tool.pytest]`, `playwright.config.*`, `cypress.config.*`, `.mocharc.*`)
+  - Test directories and patterns (`__tests__/`, `test/`, `spec/`, `tests/`, `*.test.*`, `*.spec.*`, `test_*`)
+  - Coverage configuration (`coverageThreshold`, `--cov`, `coverage/`, `.nycrc`, `istanbul`)
+  - E2E test setup (`playwright`, `cypress`, `selenium`, `puppeteer`, `testcontainers`)
+  - Test utilities (`fixtures/`, `helpers/`, `factories/`, `mocks/`, `stubs/`, `__mocks__/`)
+  - Contract tests (`pact`, `consumer`, `provider`, `contract`)
+**And** `scrum_workflow/templates/testing-architecture.md` exists as the output template with sections: Overview, Test Pyramid (unit/integration/E2E split), Frameworks & Configuration, Test Directory Structure, Coverage Requirements, E2E Setup, Test Utilities & Fixtures
+**And** the generated `docs/generated/testing-architecture.md` follows the template structure
+**And** the test pyramid is documented with a Mermaid `graph TD` or description showing the balance of unit/integration/E2E tests (FR76)
+**And** test frameworks are documented with: framework name, config file location (file:line), test directory patterns, run commands
+**And** coverage thresholds are extracted and documented if configured
+**And** if no test configuration is detected, the document is skipped with a note in the scan state
+
+### Story 7.8: Incremental Update Mode
+
+As a developer,
+I want to update existing architecture documentation incrementally when my code changes,
+So that my architecture docs stay in sync without regenerating everything from scratch.
+
+**Acceptance Criteria:**
+
+**Given** `docs/generated/` exists with architecture docs and `.arch-scan-state.json` from a previous full scan
+**When** the user runs `/scrum-create-architecture-docs --update`
+**Then** the agent reads `.arch-scan-state.json` to determine which files were previously scanned and their timestamps/hashes (FR79)
+**And** the agent identifies files that have been modified since the last scan by comparing current file timestamps/hashes against the stored state (FR77)
+**And** the agent re-analyzes ONLY the changed files — not the entire codebase
+**And** the agent compares new findings against existing documentation content
+**And** the agent presents a **diff summary** to the user before writing: "Changed architecture components: +2 new endpoints, ~1 modified service, -1 removed middleware"
+**And** the user must confirm the update before any docs are modified: "Apply these changes? [y/N]"
+**And** if confirmed, the agent updates the relevant sections in the affected documents while preserving unchanged sections
+**And** the agent updates `.arch-scan-state.json` with new timestamps/hashes after successful update
+**And** if no changes are detected, the agent reports: "No architecture changes detected since last scan."
+**And** if `.arch-scan-state.json` does not exist, the agent falls back to full-scan mode with a warning: "No previous scan state found. Running full scan."
+
+### Story 7.9: Architecture Scan State Management & Resume Capability
+
+As a developer,
+I want the system to track what architecture has been documented and enable resumption of interrupted scans,
+So that I never lose progress on large codebase documentation.
+
+**Acceptance Criteria:**
+
+**Given** the `/scrum-create-architecture-docs` workflow from Story 7.2 is functional
+**When** a scan is executed (full or update)
+**Then** `docs/generated/.arch-scan-state.json` is created/updated with: `scan_date`, `scan_mode` (full/update), `files_scanned` (array of `{path, hash, timestamp}`), `documents_generated` (array of doc paths), `documents_skipped` (array with skip reasons), `scan_duration`, `scan_status` (complete/interrupted) (FR79)
+**And** the state file is separate from Epic 6's `.scan-state.json` — the two agents manage independent state
+**And** the hash for each file is computed from file content to detect modifications reliably
+**And** if a scan is interrupted, `scan_status` is set to `interrupted` and `last_completed_file` is recorded
+**And** when a scan resumes after interruption, the agent reads `.arch-scan-state.json` and continues from `last_completed_file`
+**And** the state file is updated incrementally during the scan — not only at the end — so progress is never lost
+**And** `documents_skipped` tracks which architecture dimensions were skipped due to no detected components (e.g., "frontend-architecture.md: no frontend detected")
+**And** running a `full-scan` when a previous scan exists resets the state file (after user confirmation per Story 7.2)
+**And** the state file is valid JSON and human-readable for debugging
+**And** the state file is included in `.gitignore` recommendations (scan state is local, not committed)
+
+## Epic 8: Installer Integration — Epic 6 & 7 Documentation Skills
+
+After this epic, the `create-scrum-workflow` installer installs all documentation skills from Epic 6 and Epic 7 — making `/scrum-create-project-docs` and `/scrum-create-architecture-docs` available as platform-discoverable commands alongside the original four skills. This epic should be started **only after** Epic 6 and Epic 7 are both complete.
+
+**Story Dependency Map:**
+- Story 8.1 has no dependencies (template creation)
+- Story 8.2 depends on 8.1 (installer needs templates first)
+- Story 8.3 depends on 8.2 (tests need installer changes)
+- Story 8.4 depends on 8.2 (validation needs installer changes)
+- Stories 8.1 and 8.2 can be worked in **parallel** with Epic 6/7 finalization if templates are known in advance
+
+### Story 8.1: Skill Registration Templates for Epic 6 & 7
+
+As a developer,
+I want skill registration templates for the two new documentation commands,
+So that the installer can generate platform-specific skill shims for these commands.
+
+**Acceptance Criteria:**
+
+**Given** Epic 6 and Epic 7 command definitions are complete
+**When** the skill registration templates are created
+**Then** `templates/skill-registrations/scrum-create-project-docs/SKILL.md` exists with: YAML frontmatter (`name`, `display_name`, `description`, `active_in`) and body referencing `{{framework_path}}/commands/create-project-docs.md`
+**And** `templates/skill-registrations/scrum-create-architecture-docs/SKILL.md` exists with the same structure, referencing `{{framework_path}}/commands/create-architecture-docs.md`
+**And** each template contains a `{{framework_path}}` placeholder that will be replaced during installation
+**And** both templates follow the exact same format as the existing four skill shims (create-project-context, create-ticket, refine-ticket, dev-story)
+**And** the `name` field in frontmatter uses kebab-case and matches the directory name (`scrum-create-project-docs`, `scrum-create-architecture-docs`)
+**And** each template includes a clear `description` field explaining what the command does
+
+### Story 8.2: Installer Pipeline Update for New Skills
+
+As a developer,
+I want the installer to copy and register the new documentation skill shims,
+So that users can invoke `/scrum-create-project-docs` and `/scrum-create-architecture-docs` after installation.
+
+**Acceptance Criteria:**
+
+**Given** the skill registration templates from Story 8.1 exist
+**When** the install command executes the skill registration step
+**Then** `src/core/skill-registrar.js` is updated to include the two new skill shims in the copy pipeline
+**And** `src/core/installer.js` orchestrates the skill registration for all six skills (original 4 + 2 new)
+**And** for each selected platform, the installer copies the 6 skill shim directories to `{target}/.{platform}/skills/`
+**And** during copy, `{{framework_path}}` is replaced with the resolved framework path (e.g., `scrum_workflow`) for all 6 skills
+**And** all 6 generated SKILL.md files have valid YAML frontmatter with `name` matching the directory name
+**And** the install command prints a summary showing: "6 skills registered: [list of all 6 skills]"
+**And** if a platform's `skills/` directory already contains any of the 6 skills, they are overwritten (idempotent behavior)
+**And** the lock file (`.scrum-workflow-lock.json`) includes all 6 skill registration files in the `files` object with SHA-256 hashes
+
+### Story 8.3: Integration Tests for Epic 6/7 Skills
+
+As a developer,
+I want test coverage that verifies the new documentation skills are installed correctly,
+So that I have confidence the installer works for all six skills.
+
+**Acceptance Criteria:**
+
+**Given** the installer pipeline from Story 8.2 is updated
+**When** the integration test suite runs
+**Then** `create-scrum-workflow/test/integration/installer.test.js` (or equivalent test file) includes test cases for both new skills
+**And** tests verify that after installation, both `scrum-create-project-docs.md` and `scrum-create-architecture-docs.md` exist in each selected platform's skills directory
+**And** tests verify that the `{{framework_path}}` placeholder is correctly replaced in both new skill files
+**And** tests verify that the lock file contains entries for all 6 skill registration files
+**And** tests verify that the install command summary shows all 6 skills
+**And** running `npm test` passes all integration tests including the new Epic 6/7 skill tests
+
+### Story 8.4: Platform Registry Validation for New Skills
+
+As a developer,
+I want validation that all six skills work across all supported platforms,
+So that users can use the documentation commands regardless of their AI coding platform.
+
+**Acceptance Criteria:**
+
+**Given** the installer from Story 8.2 and tests from Story 8.3 are in place
+**When** platform validation is executed
+**Then** a validation test or manual verification confirms that skill shims are created for all platforms in the registry: `claude-code`, `cursor`, `windsurf`, `github-copilot`, `cline`, `agents-universal`
+**And** for each platform, the skill directory path matches the `target_dir` from `platform-registry.yaml`
+**And** the skill format (`skill-md`) is consistent across all platforms for the 6 skills
+**And** platforms with `fallback_scan` (e.g., Cursor scanning `.claude/skills/`) can discover the skills even if not installed to their primary directory
+**And** a validation report documents which platforms successfully recognize which skills (e.g., "Claude Code: all 6 skills | Cursor: all 6 skills (via .claude fallback)")
+**And** any platform-specific quirks or limitations are documented in the installer README

@@ -8,7 +8,7 @@ Step-by-step workflow for implementing stories based on approved specifications 
 - Story file exists at `sprints/SW-XXX/story.md` with `status: ready`
 - Execution plan exists at `sprints/SW-XXX/plan.md` (created by readiness check)
 - Story has passed readiness check (all 4 criteria validated)
-- `scrum_workflow/commands/dev-story.md` exists with guard condition enforcement
+- `scrum_workflow/commands/scrum-dev-story.md` exists with guard condition enforcement
 
 ## Step 1: Verify Guard Condition
 

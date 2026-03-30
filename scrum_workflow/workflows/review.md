@@ -6,7 +6,7 @@ Step-by-step workflow for reviewing implemented code against story specification
 
 - Story file exists at `sprints/SW-XXX/story.md` with `status: in-dev` or `status: in-review`
 - Code has been implemented (git changes exist or files modified/created)
-- `scrum_workflow/commands/dev-story.md` exists with review trigger functionality
+- `scrum_workflow/commands/scrum-dev-story.md` exists with review trigger functionality
 - Review template exists at `scrum_workflow/templates/review.md`
 
 ## Step 1: Detect Review Trigger

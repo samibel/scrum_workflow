@@ -18,28 +18,28 @@ Validate that required files exist before workflow execution:
 
 | File | Purpose | Required For |
 |---|---|---|
-| `sprints/SW-XXX/story.md` | Story definition | All story-processing workflows |
+| `_scrum-output/sprints/SW-XXX/story.md` | Story definition | All story-processing workflows |
 | `context/index.md` | Project context overview | Most workflows (except context creation) |
 
 **Phase-Specific Required Files:**
 
 | File | Purpose | Required For |
 |---|---|---|
-| `sprints/SW-XXX/refinement.md` | Multi-agent refinement output | Readiness check (after refinement) |
-| `sprints/SW-XXX/plan.md` | Implementation plan | Development workflow |
+| `_scrum-output/sprints/SW-XXX/refinement.md` | Multi-agent refinement output | Readiness check (after refinement) |
+| `_scrum-output/sprints/SW-XXX/plan.md` | Implementation plan | Development workflow |
 
 ## Story File Validation
 
 Check if the story file exists at the expected path:
 
-1. **Path Pattern**: `sprints/SW-XXX/story.md` where XXX is the ticket number
+1. **Path Pattern**: `_scrum-output/sprints/SW-XXX/story.md` where XXX is the ticket number
 2. **File Existence**: File must exist and be readable
 3. **File Type**: Must be a regular file (not directory or symlink)
 
 **On missing story file**, return an error:
 
 ```
-Error: File 'sprints/SW-XXX/story.md' not found
+Error: File '_scrum-output/sprints/SW-XXX/story.md' not found
 Fix: Run '/scrum-create-ticket SW-XXX' first to create the story file
 ```
 
@@ -62,14 +62,14 @@ Fix: Run '/scrum-create-project-context' first to generate project context files
 
 Check if refinement output exists (for readiness check):
 
-1. **Path Pattern**: `sprints/SW-XXX/refinement.md`
+1. **Path Pattern**: `_scrum-output/sprints/SW-XXX/refinement.md`
 2. **Required For**: Readiness check after refinement phase
 3. **File Existence**: File must exist and be readable
 
 **On missing refinement file**, return an error:
 
 ```
-Error: File 'sprints/SW-XXX/refinement.md' not found
+Error: File '_scrum-output/sprints/SW-XXX/refinement.md' not found
 Fix: Run '/scrum-refine-ticket SW-XXX' first to generate refinement output
 ```
 
@@ -77,14 +77,14 @@ Fix: Run '/scrum-refine-ticket SW-XXX' first to generate refinement output
 
 Check if implementation plan exists (for development workflow):
 
-1. **Path Pattern**: `sprints/SW-XXX/plan.md`
+1. **Path Pattern**: `_scrum-output/sprints/SW-XXX/plan.md`
 2. **Required For**: Development workflow after readiness check
 3. **File Existence**: File must exist and be readable
 
 **On missing plan file**, return an error:
 
 ```
-Error: File 'sprints/SW-XXX/plan.md' not found
+Error: File '_scrum-output/sprints/SW-XXX/plan.md' not found
 Fix: Run readiness check first to generate the implementation plan
 ```
 
@@ -97,17 +97,17 @@ Different commands have different prerequisite requirements:
 - Optional: `context/index.md` (improves story quality)
 
 **`/scrum-refine-ticket` prerequisites:**
-- Required: `sprints/SW-XXX/story.md` must exist
+- Required: `_scrum-output/sprints/SW-XXX/story.md` must exist
 - Required: `context/index.md` must exist
 
 **Readiness check prerequisites:**
-- Required: `sprints/SW-XXX/story.md` must exist
-- Required: `sprints/SW-XXX/refinement.md` must exist
+- Required: `_scrum-output/sprints/SW-XXX/story.md` must exist
+- Required: `_scrum-output/sprints/SW-XXX/refinement.md` must exist
 - Required: `context/index.md` must exist
 
 **`/scrum-dev-story` prerequisites:**
-- Required: `sprints/SW-XXX/story.md` must exist
-- Required: `sprints/SW-XXX/plan.md` must exist
+- Required: `_scrum-output/sprints/SW-XXX/story.md` must exist
+- Required: `_scrum-output/sprints/SW-XXX/plan.md` must exist
 - Required: `context/index.md` must exist
 
 ## Batch Validation Strategy
@@ -127,7 +127,7 @@ Return a structured validation result:
 ```yaml
 valid: true/false
 missing_files:
-  - file_path: "sprints/SW-XXX/story.md"
+  - file_path: "_scrum-output/sprints/SW-XXX/story.md"
     error: "File not found"
     fix: "Run '/scrum-create-ticket SW-XXX' first"
 prerequisite_commands:
@@ -143,10 +143,10 @@ prerequisite_commands:
 
 ## Reads
 
-- Story file path (typically `sprints/SW-XXX/story.md`)
+- Story file path (typically `_scrum-output/sprints/SW-XXX/story.md`)
 - Project context index (`context/index.md`)
-- Refinement file (`sprints/SW-XXX/refinement.md`) for readiness check
-- Plan file (`sprints/SW-XXX/plan.md`) for development workflow
+- Refinement file (`_scrum-output/sprints/SW-XXX/refinement.md`) for readiness check
+- Plan file (`_scrum-output/sprints/SW-XXX/plan.md`) for development workflow
 - Command being executed (to determine which prerequisites to check)
 
 ## Writes

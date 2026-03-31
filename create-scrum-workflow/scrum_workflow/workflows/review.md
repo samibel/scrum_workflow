@@ -4,7 +4,7 @@ Step-by-step workflow for reviewing implemented code against story specification
 
 ## Prerequisites
 
-- Story file exists at `sprints/SW-XXX/story.md` with `status: in-dev` or `status: in-review`
+- Story file exists at `_scrum-output/sprints/SW-XXX/story.md` with `status: in-dev` or `status: in-review`
 - Code has been implemented (git changes exist or files modified/created)
 - `scrum_workflow/commands/scrum-dev-story.md` exists with review trigger functionality
 - Review template exists at `scrum_workflow/templates/review.md`
@@ -25,11 +25,11 @@ Fix: Append 'review' to the dev-story command.
 
 ### Step 1.2: Verify Story File Exists
 
-Check if `sprints/SW-XXX/story.md` exists.
+Check if `_scrum-output/sprints/SW-XXX/story.md` exists.
 
 **If file does not exist**, halt with error:
 ```
-Error: Story file 'sprints/SW-XXX/story.md' not found
+Error: Story file '_scrum-output/sprints/SW-XXX/story.md' not found
 Fix: Ensure story exists before triggering review
 ```
 
@@ -49,7 +49,7 @@ Fix: Complete implementation before triggering review
 
 ### Step 2.1: Load Story File
 
-Read `sprints/SW-XXX/story.md` completely and extract:
+Read `_scrum-output/sprints/SW-XXX/story.md` completely and extract:
 - Story section: User story description
 - Acceptance Criteria: BDD Given/When/Then criteria
 - Tasks/Subtasks: Implementation task list (for finding reference)
@@ -57,21 +57,21 @@ Read `sprints/SW-XXX/story.md` completely and extract:
 
 ### Step 2.2: Load Plan File
 
-Read `sprints/SW-XXX/plan.md` if it exists and extract:
+Read `_scrum-output/sprints/SW-XXX/plan.md` if it exists and extract:
 - Subtasks table with dependencies
 - Acceptance criteria summary
 - Story context and overview
 
 **If plan.md does not exist**, issue warning but continue:
 ```
-Warning: Plan file 'sprints/SW-XXX/plan.md' not found
+Warning: Plan file '_scrum-output/sprints/SW-XXX/plan.md' not found
 Review will proceed using story.md only
 ```
 
 ### Step 2.3: Detect Existing Reviews
 
 Scan the sprint folder for existing review files:
-- Look for pattern: `sprints/SW-XXX/review-*.md`
+- Look for pattern: `_scrum-output/sprints/SW-XXX/review-*.md`
 - Extract highest review number (e.g., review-3.md → N=3)
 - If no review files exist, set current review number to 1
 
@@ -217,7 +217,7 @@ For each finding, provide actionable suggested fix:
 ### Step 6.1: Initialize Review File
 
 Create review file using template from `scrum_workflow/templates/review.md`:
-- Output file: `sprints/SW-XXX/review-N.md` (N from Step 2.3)
+- Output file: `_scrum-output/sprints/SW-XXX/review-N.md` (N from Step 2.3)
 - Use atomic write operation (NFR1 compliance)
 - Template ensures consistent format across all reviews
 
@@ -264,7 +264,7 @@ Add review metadata to review file:
 
 ### Step 7.1: Update Status to in-review
 
-Update `sprints/SW-XXX/story.md` YAML frontmatter:
+Update `_scrum-output/sprints/SW-XXX/story.md` YAML frontmatter:
 - Set `status` field to `in-review`
 - Update `updated` field to current date (ISO 8601 format)
 - Use atomic write operation (NFR1 compliance)
@@ -280,7 +280,7 @@ Confirm status was updated successfully:
 ```
 ✅ Code review complete for SW-XXX
 Status updated: in-dev → in-review
-Review findings: sprints/SW-XXX/review-N.md
+Review findings: _scrum-output/sprints/SW-XXX/review-N.md
 ```
 
 ## Step 8: Write Boundary Rules Enforcement
@@ -288,15 +288,15 @@ Review findings: sprints/SW-XXX/review-N.md
 ### Step 8.1: Allowed Write Operations
 
 The review agent MAY write:
-- `sprints/SW-XXX/review-N.md` -- Review findings report
-- `sprints/SW-XXX/story.md` -- Status update only (in-review)
+- `_scrum-output/sprints/SW-XXX/review-N.md` -- Review findings report
+- `_scrum-output/sprints/SW-XXX/story.md` -- Status update only (in-review)
 
 ### Step 8.2: Prohibited Write Operations
 
 The review agent MAY NOT write:
-- `sprints/SW-XXX/refinement.md` -- Read-only during review
-- `sprints/SW-XXX/plan.md` -- Read-only during review
-- `sprints/SW-XXX/approval.md` -- Managed by approval workflow
+- `_scrum-output/sprints/SW-XXX/refinement.md` -- Read-only during review
+- `_scrum-output/sprints/SW-XXX/plan.md` -- Read-only during review
+- `_scrum-output/sprints/SW-XXX/approval.md` -- Managed by approval workflow
 - Code files in project directory -- Review is read-only for code
 - `scrum_workflow/` -- Framework files are read-only during review
 

@@ -33,13 +33,13 @@ Tip: Run '/scrum-create-project-context' first to generate project context files
 
 Invoke `scrum_workflow/skills/status-guard-validation/SKILL.md` to check if story file already exists:
 
-- Check if `sprints/SW-XXX/story.md` already exists
+- Check if `_scrum-output/sprints/SW-XXX/story.md` already exists
 - Guard condition: Story file must NOT exist for `/scrum-create-ticket`
 
 **On guard condition failure** (story file already exists), halt with error:
 
 ```
-Error: Story file 'sprints/SW-XXX/story.md' already exists
+Error: Story file '_scrum-output/sprints/SW-XXX/story.md' already exists
 Fix: Delete the existing story file first, or use a different ticket number
 ```
 
@@ -231,18 +231,18 @@ Create the sprint folder structure for the new ticket.
 
 ### Step 6.1: Check for Existing Story
 
-Check if `sprints/SW-XXX/story.md` already exists.
+Check if `_scrum-output/sprints/SW-XXX/story.md` already exists.
 
 **If the file already exists**, return an actionable error:
 
 ```
-Error: Story file 'sprints/SW-XXX/story.md' already exists. To re-create, delete the existing file first
+Error: Story file '_scrum-output/sprints/SW-XXX/story.md' already exists. To re-create, delete the existing file first
 Fix: Delete the existing story file or choose a different ticket number
 ```
 
 ### Step 6.2: Create Sprint Folder
 
-Create the `sprints/SW-XXX/` directory if it does not already exist.
+Create the `_scrum-output/sprints/SW-XXX/` directory if it does not already exist.
 
 ## Step 7: Story File Creation
 
@@ -276,7 +276,7 @@ Replace template placeholders with generated content:
 
 ### Step 7.3: Write Complete File
 
-Write the complete story file to `sprints/SW-XXX/story.md` in a **single write operation**.
+Write the complete story file to `_scrum-output/sprints/SW-XXX/story.md` in a **single write operation**.
 
 **Critical (NFR1):** The entire file content -- YAML frontmatter and Markdown body -- must be written atomically. No partial writes that could leave the file in an inconsistent state or corrupt the frontmatter.
 
@@ -289,7 +289,7 @@ Display the created story summary to the user.
 Present a confirmation message with:
 
 - Ticket number and generated title
-- File path: `sprints/SW-XXX/story.md`
+- File path: `_scrum-output/sprints/SW-XXX/story.md`
 - Status: `draft`
 - Estimation: story points assigned
 - Number of acceptance criteria generated
@@ -307,7 +307,7 @@ Suggest next steps to the user:
 
 This workflow may write:
 
-- `sprints/SW-XXX/story.md` -- The generated story file
+- `_scrum-output/sprints/SW-XXX/story.md` -- The generated story file
 
 This workflow may NOT write:
 

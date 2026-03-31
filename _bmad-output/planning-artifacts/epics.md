@@ -10,6 +10,7 @@ inputDocuments:
   - 'research/technical-agentic-patterns-research-2026-03-24.md'
   - 'prd-validation-report.md'
   - 'research/technical-bmad-install-script-analysis-research-2026-03-27.md'
+  - 'research/multi-agent-consensus-patterns-refinement-2026-03-31.md'
 ---
 
 # scrum_workflow - Epic Breakdown
@@ -98,6 +99,27 @@ FR76: Each generated architecture document includes Mermaid diagrams (graph TD, 
 FR77: System can incrementally update existing architecture docs by comparing current code against previously documented state
 FR78: Architecture documentation agent is language-agnostic — works with any programming language via grep-based analysis
 FR79: Architecture scan state is managed independently from business logic scan state (separate .arch-scan-state.json)
+
+**Technical Research Agent (Epic 9):**
+FR80: User can run `/scrum-research technical <topic>` to generate comprehensive technical research documentation for any specified topic
+FR81: System performs web research using WebSearch tool to gather information from multiple sources
+FR82: System applies Plan-Then-Execute pattern for structured research workflow
+FR83: System uses Swarm Migration pattern for parallel subagent research across multiple sources (10x+ speedup)
+FR84: System applies Reflection Loop for self-critique and content quality improvement
+FR85: System persists research state to filesystem for checkpoint recovery on long-running tasks
+FR86: System generates AI-optimized output with structured frontmatter schema
+FR87: System supports incremental update mode to refresh existing research with new findings
+FR88: User can run `/scrum-research general <topic>` for broader research beyond technical topics
+FR89: Both research modes output to `docs/research/` directory with dated filenames
+FR90: Research agent is integrated into npm installer and available after `create-scrum-workflow install`
+
+**Enhanced Refinement (Epic 10):**
+FR91: Refinement command prompts user for additional documents (project docs, architecture, rules) before starting agent analysis
+FR92: Refinement implements Cross-Talk Discussion Rounds where agents see and comment on each other's perspectives
+FR93: Cross-talk continues until consensus (≥80% agreement) or max rounds (3) reached, then escalates to user
+FR94: Each agent provides independent story point estimate with confidence level (Wideband Delphi pattern)
+FR95: Estimation variance > 2 points triggers re-estimation discussion round
+FR96: Final estimate uses median of agent estimates with documented confidence level
 
 **Installer (Epic 5):**
 FR49: User can install scrum_workflow into any project by running a single CLI command
@@ -239,6 +261,23 @@ FR76: Epic 7 - Generated docs include Mermaid diagrams
 FR77: Epic 7 - Incremental update mode for architecture docs
 FR78: Epic 7 - Language-agnostic via grep-based analysis
 FR79: Epic 7 - Independent scan state (.arch-scan-state.json)
+FR80: Epic 9 - User runs /scrum-research technical for technical research
+FR81: Epic 9 - System performs web research using WebSearch tool
+FR82: Epic 9 - Plan-Then-Execute pattern for structured research
+FR83: Epic 9 - Swarm Migration pattern for parallel research (10x+ speedup)
+FR84: Epic 9 - Reflection Loop for quality improvement
+FR85: Epic 9 - Filesystem-based state for checkpoint recovery
+FR86: Epic 9 - AI-optimized output with structured frontmatter
+FR87: Epic 9 - Incremental update mode for research refresh
+FR88: Epic 9 - /scrum-research general for broader research
+FR89: Epic 9 - Research output to docs/research/ directory
+FR90: Epic 9 - Research agent integrated into npm installer
+FR91: Epic 10 - Refinement prompts for additional documents
+FR92: Epic 10 - Cross-talk discussion rounds between agents
+FR93: Epic 10 - Consensus detection with human escalation
+FR94: Epic 10 - Independent agent estimation (Wideband Delphi)
+FR95: Epic 10 - Estimation variance triggers re-estimation
+FR96: Epic 10 - Final estimate uses median with confidence
 
 ## Epic List
 
@@ -282,6 +321,25 @@ After this epic, the user can run `/scrum-create-architecture-docs` to generate 
 **Research basis:** `_bmad-output/planning-artifacts/research/technical-agentic-project-documentation-patterns-research-2026-03-30.md`
 **Architecture patterns:** Two-Mode Scan (full + update), Template-Driven Output, Grep-based language-agnostic analysis, Multi-Stage Pipeline Pattern, Scan State Management (independent from Epic 6)
 **Key design decisions:** Single agent (no multi-agent overhead), Mermaid-first documentation, architecture structure focus only (business logic is Epic 6), separate scan state from business logic agent
+
+### Epic 8: Installer Integration — Epic 6 & 7 Documentation Skills
+After this epic, the `create-scrum-workflow` installer installs all documentation skills from Epic 6 and Epic 7 — making `/scrum-create-project-docs` and `/scrum-create-architecture-docs` available as platform-discoverable commands alongside the original four skills.
+**FRs covered:** (Integration FRs for Epic 6/7 skills into installer)
+**Architecture patterns:** Template-based skill registration, automatic skill discovery, lock file integrity tracking
+
+### Epic 9: Research Agent — Technical & General
+After this epic, the user can run `/scrum-research technical <topic>` and `/scrum-research general <topic>` to generate comprehensive research documentation using agentic patterns (Plan-Then-Execute, Swarm Migration, Reflection Loop, Filesystem-Based State). The agent performs web research, generates AI-optimized output with structured frontmatter, and supports incremental updates. Research output is saved to `docs/research/` and the agent is fully integrated into the npm installer.
+**FRs covered:** FR80, FR81, FR82, FR83, FR84, FR85, FR86, FR87, FR88, FR89, FR90
+**Research basis:** `docs/research/technical-research-agent-patterns-2026-03-30.md`
+**Architecture patterns:** Plan-Then-Execute Workflow, Swarm Migration Pattern (parallel research), Reflection Loop (quality assurance), Filesystem-Based Agent State (checkpoints), Structured Output Specification (AI-optimized frontmatter), Code-Over-API Pattern (token optimization via WebSearch)
+**Key design decisions:** Single agent (`researcher`) with two workflow modes (technical/general), research state persisted to `.research-state.json`, output follows same frontmatter schema as source research document, automatic installer integration via template registration
+
+### Epic 10: Enhanced Refinement — Doc-Discovery, Cross-Talk & Estimation
+After this epic, the `/scrum-refine-ticket` command is enhanced with: (1) **Doc-Discovery Phase** for user-provided additional context, (2) **Cross-Talk Discussion Rounds** using Multi-Agent Debate pattern where Architect, Developer, and QA agents see and comment on each other's perspectives until consensus or human escalation, (3) **Estimation Phase** using Wideband Delphi / Planning Poker for collaborative story point estimation with variance detection.
+**FRs covered:** FR91, FR92, FR93, FR94, FR95, FR96
+**Research basis:** `docs/research/multi-agent-consensus-patterns-refinement-2026-03-31.md`
+**Architecture patterns:** Opponent Processor / Multi-Agent Debate Pattern, BMAD Cross-Talk Pattern (uncorrelated context windows), Wideband Delphi / Planning Poker, Max Rounds with Deadlock Detection, Context Budget Enforcement (400 words per spawn)
+**Key design decisions:** Max 3 discussion rounds before human escalation, 80% consensus threshold, 2-point estimation variance triggers re-estimation, doc-discovery is optional (user can skip)
 
 ## Epic 1: Framework Setup & Project Onboarding
 
@@ -1251,3 +1309,758 @@ So that users can use the documentation commands regardless of their AI coding p
 **And** platforms with `fallback_scan` (e.g., Cursor scanning `.claude/skills/`) can discover the skills even if not installed to their primary directory
 **And** a validation report documents which platforms successfully recognize which skills (e.g., "Claude Code: all 6 skills | Cursor: all 6 skills (via .claude fallback)")
 **And** any platform-specific quirks or limitations are documented in the installer README
+
+## Epic 9: Research Agent — Technical & General
+
+After this epic, the user can run `/scrum-research technical <topic>` and `/scrum-research general <topic>` to generate comprehensive research documentation using validated agentic patterns. The agent performs web research via WebSearch, applies Plan-Then-Execute and Swarm Migration patterns for parallel processing, uses Reflection Loop for quality assurance, persists state for long-running tasks, and generates AI-optimized output with structured frontmatter. Both modes support incremental updates and are fully integrated into the npm installer.
+
+**Story Dependency Map:**
+- Story 9.1 has no dependencies (agent definition)
+- Stories 9.2, 9.3, and 9.4 depend on 9.1 (can be parallelized)
+- Stories 9.5, 9.6, and 9.7 depend on 9.2-9.4 (can be parallelized)
+- Story 9.8 depends on 9.2 (update mode needs base workflow)
+- Story 9.9 depends on 9.2-9.8 (installer integration needs both modes)
+- Story 9.10 depends on 9.9 (tests need installer integration)
+- Story 9.11 has no dependencies (documentation, can run parallel)
+
+### Story 9.1: `researcher` Agent Definition
+
+As a developer,
+I want a dedicated research agent defined in SKILL.md format that can handle both technical and general research,
+So that the agent has a clear identity, instructions, and output format for generating AI-optimized research documentation.
+
+**Acceptance Criteria:**
+
+**Given** the `scrum_workflow/agents/` directory exists with `architect.md`, `developer.md`, `qa.md`, `documentarian.md`, `architect-doc.md`
+**When** the researcher agent is created
+**Then** `scrum_workflow/agents/researcher.md` exists in SKILL.md format with YAML frontmatter: `name: researcher`, `display_name: Researcher`, `role: Technical research specialist`, `active_in: [research-technical, research-general]`, `model: claude-sonnet-4`, `max_tokens: 4000`
+**And** the Identity section defines the agent as a research analyst that performs web research, applies agentic patterns (Plan-Then-Execute, Swarm Migration, Reflection Loop), and generates AI-optimized documentation with structured frontmatter
+**And** the Instructions section specifies the agent must reference the research patterns document at `docs/research/technical-research-agent-patterns-2026-03-30.md` for implementation guidance
+**And** the Instructions section specifies the agent must use WebSearch tool for online research and support both technical and general research modes
+**And** the Instructions section includes the four core patterns: (1) Plan-Then-Execute for workflow structure, (2) Swarm Migration for parallel subagent research, (3) Reflection Loop for quality assurance, (4) Filesystem-Based State for checkpoint recovery
+**And** the Output Format section defines two output schemas: `technical_research` (with code patterns, API references, architecture diagrams) and `general_research` (with executive summary, market analysis, strategic recommendations)
+**And** the Output Format section specifies the frontmatter schema: `type`, `topic`, `date`, `sources`, `ai_optimized: true`, `version: 1.0`, `research_confidence`
+**And** the Context Rules section specifies the agent loads `context/index.md` to understand project context before research
+**And** the agent definition follows the exact same structure as other agents: frontmatter → Identity → Instructions → Output Format → Context Rules
+
+### Story 9.2: `/scrum-research technical` Command & Workflow Skeleton
+
+As a developer,
+I want to run `/scrum-research technical <topic>` to trigger technical research with agentic patterns,
+So that I have a single command that orchestrates the full technical research workflow.
+
+**Acceptance Criteria:**
+
+**Given** the researcher agent from Story 9.1 exists
+**When** the command and workflow are created
+**Then** `scrum_workflow/commands/research-technical.md` exists in SKILL.md command format with `trigger: /research-technical`, `requires_status: null`, `sets_status: null`, `spawns_agents: [researcher]`
+**And** `scrum_workflow/workflows/research-technical.md` exists with the Plan-Then-Execute workflow: (1) Scope Confirmation, (2) Research Plan, (3) Swarm Research (parallel), (4) Verification, (5) Reflection Loop, (6) Synthesis
+**And** the workflow defines the research output directory as `docs/research/` relative to project root
+**And** the workflow loads the researcher agent definition and project context before starting research
+**And** the workflow orchestrates: (1) topic and scope confirmation with user, (2) research plan with source identification, (3) parallel subagent research across multiple sources (Swarm Migration pattern), (4) cross-referencing and verification, (5) Reflection Loop for quality check, (6) final synthesis with structured output
+**And** the command accepts optional flags: `--sources <urls...>` for specific sources, `--output <path>` for custom output location (default: `docs/research/`)
+**And** the command reads `context/index.md` to determine project domain and tech stack for context-aware research
+**And** if `docs/research/` does not exist, the workflow creates it
+**And** the generated filename follows the pattern: `technical-research-{topic-slug}-{date}.md`
+**And** a `.claude/skills/scrum-research-technical.md` adapter skill is created that references the framework command
+
+### Story 9.3: Technical Research Output Template
+
+As a developer,
+I want a standardized output template for technical research documents,
+So that all technical research outputs follow a consistent, AI-optimized format.
+
+**Acceptance Criteria:**
+
+**Given** the `/scrum-research technical` command from Story 9.2 exists
+**When** the output template is created
+**Then** `scrum_workflow/templates/technical-research.md` exists as the output template with sections matching the schema from `docs/research/technical-research-agent-patterns-2026-03-30.md`
+**And** the template includes YAML frontmatter with fields: `type: technical_research`, `topic`, `date`, `sources` (array of URLs), `ai_optimized: true`, `version: 1.0`, `research_confidence`
+**And** the template body includes sections: Executive Summary, Table of Contents, Research Methodology, Technical Landscape, Technology Stack Analysis, Integration Patterns, Implementation Approaches, Performance & Scalability, Security Considerations, Strategic Recommendations, Implementation Roadmap, Future Outlook, References
+**And** the Executive Summary is structured for AI context extraction (2-3 paragraphs with key findings)
+**And** all sections use H2/H3 headings for easy parsing
+**And** bullet points are used for easy extraction
+**And** source URLs are included for verification
+**And** confidence levels are included for uncertain claims
+**And** Mermaid diagrams are included where applicable (flowcharts for architecture, sequence diagrams for integration patterns)
+
+### Story 9.4: Web Research Integration & Swarm Migration Pattern
+
+As a developer,
+I want the researcher agent to perform web research using WebSearch and apply the Swarm Migration pattern for parallel processing,
+So that research is comprehensive and fast (10x+ speedup).
+
+**Acceptance Criteria:**
+
+**Given** the `/scrum-research technical` command and workflow from Story 9.2 exist
+**When** the web research integration is implemented
+**Then** the researcher agent uses the WebSearch tool to gather information from multiple online sources
+**And** the workflow implements the Swarm Migration pattern: main researcher spawns 3-5 parallel subagents, each researching independent aspects or sources of the topic
+**And** each subagent receives isolated context and research scope (e.g., one for architecture patterns, one for frameworks, one for best practices)
+**And** the workflow includes a result aggregation step that synthesizes findings from all subagents (map-reduce style)
+**And** the workflow tracks parallel research progress and reports progress to user
+**And** if WebSearch fails or returns no results, the agent provides a clear error message and suggests alternative approaches
+**And** the workflow includes source verification: cross-reference findings across multiple sources, identify conflicting information, mark uncertain claims with confidence levels
+**And** the parallel research achieves approximately 10x speedup compared to sequential research (validated through testing)
+
+### Story 9.5: Reflection Loop for Quality Assurance
+
+As a developer,
+I want the researcher agent to apply the Reflection Loop pattern for self-critique and iterative improvement,
+So that research output quality is high and consistent.
+
+**Acceptance Criteria:**
+
+**Given** the web research integration from Story 9.4 exists
+**When** the Reflection Loop is implemented
+**Then** the workflow includes a reflection step after initial research synthesis
+**And** the reflection step performs: content completeness check, citation validation, structure consistency, clarity assessment, gap identification
+**And** the agent critiques its own output against quality criteria from the research patterns document
+**And** if quality threshold is not met, the agent performs targeted improvement: research missing information, refine unclear sections, strengthen weak claims, add more sources
+**And** the reflection loop runs up to 2 iterations to avoid infinite loops
+**And** the final output includes a `research_confidence` field in frontmatter (high/medium/low) based on reflection results
+**And** if confidence is low, the agent provides specific reasons and suggests areas for further research
+
+### Story 9.6: Filesystem-Based State for Long-Running Research
+
+As a developer,
+I want research state persisted to filesystem for checkpoint recovery on long-running or interrupted research tasks,
+So that no research progress is lost if the task is interrupted.
+
+**Acceptance Criteria:**
+
+**Given** the `/scrum-research technical` workflow from Story 9.2 exists
+**When** filesystem-based state is implemented
+**Then** the workflow creates `docs/research/.research-state.json` at the start of each research task
+**And** the state file tracks: `research_id`, `topic`, `start_time`, `status` (planning/researching/reflecting/synthesizing/complete/interrupted), `completed_steps`, `findings` (intermediate results), `sources_consulted`
+**And** the state file is updated incrementally during research — not only at the end
+**And** if a research task is interrupted (user cancellation, context limit, error), `status` is set to `interrupted` and `last_completed_step` is recorded
+**And** when `/scrum-research technical` is run again with the same topic, the agent reads `.research-state.json` and offers to resume from the last completed step
+**And** the user can choose to resume or start fresh
+**And** if resumed, the agent skips already-completed steps and continues from `last_completed_step`
+**And** the state file is valid JSON and human-readable for debugging
+**And** the state file is included in `.gitignore` recommendations (research state is local, not committed)
+
+### Story 9.7: `/scrum-research general` Command & Workflow
+
+As a developer,
+I want to run `/scrum-research general <topic>` for broader research beyond technical topics,
+So that I can research business, market, competitive, and strategic topics using the same agentic patterns.
+
+**Acceptance Criteria:**
+
+**Given** the researcher agent from Story 9.1 exists
+**When** the general research command and workflow are created
+**Then** `scrum_workflow/commands/research-general.md` exists in SKILL.md command format with `trigger: /research-general`, `requires_status: null`, `sets_status: null`, `spawns_agents: [researcher]`
+**And** `scrum_workflow/workflows/research-general.md` exists with the same Plan-Then-Execute workflow structure as technical research
+**And** the workflow uses the same four patterns: Plan-Then-Execute, Swarm Migration, Reflection Loop, Filesystem-Based State
+**And** the output schema is `type: general_research` with sections optimized for non-technical topics: Executive Summary, Market Analysis, Competitive Landscape, Strategic Recommendations, Implementation Considerations, Risk Assessment, Future Outlook
+**And** the workflow uses the same state file `docs/research/.research-state.json` (technical and general research share state management)
+**And** the generated filename follows the pattern: `general-research-{topic-slug}-{date}.md`
+**And** a `.claude/skills/scrum-research-general.md` adapter skill is created that references the framework command
+**And** Stories 9.3-9.6 (output template, web research, reflection loop, state management) are reused for general research — no duplicate implementation needed
+
+### Story 9.8: Incremental Update Mode for Research
+
+As a developer,
+I want to update existing research documents with new findings without regenerating from scratch,
+So that my research stays current as new information becomes available.
+
+**Acceptance Criteria:**
+
+**Given** `docs/research/` contains existing research documents and `.research-state.json` from previous research
+**When** the user runs `/scrum-research technical <existing-topic> --update` or `/scrum-research general <existing-topic> --update`
+**Then** the agent reads the existing research document identified by topic
+**And** the agent reads `.research-state.json` to determine when the research was last conducted
+**And** the agent performs targeted web research for new information since the last research date
+**And** the agent compares new findings against existing document content
+**And** the agent presents a diff summary to the user before writing: "New findings: +5 sources, ~3 sections updated"
+**And** the user must confirm the update before any changes are made
+**And** if confirmed, the agent updates relevant sections while preserving unchanged content
+**And** the agent updates the `sources` array in frontmatter with new source URLs
+**And** the agent updates the `date` field in frontmatter to current date
+**And** the agent updates `.research-state.json` with new timestamps and sources after successful update
+**And** if no new findings are detected, the agent reports: "No new information found since last research."
+**And** if the existing research document is not found, the agent falls back to full research mode with a warning
+
+### Story 9.9: Installer Integration for Research Skills
+
+As a developer,
+I want the research skills to be automatically installed when running `create-scrum-workflow install`,
+So that users don't need to manually register the research commands.
+
+**Acceptance Criteria:**
+
+**Given** the research agent and workflows from Stories 9.1-9.8 are complete
+**When** the installer integration is implemented
+**Then** `create-scrum-workflow/templates/skill-registrations/scrum-research-technical/SKILL.md` exists with: YAML frontmatter (`name: scrum-research-technical`, `display_name`, `description`, `active_in`) and body referencing `{{framework_path}}/commands/research-technical.md`
+**And** `create-scrum-workflow/templates/skill-registrations/scrum-research-general/SKILL.md` exists with the same structure, referencing `{{framework_path}}/commands/research-general.md`
+**And** each template contains a `{{framework_path}}` placeholder that will be replaced during installation
+**And** `create-scrum-workflow/templates/scrum_workflow/` includes the research agent, commands, workflows, and output templates: `agents/researcher.md`, `commands/research-technical.md`, `commands/research-general.md`, `workflows/research-technical.md`, `workflows/research-general.md`, `templates/technical-research.md`, `templates/general-research.md`
+**And** when `create-scrum-workflow install` is run, the installer automatically copies both research skill shims to `{target}/.{platform}/skills/`
+**And** the lock file (`.scrum-workflow-lock.json`) includes both research skill registration files with SHA-256 hashes
+**And** the install command summary shows: "8 skills registered: [list including scrum-research-technical and scrum-research-general]"
+**And** the `create-scrum-workflow/package.json` `files` array includes the new research templates (no changes needed — `templates/` is already included)
+
+### Story 9.10: Integration Tests for Research Agent
+
+As a developer,
+I want test coverage that verifies the research agent works correctly across both modes and installer integration,
+So that I have confidence the research functionality is production-ready.
+
+**Acceptance Criteria:**
+
+**Given** the installer integration from Story 9.9 is complete
+**When** the integration test suite runs
+**Then** `create-scrum-workflow/test/integration/research.test.js` (or equivalent test file) includes test cases for both research modes
+**And** tests verify that after installation, both `scrum-research-technical.md` and `scrum-research-general.md` exist in each selected platform's skills directory
+**And** tests verify that the `{{framework_path}}` placeholder is correctly replaced in both research skill files
+**And** tests verify that the lock file contains entries for both research skill registration files
+**And** tests verify the research agent can be invoked via the skill shims
+**And** tests verify WebSearch tool is used correctly (may mock for testing)
+**And** tests verify output files are created in `docs/research/` with correct naming pattern
+**And** tests verify the frontmatter schema is valid for both technical and general research
+**And** tests verify state file (`docs/research/.research-state.json`) is created and updated correctly
+**And** tests verify interrupted research can be resumed
+**And** tests verify update mode correctly identifies and applies new findings
+**And** running `npm test` passes all integration tests including the new research agent tests
+
+### Story 9.11: Documentation & README Update
+
+As a developer,
+I want the research agent documented in the README and command reference,
+So that users know how to use the new research functionality.
+
+**Acceptance Criteria:**
+
+**Given** the research agent from Stories 9.1-9.10 is complete and tested
+**When** the documentation is updated
+**Then** `README.md` command table includes two new entries:
+   - `/scrum-research technical <topic>` — Generate technical research documentation using agentic patterns
+   - `/scrum-research general <topic>` — Generate general research documentation for broader topics
+**And** `scrum_workflow/docs/04-command-reference.md` includes detailed documentation for both research commands with examples
+**And** the documentation explains the four agentic patterns used: Plan-Then-Execute, Swarm Migration, Reflection Loop, Filesystem-Based State
+**And** the documentation includes examples of research output frontmatter
+**And** the documentation explains the difference between technical and general research modes
+**And** the documentation explains the `--update` flag for refreshing existing research
+**And** the documentation references `docs/research/technical-research-agent-patterns-2026-03-30.md` for detailed pattern information
+**And** the README "Completed Epics" section includes Epic 9 with description
+**And** the README version is updated and last updated date is set to current date
+
+## Epic 10: Enhanced Refinement — Doc-Discovery, Cross-Talk & Estimation
+
+After this epic, the `/scrum-refine-ticket` command is enhanced with: (1) **Doc-Discovery Phase** where the user can provide additional project documents before refinement, (2) **Cross-Talk Discussion Rounds** where Architect, Developer, and QA agents see and comment on each other's perspectives until consensus or escalation, (3) **Estimation Phase** using Wideband Delphi / Planning Poker for collaborative story point estimation. This transforms refinement from isolated parallel perspectives into a collaborative discussion that surfaces blind spots and builds consensus.
+
+**Research basis:** `docs/research/multi-agent-consensus-patterns-refinement-2026-03-31.md`
+
+**Architecture patterns:**
+- **Opponent Processor / Multi-Agent Debate Pattern**: Agents with uncorrelated context windows debate each other's positions to surface blind spots
+- **BMAD Cross-Talk Pattern**: Spawn agents with each other's responses as context for genuine multi-perspective discussion
+- **Wideband Delphi / Planning Poker**: Independent estimation followed by discussion and re-estimation
+- **Filesystem-Based State Pattern**: Temp files in `sprints/SW-XXX/temp/` preserve agent analyses for recovery and audit
+- **Binary Blocker Resolution**: Simple blocker/non-blocker classification instead of complex weighting matrices
+- **Progressive Context Truncation**: 400→300→200 words per round to force convergence
+
+**Story Dependency Map:**
+- Story 10.1 has no dependencies (doc-discovery is additive)
+- Story 10.2 depends on 10.1 (cross-talk needs doc-discovery context)
+- Story 10.3 depends on 10.2 (estimation needs discussion complete)
+- Story 10.4 depends on 10.1-10.3 (workflow update needs all phases)
+- Story 10.5 depends on 10.4 (tests need updated workflow)
+- Story 10.6 depends on 10.4 (documentation needs updated workflow)
+
+**Key design decisions (from Party Mode refinement):**
+- **Max 3 discussion rounds** (configurable) before human escalation — Round 3 is safety net if user can't decide earlier
+- **Binary Blocker Classification**: Each disagreement classified as blocker (must resolve) or non-blocker (document and proceed)
+- **Security Auto-Blocker**: Any security-identified issue is forced as blocker, cannot be marked non-blocker
+- **Early Consensus Exit**: If all blockers resolved and only non-blockers remain, exit early without further rounds
+- **Progressive Truncation**: Round 1: 400 words, Round 2: 300 words, Round 3: 200 words — forces convergence
+- **Temp Files**: Stored in `sprints/SW-XXX/temp/`, auto-cleaned after synthesis (configurable)
+- **Estimation variance threshold**: 2 points triggers re-estimation discussion
+- **Doc-discovery is optional** — user can skip with default context
+
+### Story 10.1: Doc-Discovery Phase for Refinement
+
+As a developer,
+I want the refinement command to explicitly ask for additional documents before starting agent analysis,
+So that agents consider all relevant project context (architecture docs, API specs, standards) during refinement.
+
+**Acceptance Criteria:**
+
+**Given** the user runs `/scrum-refine-ticket SW-XXX`
+**When** the command starts
+**Then** the command first loads auto-detected context from `_scrum-output/context/` (existing behavior)
+**And** the command prompts the user: "**Document Discovery** — Are there additional documents I should consider for this refinement? Examples: Architecture docs, API specs, coding standards, external references. Provide paths or URLs, or type **skip** to proceed."
+**And** if the user provides paths, the command validates each path exists before proceeding
+**And** if the user provides URLs, the command fetches and validates content is accessible
+**And** all discovered documents are added to the agent context for all three agents (Architect, Developer, QA)
+**And** discovered documents are listed in `refinement.md` under a new "## Document Discovery" section
+**And** if user types "skip", the command proceeds with only auto-detected context from `_scrum-output/context/`
+**And** the doc-discovery phase completes before any agents are spawned
+
+### Story 10.2: Cross-Talk Discussion Rounds
+
+As a developer,
+I want the Architect, Developer, and QA agents to see and comment on each other's perspectives,
+So that blind spots are surfaced and agents build toward consensus instead of working in isolation.
+
+**Acceptance Criteria:**
+
+**Given** the doc-discovery phase from Story 10.1 is complete
+**When** the cross-talk phase begins
+**Then** the workflow spawns all three agents in **parallel with isolated context** (Round 0: initial perspectives)
+**And** each agent receives: story.md + discovered documents + their role-specific instructions ONLY
+**And** each agent writes their full analysis to a **temp file** in `sprints/SW-XXX/temp/`:
+  - `temp/architect-round-0.md`
+  - `temp/developer-round-0.md`
+  - `temp/qa-round-0.md`
+**And** after Round 0 completes, the workflow spawns **Round 1 cross-talk** with **Progressive Truncation**:
+  - Round 1 context budget: 400 words per agent spawn
+  - Round 2 context budget: 300 words per agent spawn
+  - Round 3 context budget: 200 words per agent spawn
+**And** each cross-talk spawn prompt asks: "Comment on: (1) Where you AGREE, (2) Where you DISAGREE and why, (3) Blind spots they identified that you missed"
+**And** after each round, the workflow performs **Binary Blocker Classification**:
+  - For each disagreement, ask agent: "Does this **block** implementation? (Yes/No)"
+  - **Blockers**: Must be resolved before synthesis
+  - **Non-Blockers**: Document and proceed (noted concerns)
+**And** **Security Issues are Auto-Blockers**: Any agent-identified security risk is forced as blocker, cannot be marked non-blocker
+**And** **Early Consensus Exit**: If all blockers resolved and only non-blockers remain → proceed to synthesis without further rounds
+**And** **Progress Visibility**: After each round, show: "Round N complete. X blockers, Y non-blockers remaining."
+**And** if blockers remain after Round 3, **Deadlock UX** presents:
+  ```
+  ⚠️ REFINEMENT DEADLOCK nach 3 Runden
+
+  Blockierende Punkte:
+  1. [Agent] {Issue} - {Agent Position}
+
+  [1] {Agent}'s Vorschlag übernehmen
+  [2] Alternative eingeben
+  [3] Abbrechen und Story zurück zu Draft
+  ```
+**And** all cross-talk rounds are documented in `refinement.md` under "## Discussion Rounds"
+**And** temp files are **auto-cleaned** after synthesis (configurable via `keep_agent_temp_files: false`)
+**And** the max rounds is configurable in `config.yaml` with default `refinement_max_rounds: 3`
+
+### Story 10.3: Estimation Phase (Wideband Delphi)
+
+As a developer,
+I want each agent to provide an independent story point estimate with confidence level,
+So that we get a collaborative estimation that surfaces uncertainty and drives discussion.
+
+**Acceptance Criteria:**
+
+**Given** the cross-talk discussion from Story 10.2 is complete (or user has resolved disagreements)
+**When** the estimation phase begins
+**Then** each agent provides an **independent estimate** without seeing others' estimates:
+  - Story points (Fibonacci: 1, 2, 3, 5, 8, 13, 21)
+  - Confidence level (high/medium/low)
+  - Brief reasoning (1-2 sentences)
+**And** all three estimates are **revealed simultaneously** to the user
+**And** the workflow calculates variance: `max_estimate - min_estimate`
+**And** if variance ≤ 2 points, the final estimate is the **median** of the three values
+**And** if variance > 2 points, the workflow shows: "**Estimation variance is {variance} points.** [Agent estimates shown]. Discussing..."
+**And** for high variance, agents discuss differences in a single round and provide **revised estimates**
+**And** after re-estimation, final estimate is the median of revised values
+**And** **Confidence Aggregation**: Final confidence is the **lowest** of the three agent confidences (conservative approach)
+**And** the final estimate and confidence are written to `story.md` frontmatter: `estimation: {points: X, confidence: high|medium|low, method: wideband-delphi}`
+**And** the estimation process is documented in `refinement.md` under "## Estimation"
+**And** estimation table shows: Agent | Points | Confidence | Reasoning
+
+### Story 10.4: Updated Refinement Workflow
+
+As a developer,
+I want the refinement workflow to orchestrate doc-discovery, cross-talk, and estimation in sequence,
+So that the `/scrum-refine-ticket` command produces better refinement outcomes through collaborative agent discussion.
+
+**Acceptance Criteria:**
+
+**Given** Stories 10.1-10.3 are implemented
+**When** the workflow is updated
+**Then** `scrum_workflow/workflows/refinement.md` is updated with the new 6-phase structure:
+  1. **Phase 1: Doc-Discovery** — Load auto-context + prompt user for additional docs
+  2. **Phase 2: Initial Perspectives** — Spawn 3 agents in parallel with isolated context, write to temp files
+  3. **Phase 3: Cross-Talk Rounds** — Up to 3 rounds with binary blocker classification, early exit on consensus
+  4. **Phase 4: Estimation** — Wideband Delphi with variance handling
+  5. **Phase 5: Synthesis** — Merge agreed perspectives into story.md, cleanup temp files
+  6. **Phase 6: Readiness Check** — Validate story completeness (existing behavior)
+**And** `scrum_workflow/commands/refine-ticket.md` frontmatter is updated with:
+  ```yaml
+  features:
+    doc_discovery: true
+    discussion_rounds: 3
+    estimation: true
+    consensus_required: true
+    temp_file_cleanup: true
+  ```
+**And** `config.yaml` supports the following refinement configuration:
+  ```yaml
+  refinement:
+    max_discussion_rounds: 3           # Max cross-talk rounds before escalation
+    keep_agent_temp_files: false       # Auto-cleanup temp files after synthesis
+    estimation_variance_threshold: 2   # Points variance triggering re-estimation
+    early_exit_on_consensus: true      # Exit early if only non-blockers remain
+    security_auto_blocker: true        # Force security issues as blockers
+  ```
+**And** temp files are stored in `sprints/SW-XXX/temp/` directory structure:
+  ```
+  sprints/SW-101/
+  ├── temp/
+  │   ├── architect-round-0.md
+  │   ├── developer-round-0.md
+  │   ├── qa-round-0.md
+  │   └── discussion-round-N.md
+  ├── refinement.md
+  └── story.md
+  ```
+**And** `.gitignore` includes pattern: `sprints/*/temp/` (temp files are local, not committed)
+**And** `refinement.md` template is updated with new sections: "## Document Discovery", "## Discussion Rounds", "## Estimation"
+**And** the existing synthesis and readiness check behavior is preserved
+
+### Story 10.5: Integration Tests for Enhanced Refinement
+
+As a developer,
+I want test coverage that verifies the enhanced refinement workflow works correctly,
+So that I have confidence the new phases integrate properly.
+
+**Acceptance Criteria:**
+
+**Given** the updated workflow from Story 10.4 is complete
+**When** the integration test suite runs
+**Then** tests verify doc-discovery phase prompts user and accepts paths/URLs/skip
+**And** tests verify doc-discovery phase validates paths and fetches URLs
+**And** tests verify initial perspectives are spawned in parallel with isolated context
+**And** tests verify each agent writes analysis to `sprints/SW-XXX/temp/{role}-round-0.md`
+**And** tests verify cross-talk rounds use progressive truncation (400→300→200 words)
+**And** tests verify **binary blocker classification**: each disagreement classified as blocker/non-blocker
+**And** tests verify **security auto-blocker**: security issues forced as blockers regardless of agent classification
+**And** tests verify **early consensus exit**: workflow exits early when only non-blockers remain
+**And** tests verify **deadlock UX**: after max rounds with blockers, user sees resolution options
+**And** tests verify **temp file cleanup**: temp directory removed after synthesis (when `keep_agent_temp_files: false`)
+**And** tests verify **temp file preservation**: temp directory kept when `keep_agent_temp_files: true`
+**And** tests verify estimation phase collects independent estimates from all agents
+**And** tests verify variance threshold triggers re-estimation discussion
+**And** tests verify final estimate uses median calculation
+**And** tests verify `refinement.md` includes all new sections: Document Discovery, Discussion Rounds, Estimation
+**And** tests verify `story.md` frontmatter includes estimation with points and confidence
+**And** tests verify `.gitignore` includes `sprints/*/temp/` pattern
+**And** running `npm test` passes all integration tests including the new refinement tests
+
+### Story 10.6: Documentation & Command Reference Update
+
+As a developer,
+I want the enhanced refinement workflow documented in the command reference,
+So that users understand the new phases and configuration options.
+
+**Acceptance Criteria:**
+
+**Given** the enhanced refinement from Stories 10.1-10.5 is complete and tested
+**When** the documentation is updated
+**Then** `scrum_workflow/docs/04-command-reference.md` is updated with detailed documentation for `/scrum-refine-ticket`:
+  - Explains the 6-phase workflow: Doc-Discovery → Initial Perspectives → Cross-Talk → Estimation → Synthesis → Readiness Check
+  - Explains doc-discovery phase and how to provide additional documents
+  - Explains cross-talk rounds with **binary blocker classification** (blocker vs non-blocker)
+  - Explains **security auto-blocker** behavior
+  - Explains **early consensus exit** mechanism
+  - Explains **deadlock UX** options after max rounds
+  - Explains estimation phase (Wideband Delphi) with confidence aggregation
+  - Documents all configuration options in `config.yaml`:
+    ```yaml
+    refinement:
+      max_discussion_rounds: 3           # Max cross-talk rounds
+      keep_agent_temp_files: false       # Auto-cleanup temp files
+      estimation_variance_threshold: 2   # Points variance for re-estimation
+      early_exit_on_consensus: true      # Exit early if only non-blockers
+      security_auto_blocker: true        # Force security as blocker
+    ```
+**And** `scrum_workflow/docs/05-state-machine.md` is updated to show the refinement phase internal states:
+  - draft → refinement (on /refine-ticket)
+  - refinement internal states: doc-discovery → perspectives → cross-talk-N → estimation → synthesis → readiness-check
+  - refinement → ready (on readiness PASS)
+  - refinement → draft (on readiness FAIL or user abort)
+**And** documentation references the research basis: `docs/research/multi-agent-consensus-patterns-refinement-2026-03-31.md`
+**And** documentation explains temp file location: `sprints/SW-XXX/temp/` and `.gitignore` pattern
+**And** README.md is updated to mention enhanced refinement features in the feature list
+**And** the documentation includes example `refinement.md` output showing all new sections:
+  - ## Document Discovery
+  - ## Discussion Rounds (with Round 0, Round 1, Round 2 summaries)
+  - ## Blocker Resolution (resolved vs escalated)
+  - ## Estimation (with Wideband Delphi table)
+
+## Epic 11: Agent Pattern Split — Separate Commands for Refine, Dev & Review
+
+After this epic, the monolithic dev-story workflow is split into three focused agents following agentic patterns from [agentic-patterns.com](https://www.agentic-patterns.com/patterns). Each agent applies a single pattern for maximum focus and allows per-step model selection.
+
+**Architecture Decision:** Split the current `dev-story` command (10 steps with planning, implementation, and review) into three separate commands:
+1. **scrum-refine-story** — Validation agent using "Feature List as Immutable Contract" pattern
+2. **scrum-dev-story** — Simplified implementation agent using "Inversion of Control" pattern
+3. **scrum-review-story** — Review agent using "AI-Assisted Code Review / Verification" pattern
+
+**Story Dependency Map:**
+- Stories 11.1, 11.2, and 11.3 can be worked in **parallel** (no dependencies)
+- All three stories should be completed together for full workflow
+
+### Story 11.1: scrum-refine-story — Validation Agent (Feature List as Immutable Contract)
+
+As a developer,
+I want a dedicated validation agent that checks story completeness before implementation,
+So that only truly ready stories enter development and I can choose a different model for validation.
+
+**Agentic Pattern:** [Feature List as Immutable Contract](https://www.agentic-patterns.com/patterns/feature-list-as-immutable-contract)
+- Agent validates story against an immutable checklist
+- Agent MAY only set `passes: false → true` — cannot modify requirements
+- Prevents premature "ready" declaration
+
+**Acceptance Criteria:**
+
+**Given** a story file exists with `status: refined`
+**When** the user runs `/scrum-refine-story SW-103`
+**Then** `scrum_workflow/commands/refine-story.md` exists in SKILL.md command format with `trigger: /refine-story`, `requires_status: refined`, `sets_status: ready-for-dev`
+**And** `scrum_workflow/workflows/refine-story.md` exists with validation workflow
+**And** the agent validates the story against an immutable checklist:
+  - All acceptance criteria are testable and unambiguous
+  - All tasks/subtasks are clearly defined
+  - Dev Notes section contains necessary context
+  - No placeholders or TODO markers in story content
+  - Dependencies are identified and documented
+**And** the agent produces a validation report with `passes: true/false` for each criterion
+**And** the agent **MAY NOT** modify story content — only set validation flags
+**And** if ALL criteria pass: `story.md` status is updated to `ready-for-dev`
+**And** if ANY criterion fails: `story.md` status remains `refined` with failure reasons documented
+**And** the validation report is appended to `sprints/SW-103/refinement.md`
+**And** the workflow is lean: Load → Validate → Set Status (no planning, no implementation)
+
+### Story 11.2: scrum-dev-story — Simplified Implementation Agent (Inversion of Control)
+
+As a developer,
+I want a focused implementation agent that only executes code without self-review or planning overhead,
+So that the agent can be more efficient and I can choose a different model for implementation.
+
+**Agentic Pattern:** [Inversion of Control](https://www.agentic-patterns.com/patterns/inversion-of-control)
+- Human sets policy (the story spec)
+- Agent owns execution strategy within guardrails
+- No micromanagement — clear objective, autonomous execution
+
+**Acceptance Criteria:**
+
+**Given** a story file exists with `status: ready-for-dev`
+**When** the user runs `/scrum-dev-story SW-103`
+**Then** `scrum_workflow/commands/dev-story.md` is updated with simplified workflow: `trigger: /dev-story`, `requires_status: ready-for-dev`, `sets_status: review`
+**And** `scrum_workflow/workflows/development.md` is simplified to 4 steps:
+  1. **Load Story** — Read `story.md` with `status: ready-for-dev`
+  2. **Implement** — Write code following TDD (Red-Green-Refactor)
+  3. **Validate** — Run tests, confirm all pass
+  4. **Set Status** — Update to `review`
+**And** the agent implements ONLY what is specified in the story file (guardrails)
+**And** the agent owns execution strategy — no prescribed step-by-step from workflow
+**And** the agent does NOT perform self-review (removed from workflow)
+**And** the agent does NOT create review reports (handled by separate agent)
+**And** the agent writes ONLY code files and `story.md` status field
+**And** if tests fail: agent fixes and retries (up to 3 attempts, then HALT)
+**And** the previous 10-step workflow is archived in `scrum_workflow/workflows/archive/development-v1.md`
+
+### Story 11.3: scrum-review-story — Review Agent (AI-Assisted Code Review)
+
+As a developer,
+I want a dedicated review agent that evaluates implemented code against the story specification,
+So that I get unbiased review from a different perspective and can choose a different model for review.
+
+**Agentic Pattern:** [AI-Assisted Code Review / Verification](https://www.agentic-patterns.com/patterns/ai-assisted-code-review-verification)
+- Separate agent for critique (not the implementer)
+- Multi-agent approach: one generates, another verifies
+- Focus on alignment with specification and quality
+
+**Acceptance Criteria:**
+
+**Given** a story file exists with `status: review`
+**When** the user runs `/scrum-review-story SW-103`
+**Then** `scrum_workflow/commands/review-story.md` exists in SKILL.md command format with `trigger: /review-story`, `requires_status: review`, `sets_status: approved|changes-needed`
+**And** `scrum_workflow/workflows/review-story.md` exists with review workflow
+**And** the agent reads implemented code changes in context of `story.md` and acceptance criteria
+**And** the agent evaluates:
+  - Code matches story specification (no extra features, no missing features)
+  - All acceptance criteria are satisfied
+  - Test coverage is adequate for the changes
+  - Code follows project standards from `context/standards.md`
+**And** the agent produces a review report in `sprints/SW-103/review-N.md`:
+  - Summary table (Total findings, by severity)
+  - Findings table (ID, Description, Severity, AC Reference, File:Line, Suggested Fix)
+  - Verdict: APPROVED or CHANGES-NEEDED
+**And** if verdict is APPROVED: `story.md` status is updated to `approved`
+**And** if verdict is CHANGES-NEEDED: `story.md` status is updated to `changes-needed`
+**And** the agent writes ONLY `review-N.md` and `story.md` status field
+**And** the review agent should ideally use a different model than the implementation agent (documented in SKILL.md frontmatter recommendation)
+
+### Story 11.4: State Machine Update & Documentation
+
+As a developer,
+I want the state machine and documentation updated to reflect the new three-agent workflow,
+So that users understand the new flow and commands work correctly.
+
+**Acceptance Criteria:**
+
+**Given** Stories 11.1, 11.2, and 11.3 are complete
+**When** the documentation is updated
+**Then** `scrum_workflow/docs/05-state-machine.md` is updated with new status transitions:
+  ```
+  draft → refinement → refined → ready-for-dev → in-progress → review → approved/changes-needed
+                    ↑              ↑               ↑            ↑
+              /refine-ticket  /refine-story   /dev-story  /review-story
+  ```
+**And** `scrum_workflow/docs/04-command-reference.md` is updated with entries for:
+  - `/scrum-refine-story` — Validation command
+  - `/scrum-dev-story` — Simplified implementation command
+  - `/scrum-review-story` — Review command
+**And** each command documentation includes:
+  - Pattern reference from agentic-patterns.com
+  - Status requirements and transitions
+  - Recommended model selection
+**And** `sprint-status.yaml` status definitions are updated with new statuses:
+  - `refined` — Story refinement complete, awaiting validation
+  - `ready-for-dev` — Story validated and ready for implementation
+  - `changes-needed` — Review found issues requiring fixes
+**And** README.md is updated to explain the three-agent pattern split workflow
+
+## Epic 12: Status-basierte Ordnerstruktur für scrum-output
+
+### Overview
+
+**Problem:** Die aktuelle Output-Struktur ist unübersichtlich. Entwickler sehen nicht auf einen Blick, welche Stories in welchem Status sind und wo die zugehörigen ACs liegen.
+
+**Lösung:** Status-basierte Ordnerstruktur mit Story-Bundles und Sprint-Board Übersicht.
+
+**Output-Ordner:** `scrum-output/` (NICHT `_bmad-output/`)
+
+### Zielstruktur
+
+```
+scrum-output/
+├── sprint-board.md              # Visuelle Übersicht aller Stories
+├── sprint-status.yaml           # Machine-readable Status
+│
+├── backlog/                     # 📥 Neu, nicht priorisiert
+│   └── {story-id}/
+│       ├── story.md
+│       ├── ac.md
+│       └── tests/
+│
+├── ready/                       # 📋 Priorisiert, bereit für Dev
+│   └── {story-id}/
+│
+├── in-progress/                 # 🔄 Aktiv in Entwicklung
+│   └── {story-id}/
+│
+├── review/                      # 👀 Wartet auf Review/Approval
+│   └── {story-id}/
+│
+└── done/                        # ✅ Abgeschlossen
+    └── {story-id}/
+```
+
+### Stories
+
+| Story | Titel | SP | Priorität |
+|-------|-------|-----|-----------|
+| 12-1 | Ordnerstruktur definieren | 1 | High |
+| 12-2 | Sprint Board & Status-File | 2 | High |
+| 12-3 | Command-Integration (create, refine, dev) | 3 | High |
+| 12-4 | Workflow-Integration (review, approval) | 2 | High |
+
+**Gesamt: 8 Story Points**
+
+---
+
+### Story 12.1: Ordnerstruktur definieren
+
+As a developer,
+I want a clear folder structure with status-based directories,
+So that I can easily see which stories are in which status.
+
+**Acceptance Criteria:**
+
+**Given** the scrum-output folder exists
+**When** the folder structure is created
+**Then** the following directories exist:
+- `scrum-output/backlog/`
+- `scrum-output/ready/`
+- `scrum-output/in-progress/`
+- `scrum-output/review/`
+- `scrum-output/done/`
+**And** each status directory contains story bundles with:
+- `story.md` — Story specification
+- `ac.md` — Acceptance criteria
+- `tests/` — Test artifacts
+**And** the structure is documented in `scrum_workflow/docs/07-output-structure.md`
+
+---
+
+### Story 12.2: Sprint Board & Status-File
+
+As a developer,
+I want a sprint board overview and machine-readable status file,
+So that I can quickly see all stories and their status at a glance.
+
+**Acceptance Criteria:**
+
+**Given** the folder structure from Story 12.1 exists
+**When** the sprint board is generated
+**Then** `scrum-output/sprint-board.md` exists with:
+- Table of all stories grouped by status
+- Links to each story folder
+- Count per status column
+**And** `scrum-output/sprint-status.yaml` exists with:
+- Story ID, title, status, path for each story
+- Last updated timestamp
+**And** `/scrum-status` command displays the sprint board
+**And** the sprint board is auto-updated when stories change status
+
+---
+
+### Story 12.3: Command-Integration (create, refine, dev)
+
+As a developer,
+I want commands to create and move stories between status folders,
+So that the workflow is automated and consistent.
+
+**Acceptance Criteria:**
+
+**Given** the folder structure from Story 12.1 exists
+**When** `/scrum-create-ticket` is executed
+**Then** the story bundle is created in `scrum-output/backlog/{story-id}/`
+**And** `sprint-status.yaml` is updated with status `backlog`
+**And** `sprint-board.md` is regenerated
+
+**When** `/scrum-refine-ticket` completes successfully
+**Then** the story bundle is moved to `scrum-output/ready/{story-id}/`
+**And** `sprint-status.yaml` is updated with status `ready`
+**And** `sprint-board.md` is regenerated
+
+**When** `/scrum-dev-story` starts
+**Then** the story bundle is moved to `scrum-output/in-progress/{story-id}/`
+**And** `sprint-status.yaml` is updated with status `in-progress`
+**And** `sprint-board.md` is regenerated
+
+---
+
+### Story 12.4: Workflow-Integration (review, approval)
+
+As a developer,
+I want the review and approval workflows to update story status and location,
+So that the sprint board always reflects the current state.
+
+**Acceptance Criteria:**
+
+**Given** a story is in `in-progress/` with completed implementation
+**When** the review workflow starts
+**Then** the story bundle is moved to `scrum-output/review/{story-id}/`
+**And** `sprint-status.yaml` is updated with status `review`
+**And** `sprint-board.md` is regenerated
+
+**When** the approval workflow completes with APPROVED
+**Then** the story bundle is moved to `scrum-output/done/{story-id}/`
+**And** `sprint-status.yaml` is updated with status `done`
+**And** `sprint-board.md` is regenerated
+
+**When** the review workflow returns CHANGES-NEEDED
+**Then** the story bundle is moved back to `scrum-output/in-progress/{story-id}/`
+**And** `sprint-status.yaml` is updated with status `in-progress`
+**And** `sprint-board.md` is regenerated

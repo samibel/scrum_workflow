@@ -76,11 +76,12 @@ ls .claude/skills/scrum-create-project-context.md
 
 ```bash
 # Create Scrum Workflow output directory
-mkdir -p _scrum-output/planning-artifacts
-mkdir -p _scrum-output/implementation-artifacts
+mkdir -p _scrum-output/context
+mkdir -p _scrum-output/docs
+mkdir -p _scrum-output/skills
 
 # Create sprints directory
-mkdir -p sprints
+mkdir -p _scrum-output/sprints
 
 # Verify structure
 tree -L 2 . || find . -maxdepth 2 -type d
@@ -96,14 +97,15 @@ your-project/
 │       ├── refine-ticket.md
 │       └── create-project-context.md
 ├── _scrum-output/
-│   ├── planning-artifacts/    # Epics, PRD, Architecture
-│   └── implementation-artifacts/  # Story files
+│   ├── context/               # Project context and domain knowledge
+│   ├── docs/                  # Generated documentation
+│   └── skills/                # Generated skill files
 ├── scrum_workflow/
 │   ├── agents/
 │   ├── commands/
 │   ├── workflows/
 │   └── ...
-└── sprints/                   # Sprint folders (SW-101, SW-102, etc.)
+└── _scrum-output/sprints/     # Sprint folders (SW-101, SW-102, etc.)
 ```
 
 ### Step 4: Configure Claude Code Settings
@@ -147,8 +149,8 @@ active_agents:
   - qa
 
 # Output locations
-story_location: "{project-root}/_scrum-output/implementation-artifacts"
-sprint_location: "{project-root}/sprints"
+story_location: "{project-root}/_scrum-output/context"
+sprint_location: "{project-root}/_scrum-output/sprints"
 ```
 
 ### Step 6: Verify Installation
@@ -183,8 +185,8 @@ git submodule update --init --recursive
 cp scrum_workflow/.claude/skills/*.md .claude/skills/
 
 # Create required directories
-mkdir -p _scrum-output/{planning-artifacts,implementation-artifacts}
-mkdir -p sprints
+mkdir -p _scrum-output/{context,docs,skills}
+mkdir -p _scrum-output/sprints
 ```
 
 **Update workflow** (when upstream changes):
@@ -211,9 +213,10 @@ echo "Installing scrum_workflow to: $TARGET_DIR"
 # Create directories
 mkdir -p "$TARGET_DIR/scrum_workflow"
 mkdir -p "$TARGET_DIR/.claude/skills"
-mkdir -p "$TARGET_DIR/_scrum-output/planning-artifacts"
-mkdir -p "$TARGET_DIR/_scrum-output/implementation-artifacts"
-mkdir -p "$TARGET_DIR/sprints"
+mkdir -p "$TARGET_DIR/_scrum-output/context"
+mkdir -p "$TARGET_DIR/_scrum-output/docs"
+mkdir -p "$TARGET_DIR/_scrum-output/skills"
+mkdir -p "$TARGET_DIR/_scrum-output/sprints"
 
 # Copy framework
 echo "Copying framework files..."
@@ -294,7 +297,7 @@ Use Method 1 (Manual Copy) with these adjustments:
 
 - [ ] Framework directory copied: `scrum_workflow/`
 - [ ] Skills installed: `.claude/skills/*.md`
-- [ ] Output directories created: `_scrum-output/`, `sprints/`
+- [ ] Output directories created: `_scrum-output/`, `_scrum-output/sprints/`
 - [ ] Settings configured: `.claude/settings.json`
 - [ ] Config reviewed: `scrum_workflow/config.yaml`
 - [ ] Commands accessible in Claude Code
@@ -326,8 +329,8 @@ Run this test to verify installation:
 - **Solution**: Check skill file has proper frontmatter
 
 **Problem**: Cannot write to sprints directory
-- **Solution**: Check directory permissions: `ls -la sprints/`
-- **Solution**: Create directory if missing: `mkdir -p sprints`
+- **Solution**: Check directory permissions: `ls -la _scrum-output/sprints/`
+- **Solution**: Create directory if missing: `mkdir -p _scrum-output/sprints`
 
 ---
 

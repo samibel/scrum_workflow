@@ -215,14 +215,14 @@ describe('Story 6-5: Domain Model Extraction & Generation', () => {
       expect(step53Match![0]).toMatch(/templates/);
     });
 
-    test('P0: Workflow Step 5.3 specifies output location as docs/generated/domain-model.md', () => {
+    test('P0: Workflow Step 5.3 specifies output location as _scrum-output/docs/domain-model.md', () => {
       const content = readFileSync(PROJECT_DOC_WORKFLOW_PATH, 'utf8');
       const step53Match = content.match(/Step 5\.3.*?(?=Step 5\.4|$)/s);
 
       expect(step53Match).toBeTruthy();
       const step53 = step53Match[0];
 
-      expect(step53).toMatch(/docs\/generated\/domain-model\.md/);
+      expect(step53).toMatch(/_scrum-output\/docs\/domain-model\.md/);
     });
 
     test('P1: Workflow Step 5.3 references documentarian agent definition', () => {
@@ -564,17 +564,17 @@ describe('Story 6-5: Domain Model Extraction & Generation', () => {
       expect(DOMAIN_MODEL_TEMPLATE_PATH).toMatch(/scrum_workflow\/templates/);
     });
 
-    test('P0: Workflow specifies Project Layer output (docs/generated/)', () => {
+    test('P0: Workflow specifies Project Layer output (_scrum-output/docs/)', () => {
       const content = readFileSync(PROJECT_DOC_WORKFLOW_PATH, 'utf8');
       const step53Match = content.match(/Step 5\.3.*?(?=Step 5\.4|$)/s);
 
       expect(step53Match).toBeTruthy();
-      expect(step53Match![0]).toMatch(/docs\/generated/);
+      expect(step53Match![0]).toMatch(/_scrum-output\/docs/);
     });
 
     test('P0: Workflow does NOT write to scrum_workflow/ at runtime', () => {
       const content = readFileSync(PROJECT_DOC_WORKFLOW_PATH, 'utf8');
-      // Runtime writes should only go to docs/generated/
+      // Runtime writes should only go to _scrum-output/docs/
       const runtimeWriteMatch = content.match(/writes? to|generates?|creates?\s+\w+\.md/g);
 
       if (runtimeWriteMatch) {

@@ -193,9 +193,9 @@ To add a new platform (e.g., GitHub Copilot):
 ## References
 
 **Source Documents:**
-- Architecture Decision Document: [Source: _scrum-output/planning-artifacts/architecture.md#Decision-6-Platform-Adapter-Contract]
-- Framework Distribution: [Source: _scrum-output/planning-artifacts/architecture.md#Decision-7-Framework-Distribution-Path-Referencing]
-- Three-Layer Separation: [Source: _scrum-output/planning-artifacts/architecture.md#Three-Layer-Separation]
+- Architecture Decision Document: [Source: _scrum-output/docs/architecture.md#Decision-6-Platform-Adapter-Contract]
+- Framework Distribution: [Source: _scrum-output/docs/architecture.md#Decision-7-Framework-Distribution-Path-Referencing]
+- Three-Layer Separation: [Source: _scrum-output/docs/architecture.md#Three-Layer-Separation]
 
 **Related Stories:**
 - Story 1.3: Platform Adapter Contract and Claude Code Adapter (implementation)

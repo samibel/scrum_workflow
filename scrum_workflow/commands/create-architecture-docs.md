@@ -23,12 +23,12 @@ workflows/architecture-documentation.md
 
 ## Output
 
-- `docs/generated/backend-architecture.md` -- Backend API endpoints, event system, scheduled tasks, middleware pipeline, service layer, database access
-- `docs/generated/frontend-architecture.md` -- Component hierarchy, state management, routing structure, build pipeline, shared utilities
-- `docs/generated/devops-architecture.md` -- CI/CD pipelines, container configuration, orchestration, infrastructure as code, monitoring
-- `docs/generated/local-dev-environment.md` -- Services with ports, mock services, environment variables, seed data, common commands
-- `docs/generated/testing-architecture.md` -- Test pyramid, frameworks & configuration, test directory structure, coverage requirements, E2E setup
-- `docs/generated/.arch-scan-state.json` -- Scan state tracking (files scanned, timestamps, hashes, status)
+- `_scrum-output/docs/backend-architecture.md` -- Backend API endpoints, event system, scheduled tasks, middleware pipeline, service layer, database access
+- `_scrum-output/docs/frontend-architecture.md` -- Component hierarchy, state management, routing structure, build pipeline, shared utilities
+- `_scrum-output/docs/devops-architecture.md` -- CI/CD pipelines, container configuration, orchestration, infrastructure as code, monitoring
+- `_scrum-output/docs/local-dev-environment.md` -- Services with ports, mock services, environment variables, seed data, common commands
+- `_scrum-output/docs/testing-architecture.md` -- Test pyramid, frameworks & configuration, test directory structure, coverage requirements, E2E setup
+- `_scrum-output/docs/.arch-scan-state.json` -- Scan state tracking (files scanned, timestamps, hashes, status)
 
 ## Modes
 

@@ -15,8 +15,10 @@ export function resolveInstallPaths(config, registry) {
   const frameworkDir = join(config.directory, config.frameworkPath)
 
   const outputDirs = [
-    join(config.directory, '_scrum-output', 'planning-artifacts'),
-    join(config.directory, '_scrum-output', 'implementation-artifacts')
+    join(config.directory, '_scrum-output', 'context'),
+    join(config.directory, '_scrum-output', 'docs'),
+    join(config.directory, '_scrum-output', 'skills'),
+    join(config.directory, '_scrum-output', 'sprints')
   ]
 
   const platformDirs = new Map()

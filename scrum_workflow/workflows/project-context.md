@@ -125,7 +125,7 @@ For each detected domain:
 1. Load template from `scrum_workflow/templates/context-{domain}.md`
 2. Replace `{{variable_name}}` placeholders with facts collected in Phase A
 3. Fill `<!-- Fill from Phase A analysis -->` comment sections with discovered information
-4. Write filled content to `project-root/context/{domain}.md`
+4. Write filled content to `project-root/_scrum-output/context/{domain}.md`
 5. Ensure output file has valid YAML frontmatter with at minimum `domain` and `generated` fields
 
 Templates available:
@@ -139,7 +139,7 @@ Templates available:
 
 ### Step B2: Index Generation
 
-Generate `context/index.md` from `scrum_workflow/templates/context-index.md`:
+Generate `_scrum-output/context/index.md` from `scrum_workflow/templates/context-index.md`:
 
 1. Load the index template
 2. Fill the Domains section with the list of all detected domains
@@ -153,7 +153,7 @@ Generate `context/index.md` from `scrum_workflow/templates/context-index.md`:
 | QA | index.md, testing.md, {story-relevant-domain}.md |
 
 4. Fill the Project Summary with a brief description based on Phase A findings
-5. Write to `project-root/context/index.md`
+5. Write to `project-root/_scrum-output/context/index.md`
 
 ### Step B3: Domain Skill File Generation
 
@@ -162,8 +162,8 @@ For each detected domain:
 1. Load skill template from `scrum_workflow/templates/skill-{domain}.md`
 2. Replace `{{variable_name}}` placeholders with project-specific facts from Phase A
 3. Fill instruction sections with project-specific guidelines
-4. Create the target directory if it does not exist: `project-root/skills/{domain}/`
-5. Write filled content to `project-root/skills/{domain}/SKILL.md`
+4. Create the target directory if it does not exist: `project-root/_scrum-output/skills/{domain}/`
+5. Write filled content to `project-root/_scrum-output/skills/{domain}/SKILL.md`
 
 Skill templates available:
 
@@ -177,14 +177,14 @@ Skill templates available:
 
 After all files are generated:
 
-1. Read `context/index.md` and extract the list of referenced domain files
-2. Verify every generated `context/{domain}.md` file is referenced in `index.md`
+1. Read `_scrum-output/context/index.md` and extract the list of referenced domain files
+2. Verify every generated `_scrum-output/context/{domain}.md` file is referenced in `index.md`
 3. Verify no file is referenced in `index.md` that was not actually generated
 4. If validation fails, update `index.md` to match the actually generated files
 
 ### Step B5: Frontmatter Validation
 
-Validate every generated `context/*.md` file:
+Validate every generated `_scrum-output/context/*.md` file:
 
 1. Check that YAML frontmatter exists (file starts with `---` and has a closing `---`)
 2. Parse the YAML frontmatter
@@ -195,15 +195,15 @@ Validate every generated `context/*.md` file:
 
 When the command is run again on a project that already has generated context and skill files:
 
-- Overwrite all existing `context/*.md` files cleanly with fresh analysis results
-- Overwrite all existing `skills/*/SKILL.md` files cleanly with fresh analysis results
+- Overwrite all existing `_scrum-output/context/*.md` files cleanly with fresh analysis results
+- Overwrite all existing `_scrum-output/skills/*/SKILL.md` files cleanly with fresh analysis results
 - Do not leave stale files from domains that are no longer detected -- remove context and skill files for domains that no longer have evidence
 - The command is safe to re-run at any time to refresh project context
 
 ## Validation Rules
 
-- Every generated `context/*.md` must have valid YAML frontmatter with `domain` and `generated` fields
-- `context/index.md` must reference all generated sub-files (cross-reference check)
+- Every generated `_scrum-output/context/*.md` must have valid YAML frontmatter with `domain` and `generated` fields
+- `_scrum-output/context/index.md` must reference all generated sub-files (cross-reference check)
 - No sub-file without entry in `index.md`
 - No empty files for domains not detected in the project
 - All files must use kebab-case naming
@@ -216,31 +216,32 @@ After successful execution:
 
 ```
 project-root/
-  context/
-    index.md              <-- Always generated
-    frontend.md           <-- Only if frontend detected
-    backend.md            <-- Only if backend detected
-    testing.md            <-- Only if tests detected
-    devops.md             <-- Only if CI/Docker detected
-    architecture.md       <-- Only if architectural patterns detected
-  skills/
-    backend/SKILL.md      <-- Only if backend detected
-    frontend/SKILL.md     <-- Only if frontend detected
-    testing/SKILL.md      <-- Only if tests detected
-    devops/SKILL.md       <-- Only if CI/Docker detected
-    project-architect/SKILL.md <-- Only if architectural patterns detected
+  _scrum-output/
+    context/
+      index.md              <-- Always generated
+      frontend.md           <-- Only if frontend detected
+      backend.md            <-- Only if backend detected
+      testing.md            <-- Only if tests detected
+      devops.md             <-- Only if CI/Docker detected
+      architecture.md       <-- Only if architectural patterns detected
+    skills/
+      backend/SKILL.md      <-- Only if backend detected
+      frontend/SKILL.md     <-- Only if frontend detected
+      testing/SKILL.md      <-- Only if tests detected
+      devops/SKILL.md       <-- Only if CI/Docker detected
+      project-architect/SKILL.md <-- Only if architectural patterns detected
 ```
 
 ## Write Boundaries
 
 This workflow may write:
 
-- `context/*.md`
-- `skills/*/SKILL.md`
+- `_scrum-output/context/*.md`
+- `_scrum-output/skills/*/SKILL.md`
 
 This workflow may NOT write:
 
-- `sprints/` -- Sprint files are managed by other commands
+- `_scrum-output/sprints/` -- Sprint files are managed by other commands
 - `story.md` -- Story files are managed by `/scrum-create-ticket`
 - `refinement.md` -- Refinement files are managed by `/scrum-refine-ticket`
 - `scrum_workflow/` -- Framework files are read-only during execution

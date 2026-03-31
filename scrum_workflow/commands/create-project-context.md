@@ -20,5 +20,5 @@ Project root directory (implicit from current working directory). The command re
 
 ## Output
 
-- `context/*.md` -- Project context files with YAML frontmatter (one per detected domain, plus `index.md`)
-- `skills/*/SKILL.md` -- Domain-specific skill files (one per detected domain)
+- `_scrum-output/context/*.md` -- Project context files with YAML frontmatter (one per detected domain, plus `index.md`)
+- `_scrum-output/skills/*/SKILL.md` -- Domain-specific skill files (one per detected domain)

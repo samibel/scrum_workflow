@@ -10,7 +10,7 @@
 
 **Input:** Epic requirements, user acceptance criteria
 
-**Output:** `sprints/SW-XXX/story.md`
+**Output:** `_scrum-output/sprints/SW-XXX/story.md`
 
 **Status Change:** → `draft`
 

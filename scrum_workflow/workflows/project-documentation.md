@@ -64,7 +64,7 @@ Validate prerequisites and safety conditions before any analysis begins.
 
 ### Step 1.1: Check for Existing Scan State (Resumption Detection)
 
-Check if `docs/generated/.scan-state.json` exists from a previous scan.
+Check if `_scrum-output/docs/.scan-state.json` exists from a previous scan.
 
 **If scan state exists**, read the file and check `scan_status`:
 
@@ -109,12 +109,12 @@ Tip: Run '/scrum-create-project-context' first for better documentation quality 
 
 ### Step 1.4: Check Output Directory (Full-Scan Overwrite Warning)
 
-**Only in `full-scan` mode**: Check if `docs/generated/` already exists and contains files.
+**Only in `full-scan` mode**: Check if `_scrum-output/docs/` already exists and contains files.
 
 **If directory exists and contains files**, warn the user:
 
 ```
-Warning: Existing docs found in 'docs/generated/'. This will overwrite all existing documentation.
+Warning: Existing docs found in '_scrum-output/docs/'. This will overwrite all existing documentation.
 Continue? [y/N]
 ```
 
@@ -125,7 +125,7 @@ Continue? [y/N]
 
 ### Step 1.5: Validate Scan State (Update Mode Only)
 
-**Only in `update` mode**: Check if the scan state file exists at `docs/generated/`.
+**Only in `update` mode**: Check if the scan state file exists at `_scrum-output/docs/`.
 
 **If scan state does not exist**, halt with error:
 
@@ -188,7 +188,7 @@ Discover source files and build a file manifest for the documentarian agent.
 ### Step 3.1: Discover Source Files
 
 **Standard Exclusion List** (applied to all analysis steps):
-- **Excluded directories:** `node_modules/`, `dist/`, `build/`, `.git/`, `vendor/`, `__pycache__/`, `docs/generated/`, `scrum_workflow/`
+- **Excluded directories:** `node_modules/`, `dist/`, `build/`, `.git/`, `vendor/`, `__pycache__/`, `_scrum-output/docs/`, `scrum_workflow/`
 - **Excluded test files:** `*.test.*`, `*.spec.*`, `test_*`, `*_test.*`
 
 This exclusion list is applied consistently in Steps 5.1 (Business Logic), 5.2 (Workflows), and 5.3 (Domain Model) to avoid false positives and redundant documentation of infrastructure code.
@@ -197,7 +197,7 @@ Use Glob patterns to discover all source files in the project:
 
 - Discover files by language: `**/*.ts`, `**/*.js`, `**/*.py`, `**/*.go`, `**/*.java`, `**/*.rs`, `**/*.rb`, `**/*.php`, `**/*.cs`, `**/*.kt`, `**/*.swift`, etc.
 - Exclude non-source directories: `node_modules/`, `dist/`, `build/`, `.git/`, `vendor/`, `__pycache__/`, `.next/`, `coverage/`
-- Exclude generated and framework files: `docs/generated/`, `scrum_workflow/`
+- Exclude generated and framework files: `_scrum-output/docs/`, `scrum_workflow/`
 
 ### Step 3.2: Build File Manifest
 
@@ -215,7 +215,7 @@ Ensure the output directory exists before writing any files.
 
 ### Step 4.1: Create Output Directory
 
-If `docs/generated/` does not exist, create it (including the parent `docs/` directory if needed).
+If `_scrum-output/docs/` does not exist, create it (including the parent `docs/` directory if needed).
 
 This step must be completed before any file writes in Steps 5, 6, or 7.
 
@@ -269,7 +269,7 @@ Every documented rule must include a source reference in the format `[Source: pa
 1. Load the template from `scrum_workflow/templates/business-logic.md`
 2. Fill the template sections with discovered rules, following the template structure
 3. Populate the Overview section with total rules found, domain areas detected, and analysis timestamp
-4. Write the filled document to `docs/generated/business-logic.md`
+4. Write the filled document to `_scrum-output/docs/business-logic.md`
 5. If no business logic is found (empty codebase or pure infrastructure project), write a minimal document stating "No business logic detected" with the analysis timestamp rather than an empty file
 
 #### 5.1.7: Incremental State Update (Business Logic Complete)
@@ -349,7 +349,7 @@ For state machines, reference the file where the state machine is defined or whe
 2. Fill the template sections with discovered workflows, following the template structure
 3. Populate the Overview section with total workflows found by category (state machines, event flows, pipelines, async workflows) and analysis timestamp
 4. Group workflows by type and order by complexity (most complex workflows first within each category)
-5. Write the filled document to `docs/generated/workflows.md`
+5. Write the filled document to `_scrum-output/docs/workflows.md`
 6. If no workflows are found (static codebase with no dynamic flows), write a minimal document stating "No workflows detected" with the analysis timestamp rather than an empty file
 
 #### 5.2.7: Incremental State Update (Workflow Analysis Complete)
@@ -436,7 +436,7 @@ Group entities by bounded context/domain area based on directory structure and n
 3. Populate the Overview section with total entities found by category (core entities, value objects, enums, DTOs) and analysis timestamp
 4. Group entities by bounded context where appropriate
 5. **Conditional section**: If database schemas are detected (migrations, ORM entities, schema definitions), fill the Database Schema section with table definitions and ER diagrams. If no schemas detected, omit the entire Database Schema section from the output.
-6. Write the filled document to `docs/generated/domain-model.md`
+6. Write the filled document to `_scrum-output/docs/domain-model.md`
 7. If no entities are found (unlikely for any non-trivial codebase), write a minimal document stating "No domain entities detected" with the analysis timestamp rather than an empty file
 
 #### 5.3.8: Incremental State Update (Domain Model Complete)
@@ -459,12 +459,12 @@ Incrementally update existing documentation by detecting changes since the last 
 
 ### Step 6.1: Load Existing Scan State
 
-Read `docs/generated/.scan-state.json` to load the previous scan state.
+Read `_scrum-output/docs/.scan-state.json` to load the previous scan state.
 
 **If the file does not exist**, print warning and fallback to full-scan mode:
 
 ```
-Warning: No previous scan state found at 'docs/generated/.scan-state.json'. Running full scan.
+Warning: No previous scan state found at '_scrum-output/docs/.scan-state.json'. Running full scan.
 ```
 
 Then GOTO Step 5 (Full-Scan Mode).
@@ -577,14 +577,14 @@ For each file in `changed_files` and `new_files`, determine which documentation 
 
 Load the three existing documentation files as baseline:
 
-- `docs/generated/business-logic.md` (if exists)
-- `docs/generated/workflows.md` (if exists)
-- `docs/generated/domain-model.md` (if exists)
+- `_scrum-output/docs/business-logic.md` (if exists)
+- `_scrum-output/docs/workflows.md` (if exists)
+- `_scrum-output/docs/domain-model.md` (if exists)
 
 **If a documentation file is missing**, print warning but continue:
 
 ```
-Warning: Document 'docs/generated/DOCUMENT.md' not found. Will regenerate from scratch.
+Warning: Document '_scrum-output/docs/DOCUMENT.md' not found. Will regenerate from scratch.
 ```
 
 #### 6.3.2: Targeted Business Rule Analysis
@@ -723,14 +723,14 @@ Display a clear, actionable summary of proposed documentation changes to the use
 
 Load each existing documentation file to establish a baseline for comparison:
 
-- `docs/generated/business-logic.md` (if exists)
-- `docs/generated/workflows.md` (if exists)
-- `docs/generated/domain-model.md` (if exists)
+- `_scrum-output/docs/business-logic.md` (if exists)
+- `_scrum-output/docs/workflows.md` (if exists)
+- `_scrum-output/docs/domain-model.md` (if exists)
 
 **If a documentation file is missing**, print warning but continue:
 
 ```
-Warning: Document 'docs/generated/DOCUMENT.md' not found. Will regenerate from scratch.
+Warning: Document '_scrum-output/docs/DOCUMENT.md' not found. Will regenerate from scratch.
 Changes for this document will be counted as additions.
 ```
 
@@ -843,17 +843,17 @@ Print the diff summary in this format:
 ```
 Documentation changes detected since last scan:
 
-Business Logic Documentation (docs/generated/business-logic.md):
+Business Logic Documentation (_scrum-output/docs/business-logic.md):
   +X new business rules
   ~X modified business rules
   -X removed business rules
 
-Workflow Documentation (docs/generated/workflows.md):
+Workflow Documentation (_scrum-output/docs/workflows.md):
   +X new workflows
   ~X modified workflows
   -X removed workflows
 
-Domain Model Documentation (docs/generated/domain-model.md):
+Domain Model Documentation (_scrum-output/docs/domain-model.md):
   +X new entities
   ~X modified entities
   -X removed entities
@@ -874,14 +874,14 @@ Review the changes above. You will be asked to confirm before any files are modi
 **If there are no changes for a document type**, show that explicitly:
 
 ```
-Business Logic Documentation (docs/generated/business-logic.md):
+Business Logic Documentation (_scrum-output/docs/business-logic.md):
   No changes detected
 ```
 
 **If a document file is missing** (will be regenerated), show:
 
 ```
-Business Logic Documentation (docs/generated/business-logic.md):
+Business Logic Documentation (_scrum-output/docs/business-logic.md):
   Document not found. Will regenerate from scratch.
   +X business rules will be documented
 ```
@@ -951,10 +951,10 @@ For each document file, use atomic writes to prevent corruption if the workflow 
 **Atomic Write Algorithm:**
 
 1. **Generate temp file path**: Create a temporary file path by appending `.tmp` to the target path
-   - Example: `docs/generated/business-logic.md` → `docs/generated/business-logic.md.tmp`
+   - Example: `_scrum-output/docs/business-logic.md` → `_scrum-output/docs/business-logic.md.tmp`
 
 2. **Clean up existing temp file**: If a temp file already exists from a previous interrupted run, delete it first to prevent rename conflicts
-   - Check if `docs/generated/DOCUMENT.md.tmp` exists
+   - Check if `_scrum-output/docs/DOCUMENT.md.tmp` exists
    - If exists, delete it before proceeding
 
 3. **Write to temp file**: Write the updated document content to the temporary file path
@@ -1020,7 +1020,7 @@ def atomic_write(file_path: str, content: str) -> None:
 If any step fails during the atomic write process:
 
 ```
-Error: Cannot write document 'docs/generated/DOCUMENT.md': OPERATION_FAILED
+Error: Cannot write document '_scrum-output/docs/DOCUMENT.md': OPERATION_FAILED
 Update aborted. Partial changes may exist. Check file permissions and disk space.
 Details: {specific error details}
 ```
@@ -1062,7 +1062,7 @@ For files in `deleted_files` list:
 
 **Only executed if all documents were successfully updated in Step 6.6.**
 
-Update `docs/generated/.scan-state.json` with new scan metadata.
+Update `_scrum-output/docs/.scan-state.json` with new scan metadata.
 
 #### 6.7.1: Generate New Scan State
 
@@ -1077,9 +1077,9 @@ Create updated scan state object:
     // Exclude deleted_files
   ],
   "documents_generated": [
-    "docs/generated/business-logic.md",
-    "docs/generated/workflows.md",
-    "docs/generated/domain-model.md"
+    "_scrum-output/docs/business-logic.md",
+    "_scrum-output/docs/workflows.md",
+    "_scrum-output/docs/domain-model.md"
   ],
   "scan_duration": UPDATE_DURATION_SECONDS,
   "scan_status": "complete"
@@ -1098,14 +1098,14 @@ Where:
 
 Use atomic write pattern for scan state file:
 
-1. **Write to temp file**: Write scan state to `docs/generated/.scan-state.json.tmp`
+1. **Write to temp file**: Write scan state to `_scrum-output/docs/.scan-state.json.tmp`
 2. **Verify temp file**: Ensure temp file is valid JSON
-3. **Atomic rename**: Rename temp file to `docs/generated/.scan-state.json`
+3. **Atomic rename**: Rename temp file to `_scrum-output/docs/.scan-state.json`
 4. **Handle failure**: If rename fails, print warning but continue:
 
 ```
 Warning: Could not update scan state file. Update was successful but scan state is stale.
-Fix: Check file permissions for 'docs/generated/.scan-state.json'.
+Fix: Check file permissions for '_scrum-output/docs/.scan-state.json'.
 ```
 
 The documentation update is still successful even if scan state update fails (non-critical).
@@ -1136,9 +1136,9 @@ If any error occurs during document update (Step 6.6) or scan state update (Step
 
 | Situation | Error Message | Error Type |
 |---|---|---|
-| Document read fails | `Error: Cannot read document 'docs/generated/DOCUMENT.md': PERMISSION_DENIED` | Critical - Halt |
-| Document write fails | `Error: Cannot write document 'docs/generated/DOCUMENT.md': DISK_FULL. Free space and retry.` | Critical - Halt |
-| Scan state read fails | `Error: Cannot read scan state 'docs/generated/.scan-state.json': PERMISSION_DENIED` | Critical - Halt |
+| Document read fails | `Error: Cannot read document '_scrum-output/docs/DOCUMENT.md': PERMISSION_DENIED` | Critical - Halt |
+| Document write fails | `Error: Cannot write document '_scrum-output/docs/DOCUMENT.md': DISK_FULL. Free space and retry.` | Critical - Halt |
+| Scan state read fails | `Error: Cannot read scan state '_scrum-output/docs/.scan-state.json': PERMISSION_DENIED` | Critical - Halt |
 | Scan state write fails | `Warning: Could not update scan state file. Update was successful but scan state is stale.` | Non-critical - Continue |
 | Hash computation fails | `Warning: Cannot compute hash for file 'path/to/file': PERMISSION_DENIED. Skipping file.` | Non-critical - Continue |
 | User rejects update | `Update cancelled. No files modified. Existing docs preserved.` | User decision - Exit |
@@ -1155,7 +1155,7 @@ Write the scan state file after successful full-scan documentation generation.
 
 ### Step 7.1: Generate Scan State
 
-Create `docs/generated/.scan-state.json` with complete scan metadata:
+Create `_scrum-output/docs/.scan-state.json` with complete scan metadata:
 
 ```json
 {
@@ -1175,9 +1175,9 @@ Create `docs/generated/.scan-state.json` with complete scan metadata:
     }
   ],
   "documents_generated": [
-    "docs/generated/business-logic.md",
-    "docs/generated/workflows.md",
-    "docs/generated/domain-model.md"
+    "_scrum-output/docs/business-logic.md",
+    "_scrum-output/docs/workflows.md",
+    "_scrum-output/docs/domain-model.md"
   ],
   "scan_duration": 45.2,
   "scan_status": "complete"
@@ -1208,13 +1208,13 @@ Compute SHA-256 hash for each file in the file manifest (from Step 3.2) to enabl
 Use atomic write pattern to prevent corruption:
 
 1. **Clean up any existing temp file**: If `.scan-state.json.tmp` exists from a previous interrupted run, delete it first to prevent rename conflicts.
-2. **Write to temp file**: Write scan state to `docs/generated/.scan-state.json.tmp`
+2. **Write to temp file**: Write scan state to `_scrum-output/docs/.scan-state.json.tmp`
 3. **Verify temp file**: Ensure temp file is valid JSON and non-empty
-4. **Atomic rename**: Rename temp file to `docs/generated/.scan-state.json`
+4. **Atomic rename**: Rename temp file to `_scrum-output/docs/.scan-state.json`
 5. **Handle failure**: If rename fails, delete temp file and halt with error:
 
 ```
-Error: Cannot write scan state file 'docs/generated/.scan-state.json': OPERATION_FAILED
+Error: Cannot write scan state file '_scrum-output/docs/.scan-state.json': OPERATION_FAILED
 Documentation was generated successfully but scan state is stale. Check file permissions and disk space.
 ```
 
@@ -1227,9 +1227,9 @@ After successful scan state write, print:
 ```
 Full scan complete.
 Generated 3 documents:
-- docs/generated/business-logic.md (X business rules)
-- docs/generated/workflows.md (X workflows)
-- docs/generated/domain-model.md (X entities)
+- _scrum-output/docs/business-logic.md (X business rules)
+- _scrum-output/docs/workflows.md (X workflows)
+- _scrum-output/docs/domain-model.md (X entities)
 Scan state saved. Next run can use --update flag for incremental updates.
 ```
 
@@ -1240,8 +1240,8 @@ Check if `.gitignore` exists in project root.
 **If `.gitignore` does not exist**, create it with:
 ```
 # Scan state files (local, not committed)
-docs/generated/.scan-state.json
-docs/generated/.arch-scan-state.json
+_scrum-output/docs/.scan-state.json
+_scrum-output/docs/.arch-scan-state.json
 ```
 
 **If `.gitignore` exists**, check if scan state entries are present:
@@ -1259,15 +1259,15 @@ Added scan state files to .gitignore (scan state is local, not committed to git)
 
 This workflow may write:
 
-- `docs/generated/business-logic.md`
-- `docs/generated/workflows.md`
-- `docs/generated/domain-model.md`
-- `docs/generated/.scan-state.json`
+- `_scrum-output/docs/business-logic.md`
+- `_scrum-output/docs/workflows.md`
+- `_scrum-output/docs/domain-model.md`
+- `_scrum-output/docs/.scan-state.json`
 
-This workflow may NOT write to `scrum_workflow/`, `sprints/`, `context/`, or `.claude/skills/`:
+This workflow may NOT write to `scrum_workflow/`, `_scrum-output/sprints/`, `context/`, or `.claude/skills/`:
 
 - `scrum_workflow/` -- Framework files are read-only during execution
-- `sprints/` -- Sprint files are managed by other commands
+- `_scrum-output/sprints/` -- Sprint files are managed by other commands
 - `context/` -- Context files are managed by `/scrum-create-project-context`
 - `.claude/skills/` -- Adapter skills are static, not modified at runtime
 
@@ -1322,9 +1322,9 @@ Resumed scan:
 
 ## Validation Rules
 
-- Every generated `docs/generated/*.md` file must contain valid Markdown with properly formatted Mermaid code blocks
+- Every generated `_scrum-output/docs/*.md` file must contain valid Markdown with properly formatted Mermaid code blocks
 - All documented elements must include source references in `file:line` format
 - `.scan-state.json` must contain valid JSON with all required fields
-- Output directory must be `docs/generated/` relative to project root -- never inside `scrum_workflow/`
+- Output directory must be `_scrum-output/docs/` relative to project root -- never inside `scrum_workflow/`
 - All filenames must use kebab-case
 - All JSON fields must use snake_case

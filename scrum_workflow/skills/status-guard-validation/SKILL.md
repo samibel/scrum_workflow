@@ -46,7 +46,7 @@ Read the current `status` field from the story file's YAML frontmatter and valid
 **On guard condition failure**, return an error:
 
 ```
-Error: Story file 'sprints/SW-XXX/story.md' already exists
+Error: Story file '_scrum-output/sprints/SW-XXX/story.md' already exists
 Fix: Delete the existing story file first, or use a different ticket number
 ```
 
@@ -159,7 +159,7 @@ can_proceed: true/false
 
 ## Reads
 
-- Story file (typically `sprints/SW-XXX/story.md`) to read current status from YAML frontmatter
+- Story file (typically `_scrum-output/sprints/SW-XXX/story.md`) to read current status from YAML frontmatter
 - State machine definitions: `scrum_workflow/context/standards.md`
 - Command being executed (to determine required status)
 

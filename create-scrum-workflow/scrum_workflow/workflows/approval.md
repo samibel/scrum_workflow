@@ -4,8 +4,8 @@ Step-by-step workflow for human-in-the-loop approval of reviewed stories. The ap
 
 ## Prerequisites
 
-- Story file exists at `sprints/SW-XXX/story.md` with `status: in-review`
-- Code review file exists at `sprints/SW-XXX/review-N.md` (typically `review-1.md`)
+- Story file exists at `_scrum-output/sprints/SW-XXX/story.md` with `status: in-review`
+- Code review file exists at `_scrum-output/sprints/SW-XXX/review-N.md` (typically `review-1.md`)
 - `scrum_workflow/templates/approval.md` exists for approval record format
 - Human reviewer is available to provide explicit approval decision
 
@@ -13,11 +13,11 @@ Step-by-step workflow for human-in-the-loop approval of reviewed stories. The ap
 
 ### Step 1.1: Verify Story File Exists
 
-Check if `sprints/SW-XXX/story.md` exists.
+Check if `_scrum-output/sprints/SW-XXX/story.md` exists.
 
 **If file does not exist**, halt with error:
 ```
-Error: Story file 'sprints/SW-XXX/story.md' not found
+Error: Story file '_scrum-output/sprints/SW-XXX/story.md' not found
 Fix: Ensure story exists before triggering approval
 ```
 
@@ -55,7 +55,7 @@ Fix: Complete code review before triggering approval
 
 ### Step 1.3: Verify Review File Exists
 
-Check if `sprints/SW-XXX/review-N.md` exists (where N is 1, 2, 3, etc.).
+Check if `_scrum-output/sprints/SW-XXX/review-N.md` exists (where N is 1, 2, 3, etc.).
 
 **If no review file exists**, halt with error:
 ```
@@ -69,7 +69,7 @@ Fix: Run code review first: '/scrum-dev-story SW-XXX review'
 
 ### Step 2.1: Load Review File
 
-Read the most recent `sprints/SW-XXX/review-N.md` and extract:
+Read the most recent `_scrum-output/sprints/SW-XXX/review-N.md` and extract:
 - Summary table (Total, Critical, Major, Minor findings)
 - Findings table with all issues
 - Detailed analysis by severity level
@@ -206,12 +206,12 @@ Required: Please provide rejection reason (issues to fix, concerns, etc.):
 ### Step 4.1: Initialize Approval File
 
 Detect existing approval files in sprint folder:
-- Look for pattern: `sprints/SW-XXX/approval-*.md`
+- Look for pattern: `_scrum-output/sprints/SW-XXX/approval-*.md`
 - If no approval files exist, create `approval-1.md`
 - If approval files exist, increment to next number: `approval-N.md` where N = highest + 1
 
 Create approval file using template from `scrum_workflow/templates/approval.md`:
-- Output file: `sprints/SW-XXX/approval-N.md` (incremental N)
+- Output file: `_scrum-output/sprints/SW-XXX/approval-N.md` (incremental N)
 - Use atomic write operation: write complete content to temporary file (`.tmp` suffix), then use atomic rename operation to replace original (NFR1 compliance)
 - Template ensures consistent format across all approvals
 
@@ -280,7 +280,7 @@ review_reference: "review-N.md"
 ### Step 5.1: If Approved — Update Status to done
 
 When human approves:
-1. Update `sprints/SW-XXX/story.md` YAML frontmatter:
+1. Update `_scrum-output/sprints/SW-XXX/story.md` YAML frontmatter:
    - Set `status` field to `done`
    - Update `updated` field to current date (ISO 8601 format)
    - Use atomic write operation: write complete content to temporary file (`.tmp` suffix), then use atomic rename operation to replace original (NFR1 compliance)
@@ -291,13 +291,13 @@ When human approves:
    ```
    ✅ Story SW-XXX approved by {approver}
    Status updated: in-review → done
-   Approval record: sprints/SW-XXX/approval.md
+   Approval record: _scrum-output/sprints/SW-XXX/approval.md
    ```
 
 ### Step 5.2: If Rejected — Keep Status in in-review
 
 When human rejects:
-1. Keep `sprints/SW-XXX/story.md` status as `in-review`
+1. Keep `_scrum-output/sprints/SW-XXX/story.md` status as `in-review`
 2. Document rejection reason in approval.md
 3. Provide instructions for next steps:
    ```
@@ -331,15 +331,15 @@ Approval decisions are permanent and create audit trail:
 ### Step 6.1: Allowed Write Operations
 
 The approval workflow MAY write:
-- `sprints/SW-XXX/approval.md` -- Approval record (new file or update)
-- `sprints/SW-XXX/story.md` -- Status update only (in-review → done)
+- `_scrum-output/sprints/SW-XXX/approval.md` -- Approval record (new file or update)
+- `_scrum-output/sprints/SW-XXX/story.md` -- Status update only (in-review → done)
 
 ### Step 6.2: Prohibited Write Operations
 
 The approval workflow MAY NOT write:
-- `sprints/SW-XXX/refinement.md` -- Read-only during approval
-- `sprints/SW-XXX/plan.md` -- Read-only during approval
-- `sprints/SW-XXX/review-N.md` -- Read-only (review is complete)
+- `_scrum-output/sprints/SW-XXX/refinement.md` -- Read-only during approval
+- `_scrum-output/sprints/SW-XXX/plan.md` -- Read-only during approval
+- `_scrum-output/sprints/SW-XXX/review-N.md` -- Read-only (review is complete)
 - Code files in project directory -- No code modifications during approval
 - `scrum_workflow/` -- Framework files are read-only during approval (exception: framework files may be created during initial project setup, but never modified during approval execution)
 

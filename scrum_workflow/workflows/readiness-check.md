@@ -4,7 +4,7 @@ Step-by-step workflow for validating story completeness before implementation. T
 
 ## Prerequisites
 
-- Story file exists at `sprints/SW-XXX/story.md` with `status: refinement`
+- Story file exists at `_scrum-output/sprints/SW-XXX/story.md` with `status: refinement`
 - Refinement completed with synthesis (from Story 3.3)
 - `scrum_workflow/skills/readiness-check/SKILL.md` exists
 
@@ -12,11 +12,11 @@ Step-by-step workflow for validating story completeness before implementation. T
 
 ### Step 1.1: Verify Story File Exists
 
-Check if `sprints/SW-XXX/story.md` exists.
+Check if `_scrum-output/sprints/SW-XXX/story.md` exists.
 
 **If file does not exist**, halt with error:
 ```
-Error: Story file 'sprints/SW-XXX/story.md' not found
+Error: Story file '_scrum-output/sprints/SW-XXX/story.md' not found
 Fix: Ensure refinement has completed and story file exists
 ```
 
@@ -81,7 +81,7 @@ The skill produces:
 **If validation result is PASS:**
 
 1. **Create plan.md** from skill output FIRST
-   - Write to `sprints/SW-XXX/plan.md`
+   - Write to `_scrum-output/sprints/SW-XXX/plan.md`
    - Create directory if missing
    - Use atomic write operation (NFR1 compliance)
 
@@ -98,7 +98,7 @@ The skill produces:
 ```
 ✅ Story SW-XXX passed readiness check
 Status updated: refinement → ready
-Plan created: sprints/SW-XXX/plan.md
+Plan created: _scrum-output/sprints/SW-XXX/plan.md
 Story is ready for implementation
 ```
 
@@ -131,8 +131,8 @@ Address these issues and re-run refinement
 
 This workflow may write:
 
-- `sprints/SW-XXX/plan.md` -- Execution plan (on PASS only)
-- `sprints/SW-XXX/story.md` -- Status update (ready on PASS, draft on FAIL) and failure reasons section (on FAIL)
+- `_scrum-output/sprints/SW-XXX/plan.md` -- Execution plan (on PASS only)
+- `_scrum-output/sprints/SW-XXX/story.md` -- Status update (ready on PASS, draft on FAIL) and failure reasons section (on FAIL)
 
 This workflow may NOT write:
 

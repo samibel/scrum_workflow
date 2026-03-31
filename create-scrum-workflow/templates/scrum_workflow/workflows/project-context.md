@@ -240,7 +240,7 @@ This workflow may write:
 
 This workflow may NOT write:
 
-- `sprints/` -- Sprint files are managed by other commands
+- `_scrum-output/sprints/` -- Sprint files are managed by other commands
 - `story.md` -- Story files are managed by `/scrum-create-ticket`
 - `refinement.md` -- Refinement files are managed by `/scrum-refine-ticket`
 - `scrum_workflow/` -- Framework files are read-only during execution

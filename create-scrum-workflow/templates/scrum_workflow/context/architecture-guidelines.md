@@ -43,7 +43,7 @@ The adapter layer is responsible for:
 - Managing project-specific configuration and overrides
 - Providing tool-specific implementations of framework interfaces
 
-### 3. State Layer (`sprints/`, config.yaml override)
+### 3. State Layer (`_scrum-output/sprints/`, config.yaml override)
 
 Per-project sprint data and configuration overrides:
 - **Sprint data**: Story files, refinement records, review findings

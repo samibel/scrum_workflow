@@ -75,13 +75,13 @@ When analyzing a codebase, follow this methodology:
 10. **Incremental Analysis** (for `--update` mode): When updating existing documentation, analyze only changed files since last run. Compare file modification timestamps and glob patterns to identify new, modified, or deleted architecture components.
 
 11. **Skip Condition Handling** (for testing architecture): When no testing framework, configuration, or test directories are detected after scanning:
-    - Note in scan state as `documents_skipped: ["docs/generated/testing-architecture.md"]`
-    - Do not generate `docs/generated/testing-architecture.md` file
+    - Note in scan state as `documents_skipped: ["_scrum-output/docs/testing-architecture.md"]`
+    - Do not generate `_scrum-output/docs/testing-architecture.md` file
     - Continue with other architecture dimensions
 
 # Output Format
 
-**Output Location**: All architecture documents are written to `_bmad-output/architecture-docs/` directory. Create the directory if it doesn't exist.
+**Output Location**: All architecture documents are written to `_scrum-output/docs/` directory. Create the directory if it doesn't exist.
 
 ## backend-architecture.md
 

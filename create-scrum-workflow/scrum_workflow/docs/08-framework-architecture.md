@@ -19,7 +19,7 @@ graph TB
     end
 
     subgraph "State Layer"
-        F[sprints/SW-XXX/]
+        F[_scrum-output/sprints/SW-XXX/]
         F --> G[story.md]
         F --> H[plan.md]
         F --> I[review-N.md]
@@ -68,7 +68,7 @@ graph TB
 
 ## State Layer
 
-**Location:** `sprints/SW-XXX/`
+**Location:** `_scrum-output/sprints/SW-XXX/`
 
 **Contents:**
 - `story.md` - Story specification and status

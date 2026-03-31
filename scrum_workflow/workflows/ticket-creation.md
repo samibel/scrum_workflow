@@ -5,7 +5,7 @@ Step-by-step workflow for the `/scrum-create-ticket` command. Transforms a natur
 ## Prerequisites
 
 - Framework installed with templates in `scrum_workflow/templates/`
-- Project context generated via `/scrum-create-project-context` (context/index.md must exist) - optional but recommended
+- Project context generated via `/scrum-create-project-context` (_scrum-output/context/index.md must exist) - optional but recommended
 - Estimation reference data available at `scrum_workflow/data/estimation-reference.yaml`
 
 ## Step 0: Validation
@@ -16,7 +16,7 @@ Validate prerequisites and guard conditions before any processing begins.
 
 Invoke `scrum_workflow/skills/prerequisite-validation/SKILL.md` to check for project context:
 
-- Check if `context/index.md` exists at project root
+- Check if `_scrum-output/context/index.md` exists at project root
 - If context exists, it will be loaded in Step 3 to improve story quality
 - If context does not exist, issue a warning but proceed (context is optional for `/scrum-create-ticket`)
 
@@ -33,13 +33,13 @@ Tip: Run '/scrum-create-project-context' first to generate project context files
 
 Invoke `scrum_workflow/skills/status-guard-validation/SKILL.md` to check if story file already exists:
 
-- Check if `sprints/SW-XXX/story.md` already exists
+- Check if `_scrum-output/sprints/SW-XXX/story.md` already exists
 - Guard condition: Story file must NOT exist for `/scrum-create-ticket`
 
 **On guard condition failure** (story file already exists), halt with error:
 
 ```
-Error: Story file 'sprints/SW-XXX/story.md' already exists
+Error: Story file '_scrum-output/sprints/SW-XXX/story.md' already exists
 Fix: Delete the existing story file first, or use a different ticket number
 ```
 
@@ -127,7 +127,7 @@ Load project context to inform story generation with project-specific knowledge.
 
 ### Step 3.1: Check for Project Context
 
-Check if `context/index.md` exists at the project root.
+Check if `_scrum-output/context/index.md` exists at the project root.
 
 **If not found**, return an actionable error:
 
@@ -138,28 +138,28 @@ Fix: Run '/scrum-create-project-context' to generate project context files befor
 
 ### Step 3.2: Load Project Context Index
 
-Read `context/index.md` to understand the project's structure, domains, technology stack, and agent loading map.
+Read `_scrum-output/context/index.md` to understand the project's structure, domains, technology stack, and agent loading map.
 
 ### Step 3.3: Load Relevant Domain Context
 
 Based on keywords in the ticket description, identify and load relevant domain context files:
 
-- API, endpoint, service, database keywords -- load `context/backend.md`
-- UI, component, page, form keywords -- load `context/frontend.md`
-- Test, coverage, assertion keywords -- load `context/testing.md`
-- Deploy, CI, pipeline, Docker keywords -- load `context/devops.md`
-- Architecture, pattern, design keywords -- load `context/architecture.md`
+- API, endpoint, service, database keywords -- load `_scrum-output/context/backend.md`
+- UI, component, page, form keywords -- load `_scrum-output/context/frontend.md`
+- Test, coverage, assertion keywords -- load `_scrum-output/context/testing.md`
+- Deploy, CI, pipeline, Docker keywords -- load `_scrum-output/context/devops.md`
+- Architecture, pattern, design keywords -- load `_scrum-output/context/architecture.md`
 
 **Loading rules:**
 
 - Load all domain files that match keywords in the description
 - If a domain file is referenced but does not exist on disk, log a warning and continue with available context
-- If no specific keywords match, load only `context/index.md`
+- If no specific keywords match, load only `_scrum-output/context/index.md`
 
 **On missing domain file**, warn the user but proceed:
 
 ```
-Warning: Domain context file 'context/{domain}.md' not found. Proceeding with available context.
+Warning: Domain context file '_scrum-output/context/{domain}.md' not found. Proceeding with available context.
 Tip: Ensure all referenced domain files exist or run '/scrum-create-project-context' to regenerate context files.
 ```
 
@@ -231,18 +231,18 @@ Create the sprint folder structure for the new ticket.
 
 ### Step 6.1: Check for Existing Story
 
-Check if `sprints/SW-XXX/story.md` already exists.
+Check if `_scrum-output/sprints/SW-XXX/story.md` already exists.
 
 **If the file already exists**, return an actionable error:
 
 ```
-Error: Story file 'sprints/SW-XXX/story.md' already exists. To re-create, delete the existing file first
+Error: Story file '_scrum-output/sprints/SW-XXX/story.md' already exists. To re-create, delete the existing file first
 Fix: Delete the existing story file or choose a different ticket number
 ```
 
 ### Step 6.2: Create Sprint Folder
 
-Create the `sprints/SW-XXX/` directory if it does not already exist.
+Create the `_scrum-output/sprints/SW-XXX/` directory if it does not already exist.
 
 ## Step 7: Story File Creation
 
@@ -276,7 +276,7 @@ Replace template placeholders with generated content:
 
 ### Step 7.3: Write Complete File
 
-Write the complete story file to `sprints/SW-XXX/story.md` in a **single write operation**.
+Write the complete story file to `_scrum-output/sprints/SW-XXX/story.md` in a **single write operation**.
 
 **Critical (NFR1):** The entire file content -- YAML frontmatter and Markdown body -- must be written atomically. No partial writes that could leave the file in an inconsistent state or corrupt the frontmatter.
 
@@ -289,7 +289,7 @@ Display the created story summary to the user.
 Present a confirmation message with:
 
 - Ticket number and generated title
-- File path: `sprints/SW-XXX/story.md`
+- File path: `_scrum-output/sprints/SW-XXX/story.md`
 - Status: `draft`
 - Estimation: story points assigned
 - Number of acceptance criteria generated
@@ -307,7 +307,7 @@ Suggest next steps to the user:
 
 This workflow may write:
 
-- `sprints/SW-XXX/story.md` -- The generated story file
+- `_scrum-output/sprints/SW-XXX/story.md` -- The generated story file
 
 This workflow may NOT write:
 
@@ -316,7 +316,7 @@ This workflow may NOT write:
 - `review-*.md` -- Managed by `/scrum-dev-story`
 - `approval.md` -- Managed by approval workflow
 - `scrum_workflow/` -- Framework files are read-only during execution
-- `context/` -- Context files are managed by `/scrum-create-project-context`
+- `_scrum-output/context/` -- Context files are managed by `/scrum-create-project-context`
 
 ## Validation Rules
 

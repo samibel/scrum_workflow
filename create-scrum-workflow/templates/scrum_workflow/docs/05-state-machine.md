@@ -121,10 +121,10 @@ draft → refinement → (FAIL) → draft → refinement → ready → ...
 Check story status from command line:
 ```bash
 # Extract status from story.md
-grep "^status:" sprints/SW-XXX/story.md
+grep "^status:" _scrum-output/sprints/SW-XXX/story.md
 
 # Or use YAML parser
-yq '.status' sprints/SW-XXX/story.md
+yq '.status' _scrum-output/sprints/SW-XXX/story.md
 ```
 
 ---

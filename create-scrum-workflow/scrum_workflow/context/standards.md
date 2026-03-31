@@ -194,7 +194,7 @@ project-root/
 ├── scrum_workflow/      # Framework (shared)
 ├── .claude/             # Claude Code adapter
 ├── .github/             # GitHub Copilot adapter
-├── sprints/             # Sprint state (project-specific)
+├── _scrum-output/sprints/             # Sprint state (project-specific)
 └── config.yaml          # Configuration overrides
 ```
 
@@ -351,7 +351,7 @@ Commands **MUST** use actionable error messages following these templates when g
 | Situation | Error Message Pattern |
 |---|---|
 | Wrong status | `"Story SW-XXX is in status 'current', but '/command' requires 'required'"` |
-| Missing file | `"File 'sprints/SW-XXX/story.md' not found. Run '/scrum-create-ticket SW-XXX' first"` |
+| Missing file | `"File '_scrum-output/sprints/SW-XXX/story.md' not found. Run '/scrum-create-ticket SW-XXX' first"` |
 | Invalid frontmatter | `"Invalid frontmatter in story.md: field 'status' missing"` |
 | Interrupted workflow | Recovery: read `status` from frontmatter, resume from that phase |
 
@@ -361,7 +361,7 @@ Commands **MUST** use actionable error messages following these templates when g
 Error: Story SW-042 is in status 'draft', but '/scrum-dev-story' requires 'ready'
 Fix: Run '/scrum-refine-ticket SW-042' to refine the story, then pass readiness check
 
-Error: File 'sprints/SW-101/story.md' not found. Run '/scrum-create-ticket SW-101' first
+Error: File '_scrum-output/sprints/SW-101/story.md' not found. Run '/scrum-create-ticket SW-101' first
 Fix: Create the story file before attempting refinement
 
 Error: Invalid frontmatter in story.md: field 'status' missing
@@ -372,19 +372,19 @@ Fix: Ensure the story file has valid YAML frontmatter with all required fields
 
 ### Folder Naming
 
-Sprint ticket folders use the pattern `sprints/SW-XXX/` where `XXX` is a zero-padded 3-digit ticket number.
+Sprint ticket folders use the pattern `_scrum-output/sprints/SW-XXX/` where `XXX` is a zero-padded 3-digit ticket number.
 
 **Rules:**
 
 - **Prefix**: `SW-` (scrum_workflow project key)
 - **Number**: 3-digit, zero-padded (e.g., `001`, `042`, `103`)
-- **Location**: All ticket folders reside under the `sprints/` directory at project root
+- **Location**: All ticket folders reside under the `_scrum-output/sprints/` directory at project root
 - **Naming**: kebab-case consistent with all other directory naming conventions
 
 **Examples:**
 
 ```
-sprints/
+_scrum-output/sprints/
 ├── SW-001/
 ├── SW-002/
 ├── SW-042/
@@ -393,7 +393,7 @@ sprints/
 
 ### Allowed Files Per Ticket Folder
 
-Each ticket folder `sprints/SW-XXX/` may contain the following files:
+Each ticket folder `_scrum-output/sprints/SW-XXX/` may contain the following files:
 
 | File | Purpose | Created By | Write Boundary |
 |---|---|---|---|

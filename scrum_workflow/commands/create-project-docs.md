@@ -30,7 +30,7 @@ No ticket number or other arguments are required. The command operates on the cu
 
 ## Output
 
-- `docs/generated/business-logic.md` -- Business rules, validation logic, and guard clauses with Mermaid flowchart diagrams
-- `docs/generated/workflows.md` -- State machines, event flows, and processing pipelines with Mermaid stateDiagram-v2, sequenceDiagram, and flowchart LR diagrams
-- `docs/generated/domain-model.md` -- Core entities, relationships, and value objects with Mermaid classDiagram and erDiagram diagrams
-- `docs/generated/.scan-state.json` -- Scan metadata tracking files scanned, timestamps, and hashes for incremental updates
+- `_scrum-output/docs/business-logic.md` -- Business rules, validation logic, and guard clauses with Mermaid flowchart diagrams
+- `_scrum-output/docs/workflows.md` -- State machines, event flows, and processing pipelines with Mermaid stateDiagram-v2, sequenceDiagram, and flowchart LR diagrams
+- `_scrum-output/docs/domain-model.md` -- Core entities, relationships, and value objects with Mermaid classDiagram and erDiagram diagrams
+- `_scrum-output/docs/.scan-state.json` -- Scan metadata tracking files scanned, timestamps, and hashes for incremental updates

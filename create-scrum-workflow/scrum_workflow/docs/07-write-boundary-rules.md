@@ -136,8 +136,8 @@ def write_atomic(path: str, content: str) -> None:
 
 ### Refinement Phase
 **MAY WRITE:**
-- `sprints/SW-XXX/refinement.md` (new)
-- `sprints/SW-XXX/story.md` (sections only)
+- `_scrum-output/sprints/SW-XXX/refinement.md` (new)
+- `_scrum-output/sprints/SW-XXX/story.md` (sections only)
 
 **MAY NOT WRITE:**
 - `plan.md` (created by readiness check)
@@ -146,8 +146,8 @@ def write_atomic(path: str, content: str) -> None:
 
 ### Readiness Check Phase
 **MAY WRITE:**
-- `sprints/SW-XXX/plan.md` (new)
-- `sprints/SW-XXX/story.md` (status → ready)
+- `_scrum-output/sprints/SW-XXX/plan.md` (new)
+- `_scrum-output/sprints/SW-XXX/story.md` (status → ready)
 
 **MAY NOT WRITE:**
 - `refinement.md` (read-only during check)
@@ -156,7 +156,7 @@ def write_atomic(path: str, content: str) -> None:
 ### Development Phase
 **MAY WRITE:**
 - Code files (project-specific)
-- `sprints/SW-XXX/story.md` (status → in-dev)
+- `_scrum-output/sprints/SW-XXX/story.md` (status → in-dev)
 
 **MAY NOT WRITE:**
 - `plan.md` (read-only during dev)
@@ -165,8 +165,8 @@ def write_atomic(path: str, content: str) -> None:
 
 ### Code Review Phase
 **MAY WRITE:**
-- `sprints/SW-XXX/review-N.md` (new)
-- `sprints/SW-XXX/story.md` (status → in-review)
+- `_scrum-output/sprints/SW-XXX/review-N.md` (new)
+- `_scrum-output/sprints/SW-XXX/story.md` (status → in-review)
 
 **MAY NOT WRITE:**
 - Code files (implementation is frozen)
@@ -175,8 +175,8 @@ def write_atomic(path: str, content: str) -> None:
 
 ### Approval Phase
 **MAY WRITE:**
-- `sprints/SW-XXX/approval-N.md` (new)
-- `sprints/SW-XXX/story.md` (status → done)
+- `_scrum-output/sprints/SW-XXX/approval-N.md` (new)
+- `_scrum-output/sprints/SW-XXX/story.md` (status → done)
 
 **MAY NOT WRITE:**
 - Code files

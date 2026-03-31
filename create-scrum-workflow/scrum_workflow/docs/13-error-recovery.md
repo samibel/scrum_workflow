@@ -11,8 +11,8 @@
 **Recovery:**
 ```bash
 # Option 1: Restore from git history
-git log --follow -- sprints/SW-XXX/story.md
-git show <commit>:sprints/SW-XXX/story.md > story.md
+git log --follow -- _scrum-output/sprints/SW-XXX/story.md
+git show <commit>:_scrum-output/sprints/SW-XXX/story.md > story.md
 
 # Option 2: Re-run refinement
 /scrum-refine-ticket SW-XXX  # Regenerates story.md
@@ -51,7 +51,7 @@ git show <commit>:sprints/SW-XXX/story.md > story.md
 **Recovery:**
 ```bash
 # Check approval history
-ls sprints/SW-XXX/approval-*.md
+ls _scrum-output/sprints/SW-XXX/approval-*.md
 
 # If no approvals exist, re-run approval from review-N.md
 ```
@@ -65,7 +65,7 @@ ls sprints/SW-XXX/approval-*.md
 **Recovery:**
 ```bash
 # Manual status correction (last resort)
-vim sprints/SW-XXX/story.md
+vim _scrum-output/sprints/SW-XXX/story.md
 # Update status field manually
 # Use atomic write!
 ```

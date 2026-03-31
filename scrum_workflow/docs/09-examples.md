@@ -122,19 +122,19 @@ Story marked as DONE. Deployment to staging recommended.
 
 ### Story Files
 ```
-sprints/SW-XXX/story.md
+_scrum-output/sprints/SW-XXX/story.md
 ```
 
 ### Review Files
 ```
-sprints/SW-XXX/review-1.md    # First review
-sprints/SW-XXX/review-2.md    # Second review (after fixes)
+_scrum-output/sprints/SW-XXX/review-1.md    # First review
+_scrum-output/sprints/SW-XXX/review-2.md    # Second review (after fixes)
 ```
 
 ### Approval Files
 ```
-sprints/SW-XXX/approval-1.md  # First approval attempt
-sprints/SW-XXX/approval-2.md  # Second approval (after re-review)
+_scrum-output/sprints/SW-XXX/approval-1.md  # First approval attempt
+_scrum-output/sprints/SW-XXX/approval-2.md  # Second approval (after re-review)
 ```
 
 ---

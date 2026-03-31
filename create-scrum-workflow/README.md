@@ -190,9 +190,10 @@ The installer copies the following into your project:
 
 - **`scrum_workflow/`** -- The complete framework directory (agents, commands, workflows, skills, templates, context, data, docs, and config). All files are platform-agnostic Markdown and YAML.
 - **`.<platform>/skills/scrum-*/`** -- Four skill registration shims placed in each selected platform's skill directory. These are thin entry points that load the corresponding command from the framework directory.
-- **`_scrum-output/`** -- Two output directories for artifacts generated during workflow execution:
-  - `planning-artifacts/` -- Refinement outputs, plans, approvals
-  - `implementation-artifacts/` -- Development outputs, reviews
+- **`_scrum-output/`** -- Output directories for artifacts generated during workflow execution:
+  - `context/` -- Project context, architecture, and planning documents
+  - `docs/` -- Story files, reviews, and implementation artifacts
+  - `skills/` -- Generated domain-specific skill files
 - **`.scrum-workflow-lock.json`** -- Lock file at the project root (see below)
 
 ## Skill Commands

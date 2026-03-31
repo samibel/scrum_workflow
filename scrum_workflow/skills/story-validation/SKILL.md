@@ -134,7 +134,7 @@ warnings:
 
 ## Reads
 
-- Story file to validate (typically `sprints/SW-XXX/story.md`)
+- Story file to validate (typically `_scrum-output/sprints/SW-XXX/story.md`)
 - Story template schema reference: `scrum_workflow/templates/story.md`
 - State machine status values: `scrum_workflow/context/standards.md`
 

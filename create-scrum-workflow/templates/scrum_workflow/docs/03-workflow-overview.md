@@ -84,7 +84,7 @@ EPIC REQUIREMENTS
 ┌─────────────────────────────────────┐
 │  Phase 1: Spec Creation              │
 │  Command: /scrum-create-ticket             │
-│  Output: sprints/SW-XXX/story.md     │
+│  Output: _scrum-output/sprints/SW-XXX/story.md     │
 │  Status: draft                       │
 └─────────────────────────────────────┘
        ↓

@@ -23,7 +23,7 @@
 3. Sets status to `draft`
 
 ### Output
-- `sprints/SW-XXX/story.md` (NEW)
+- `_scrum-output/sprints/SW-XXX/story.md` (NEW)
 
 ### See also
 [Examples: Complete story.md](09-examples.md#example-1-complete-storymd)
@@ -107,7 +107,7 @@ if story.status != "ready":
 - All tasks marked [x]
 
 ### Output
-- `sprints/SW-XXX/review-N.md` (NEW - N increments each review)
+- `_scrum-output/sprints/SW-XXX/review-N.md` (NEW - N increments each review)
 
 ### See also
 [Examples: Complete review-N.md](09-examples.md#example-2-complete-review-nmd)

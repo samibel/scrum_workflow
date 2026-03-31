@@ -4,8 +4,8 @@ Step-by-step workflow for the `/scrum-refine-ticket` command. Orchestrates multi
 
 ## Prerequisites
 
-- Story file exists at `sprints/SW-XXX/story.md` with `status: draft`
-- Project context exists at `context/index.md`
+- Story file exists at `_scrum-output/sprints/SW-XXX/story.md` with `status: draft`
+- Project context exists at `_scrum-output/context/index.md`
 - Agent role definitions exist at `scrum_workflow/agents/architect.md`, `scrum_workflow/agents/developer.md`, `scrum_workflow/agents/qa.md`
 
 ## Step 1: Validation
@@ -16,14 +16,14 @@ Validate prerequisites, guard conditions, and story file integrity before any pr
 
 Invoke `scrum_workflow/skills/prerequisite-validation/SKILL.md` to check required files:
 
-- Check if `sprints/SW-XXX/story.md` exists
-- Check if `context/index.md` exists
+- Check if `_scrum-output/sprints/SW-XXX/story.md` exists
+- Check if `_scrum-output/context/index.md` exists
 - Collect any missing file errors
 
 **On prerequisite failure** (story file missing), halt with error:
 
 ```
-Error: File 'sprints/SW-XXX/story.md' not found
+Error: File '_scrum-output/sprints/SW-XXX/story.md' not found
 Fix: Run '/scrum-create-ticket SW-XXX' first to create the story file
 ```
 
@@ -114,7 +114,7 @@ Update the story file to reflect the transition to the refinement phase.
 
 ### Step 3.1: Update Status to Refinement
 
-Update the YAML frontmatter in `sprints/SW-XXX/story.md`:
+Update the YAML frontmatter in `_scrum-output/sprints/SW-XXX/story.md`:
 
 - Set `status: refinement`
 - Set `updated: <today>` (ISO 8601 format: YYYY-MM-DD)
@@ -127,7 +127,7 @@ Load project context to determine the ticket domain and prepare domain-specific 
 
 ### Step 4.1: Check for Project Context
 
-Check if `context/index.md` exists at the project root.
+Check if `_scrum-output/context/index.md` exists at the project root.
 
 **If not found**, return an actionable error:
 
@@ -140,9 +140,9 @@ Fix: Run '/scrum-create-project-context' to generate project context files befor
 
 ### Step 4.2: Load Project Context Index
 
-Read `context/index.md` to understand the project structure and identify which domain the ticket belongs to.
+Read `_scrum-output/context/index.md` to understand the project structure and identify which domain the ticket belongs to.
 
-**Domain determination:** Parse the story description and acceptance criteria from `sprints/SW-XXX/story.md` to identify keywords that map to domains:
+**Domain determination:** Parse the story description and acceptance criteria from `_scrum-output/sprints/SW-XXX/story.md` to identify keywords that map to domains:
 
 - API, endpoint, service, database, backend keywords -- `backend` domain
 - UI, component, page, form, frontend keywords -- `frontend` domain
@@ -156,12 +156,12 @@ Store the identified domain as `{ticket-domain}` for use in agent context loadin
 
 Based on the identified `{ticket-domain}`, load the relevant domain context file:
 
-- If `{ticket-domain}` is `backend`, load `context/backend.md`
-- If `{ticket-domain}` is `frontend`, load `context/frontend.md`
-- If `{ticket-domain}` is `testing`, load `context/testing.md`
-- If `{ticket-domain}` is `devops`, load `context/devops.md`
-- If `{ticket-domain}` is `architecture`, load `context/architecture.md`
-- If no specific domain is identified, load only `context/index.md`
+- If `{ticket-domain}` is `backend`, load `_scrum-output/context/backend.md`
+- If `{ticket-domain}` is `frontend`, load `_scrum-output/context/frontend.md`
+- If `{ticket-domain}` is `testing`, load `_scrum-output/context/testing.md`
+- If `{ticket-domain}` is `devops`, load `_scrum-output/context/devops.md`
+- If `{ticket-domain}` is `architecture`, load `_scrum-output/context/architecture.md`
+- If no specific domain is identified, load only `_scrum-output/context/index.md`
 
 ## Step 5: Spawn Architect Agent
 
@@ -171,10 +171,10 @@ Create an isolated agent context and invoke the Architect agent with architectur
 
 Create an isolated context bundle containing:
 
-1. `sprints/SW-XXX/story.md` -- The story being refined
-2. `context/index.md` -- Project context overview
-3. `context/architecture.md` -- System architecture documentation
-4. `context/{ticket-domain}.md` -- Domain-specific context (if identified)
+1. `_scrum-output/sprints/SW-XXX/story.md` -- The story being refined
+2. `_scrum-output/context/index.md` -- Project context overview
+3. `_scrum-output/context/architecture.md` -- System architecture documentation
+4. `_scrum-output/context/{ticket-domain}.md` -- Domain-specific context (if identified)
 5. `scrum_workflow/agents/architect.md` -- Architect agent role definition
 
 **Isolation principle:** The Architect agent receives ONLY these files. It does NOT receive:
@@ -209,9 +209,9 @@ Create an isolated agent context and invoke the Developer agent with technical i
 
 Create an isolated context bundle containing:
 
-1. `sprints/SW-XXX/story.md` -- The story being refined
-2. `context/index.md` -- Project context overview
-3. `context/{ticket-domain}.md` -- Domain-specific context (if identified)
+1. `_scrum-output/sprints/SW-XXX/story.md` -- The story being refined
+2. `_scrum-output/context/index.md` -- Project context overview
+3. `_scrum-output/context/{ticket-domain}.md` -- Domain-specific context (if identified)
 4. `skills/{ticket-domain}/SKILL.md` -- Domain-specific skill patterns (e.g., `skills/backend/SKILL.md`)
 5. `scrum_workflow/agents/developer.md` -- Developer agent role definition
 
@@ -248,10 +248,10 @@ Create an isolated agent context and invoke the QA agent with testing and qualit
 
 Create an isolated context bundle containing:
 
-1. `sprints/SW-XXX/story.md` -- The story being refined
-2. `context/index.md` -- Project context overview
-3. `context/testing.md` -- Testing standards and practices
-4. `context/{ticket-domain}.md` -- Domain-specific context (if identified)
+1. `_scrum-output/sprints/SW-XXX/story.md` -- The story being refined
+2. `_scrum-output/context/index.md` -- Project context overview
+3. `_scrum-output/context/testing.md` -- Testing standards and practices
+4. `_scrum-output/context/{ticket-domain}.md` -- Domain-specific context (if identified)
 5. `skills/testing/SKILL.md` -- QA-specific skill patterns
 6. `scrum_workflow/agents/qa.md` -- QA agent role definition
 
@@ -413,11 +413,11 @@ Invoke `scrum_workflow/skills/synthesis/SKILL.md` (direct skill invocation, not 
 
 **Prerequisites Check:**
 - Verify refinement template exists: `scrum_workflow/templates/refinement.md`
-- Verify target directory exists: `sprints/SW-XXX/`, create if missing
+- Verify target directory exists: `_scrum-output/sprints/SW-XXX/`, create if missing
 - If prerequisites fail, halt with actionable error message
 
 **File Creation:**
-Create `sprints/SW-XXX/refinement.md` containing:
+Create `_scrum-output/sprints/SW-XXX/refinement.md` containing:
 
 - All agent perspectives (accepted and rejected) for auditability
 - **Feedback Record Section** (NFR16 compliance): User decisions with timestamps, comments, and quality tracking summary (from {feedback_data})
@@ -478,14 +478,14 @@ If all three perspectives were rejected by the user:
 - Proceed to Step 10.4 for validation
 
 **Validation Before Update:**
-- Verify story.md still exists at `sprints/SW-XXX/story.md`
+- Verify story.md still exists at `_scrum-output/sprints/SW-XXX/story.md`
 - Create backup of current story.md for rollback capability
 - Verify synthesis skill provides merge logic (validate skill has merge implementation)
 - Verify deduplication rules are applied (check synthesis skill output for consolidated findings)
 - Verify conflict resolution is applied (check synthesis skill output for resolved conflicts)
 
 **Atomic Update (NFR1 Compliance):**
-Update `sprints/SW-XXX/story.md` with synthesized content using atomic write operation:
+Update `_scrum-output/sprints/SW-XXX/story.md` with synthesized content using atomic write operation:
 
 - Read complete story.md file
 - Merge Architect findings into story description (if accepted)
@@ -558,7 +558,7 @@ Invoke `scrum_workflow/skills/readiness-check/SKILL.md` (direct skill invocation
 
 **If readiness check returns PASS:**
 
-1. **Verify plan.md was created** at `sprints/SW-XXX/plan.md`
+1. **Verify plan.md was created** at `_scrum-output/sprints/SW-XXX/plan.md`
 2. **Update story.md status** from `refinement` to `ready`
 3. **Update `updated` field** to current date (ISO 8601)
 4. **Use atomic write operation** (NFR1 compliance)
@@ -567,7 +567,7 @@ Invoke `scrum_workflow/skills/readiness-check/SKILL.md` (direct skill invocation
 ```
 ✅ Story SW-XXX passed readiness check
 Status updated: refinement → ready
-Plan created: sprints/SW-XXX/plan.md
+Plan created: _scrum-output/sprints/SW-XXX/plan.md
 Story is ready for implementation
 ```
 
@@ -620,9 +620,9 @@ After handling PASS or FAIL result:
 
 This workflow may write:
 
-- `sprints/SW-XXX/story.md` -- Status update (`status: refinement`, `updated: <today>`) and synthesized content updates
-- `sprints/SW-XXX/refinement.md` -- Refinement audit file with all perspectives and feedback record
-- `sprints/SW-XXX/plan.md` -- Execution plan (on readiness check PASS only)
+- `_scrum-output/sprints/SW-XXX/story.md` -- Status update (`status: refinement`, `updated: <today>`) and synthesized content updates
+- `_scrum-output/sprints/SW-XXX/refinement.md` -- Refinement audit file with all perspectives and feedback record
+- `_scrum-output/sprints/SW-XXX/plan.md` -- Execution plan (on readiness check PASS only)
 
 This workflow may NOT write:
 
@@ -630,7 +630,7 @@ This workflow may NOT write:
 - `review-*.md` -- Managed by `/scrum-dev-story`
 - `approval.md` -- Managed by approval workflow
 - `scrum_workflow/` -- Framework files are read-only during execution
-- `context/` -- Context files are managed by `/scrum-create-project-context`
+- `_scrum-output/context/` -- Context files are managed by `/scrum-create-project-context`
 
 ## Validation Rules
 

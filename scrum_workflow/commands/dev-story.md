@@ -21,12 +21,12 @@ workflows/development.md
 Ticket number in the format: `/scrum-dev-story SW-XXX`
 
 - **Ticket number**: `SW-XXX` format where XXX is a zero-padded 3-digit number (e.g., `SW-001`, `SW-042`, `SW-103`)
-- **Prerequisite**: The story file `sprints/SW-XXX/story.md` must exist with `status: ready`
-- **Plan**: The execution plan file `sprints/SW-XXX/plan.md` should exist (created by readiness check)
+- **Prerequisite**: The story file `_scrum-output/sprints/SW-XXX/story.md` must exist with `status: ready`
+- **Plan**: The execution plan file `_scrum-output/sprints/SW-XXX/plan.md` should exist (created by readiness check)
 
 ## Output
 
-- `sprints/SW-XXX/story.md` -- Updated with `status: in-dev` and `updated: <today>` (ISO 8601 format)
+- `_scrum-output/sprints/SW-XXX/story.md` -- Updated with `status: in-dev` and `updated: <today>` (ISO 8601 format)
 - Implemented code changes following the plan and story specification
 - Code files in the project directory (specific to story requirements)
 

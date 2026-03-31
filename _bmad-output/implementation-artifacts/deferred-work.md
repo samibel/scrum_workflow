@@ -59,3 +59,7 @@
 - **IDE Workspace Datei im Version Control** [.idea/workspace.xml] — Pre-existing: IDE files should not be tracked in version control. Recommendation: Add `.idea/` to `.gitignore`
 - **WebFetch Domain-Beschränkungen** [.claude/settings.local.json:11-17] — Pre-existing from research phase: WebFetch domain restrictions are research sandbox rules. Recommendation: Clean up local settings after research
 - **Große Epics-Datei** [_bmad-output/planning-artifacts/epics.md] — Pre-existing file structure: Large file with Epic 6 & 7 definitions. Recommendation: Consider modular structure for future epics
+
+## Deferred from: code review of 9-1-researcher-agent-definition (2026-03-30)
+
+- **Installer template missing docs/research/ directory** [create-scrum-workflow/templates/scrum_workflow/] — Pre-existing gap: The researcher agent references `docs/research/technical-research-agent-patterns-2026-03-30.md` but the installer templates do not include a `docs/research/` directory. Will be addressed by Story 9.9 (installer integration).

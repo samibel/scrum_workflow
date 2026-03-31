@@ -69,6 +69,8 @@ flowchart LR
 | `/scrum-dev-story SW-XXX review` | Phase 4: Code review |
 | `/scrum-create-project-docs` | Generate business logic documentation |
 | `/scrum-create-architecture-docs` | Generate architecture documentation |
+| `/scrum-research technical <topic>` | Technical research with agentic patterns |
+| `/scrum-research general <topic>` | General research for broader topics |
 | Human approval | Phase 5: Final gate |
 
 **Full Documentation:** [docs/00-index.md](scrum_workflow/docs/00-index.md)
@@ -127,8 +129,10 @@ After installation, your project will contain:
 your-project/
 ├── .claude/skills/         # Registered workflow skills (platform-dependent)
 ├── _scrum-output/
-│   ├── planning-artifacts/       # Epics, PRD, Architecture
-│   └── implementation-artifacts/ # Story files
+│   ├── context/          # Project context and domain knowledge
+│   ├── docs/             # Generated documentation
+│   ├── skills/           # Generated skill files
+│   └── sprints/          # SW-101, SW-102, etc.
 ├── scrum_workflow/
 │   ├── agents/           # Agent definitions
 │   ├── commands/         # Command workflows
@@ -136,7 +140,6 @@ your-project/
 │   ├── templates/        # Output templates
 │   ├── context/          # Domain context
 │   └── docs/             # Documentation
-├── sprints/              # SW-101, SW-102, etc.
 └── .scrum-workflow-lock.json  # Installation integrity tracking
 ```
 
@@ -207,6 +210,7 @@ draft → refinement → ready → in-dev → in-review → done
 - **Epic 6:** Business Logic Documentation Agent
 - **Epic 7:** Architecture Documentation Agent
 - **Epic 8:** Installer Integration (Epic 6 & 7 Skills)
+- **Epic 9:** Research Agent — Technical & General
 
 ---
 
@@ -224,6 +228,6 @@ This framework is designed to be extended. See:
 
 ---
 
-**Version:** 1.0.0
+**Version:** 1.1.0
 **Last Updated:** 2026-03-30
 **Documentation:** [scrum_workflow/docs/00-index.md](scrum_workflow/docs/00-index.md)

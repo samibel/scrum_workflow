@@ -5,7 +5,7 @@ Two-mode workflow for the `/scrum-create-architecture-docs` command. Orchestrate
 ## Prerequisites
 
 - **Required**: `scrum_workflow/agents/architect-doc.md` -- architect-doc agent definition (must exist)
-- **Optional**: `context/index.md` -- Project context for domain/tech stack understanding (warn if missing, do not halt)
+- **Optional**: `_scrum-output/context/index.md` -- Project context for domain/tech stack understanding (warn if missing, do not halt)
 - **Agent Active-In**: The architect-doc agent has `active_in: [create-architecture-docs]` matching this command name
 
 ## Step 0: Mode Detection
@@ -42,25 +42,25 @@ If file does not exist:
 
 ### 1.2: Check Project Context
 
-Check if `context/index.md` exists:
+Check if `_scrum-output/context/index.md` exists:
 
 ```bash
-test -f context/index.md
+test -f _scrum-output/context/index.md
 ```
 
 - If exists: Load for project domain and tech stack understanding
-- If missing: **WARN** "No project context found (context/index.md). Analysis will proceed without domain-specific context." and continue
+- If missing: **WARN** "No project context found (_scrum-output/context/index.md). Analysis will proceed without domain-specific context." and continue
 
 ### 1.3: Check Existing Documentation (Full-Scan Only)
 
-In full-scan mode only, check if `docs/generated/` directory contains existing architecture docs:
+In full-scan mode only, check if `_scrum-output/docs/` directory contains existing architecture docs:
 
 ```bash
-test -d docs/generated
-ls docs/generated/*.md 2>/dev/null | grep -E "backend-architecture|frontend-architecture|devops-architecture|local-dev-environment|testing-architecture"
+test -d _scrum-output/docs
+ls _scrum-output/docs/*.md 2>/dev/null | grep -E "backend-architecture|frontend-architecture|devops-architecture|local-dev-environment|testing-architecture"
 ```
 
-If architecture documentation files already exist in `docs/generated/`:
+If architecture documentation files already exist in `_scrum-output/docs/`:
 - **WARN** with overwrite prompt: "Existing architecture docs found. This will overwrite. Continue? [y/N]"
 - If user confirms (Y/y): Proceed with full-scan
 - If user declines (N/n): **EXIT gracefully** with message: "Documentation generation cancelled by user. No changes made."
@@ -79,7 +79,7 @@ Load the architect-doc agent definition from `scrum_workflow/agents/architect-do
 
 ### 2.2: Load Project Context (if available)
 
-If `context/index.md` exists:
+If `_scrum-output/context/index.md` exists:
 - Load to understand project domain areas (backend, frontend, DevOps, testing, architecture)
 - Extract tech stack information (languages, frameworks, tools)
 - Use context to prioritize which architecture dimensions are relevant
@@ -112,7 +112,7 @@ In full-scan mode, orchestrate five analysis phases sequentially:
 
 Invoke architect-doc agent with backend analysis instructions:
 - Use grep patterns for API endpoints, event systems, schedulers, middleware, services
-- Generate `docs/generated/backend-architecture.md` with:
+- Generate `_scrum-output/docs/backend-architecture.md` with:
   - API Endpoints (grouped by resource/domain)
   - Event System (with `sequenceDiagram`)
   - Scheduled Tasks
@@ -124,7 +124,7 @@ Invoke architect-doc agent with backend analysis instructions:
 
 Invoke architect-doc agent with frontend analysis instructions:
 - Use grep patterns for components, state management, routing
-- Generate `docs/generated/frontend-architecture.md` with:
+- Generate `_scrum-output/docs/frontend-architecture.md` with:
   - Component Hierarchy (with `graph TD`)
   - State Management (with `flowchart`)
   - Routing Structure
@@ -135,7 +135,7 @@ Invoke architect-doc agent with frontend analysis instructions:
 
 Invoke architect-doc agent with DevOps analysis instructions:
 - Use grep patterns for CI/CD, Docker, Kubernetes, IaC
-- Generate `docs/generated/devops-architecture.md` with:
+- Generate `_scrum-output/docs/devops-architecture.md` with:
   - CI/CD Pipelines (with `flowchart LR`)
   - Container Configuration
   - Orchestration (K8s)
@@ -146,7 +146,7 @@ Invoke architect-doc agent with DevOps analysis instructions:
 
 Invoke architect-doc agent with local dev analysis instructions:
 - Use grep patterns for docker-compose, Wiremock, env files, seed data
-- Generate `docs/generated/local-dev-environment.md` with:
+- Generate `_scrum-output/docs/local-dev-environment.md` with:
   - Services with ports (with `graph TD`)
   - Mock Services
   - Environment Variables
@@ -157,21 +157,21 @@ Invoke architect-doc agent with local dev analysis instructions:
 
 Invoke architect-doc agent with testing analysis instructions:
 - Use grep patterns for test frameworks, directories, coverage
-- Generate `docs/generated/testing-architecture.md` with:
+- Generate `_scrum-output/docs/testing-architecture.md` with:
   - Test Pyramid (with `graph TD`)
   - Frameworks & Configuration
   - Test Directory Structure
   - Coverage Requirements
   - E2E Setup
 - Extract source references in file:line format from all discovered testing components
-- if no testing framework or configuration is detected after scanning, skip this step and note in scan state as `documents_skipped: ["docs/generated/testing-architecture.md"]`
+- if no testing framework or configuration is detected after scanning, skip this step and note in scan state as `documents_skipped: ["_scrum-output/docs/testing-architecture.md"]`
 
 ### 4.6: Scan State Persistence
 
-Write/update `docs/generated/.arch-scan-state.json` atomically using temp file pattern:
+Write/update `_scrum-output/docs/.arch-scan-state.json` atomically using temp file pattern:
 ```bash
 # Write to temp file first, then move to target for atomicity
-cat > docs/generated/.arch-scan-state.tmp <<EOF
+cat > _scrum-output/docs/.arch-scan-state.tmp <<EOF
 {
   "scan_date": "2026-03-30T12:00:00.000Z",
   "scan_mode": "full-scan",
@@ -180,18 +180,18 @@ cat > docs/generated/.arch-scan-state.tmp <<EOF
     ...
   ],
   "documents_generated": [
-    "docs/generated/backend-architecture.md",
-    "docs/generated/frontend-architecture.md",
-    "docs/generated/devops-architecture.md",
-    "docs/generated/local-dev-environment.md",
-    "docs/generated/testing-architecture.md"
+    "_scrum-output/docs/backend-architecture.md",
+    "_scrum-output/docs/frontend-architecture.md",
+    "_scrum-output/docs/devops-architecture.md",
+    "_scrum-output/docs/local-dev-environment.md",
+    "_scrum-output/docs/testing-architecture.md"
   ],
   "documents_skipped": [],
   "scan_duration_seconds": 45,
   "scan_status": "complete"
 }
 EOF
-mv docs/generated/.arch-scan-state.tmp docs/generated/.arch-scan-state.json
+mv _scrum-output/docs/.arch-scan-state.tmp _scrum-output/docs/.arch-scan-state.json
 ```
 
 If write fails: **WARN** "Failed to write scan state. Next scan will run full-scan mode." and continue (state is optional for next run).
@@ -204,7 +204,7 @@ In update mode (triggered by `--update` flag):
 
 ### 5.1: Load Existing Scan State
 
-Load `docs/generated/.arch-scan-state.json`:
+Load `_scrum-output/docs/.arch-scan-state.json`:
 - Verify state file exists
 - Extract `files_scanned` array with previous file hashes and timestamps
 - Extract `documents_generated` list
@@ -249,10 +249,10 @@ Apply these changes? [y/N]
 
 ### 5.6: Update Scan State
 
-Update `docs/generated/.arch-scan-state.json` atomically using temp file pattern:
+Update `_scrum-output/docs/.arch-scan-state.json` atomically using temp file pattern:
 ```bash
 # Write to temp file first, then move to target for atomicity
-cat > docs/generated/.arch-scan-state.tmp <<EOF
+cat > _scrum-output/docs/.arch-scan-state.tmp <<EOF
 {
   "scan_date": "...",
   "scan_mode": "update",
@@ -261,7 +261,7 @@ cat > docs/generated/.arch-scan-state.tmp <<EOF
   ...
 }
 EOF
-mv docs/generated/.arch-scan-state.tmp docs/generated/.arch-scan-state.json
+mv _scrum-output/docs/.arch-scan-state.tmp _scrum-output/docs/.arch-scan-state.json
 ```
 
 If state update fails: **WARN** "Failed to update scan state. Next incremental scan may re-analyze all files." and continue (documentation was already updated successfully).
@@ -269,20 +269,20 @@ If state update fails: **WARN** "Failed to update scan state. Next incremental s
 If any documentation write fails in Step 5.5:
 - **ROLLBACK** any partially written documentation files
 - **DO NOT update** scan state
-- **ERROR** "Documentation update failed. Partial changes may exist. Please review docs/generated/ manually."
+- **ERROR** "Documentation update failed. Partial changes may exist. Please review _scrum-output/docs/ manually."
 
 ## Step 6: Output Directory Creation
 
 Before writing any documentation files:
-- Check if `docs/generated/` directory exists
+- Check if `_scrum-output/docs/` directory exists
 - If directory does not exist, create it:
 
 ```bash
-mkdir -p docs/generated
+mkdir -p _scrum-output/docs
 ```
 
 If directory creation fails:
-- **HALT** with error: "Cannot create output directory 'docs/generated/'. Check permissions."
+- **HALT** with error: "Cannot create output directory '_scrum-output/docs/'. Check permissions."
 - Do not proceed with documentation generation
 
 All architecture documentation files are written to this directory.
@@ -290,11 +290,11 @@ All architecture documentation files are written to this directory.
 ## Write Boundaries
 
 **This workflow MAY write:**
-- All files under `docs/generated/` directory
-- `docs/generated/.arch-scan-state.json` scan state file
+- All files under `_scrum-output/docs/` directory
+- `_scrum-output/docs/.arch-scan-state.json` scan state file
 
 **This workflow MUST NOT write:**
-- Any files outside `docs/generated/`
+- Any files outside `_scrum-output/docs/`
 - Any files in `scrum_workflow/` directory
 - Any project source files
 - Any configuration files

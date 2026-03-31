@@ -58,10 +58,10 @@ approval_date: "2026-03-25"
 
 ## Related Documentation
 
-- **Epic Specifications:** `_scrum-output/planning-artifacts/epics.md`
-- **Architecture Decisions:** `_scrum-output/planning-artifacts/architecture.md`
-- **Product Requirements:** `_scrum-output/planning-artifacts/prd.md`
-- **Sprint Status:** `_scrum-output/implementation-artifacts/sprint-status.yaml`
+- **Epic Specifications:** `_scrum-output/context/epics.md`
+- **Architecture Decisions:** `_scrum-output/context/architecture.md`
+- **Product Requirements:** `_scrum-output/context/prd.md`
+- **Sprint Status:** `_scrum-output/docs/sprint-status.yaml`
 
 ---
 

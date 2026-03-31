@@ -5,8 +5,8 @@ Step-by-step workflow for implementing stories based on approved specifications 
 ## Prerequisites
 
 - Story identifier matches `SW-XXX` format (where XXX is 3-digit number: `SW-001`, `SW-042`, `SW-103`)
-- Story file exists at `sprints/SW-XXX/story.md` with `status: ready`
-- Execution plan exists at `sprints/SW-XXX/plan.md` (created by readiness check)
+- Story file exists at `_scrum-output/sprints/SW-XXX/story.md` with `status: ready`
+- Execution plan exists at `_scrum-output/sprints/SW-XXX/plan.md` (created by readiness check)
 - Story has passed readiness check (all 4 criteria validated)
 - `scrum_workflow/commands/scrum-dev-story.md` exists with guard condition enforcement
 
@@ -14,13 +14,13 @@ Step-by-step workflow for implementing stories based on approved specifications 
 
 ### Step 1.1: Verify Story File Exists
 
-Check if `sprints/SW-XXX/story.md` exists.
+Check if `_scrum-output/sprints/SW-XXX/story.md` exists.
 
 **Validate story identifier format:** `SW-XXX` where XXX is a zero-padded 3-digit number (e.g., `SW-001`, `SW-042`, `SW-103`).
 
 **If file does not exist**, halt with error:
 ```
-Error: Story file 'sprints/SW-XXX/story.md' not found
+Error: Story file '_scrum-output/sprints/SW-XXX/story.md' not found
 Fix: Create story using /scrum-create-ticket command
 ```
 
@@ -68,7 +68,7 @@ Fix: Ensure story file has valid YAML frontmatter with all required fields
 
 ### Step 2.1: Load Story File
 
-Read `sprints/SW-XXX/story.md` completely and extract:
+Read `_scrum-output/sprints/SW-XXX/story.md` completely and extract:
 - Story section: User story description
 - Acceptance Criteria: BDD Given/When/Then criteria
 - Tasks/Subtasks: Implementation task list
@@ -76,7 +76,7 @@ Read `sprints/SW-XXX/story.md` completely and extract:
 
 ### Step 2.2: Load Plan File
 
-Read `sprints/SW-XXX/plan.md` and extract:
+Read `_scrum-output/sprints/SW-XXX/plan.md` and extract:
 - Subtasks table with dependencies
 - Implementation order (prerequisites first)
 - Acceptance criteria summary
@@ -86,7 +86,7 @@ Read `sprints/SW-XXX/plan.md` and extract:
 
 **If plan.md does not exist**, issue warning but continue:
 ```
-Warning: Plan file 'sprints/SW-XXX/plan.md' not found
+Warning: Plan file '_scrum-output/sprints/SW-XXX/plan.md' not found
 Continuing with story.md task list only
 ```
 
@@ -175,7 +175,7 @@ Read `scrum_workflow/context/standards.md` for:
 
 ### Step 4.1: Update Status Field
 
-Update `sprints/SW-XXX/story.md` YAML frontmatter:
+Update `_scrum-output/sprints/SW-XXX/story.md` YAML frontmatter:
 - Set `status` field to `in-dev`
 - Update `updated` field to current date (ISO 8601 format)
 - Use atomic write operation: write to temporary file, then rename (NFR1 compliance)
@@ -258,17 +258,17 @@ For each completed task/subtask:
 
 The dev agent MAY write:
 - Code files in the project directory (language-specific source files)
-- `sprints/SW-XXX/story.md` (status update only in YAML frontmatter)
+- `_scrum-output/sprints/SW-XXX/story.md` (status update only in YAML frontmatter)
 - Test files for implemented functionality
 - Configuration files required by the story
 
 ### Step 6.2: Prohibited Write Operations
 
 The dev agent MAY NOT write:
-- `sprints/SW-XXX/refinement.md` -- Read-only during development
-- `sprints/SW-XXX/plan.md` -- Read-only during development
-- `sprints/SW-XXX/review-*.md` -- Managed by code review workflow
-- `sprints/SW-XXX/approval.md` -- Managed by approval workflow
+- `_scrum-output/sprints/SW-XXX/refinement.md` -- Read-only during development
+- `_scrum-output/sprints/SW-XXX/plan.md` -- Read-only during development
+- `_scrum-output/sprints/SW-XXX/review-*.md` -- Managed by code review workflow
+- `_scrum-output/sprints/SW-XXX/approval.md` -- Managed by approval workflow
 - `scrum_workflow/` -- Framework files are read-only during execution
 
 ### Step 6.3: Validate Write Operations
@@ -317,7 +317,7 @@ Fix: Complete all tasks and ensure tests pass before triggering review
 
 ### Step 7.3: Update Status to in-review
 
-Update `sprints/SW-XXX/story.md` YAML frontmatter:
+Update `_scrum-output/sprints/SW-XXX/story.md` YAML frontmatter:
 - Set `status` field to `in-review`
 - Update `updated` field to current date (ISO 8601 format)
 - Use atomic write operation (NFR1 compliance)
@@ -334,16 +334,16 @@ Ready for code review
 
 This workflow may write:
 
-- `sprints/SW-XXX/story.md` -- Status updates (in-dev, in-review) only
+- `_scrum-output/sprints/SW-XXX/story.md` -- Status updates (in-dev, in-review) only
 - Code files in project directory -- Implementation outputs
 - Test files -- Validation and regression tests
 
 This workflow may NOT write:
 
-- `sprints/SW-XXX/refinement.md` -- Read-only during development
-- `sprints/SW-XXX/plan.md` -- Read-only during development
-- `sprints/SW-XXX/review-*.md` -- Managed by code review workflow
-- `sprints/SW-XXX/approval.md` -- Managed by approval workflow
+- `_scrum-output/sprints/SW-XXX/refinement.md` -- Read-only during development
+- `_scrum-output/sprints/SW-XXX/plan.md` -- Read-only during development
+- `_scrum-output/sprints/SW-XXX/review-*.md` -- Managed by code review workflow
+- `_scrum-output/sprints/SW-XXX/approval.md` -- Managed by approval workflow
 - `scrum_workflow/` -- Framework files are read-only during execution
 
 ## Validation Rules

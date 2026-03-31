@@ -133,7 +133,7 @@ development_status:
 10: integration tests for research agent
 11: documentation and readme update
 12: last_updated: 2026-03-31 (story 9-6 code review complete, status updated to review)"
-  9-7-research-general-command-and-workflow: ready-for-dev
+  9-7-research-general-command-and-workflow: in-progress
   9-8-incremental-update-mode-for-research: ready-for-dev
   9-9-installer-integration-for-research-skills: ready-for-dev
   9-10-integration-tests-for-research-agent: ready-for-dev

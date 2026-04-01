@@ -1,0 +1,39 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.agentic-patterns.com)",
+      "WebSearch",
+      "WebFetch(domain:agentic-patterns.com)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:seylox.github.io)",
+      "Bash(find /Users/SBELAKH/Desktop/dev/mars/scrum_workflow -name *1-1* -type f)",
+      "Bash(find /Users/SBELAKH/Desktop/dev/mars/scrum_workflow/_bmad -name config.yaml -o -name *.config.json)",
+      "Bash(find /Users/SBELAKH/Desktop/dev/mars/scrum_workflow/_bmad -name tea* -type f)",
+      "Bash(find /Users/SBELAKH/Desktop/dev/mars/scrum_workflow -type f -name *.test.* -o -name *.spec.* -o -name __tests__)",
+      "Bash(python3 -c \"import yaml; yaml.safe_load\\(open\\(''scrum_workflow/config.yaml''\\)\\)\")",
+      "Bash(grep -v '^$')",
+      "Bash(while read:*)",
+      "Bash(do echo:*)",
+      "Bash(done)",
+      "Bash(python3 -c \"import yaml; yaml.safe_load\\(open\\(''scrum_workflow/config.yaml''\\)\\); print\\(''✓ config.yaml is valid''\\)\")",
+      "Bash(cat:*)",
+      "Read(//tmp/**)",
+      "Bash(npm test:*)",
+      "Bash(npm install:*)",
+      "Bash(npx jest:*)",
+      "Bash(npx ts-node:*)",
+      "Bash(grep -i \"workflow\\\\|orchestrat\\\\|spawn agent\\\\|execute step\\\\|coordinate\\\\|synthesis\\\\|readiness check\\\\|handoff\\\\|state machine\" /Users/SBELAKH/Desktop/dev/mars/scrum_workflow/.claude/skills/*.md)",
+      "WebFetch(domain:omc.vibetip.help)",
+      "WebFetch(domain:zogoo.medium.com)",
+      "WebFetch(domain:www.augmentcode.com)",
+      "WebFetch(domain:www.kinde.com)",
+      "WebFetch(domain:www.sitepoint.com)",
+      "WebFetch(domain:research.aimultiple.com)",
+      "WebFetch(domain:arxiv.org)",
+      "Bash(xargs ls:*)",
+      "Bash(gh api:*)",
+      "WebFetch(domain:www.marktechpost.com)",
+      "WebFetch(domain:medium.com)"
+    ]
+  }
+}

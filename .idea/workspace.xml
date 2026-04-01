@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="9fbb06fc-50c2-4c7e-bb8a-a087cf161358" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/scrum_workflow/commands/refine-story.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scrum_workflow/workflows/refine-story.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.claude/settings.local.json" beforeDir="false" afterPath="$PROJECT_DIR$/.claude/settings.local.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/9-10-integration-tests-for-research-agent.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/9-10-integration-tests-for-research-agent.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/9-11-documentation-and-readme-update.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/9-11-documentation-and-readme-update.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/9-7-research-general-command-and-workflow.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/9-7-research-general-command-and-workflow.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/9-8-incremental-update-mode-for-research.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/9-8-incremental-update-mode-for-research.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/9-9-installer-integration-for-research-skills.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/9-9-installer-integration-for-research-skills.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/deferred-work.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/deferred-work.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/sprint-status.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/sprint-status.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrum_workflow/commands/refine-ticket.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/commands/refine-ticket.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrum_workflow/commands/research-general.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/commands/research-general.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrum_workflow/commands/research-technical.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/commands/research-technical.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrum_workflow/docs/04-command-reference.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/docs/04-command-reference.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrum_workflow/docs/05-state-machine.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/docs/05-state-machine.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrum_workflow/templates/refinement.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/templates/refinement.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrum_workflow/workflows/refinement.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/workflows/refinement.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrum_workflow/workflows/research-technical.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/workflows/research-technical.md" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_/Users/SBELAKH/Desktop/dev/mars/scrum_workflow" value="3BWS2T2IV3MqcBOET1PH1KiOK68" />
+    </persistenceIdMap>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="3BWS2T2IV3MqcBOET1PH1KiOK68" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "temp__main",
+    "kotlin-language-version-configured": "true",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration default="true" type="AZURE_FUNCTION_SUPPORT" factoryName="Run Functions">
+      <option name="appName" />
+      <option name="appServicePlanName" />
+      <option name="appServicePlanResourceGroup" />
+      <option name="appSettingsKey" value="4936c097-6a7d-4d8f-97c3-b9b4d1407623" />
+      <option name="artifact" />
+      <option name="debugOptions" />
+      <option name="deployment" />
+      <option name="deploymentStagingDirectoryPath" />
+      <option name="funcPath" />
+      <option name="functionHostArguments" />
+      <option name="hostJsonPath" />
+      <option name="insightsName" />
+      <option name="instrumentationKey" />
+      <option name="javaVersion" />
+      <option name="localSettingsJsonPath" />
+      <option name="moduleName" />
+      <option name="os" />
+      <option name="pricingTier" />
+      <option name="providerMap">
+        <map />
+      </option>
+      <option name="region" />
+      <option name="resourceGroup" />
+      <option name="stagingFolder" />
+      <option name="subscription" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.26830.84" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="9fbb06fc-50c2-4c7e-bb8a-a087cf161358" name="Changes" comment="" />
+      <created>1774603126434</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1774603126434</updated>
+      <workItem from="1774603127567" duration="3440000" />
+      <workItem from="1774853903282" duration="10000" />
+      <workItem from="1774855030920" duration="31013000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="github-copilot-workspace">
+    <instructionFileLocations>
+      <option value=".github/instructions" />
+    </instructionFileLocations>
+    <promptFileLocations>
+      <option value=".github/prompts" />
+    </promptFileLocations>
+  </component>
+</project>

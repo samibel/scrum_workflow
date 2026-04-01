@@ -1,0 +1,38 @@
+{
+  "name": "create-scrum-workflow",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Install the Scrum Workflow AI-assisted development framework",
+  "bin": {
+    "create-scrum-workflow": "bin/create-scrum-workflow.js"
+  },
+  "files": [
+    "bin/",
+    "src/",
+    "templates/"
+  ],
+  "keywords": [
+    "ai",
+    "scrum",
+    "workflow",
+    "agent-skills",
+    "claude-code",
+    "cursor",
+    "windsurf"
+  ],
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "commander": "^13.0.0",
+    "@clack/prompts": "^0.9.0",
+    "fs-extra": "^11.0.0",
+    "js-yaml": "^4.1.0",
+    "picocolors": "^1.1.0"
+  },
+  "devDependencies": {
+    "vitest": "^3.0.0",
+    "memfs": "^4.0.0"
+  }
+}

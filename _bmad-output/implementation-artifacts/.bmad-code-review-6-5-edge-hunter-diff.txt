@@ -1,0 +1,207 @@
+# Story 6-5 Code Review Diff
+
+## Files Changed:
+- NEW: scrum_workflow/templates/domain-model.md (114 lines)
+- MODIFIED: scrum_workflow/workflows/project-documentation.md (Step 5.3 added)
+
+## Diff for domain-model.md:
+
+```diff
+diff --git a/scrum_workflow/templates/domain-model.md b/scrum_workflow/templates/domain-model.md
+new file mode 100644
+index 0000000..a7ea869
+--- /dev/null
++++ b/scrum_workflow/templates/domain-model.md
+@@ -0,0 +1,114 @@
++# Domain Model Documentation
++
++## Overview
++
++<!-- Fill from documentarian analysis -->
++
++**Total Entities Documented:** {{total_entities}}
++**Core Entities:** {{core_entity_count}}
++**Value Objects & Enums:** {{value_object_count}}
++**Data Flow Structures:** {{dto_count}}
++**Analysis Timestamp:** {{analysis_timestamp}}
++
++Summary of domain entities, their relationships, and data structures discovered in the codebase. Entities are grouped by category and bounded context for navigation.
++
++## Core Entities
++
++Domain objects with business meaning. Each core entity represents a fundamental concept in the domain with attributes, behaviors, and relationships to other entities.
++
++### {{entity_name}}
++
++- **Description:** {{plain language explanation of what this entity represents}}
++- **Location:** `[Source: path/to/file.ext:LINE]` (use LINE-N-N for ranges, comma-separate for multiple files)
++- **Key Attributes/Fields:** {{list of important attributes or fields}}
++- **Relationships:** {{relationships to other entities: inheritance, composition, association}}
++
++<!-- Fill from documentarian analysis -->
++
++## Entity Relationships
++
++Foreign keys, associations, inheritance hierarchies, and domain constraints that define how entities relate to each other.
++
++### {{relationship_name}}
++
++- **Type:** {{inheritance|composition|association|dependency}}
++- **Description:** {{plain language explanation of this relationship}}
++- **Location:** `[Source: path/to/file.ext:LINE]` (use LINE-N-N for ranges, comma-separate for multiple files)
++- **Entities Involved:** {{list of entities connected by this relationship}}
++- **Cardinality:** {{one-to-one|one-to-many|many-to-many}} (if discoverable)
++
++<!-- Fill from documentarian analysis -->
++
++```mermaid
++classDiagram
++    class {{EntityA}} {
++        +attribute1
++        +attribute2
++        +method1()
++    }
++    class {{EntityB}} {
++        +attribute1
++        +attribute2
++    }
++    {{EntityA}} --|> {{EntityB}} : inherits
++    {{EntityA}} *-- {{EntityC}} : composition
++```
++
++## Value Objects & Enums
++
++Immutable value types, enumerations, and domain constants that represent domain concepts without identity.
++
++### {{value_object_name}}
++
++- **Description:** {{what this value object or enum represents}}
++- **Location:** `[Source: path/to/file.ext:LINE]` (use LINE-N-N for ranges, comma-separate for multiple files)
++- **Values/Members:** {{list of enum values or value object states}}
++- **Business Context:** {{domain constraint or policy this value object enforces}}
++
++<!-- Fill from documentarian analysis -->
++
++## Data Flow Structures
++
++Data transfer objects (DTOs), requests, responses, and payloads that move data between layers or across boundaries.
++
++### {{dto_name}}
++
++- **Description:** {{what this DTO is used for}}
++- **Location:** `[Source: path/to/file.ext:LINE]` (use LINE-N-N for ranges, comma-separate for multiple files)
++- **Fields:** {{list of DTO fields}}
++- **Usage Context:** {{where this DTO is used: API boundary, inter-service communication, etc.}}
++
++<!-- Fill from documentarian analysis -->
++
++## Database Schema
++
++<!-- Only include this section if database schemas are detected (migrations, ORM entities, schema definitions) -->
++
++### Schema Overview
++
++Database tables, columns, and foreign key relationships that persist the domain model.
++
++### {{table_name}}
++
++- **Description:** {{what this table stores}}
++- **Location:** `[Source: path/to/file.ext:LINE]` (migration file or ORM model definition)
++- **Columns:** {{list of columns with data types}}
++- **Primary Key:** {{primary key column}}
++- **Foreign Keys:** {{relationships to other tables}}
++
++```mermaid
++erDiagram
++    {{TABLE_A}} ||--o{ {{TABLE_B}} : "foreign_key"
++    {{TABLE_A}} {
++        int id PK
++        string column1
++        datetime column2
++    }
++    {{TABLE_B}} {
++        int id PK
++        int table_a_id FK
++        string column1
++    }
++```
++
++<!-- Fill from documentarian analysis -->
+```
+
+## Diff for project-documentation.md (Step 5.3 only):
+
+```diff
++### Step 5.3: Domain Model Analysis
++
++Invoke the documentarian agent's domain entity extraction methodology (defined in `scrum_workflow/agents/documentarian.md` Instructions Section 4) to scan the codebase for domain entities, relationships, value objects, and data structures. Use `scrum_workflow/templates/domain-model.md` as the structural template for the output document.
++
++#### 5.3.1: Grep-Based Domain Entity Scanning
++
++Scan all source files from the file manifest (Step 3) using the documentarian agent's grep patterns for domain entity identification (defined in `scrum_workflow/agents/documentarian.md` Instructions Section 4). These patterns are language-agnostic and work with any directory structure.
++
++The grep patterns include:
++- **Class/interface/type definitions**: `\bclass\s+\w+`, `\binterface\s+\w+`, `\btype\s+\w+`, `\bstruct\s+\w+`
++- **Entity/model/schema keywords**: `\b(Entity|Model|Schema|DTO|Request|Response|Payload)\b`, `\b@Entity\b`, `\b@Table\b`
++- **Relationship keywords**: `\b(hasMany|belongsTo|hasManyThrough|belongsToMany|references|extends|implements|association)\b`, `\b@(OneToMany|ManyToOne|ManyToMany|OneToOne)\b`
++- **Enums**: `\benum\s+\w+`, `\bEnum\s+\w+`
++- **Database migrations**: `\bcreateTable\b`, `\baddColumn\b`, `\bmigration\b`, `\bschema\.`
++
++Refer to the agent definition for the complete pattern set and analysis methodology.
++
++#### 5.3.2: Exclusion Filters
++
++Exclude the following directories and files from scanning to avoid false positives:
++
++**Excluded directories:** `node_modules/`, `dist/`, `build/`, `.git/`, `vendor/`, `__pycache__/`, `docs/generated/`, `scrum_workflow/`
++
++**Excluded test files:** `*.test.*`, `*.spec.*`, `test_*`, `*_test.*`
++
++#### 5.3.3: Entity Categorization
++
++Categorize detected patterns into one of four entity categories using this inference strategy:
++
++1. **Core Entities**: Domain objects with business meaning (User, Order, Product, Account) -- typically classes/interfaces with attributes and business logic
++2. **Entity Relationships**: Foreign keys, associations, inheritance hierarchies -- defined by relationship keywords and type extensions
++3. **Value Objects & Enums**: Immutable value types, enumerations, domain constants -- typically enums, sealed classes, or final classes
++4. **Data Flow Structures**: DTOs, requests, responses, payloads -- data transfer objects with minimal logic, primarily used for API boundaries
++
++If an entity spans multiple categories, categorize by its primary purpose. Core entities are the main domain objects. DTOs are for data movement. Value objects represent domain concepts with no identity.
++
++#### 5.3.4: Mermaid Diagram Generation
++
++Generate Mermaid diagrams for the domain model based on the detected entities and relationships:
++
++- **Class diagrams**: Always use `classDiagram` for the overall domain model. Show entities as classes with their attributes/methods. Use relationship types: ` inheritance, `*>` composition, `-->` association/dependency.
++- **ER diagrams**: Use `erDiagram` when database schemas are detected (migrations, ORM entities). Show tables with columns and data types. Use `||--o{` for one-to-many, `||--||` for one-to-one relationships.
++
++Group entities by bounded context if the codebase has clear domain boundaries (e.g., authentication, billing). Use subgraphs or nested classes where Mermaid syntax supports it. Show relationship direction and multiplicity where discoverable (one-to-one, one-to-many, many-to-many).
++
++For very small codebases (< 5 entities), a simple list may suffice. For larger codebases, diagrams provide significant value.
++
++Each Mermaid diagram must be in a fenced code block with ` ```mermaid ` language tag and include a descriptive comment above it explaining the domain model being visualized. Use descriptive entity names, not necessarily code class names if they're overly technical (e.g., "UserAccount" not just "User" if that clarifies domain role).
++
++#### 5.3.5: Source Reference Format
++
++Every documented entity must include a source reference in the format `[Source: path/to/file.ext:LINE]` using relative paths from the project root (not absolute paths). If an entity spans multiple files, include all file:line references for key attributes and relationships.
++
++For entities with primary definition in one file and relationships in another, reference the primary definition file and note the relationship files separately.
++
++#### 5.3.6: Bounded Context Grouping
++
++Group entities by bounded context/domain area based on directory structure and naming patterns (e.g., "Authentication", "Billing", "Permissions"). Use the following inference strategy:
++
++1. **Path-based inference**: Extract bounded context from directory structure (e.g., `src/auth/` -> "Authentication", `src/billing/` -> "Billing", `lib/permissions/` -> "Permissions")
++2. **File-name inference**: Use file name when path is flat (e.g., `user.ts` -> "User Management", `payment.ts` -> "Payments")
++3. **Fallback**: Use the top-level directory name as the bounded context if no semantic match
++4. **Ungrouped**: Entities that cannot be categorized go in an "Other / Uncategorized" section
++
++#### 5.3.7: Write Output
++
++1. Load the template from `scrum_workflow/templates/domain-model.md`
++2. Fill the template sections with discovered entities, following the template structure
++3. Populate the Overview section with total entities found by category (core entities, value objects, enums, DTOs) and analysis timestamp
++4. Group entities by bounded context where appropriate
++5. Write the filled document to `docs/generated/domain-model.md`
++6. If no entities are found (unlikely for any non-trivial codebase), write a minimal document stating "No domain entities detected" with the analysis timestamp rather than an empty file
+```

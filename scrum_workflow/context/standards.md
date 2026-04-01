@@ -39,7 +39,7 @@ This document defines the coding standards, naming conventions, and file structu
 
 - **Epic Status**: `backlog`, `in-progress`, `done`
 - **Sprint Tracking Status** (sprint-status.yaml): `backlog`, `ready-for-dev`, `in-progress`, `review`, `done`
-- **Story File Status** (story.md frontmatter): `draft`, `refinement`, `ready`, `in-dev`, `in-review`, `done` (see [Story Status State Machine](#story-status-state-machine))
+- **Story File Status** (story.md frontmatter): `draft`, `refinement`, `refined`, `ready-for-dev`, `in-progress`, `review`, `approved`, `changes-needed`, `done` (see [Story Status State Machine](#story-status-state-machine))
 - **Retrospective Status**: `optional`, `done`
 
 **Rationale**: Consistent with file naming conventions and YAML field naming.
@@ -222,7 +222,7 @@ project-root/
 **Example:**
 
 ```yaml
-story_status: in-progress
+story_status: in-progress  # valid values: draft, refinement, refined, ready-for-dev, in-progress, review, approved, changes-needed, done
 last_task: "create-configuration"
 error_detected: true
 error_message: "Invalid YAML syntax"
@@ -294,15 +294,18 @@ Prevention: Use YAML block scalar (|) for multi-line strings
 
 ### Status Values
 
-The story status state machine defines the lifecycle of a story from creation to completion. There are exactly **6 valid status values**:
+The story status state machine defines the lifecycle of a story from creation to completion. There are exactly **9 valid status values**:
 
 | Status | Set By | Guard | Meaning |
 |---|---|---|---|
 | `draft` | /scrum-create-ticket | -- | Story created, not yet refined |
 | `refinement` | /scrum-refine-ticket | status == draft | Multi-agent refinement in progress |
-| `ready` | Readiness check | PASS result | Spec approved, implementation allowed |
-| `in-dev` | /scrum-dev-story | status == ready (FR17) | Implementation in progress |
-| `in-review` | /scrum-dev-story review | status == in-dev | Single review pass (MVP) |
+| `refined` | /scrum-refine-ticket | refinement complete | Refinement complete, awaiting validation |
+| `ready-for-dev` | /scrum-refine-story | all 5 validation criteria PASS | Validated and ready for implementation |
+| `in-progress` | /scrum-dev-story | status == ready-for-dev (FR17) | Implementation in progress |
+| `review` | /scrum-dev-story review | status == in-progress | Code review requested |
+| `approved` | /scrum-review-story | verdict == APPROVED | Review passed, awaiting human sign-off |
+| `changes-needed` | /scrum-review-story | verdict == CHANGES-NEEDED | Review found issues, changes required |
 | `done` | User approval | explicit sign-off (FR28) | Human approval complete |
 
 ### Valid Transitions
@@ -312,25 +315,44 @@ All transitions are explicit and guarded. No implicit status changes are permitt
 | From | To | Trigger | Guard Condition |
 |---|---|---|---|
 | `draft` | `refinement` | /scrum-refine-ticket | status == draft |
-| `refinement` | `ready` | Readiness check | Readiness check result == PASS |
-| `refinement` | `draft` | Readiness check | Readiness check result == FAIL |
-| `ready` | `in-dev` | /scrum-dev-story | status == ready |
-| `in-dev` | `in-review` | /scrum-dev-story review | status == in-dev |
-| `in-review` | `done` | User approval | Explicit user sign-off (FR28) |
+| `refinement` | `refined` | /scrum-refine-ticket | refinement agents complete |
+| `refined` | `ready-for-dev` | /scrum-refine-story | all 5 validation criteria PASS |
+| `refined` | `refined` | /scrum-refine-story | any validation criterion FAIL (status unchanged) |
+| `ready-for-dev` | `in-progress` | /scrum-dev-story | status == ready-for-dev (FR17) |
+| `in-progress` | `review` | /scrum-dev-story review | status == in-progress |
+| `review` | `approved` | /scrum-review-story | verdict == APPROVED |
+| `review` | `changes-needed` | /scrum-review-story | verdict == CHANGES-NEEDED |
+| `changes-needed` | `in-progress` | /scrum-dev-story | developer addresses findings |
+| `approved` | `done` | User approval | Explicit user sign-off (FR28) |
 
 ### State Transition Diagram
 
 ```
-                          FAIL
-                   ┌──────────────┐
-                   │              │
-                   ▼              │
-               ┌───────┐    ┌────────────┐    ┌───────┐    ┌────────┐    ┌───────────┐    ┌──────┐
-               │ draft │───▶│ refinement │───▶│ ready │───▶│ in-dev │───▶│ in-review │───▶│ done │
-               └───────┘    └────────────┘    └───────┘    └────────┘    └───────────┘    └──────┘
-                  /refine-     PASS via          /scrum-dev-story   /scrum-dev-story     User
-                  ticket       readiness                      review         approval
-                               check                                        (FR28)
+                                          FAIL (unchanged)
+                                     ┌──────────────┐
+                                     │              │
+                                     ▼              │
+  ┌───────┐    ┌────────────┐    ┌─────────┐    ┌──────────────┐    ┌─────────────┐    ┌────────┐
+  │ draft │───▶│ refinement │───▶│ refined │───▶│ ready-for-dev│───▶│ in-progress │───▶│ review │
+  └───────┘    └────────────┘    └─────────┘    └──────────────┘    └─────────────┘    └────────┘
+     /refine-     agents           /refine-        /scrum-dev-story    /scrum-dev-story     │
+     ticket       complete         story PASS                          review               │
+                                                                              ┌─────────────┤
+                                                                              │             │
+                                                                              ▼             ▼
+                                   ┌──────┐    ┌──────────┐    ┌─────────────────────┐
+                                   │ done │◀───│ approved │    │   changes-needed    │
+                                   └──────┘    └──────────┘    └─────────────────────┘
+                                     User         /review-           │
+                                     approval     story              │
+                                     (FR28)       APPROVED           │
+                                                                     │
+                                                       ┌─────────────┘
+                                                       │ /scrum-dev-story (fix findings)
+                                                       ▼
+                                                  ┌─────────────┐
+                                                  │ in-progress │
+                                                  └─────────────┘
 ```
 
 ### Guard Enforcement Rules
@@ -358,8 +380,8 @@ Commands **MUST** use actionable error messages following these templates when g
 **Examples:**
 
 ```
-Error: Story SW-042 is in status 'draft', but '/scrum-dev-story' requires 'ready'
-Fix: Run '/scrum-refine-ticket SW-042' to refine the story, then pass readiness check
+Error: Story SW-042 is in status 'draft', but '/scrum-dev-story' requires 'ready-for-dev'
+Fix: Run '/scrum-refine-ticket SW-042' to refine the story, then '/scrum-refine-story SW-042' to validate and pass readiness check
 
 Error: File '_scrum-output/sprints/SW-101/story.md' not found. Run '/scrum-create-ticket SW-101' first
 Fix: Create the story file before attempting refinement
@@ -400,7 +422,7 @@ Each ticket folder `_scrum-output/sprints/SW-XXX/` may contain the following fil
 | `story.md` | Story definition with YAML frontmatter and acceptance criteria | /scrum-create-ticket | /scrum-create-ticket, /scrum-refine-ticket (update), Readiness check (status), Approval (status -> done) |
 | `refinement.md` | Multi-agent refinement feedback and analysis | /scrum-refine-ticket | /scrum-refine-ticket only |
 | `plan.md` | Implementation plan generated from readiness check | Readiness check | Readiness check only |
-| `review-N.md` | Code review findings (N = review number, e.g., `review-1.md`) | /scrum-dev-story | /scrum-dev-story only |
+| `review-N.md` | Code review findings (N = review number, e.g., `review-1.md`) | /scrum-review-story | /scrum-review-story only |
 | `approval.md` | Human approval record and sign-off | Approval workflow | Approval workflow only |
 
 ### Write Boundary Rules
@@ -411,8 +433,9 @@ Each command has strict write boundaries. A command may only create or modify fi
 |---|---|---|
 | /scrum-create-ticket | `story.md` | `refinement.md`, `plan.md`, `review-*.md`, `approval.md` |
 | /scrum-refine-ticket | `refinement.md`, `story.md` (update) | `plan.md`, `review-*.md`, `approval.md` |
-| Readiness check | `plan.md`, `story.md` (status update) | `refinement.md`, `review-*.md`, `approval.md` |
-| /scrum-dev-story | Code files, `review-1.md` | `story.md`, `refinement.md`, `plan.md`, `approval.md` |
+| /scrum-refine-story | `plan.md`, `story.md` (status update) | `refinement.md`, `review-*.md`, `approval.md` |
+| /scrum-dev-story | Code files, `story.md` (status update) | `refinement.md`, `plan.md`, `review-*.md`, `approval.md` |
+| /scrum-review-story | `review-N.md`, `story.md` (status update) | `refinement.md`, `plan.md`, `approval.md` |
 | Approval | `approval.md`, `story.md` (status -> done) | `refinement.md`, `plan.md`, `review-*.md` |
 
 ### Markdown-Only Constraint

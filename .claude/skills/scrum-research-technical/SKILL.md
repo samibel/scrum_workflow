@@ -2,7 +2,7 @@
 name: scrum-research-technical
 trigger: /scrum-research technical
 description: Conduct technical research on a topic using agentic patterns with Plan-Then-Execute workflow
-framework_command: {framework_commands}/research-technical.md
+framework_command: "{framework_commands}/research-technical.md"
 ---
 
 # Technical Research

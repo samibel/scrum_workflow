@@ -2,7 +2,7 @@
 name: refine-ticket
 trigger: "/scrum-refine-ticket"
 requires_status: draft
-sets_status: refinement
+sets_status: "refinement → refined"
 spawns_agents:
   - architect
   - developer
@@ -30,9 +30,8 @@ Ticket number in the format: `/scrum-refine-ticket SW-XXX`
 
 ## Output
 
-- `_scrum-output/sprints/SW-XXX/story.md` -- Updated with `status: ready` (on readiness check PASS) or `status: draft` (on readiness check FAIL), `updated: <today>` (ISO 8601 format), and synthesized content from accepted perspectives using atomic write operation (NFR1 compliance)
+- `_scrum-output/sprints/SW-XXX/story.md` -- Updated with `status: refined` on completion, `updated: <today>` (ISO 8601 format), and synthesized content from accepted perspectives using atomic write operation (NFR1 compliance)
 - `_scrum-output/sprints/SW-XXX/refinement.md` -- Refinement audit file containing all agent perspectives (accepted and rejected), user feedback decisions in NFR16-compliant separated section, discussion rounds documentation, and synthesis summary
-- `_scrum-output/sprints/SW-XXX/plan.md` -- Execution plan created on readiness check PASS (subtasks, execution order, dependencies)
 - Three agent perspectives displayed to the user (Architect, Developer, QA), each following the table-based output format defined in Architecture Pattern 3
 - Each agent perspective includes Findings table, Recommendations, and Proposed Acceptance Criteria
 - User prompted to accept or reject each perspective individually
@@ -40,9 +39,7 @@ Ticket number in the format: `/scrum-refine-ticket SW-XXX`
 - If all perspectives rejected, original story preserved with log entry in refinement.md
 - Synthesis includes deduplication and conflict resolution applied per synthesis skill rules
 - Token budget validated preventively before synthesis generation (NFR12 compliance)
-- **Readiness check** validates story completeness and produces PASS/FAIL result with specific failure reasons (FR15, FR16)
-- **On PASS**: story status updated to `ready`, plan.md assembled from synthesized subtasks
-- **On FAIL**: story status reverted to `draft`, failure reasons documented in story.md
+- Status transitions: `draft` → `refinement` (on start) → `refined` (on completion)
 
 ### Doc Discovery (Story 10.1)
 

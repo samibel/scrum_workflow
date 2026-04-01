@@ -2,7 +2,7 @@
 name: scrum-research-general
 trigger: /scrum-research general
 description: Conduct general research on business/market/strategic topics using agentic patterns with Plan-Then-Execute workflow
-framework_command: {framework_commands}/research-general.md
+framework_command: "{framework_commands}/research-general.md"
 ---
 
 # General Research

@@ -8,7 +8,7 @@
 ## Lean 3-Step Structure
 
 This workflow follows a lean structure:
-1. **Step 1: Load** - Load story with `status: refinement`
+1. **Step 1: Load** - Load story with `status: refined`
 2. **Step 2: Validate** - Validate against immutable checklist
 3. **Step 3: Set Status** - Update status based on validation result
 
@@ -33,14 +33,14 @@ Fix: Run '/scrum-create-ticket SW-XXX' first to create the story file
 
 Verify story status:
 - Read current status from story file YAML frontmatter
-- Verify status is `refinement` (required for `/scrum-refine-story`)
-- Guard condition: Story must be in `refinement` status
+- Verify status is `refined` (required for `/scrum-refine-story`)
+- Guard condition: Story must be in `refined` status
 
 **On guard condition failure** (wrong status), halt with error:
 
 ```
-Error: Story SW-XXX is in status 'current_status', but '/scrum-refine-story' requires 'refinement'
-Fix: Stories must be in 'refinement' status to enter validation
+Error: Story SW-XXX is in status 'current_status', but '/scrum-refine-story' requires 'refined'
+Fix: Stories must be in 'refined' status to enter validation. Run '/scrum-refine-ticket SW-XXX' first.
 ```
 
 ### Step 1.3: Load Story Content
@@ -262,15 +262,17 @@ Create validation report:
 
 **If validation_state.overall == "PASS":**
 
-1. **Update story.md status** from `refinement` to `ready`
+1. **Update story.md status** from `refined` to `ready-for-dev`
 2. **Update `updated` field** to current date (ISO 8601 format: YYYY-MM-DD)
 3. **Use atomic write operation** (NFR1 compliance)
-4. **Append validation report** to `_scrum-output/sprints/SW-XXX/refinement.md`
+4. **Create plan.md** at `_scrum-output/sprints/SW-XXX/plan.md` with execution plan assembled from synthesized subtasks
+5. **Append validation report** to `_scrum-output/sprints/SW-XXX/refinement.md`
 
 **Output success message:**
 ```
 ✅ Story SW-XXX passed validation
-Status updated: refinement → ready
+Status updated: refined → ready-for-dev
+Plan created: _scrum-output/sprints/SW-XXX/plan.md
 Story is ready for implementation
 ```
 
@@ -278,14 +280,14 @@ Story is ready for implementation
 
 **If validation_state.overall == "FAIL":**
 
-1. **Preserve story.md status** as `refinement` (no change)
+1. **Preserve story.md status** as `refined` (no change)
 2. **Document failure reasons** in validation report
 3. **Append validation report** to `_scrum-output/sprints/SW-XXX/refinement.md`
 
 **Output failure message:**
 ```
 ❌ Story SW-XXX failed validation
-Status preserved: refinement
+Status preserved: refined
 Failure reasons:
 1. [Specific reason 1]
 2. [Specific reason 2]
@@ -341,7 +343,8 @@ Address these issues before development
 ## Write Boundaries
 
 This workflow may write:
-- `_scrum-output/sprints/SW-XXX/story.md` - Status field only (`status: ready` or unchanged)
+- `_scrum-output/sprints/SW-XXX/story.md` - Status field only (`status: ready-for-dev` or unchanged)
+- `_scrum-output/sprints/SW-XXX/plan.md` - Execution plan (created on PASS)
 - `_scrum-output/sprints/SW-XXX/refinement.md` - Append validation report
 
 This workflow may NOT write:
@@ -356,7 +359,7 @@ This workflow may NOT write:
 
 ## Validation Rules
 
-- Story status must be `refinement` before validation begins
+- Story status must be `refined` before validation begins
 - Validation checklist is IMMUTABLE — agent cannot modify criteria
 - Agent can ONLY set `passes: false → true` for each criterion
 - Agent CANNOT modify story content, acceptance criteria, or tasks

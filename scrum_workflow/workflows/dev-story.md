@@ -10,7 +10,7 @@
 This workflow follows a lean structure:
 1. **Step 1: Load** - Load story with `status: ready` and plan.md
 2. **Step 2: Execute** - Implement each step from plan.md
-3. **Step 3: Update Status** - Set status to `in-dev` on completion
+3. **Step 3: Update Status** - Set status to `in-progress` on completion
 
 ---
 
@@ -31,8 +31,8 @@ Fix: Run '/scrum-create-ticket SW-XXX' first to create type story file
 ### Step 1.2: Status Guard Validation
 Verify story status:
 - Read current status from story file YAML frontmatter
-- Verify status is `ready` (required for `/scrum-dev-story`)
-- Guard condition: Story must be in `ready` status
+- Verify status is `ready-for-dev` (required for `/scrum-dev-story`)
+- Guard condition: Story must be in `ready-for-dev` status
 
 **On guard condition failure** (wrong status), halt with error:
 
@@ -62,11 +62,11 @@ Fix: Run '/scrum-refine-story SW-XXX' first to validate the story and create the
 - Extract subtasks and execution order
 - Store as `{implementation_plan}` for Step 2
 
-### Step 1.5: Update Status to in-dev
+### Step 1.5: Update Status to in-progress
 Before execution begins, update the story status.
 
 - Read the complete story.md file
-- Update `status` field to `in-dev`
+- Update `status` field to `in-progress`
 - Update `updated` field to current date (ISO 8601 format: YYYY-MM-DD)
 - Write the entire file in single atomic operation (NFR1 compliance)
 
@@ -119,7 +119,7 @@ Repeat Step 2.2 until all subtasks in `{implementation_plan}` are complete.
 ---
 
 ## Step 3: Update Status on Completion
-Update story status and `in-dev` and notify user.
+Update story status and `in-progress` and notify user.
 
 ### Step 3.1: Verify All subtasks complete
 - Re-scan plan.md to confirm all subtasks are executed
@@ -128,7 +128,7 @@ Update story status and `in-dev` and notify user.
 
 ### Step 3.2: Update story status
 - Read complete story.md file
-- Update `status` field to `in-dev`
+- Update `status` field to `in-progress`
 - Update `updated` field to current date (ISO 8601 format: YYYY-MM-DD)
 - Write entire file in single atomic operation (NFR1 compliance)
 
@@ -137,7 +137,7 @@ Display completion summary:
 
 ```
 ✅ Story SW-XXX implementation complete
-Status: ready → in-dev
+Status: ready-for-dev → in-progress
 Files modified: [count] files
 Tests run: [yes/no]
 
@@ -150,7 +150,7 @@ Next step: Run '/scrum-review-story SW-XXX' for code review
 This workflow may write:
 
 - Code files (following plan.md execution guidance)
-- `_scrum-output/sprints/SW-XXX/story.md` - Status field only (`status: in-dev`, `updated: <date>)
+- `_scrum-output/sprints/SW-XXX/story.md` - Status field only (`status: in-progress`, `updated: <date>)
 
 This workflow may NOT write
 
@@ -224,7 +224,7 @@ All status updates are atomic (NFR1 compliance)
 ---
 
 ## Validation Rules
-- Story status must be `ready` before implementation begins
+- Story status must be `ready-for-dev` before implementation begins
 - Plan.md must exist before implementation can proceed
 - All file writes must be atomic (NFR1 compliance)
 - Write boundaries must be strictly enforced

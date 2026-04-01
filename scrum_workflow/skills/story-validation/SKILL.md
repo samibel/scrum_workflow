@@ -72,15 +72,18 @@ Validate that the `status` field contains a valid state value:
 |---|---|
 | `draft` | Story created, not yet refined |
 | `refinement` | Multi-agent refinement in progress |
-| `ready` | Spec approved, implementation allowed |
-| `in-dev` | Implementation in progress |
-| `in-review` | Code review in progress |
+| `refined` | Refinement complete, awaiting validation |
+| `ready-for-dev` | Validated and ready for implementation |
+| `in-progress` | Implementation in progress |
+| `review` | Code review requested |
+| `approved` | Review passed, awaiting human sign-off |
+| `changes-needed` | Review found issues, changes required |
 | `done` | Story completed and approved |
 
 **On invalid status value**, return an error:
 
 ```
-Error: Invalid frontmatter in story.md: field 'status' has invalid value 'invalid_status' (valid values: draft, refinement, ready, in-dev, in-review, done)
+Error: Invalid frontmatter in story.md: field 'status' has invalid value 'invalid_status' (valid values: draft, refinement, refined, ready-for-dev, in-progress, review, approved, changes-needed, done)
 Fix: Update the status field to one of the valid state values
 ```
 

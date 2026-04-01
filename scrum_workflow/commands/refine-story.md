@@ -1,8 +1,8 @@
 ---
 name: refine-story
 trigger: "/scrum-refine-story"
-requires_status: refinement
-sets_status: ready
+requires_status: refined
+sets_status: ready-for-dev
 pattern: feature-list-as-immutable-contract
 ---
 
@@ -28,16 +28,17 @@ workflows/refine-story.md
 Ticket number in the format: `/scrum-refine-story SW-XXX`
 
 - **Ticket number**: `SW-XXX` format where XXX is a zero-padded 3-digit number (e.g., `SW-001`, `SW-042`, `SW-103`)
-- **Prerequisite**: The story file `_scrum-output/sprints/SW-XXX/story.md` must exist with `status: refinement`
+- **Prerequisite**: The story file `_scrum-output/sprints/SW-XXX/story.md` must exist with `status: refined`
 
 ## Output
 
 ### On All Criteria PASS:
-- `_scrum-output/sprints/SW-XXX/story.md` -- Updated with `status: ready` (atomic write)
+- `_scrum-output/sprints/SW-XXX/story.md` -- Updated with `status: ready-for-dev` (atomic write)
+- `_scrum-output/sprints/SW-XXX/plan.md` -- Execution plan assembled from synthesized subtasks
 - `_scrum-output/sprints/SW-XXX/refinement.md` -- Validation report appended with PASS status
 
 ### On Any Criterion FAIL:
-- `_scrum-output/sprints/SW-XXX/story.md` -- Status remains `refinement`, failure reasons documented
+- `_scrum-output/sprints/SW-XXX/story.md` -- Status remains `refined`, failure reasons documented
 - `_scrum-output/sprints/SW-XXX/refinement.md` -- Validation report appended with FAIL status and failure reasons
 
 ## Validation Checklist (Immutable Contract)
@@ -55,8 +56,8 @@ The agent validates the story against these criteria without modification:
 ## Status Transitions
 
 ```
-refinement → ready      (via /scrum-refine-story, all criteria PASS)
-refinement → refinement (via /scrum-refine-story, any criterion FAIL - status unchanged)
+refined → ready-for-dev  (via /scrum-refine-story, all criteria PASS)
+refined → refined        (via /scrum-refine-story, any criterion FAIL - status unchanged)
 ```
 
 ## Relationship to refine-ticket Command
@@ -65,12 +66,12 @@ refinement → refinement (via /scrum-refine-story, any criterion FAIL - status 
 
 | Command | Purpose | Status Transition | Pattern |
 |---------|---------|-------------------|---------|
-| `/scrum-refine-ticket` | Multi-agent refinement (Architect, Dev, QA perspectives) | `draft` → `refinement` | Parallel agent spawning |
-| `/scrum-refine-story` | Validation-only agent (immutable checklist) | `refinement` → `ready` | Feature List as Immutable Contract |
+| `/scrum-refine-ticket` | Multi-agent refinement (Architect, Dev, QA perspectives) | `draft` → `refinement` → `refined` | Parallel agent spawning |
+| `/scrum-refine-story` | Validation-only agent (immutable checklist) | `refined` → `ready-for-dev` | Feature List as Immutable Contract |
 
 **Typical Workflow:**
 1. User runs `/scrum-refine-ticket SW-XXX` to get multi-agent refinement
-2. Status moves from `draft` → `refinement`
+2. Status moves from `draft` → `refinement` → `refined`
 3. User reviews perspectives, accepts/rejects
 4. User runs `/scrum-refine-story SW-XXX` to validate completeness
 5. Status moves from `refined` → `ready-for-dev` (if validation passes)
@@ -78,7 +79,7 @@ refinement → refinement (via /scrum-refine-story, any criterion FAIL - status 
 ## Write Boundary Rules
 
 This workflow may write:
-- `_scrum-output/sprints/SW-XXX/story.md` - Status field only (`status: ready` or unchanged)
+- `_scrum-output/sprints/SW-XXX/story.md` - Status field only (`status: ready-for-dev` or unchanged)
 - `_scrum-output/sprints/SW-XXX/refinement.md` - Append validation report
 
 This workflow may NOT write:

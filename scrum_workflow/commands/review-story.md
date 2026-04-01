@@ -75,17 +75,17 @@ review → changes-needed   (via /scrum-review-story, verdict: CHANGES-NEEDED)
 
 | Command | Purpose | Status Transition | Pattern |
 |---------|---------|-------------------|---------|
-| `/scrum-refine-ticket` | Multi-agent refinement | `draft` → `refinement` | Sub-Agent Spawning |
-| `/scrum-refine-story` | Validation-only agent | `refinement` → `ready-for-dev` | Feature List as Immutable Contract |
-| `/scrum-dev-story` | Implementation-only agent | `ready-for-dev` → `review` | Inversion of Control |
+| `/scrum-refine-ticket` | Multi-agent refinement | `draft` → `refinement` → `refined` | Sub-Agent Spawning |
+| `/scrum-refine-story` | Validation-only agent | `refined` → `ready-for-dev` | Feature List as Immutable Contract |
+| `/scrum-dev-story` | Implementation-only agent | `ready-for-dev` → `in-progress` → `review` | Inversion of Control |
 | `/scrum-review-story` | Review-only agent | `review` → `approved` or `changes-needed` | AI-Assisted Code Review |
 
 **Typical Workflow:**
 1. User runs `/scrum-dev-story SW-XXX` to implement (one agent/model)
-2. Status moves from `ready-for-dev` → `review`
+2. Status moves from `ready-for-dev` → `in-progress` → `review`
 3. User runs `/scrum-review-story SW-XXX` to review (different agent/model)
 4. Status moves from `review` → `approved` or `changes-needed`
-5. If `changes-needed`, developer addresses findings and re-runs `/scrum-review-story`
+5. If `changes-needed`, developer addresses findings and re-runs `/scrum-dev-story`, then `/scrum-review-story`
 
 ## Model Selection Recommendation
 

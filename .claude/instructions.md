@@ -54,10 +54,22 @@ This is where workflow logic lives in the framework.
 
 The following slash commands are registered via skill files in `.claude/skills/`:
 
-- `/create-project-context` - Analyze codebase and generate project context
-- `/create-ticket` - Create structured story from natural language
-- `/refine-ticket` - Multi-agent refinement with Architect/Dev/QA perspectives
-- `/dev-story` - Implement story following specification
+- `/scrum-create-project-context` - Analyze codebase and generate project context
+- `/scrum-create-project-docs` - Generate business logic documentation
+- `/scrum-create-architecture-docs` - Generate architecture documentation
+- `/scrum-create-ticket` - Create structured story from natural language
+- `/scrum-refine-ticket` - Multi-agent refinement with Architect/Dev/QA perspectives
+- `/scrum-refine-story` - Validate story completeness (Feature List as Immutable Contract)
+- `/scrum-dev-story` - Implement story following specification
+- `/scrum-review-story` - AI-assisted code review (separate agent from implementer)
+- `/scrum-research-general` - General research on business/market/strategic topics
+- `/scrum-research-technical` - Technical research on technologies and architecture
+
+## Story Status State Machine
+
+```
+draft → refinement → refined → ready-for-dev → in-progress → review → approved/changes-needed → done
+```
 
 Each skill file references the corresponding framework command file at:
 ```

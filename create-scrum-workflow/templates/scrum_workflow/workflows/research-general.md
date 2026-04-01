@@ -1,6 +1,6 @@
-# Technical Research Workflow
+# General Research Workflow
 
-Workflow for the `/scrum-research technical` command that orchestrates the researcher agent.
+Workflow for the `/scrum-research general` command that orchestrates the researcher agent.
 Uses WebSearch for external online investigation (not Glob/Grep for local codebase scanning).
 Implements structured agentic methodology with six sequential phases.
 Implements Filesystem-Based State Pattern for checkpoint recovery and long-running research tasks.
@@ -8,7 +8,7 @@ Implements Filesystem-Based State Pattern for checkpoint recovery and long-runni
 ## Prerequisites
 
 - **Required**: `scrum_workflow/agents/researcher.md` -- Researcher agent definition (must exist)
-- **Optional**: `context/index.md` -- Project context for domain and tech stack understanding (warn if missing, do not halt)
+- **Optional**: `context/index.md` -- Project context for domain understanding (warn if missing, do not halt)
 - **Agent Active-In**: The researcher agent has `active_in: [research-technical, research-general]` matching this command name
 
 ## Step 0: Input Parsing
@@ -19,11 +19,11 @@ Parse command input to extract topic, flags, and determine execution parameters.
 
 Parse the `<topic>` argument from the command invocation:
 
-- Example: `/research-technical "agentic patterns for documentation"` extracts topic as "agentic patterns for documentation"
-- Example: `/scrum-research technical "container orchestration"` extracts topic as "container orchestration"
+- Example: `/research-general "AI market trends 2026"` extracts topic as "AI market trends 2026"
+- Example: `/scrum-research general "competitive analysis SaaS platforms"` extracts topic as "competitive analysis SaaS platforms"
 - Topic may be quoted or unquoted
 
-**If no topic is provided**: **HALT** with error: "No research topic provided. Usage: /research-technical <topic>"
+**If no topic is provided**: **HALT** with error: "No research topic provided. Usage: /research-general <topic>"
 
 ### Step 0.2: Parse Optional Flags
 
@@ -73,7 +73,7 @@ Check if `context/index.md` exists:
 test -f context/index.md
 ```
 
-- If exists: Load for project domain and tech stack understanding
+- If exists: Load for project domain understanding
 - If missing: **WARN** "No project context found (context/index.md). Research will proceed without domain-specific context awareness." and continue -- do not halt
 
 ### Step 1.3: Check for Existing Research State (Resume Detection)
@@ -150,7 +150,7 @@ If no state file exists OR user chose "fresh" start:
 **Generate Research ID:**
 ```yaml
 research_id: research-{topic-slug}-{timestamp}
-# Example: research-agentic-patterns-20260331-143022
+# Example: research-ai-market-trends-20260331-143022
 ```
 
 Where:
@@ -203,14 +203,13 @@ Load the researcher agent definition from `scrum_workflow/agents/researcher.md`:
 - Read agent's Identity, Instructions, Output Format, and Context Rules sections
 - Extract WebSearch tool usage methodology
 - Extract agentic workflow methodology and orchestration patterns from agent Instructions
-- Extract output template structures for `technical_research` mode
+- Extract output template structures for `general_research` mode
 
 ### Step 2.2: Load Project Context (if available)
 
 If `context/index.md` exists:
-- Load to understand project domain and technology stack
-- Extract tech stack information (languages, frameworks, tools)
-- Use context to make research context-aware (e.g., prioritize technologies used by the project)
+- Load to understand project domain
+- Use context to make research context-aware (e.g., prioritize markets/competitors relevant to the project domain)
 - Extract project domain for targeted research focus
 
 If `context/index.md` is missing, proceed without project-specific context as warned in Step 1.2.
@@ -235,11 +234,11 @@ Display the parsed research topic and proposed scope to the user:
 
 ```
 Research Topic: {topic}
-Project Context: {domain} / {tech_stack} (or "No project context available")
+Project Context: {domain} (or "No project context available")
 Proposed Scope:
-  - Primary focus: {inferred focus areas}
+  - Primary focus: {inferred focus areas - market analysis, competitive landscape, strategic recommendations}
   - Source type: {online research via WebSearch}
-  - Output: technical-research-{topic-slug}-{date}.md
+  - Output: general-research-{topic-slug}-{date}.md
 ```
 
 ### Step 3.2: User Approval Gate
@@ -266,7 +265,7 @@ After user confirms scope, update the research state file:
   "status": "planning",
   "completed_steps": ["scope_confirmation"],
   "last_completed_step": "scope_confirmation",
-  "last_updated": "{current_ISO_8601_timestamp}"
+  "last_updated": "{current_ISO 8601 timestamp}"
 }
 ```
 
@@ -302,7 +301,7 @@ Use the WebSearch tool to identify relevant online sources for the research topi
 
 **WebSearch Tool Usage:**
 ```
-WebSearch(query="{topic} architecture patterns best practices", allowed_domains=[])
+WebSearch(query="{topic} market size growth trends analysis", allowed_domains=[])
 ```
 
 **Source Identification Process:**
@@ -310,10 +309,11 @@ WebSearch(query="{topic} architecture patterns best practices", allowed_domains=
 2. Analyze search results for relevance and credibility
 3. If `--sources` flag provided, prioritize those URLs in the research plan
 4. Categorize sources by type:
-   - Official documentation (vendor/authoritative sources)
-   - Community resources (blogs, forums, Stack Overflow)
-   - Academic papers (research publications)
-   - Case studies (real-world implementations)
+   - Market reports (industry analysis, market research firms)
+   - News articles (business news, trade publications)
+   - Company websites (competitor information, product pages)
+   - Case studies (real-world implementations, success stories)
+   - Consulting reports (strategic analysis, best practices)
 
 **Error Handling for WebSearch Failures:**
 - If WebSearch fails (network error, timeout, API error):
@@ -327,17 +327,15 @@ WebSearch(query="{topic} architecture patterns best practices", allowed_domains=
 
 ### Step 5.2: Create Subagent Task Distribution
 
-Plan the distribution of research across 3-5 parallel subagents following the Swarm Migration pattern:
+Plan the distribution of research across 2-3 parallel subagents following the Swarm Migration pattern:
 
-**Subagent Task Templates:**
+**Subagent Task Templates for General Research:**
 
 | Subagent | Research Aspect | Search Query Pattern | Source Categories |
 |----------|-----------------|---------------------|-------------------|
-| Subagent 1 | Architecture Patterns | "{topic} architecture patterns design principles" | Official docs, academic papers |
-| Subagent 2 | Frameworks & Tools | "{topic} frameworks libraries tools comparison" | Official docs, community resources |
-| Subagent 3 | Best Practices | "{topic} best practices implementation guide" | Community resources, case studies |
-| Subagent 4 | Performance | "{topic} performance benchmarks optimization" | Benchmarks, case studies |
-| Subagent 5 | Security | "{topic} security vulnerabilities compliance" | Security docs, vulnerability databases |
+| Subagent 1 | Market Analysis | "{topic} market size growth trends analysis" | Market reports, industry analysis |
+| Subagent 2 | Competitive Landscape | "{topic} competitors comparison alternatives" | Company websites, review sites |
+| Subagent 3 | Strategic Recommendations | "{topic} best practices strategy implementation" | Consulting reports, case studies |
 
 **Isolated Context Structure for Each Subagent:**
 ```yaml
@@ -373,19 +371,15 @@ Research Plan for: {topic}
 [Phase 1/6] Scope Confirmation - Complete
 [Phase 2/6] Research Plan - In Progress
   - Sources identified: {source_count}
-  - Subagents planned: {subagent_count}
+  - Subagents planned: 2-3
 
 Subagent Task Distribution:
-  1. Architecture Patterns: "{query_1}"
-     - Source types: Official docs, Academic papers
-  2. Frameworks & Tools: "{query_2}"
-     - Source types: Official docs, Community resources
-  3. Best Practices: "{query_3}"
-     - Source types: Community resources, Case studies
-  4. Performance: "{query_4}"
-     - Source types: Benchmarks, Case studies
-  5. Security: "{query_5}"
-     - Source types: Security docs, Vulnerability databases
+  1. Market Analysis: "{query_1}"
+     - Source types: Market reports, Industry analysis
+  2. Competitive Landscape: "{query_2}"
+     - Source types: Company websites, Review sites
+  3. Strategic Recommendations: "{query_3}"
+     - Source types: Consulting reports, Case studies
 
 [Phase 3/6] Swarm Research - Pending
 [Phase 4/6] Verification - Pending
@@ -403,7 +397,7 @@ After research plan is created, update the research state file:
   "status": "planning",
   "completed_steps": ["scope_confirmation", "research_plan"],
   "last_completed_step": "research_plan",
-  "last_updated": "{current_ISO_8601_timestamp}",
+  "last_updated": "{current_ISO 8601 timestamp}",
   "findings": {
     "subagent_tasks": "{subagent_task_distribution_from_step_5.2}"
   }
@@ -416,15 +410,15 @@ After research plan is created, update the research state file:
 
 Execute parallel subagent research using the Swarm Migration pattern for 10x+ speedup.
 
-**Performance Target:** Achieve approximately 10x speedup compared to sequential research by executing 3-5 subagents in parallel.
+**Performance Target:** Achieve approximately 10x speedup compared to sequential research by executing 2-3 subagents in parallel.
 
 ### Step 6.1: Spawn Parallel Subagents
 
-Spawn 3-5 parallel subagents based on the research plan from Phase 2:
+Spawn 2-3 parallel subagents based on the research plan from Phase 2:
 
 **Subagent Spawning Mechanism:**
 
-For each subagent (1 through N, where N = 3-5):
+For each subagent (1 through N, where N = 2-3):
 
 ```yaml
 spawn_subagent:
@@ -450,9 +444,9 @@ spawn_subagent:
 | Field | Description | Example |
 |-------|-------------|---------|
 | `subagent_id` | Unique identifier | `researcher-subagent-1` |
-| `aspect` | Research focus area | `Architecture Patterns` |
-| `search_queries` | Specific WebSearch queries | `["microservices architecture patterns", "event-driven design"]` |
-| `source_categories` | Expected source types | `["official docs", "academic papers"]` |
+| `aspect` | Research focus area | `Market Analysis` |
+| `search_queries` | Specific WebSearch queries | `["AI market size 2026", "AI industry growth trends"]` |
+| `source_categories` | Expected source types | `["market reports", "industry analysis"]` |
 | `output_requirements` | Required output fields | `findings, sources, confidence` |
 
 **Subagent Execution:**
@@ -484,14 +478,14 @@ For each search query in subagent context:
    ```
 
 2. **Extract Findings:**
-   - Key facts and data points
-   - Technical specifications
-   - Best practices and recommendations
+   - Market data and statistics
+   - Competitive intelligence
+   - Strategic insights and recommendations
    - Source URLs and titles
 
 3. **Apply Confidence Levels:**
-   - **High**: Multiple sources agree, official documentation, recent data
-   - **Medium**: Single source, community resource, some age
+   - **High**: Multiple sources agree, authoritative reports, recent data
+   - **Medium**: Single reliable source, some age
    - **Low**: Conflicting information, outdated, uncertain claims
 
 4. **Handle WebSearch Errors:**
@@ -524,13 +518,11 @@ Research Progress:
 [Phase 1/6] Scope Confirmation - Complete
 [Phase 2/6] Research Plan - Complete ({source_count} sources identified)
 [Phase 3/6] Swarm Research - In Progress
-  - Subagent 1 (Architecture): Complete (3 sources)
-  - Subagent 2 (Frameworks): Complete (4 sources)
-  - Subagent 3 (Best Practices): In Progress...
-  - Subagent 4 (Performance): Pending
-  - Subagent 5 (Security): Pending
+  - Subagent 1 (Market Analysis): Complete (3 sources)
+  - Subagent 2 (Competitive Landscape): In Progress...
+  - Subagent 3 (Strategic Recommendations): Pending
 [Phase 4/6] Verification - Pending
-[Phase 5/6] Reflection Loop - Pending (Story 9-5)
+[Phase 5/6] Reflection Loop - Pending
 [Phase 6/6] Synthesis - Pending
 ```
 
@@ -618,7 +610,7 @@ After swarm research aggregation completes, update the research state file:
   "status": "researching",
   "completed_steps": ["scope_confirmation", "research_plan", "swarm_research"],
   "last_completed_step": "swarm_research",
-  "last_updated": "{current_ISO_8601_timestamp}",
+  "last_updated": "{current_ISO 8601 timestamp}",
   "findings": {
     "subagent_tasks": "{subagent_task_distribution_from_step_5.2}",
     "subagent_results": "{aggregated_subagent_results_from_step_6.3}"
@@ -684,7 +676,7 @@ Validate each source for accessibility, relevance, and credibility:
    For each source URL:
      - Check URL format is valid
      - Verify domain is accessible
-     - Note source type (official, community, academic)
+     - Note source type (market report, news, company website)
    ```
 
 2. **Cross-Reference Claims Across Sources:**
@@ -698,8 +690,8 @@ Validate each source for accessibility, relevance, and credibility:
 3. **Confidence Level Assignment:**
    | Confidence | Criteria |
    |------------|----------|
-   | **High** | Multiple sources agree, official documentation, recent (< 1 year) |
-   | **Medium** | Single reliable source, community resource, moderate age (1-2 years) |
+   | **High** | Multiple sources agree, authoritative reports, recent (< 1 year) |
+   | **Medium** | Single reliable source, moderate age (1-2 years) |
    | **Low** | Single unverified source, conflicting information, outdated (> 2 years) |
 
 4. **Flag Unverifiable Claims:**
@@ -740,7 +732,7 @@ gap_analysis:
       recommendation: "needs_more_research"
   missing_source_types:
     - aspect: "{aspect}"
-      missing_types: ["academic", "case_study"]
+      missing_types: ["market_report", "case_study"]
 ```
 
 **Gap Resolution:**
@@ -757,7 +749,7 @@ Resolve conflicts identified during cross-referencing:
 **Conflict Resolution Strategy:**
 
 1. **Identify Conflict Severity:**
-   - **High**: Contradictory facts that affect recommendations
+   - **High**: Contradictory facts that affect strategic recommendations
    - **Medium**: Different perspectives on same topic
    - **Low**: Minor discrepancies in details
 
@@ -810,7 +802,7 @@ After verification phase completes, update the research state file:
   "status": "researching",
   "completed_steps": ["scope_confirmation", "research_plan", "swarm_research", "verification"],
   "last_completed_step": "verification",
-  "last_updated": "{current_ISO_8601_timestamp}",
+  "last_updated": "{current_ISO 8601 timestamp}",
   "findings": {
     "cross_reference_result": "{cross_reference_result_from_step_7.1}",
     "gap_analysis": "{gap_analysis_from_step_7.3}"
@@ -897,22 +889,17 @@ citation_check:
 
 #### Step 8.1.3: Structure Consistency Check
 
-Verify output follows the technical_research template schema.
+Verify output follows the general_research template schema.
 
 ```yaml
 structure_check:
   required_sections:
     - Executive Summary
-    - Table of Contents
-    - Research Methodology
-    - Technical Landscape
-    - Technology Stack Analysis
-    - Integration Patterns
-    - Implementation Approaches
-    - Performance & Scalability
-    - Security Considerations
+    - Market Analysis
+    - Competitive Landscape
     - Strategic Recommendations
-    - Implementation Roadmap
+    - Implementation Considerations
+    - Risk Assessment
     - Future Outlook
     - References
   required_frontmatter:
@@ -930,10 +917,9 @@ structure_check:
 ```
 
 **Structure Consistency Process:**
-1. Load template structure from `scrum_workflow/templates/technical-research.md`
-2. Check each required section exists in synthesized content
-3. Check each required frontmatter field exists
-4. Pass if all required sections and fields are present
+1. Check each required section exists in synthesized content
+2. Check each required frontmatter field exists
+3. Pass if all required sections and fields are present
 
 #### Step 8.1.4: Clarity Assessment
 
@@ -955,7 +941,7 @@ clarity_check:
 
 **Clarity Assessment Process:**
 1. Review synthesized content for:
-   - Technical terms that need context/definition
+   - Terms that need context/definition
    - Recommendations that lack specific action items
    - Vague statements that could be interpreted multiple ways
    - Missing examples for abstract concepts
@@ -1056,28 +1042,28 @@ improvement_actions:
       topic: "{gap_topic}"
       scope: "targeted"
       sources: 2-3
-      description: "Spawn focused research subagent for specific missing aspect"
+    description: "Spawn focused research subagent for specific missing aspect"
 
   - issue: "unclear_sections"
     action: "rewrite_section"
     parameters:
       section: "{section_name}"
       focus: "clarity_and_specificity"
-      description: "Rewrite flagged sections with more specific language and examples"
+    description: "Rewrite flagged sections with more specific language and examples"
 
   - issue: "weak_claims"
     action: "strengthen_claim"
     parameters:
       claim: "{claim_text}"
       options: ["add_sources", "adjust_confidence", "remove_claim"]
-      description: "Add supporting sources, adjust confidence level, or remove unsubstantiated claims"
+    description: "Add supporting sources, adjust confidence level, or remove unsubstantiated claims"
 
   - issue: "missing_sources"
     action: "search_additional_sources"
     parameters:
       topic: "{claim_topic}"
       min_sources: 2
-      description: "Search for additional authoritative references for uncited claims"
+    description: "Search for additional authoritative references for uncited claims"
 ```
 
 #### Step 8.4.2: Improvement Execution
@@ -1146,7 +1132,7 @@ iteration_control:
 2. After each iteration:
    - If quality score >= 0.80: Early exit with HIGH confidence
    - If quality score < 0.80 and iterations < 2: Continue to next iteration
-   - If quality score < 0.80 and iterations= 2: Exit with current confidence level
+   - If quality score < 0.80 and iterations = 2: Exit with current confidence level
 3. Log each iteration's results for auditability
 
 ### Step 8.6: Low Confidence Handling
@@ -1249,7 +1235,7 @@ After reflection loop completes, update the research state file:
   "status": "reflecting",
   "completed_steps": ["scope_confirmation", "research_plan", "swarm_research", "verification", "reflection_loop"],
   "last_completed_step": "reflection_loop",
-  "last_updated": "{current_ISO_8601_timestamp}",
+  "last_updated": "{current_ISO 8601 timestamp}",
   "findings": {
     "quality_score": "{quality_score_from_step_8.2}",
     "research_confidence": "{confidence_level_from_step_8.3}"
@@ -1268,17 +1254,12 @@ Final document assembly with structured output, executive summary, and strategic
 Assemble the final research document with:
 - YAML frontmatter (see schema below)
 - Executive Summary (2-3 paragraphs for AI context extraction)
-- Table of Contents
-- Research Methodology
-- Technical Landscape analysis
-- Technology Stack Analysis
-- Integration Patterns
-- Implementation Approaches
-- Performance & Scalability findings
-- Security Considerations
+- Market Analysis (market size, growth trends, segment analysis)
+- Competitive Landscape (key players, positioning, strengths/weaknesses)
 - Strategic Recommendations with priority levels
-- Implementation Roadmap with phased approach
-- Future Outlook
+- Implementation Considerations (resource requirements, timeline, dependencies)
+- Risk Assessment (identified risks with probability and impact)
+- Future Outlook (trends, projections, strategic opportunities)
 - References with source URLs and access dates
 
 ### Step 9.2: Apply Frontmatter Schema
@@ -1287,7 +1268,7 @@ Generate YAML frontmatter for the output document:
 
 ```yaml
 ---
-type: technical_research
+type: general_research
 topic: {topic}
 date: {date}
 sources:
@@ -1301,7 +1282,7 @@ research_confidence: high  # or medium | low
 ```
 
 Frontmatter field definitions:
-- `type`: Must be `technical_research`
+- `type`: Must be `general_research`
 - `topic`: Research topic as a concise string
 - `date`: Research completion date (YYYY-MM-DD format)
 - `sources`: List of source URLs referenced in the research
@@ -1311,11 +1292,11 @@ Frontmatter field definitions:
 
 ### Step 9.3: Filename and Output
 
-Generate output filename following the pattern: `technical-research-{topic-slug}-{date}.md`
+Generate output filename following the pattern: `general-research-{topic-slug}-{date}.md`
 
-- Topic slug: kebab-case transformation of the research topic (e.g., "Agentic Patterns for Documentation" becomes "agentic-patterns-for-documentation")
-- Date: YYYY-MM-DD format (e.g., "2026-03-30")
-- Example: `docs/research/technical-research-agentic-patterns-for-documentation-2026-03-30.md`
+- Topic slug: kebab-case transformation of the research topic (e.g., "AI Market Trends 2026" becomes "ai-market-trends-2026")
+- Date: YYYY-MM-DD format (e.g., "2026-03-31")
+- Example: `docs/research/general-research-ai-market-trends-2026-2026-03-31.md`
 
 Write the assembled document to the output directory (`docs/research/` or custom `--output` path).
 
@@ -1329,7 +1310,7 @@ After synthesis completes, update the research state file to mark research as co
   "status": "complete",
   "completed_steps": ["scope_confirmation", "research_plan", "swarm_research", "verification", "reflection_loop", "synthesis"],
   "last_completed_step": "synthesis",
-  "last_updated": "{current_ISO_8601_timestamp}"
+  "last_updated": "{current_ISO 8601 timestamp}"
   "findings": {
     "quality_score": "{quality_score_from_step_8}",
     "research_confidence": "{confidence_level_from_step_8}"
@@ -1368,9 +1349,9 @@ When an interruption is detected, the workflow:
    {
      "status": "interrupted",
      "last_completed_step": "{most_recent_completed_step}",
-     "last_updated": "{current_ISO_8601_timestamp}",
+     "last_updated": "{current_ISO 8601 timestamp}",
      "interruption_metadata": {
-       "interruption_time": "{current_ISO_8601_timestamp}",
+       "interruption_time": "{current_ISO 8601 timestamp}",
        "interruption_reason": "user_cancel | context_limit | error | unknown",
        "error_details": "{error_message_if_applicable}",
        "step_in_progress": "{step_being_executed_when_interrupted}"
@@ -1396,7 +1377,7 @@ Reason: {interruption_reason}
 Last completed step: {last_completed_step}
 Progress preserved in: docs/research/.research-state.json
 
-To resume: Run /scrum-research technical "{topic}" again
+To resume: Run /scrum-research general "{topic}" again
 ```
 
 ### Error Handler Wrapper
@@ -1485,7 +1466,7 @@ Load the existing research document for comparison.
 
 **Locate existing document:**
 1. Use `output_file` path from state file, OR
-2. Search for document matching pattern: `docs/research/technical-research-{topic-slug}-*.md`
+2. Search for document matching pattern: `docs/research/general-research-{topic-slug}-*.md`
 
 **Read existing document:**
 ```yaml
@@ -1515,17 +1496,16 @@ date_filter: "after:{last_research_date}"
 
 ```
 For each research aspect:
-  WebSearch(query="{topic} {aspect} updates {date_filter}", allowed_domains=[])
-  WebSearch(query="{topic} {aspect} changes after:{last_research_date}", allowed_domains=[])
+  WebSearch(query="{topic} market updates {date_filter}", allowed_domains=[])
+  WebSearch(query="{topic} news after:{last_research_date}", allowed_domains=[])
 ```
 
-**Focus areas for update research:**
-- New versions or releases
-- Updated best practices
-- Deprecated approaches
-- Security advisories
-- Performance improvements
-- New tools or frameworks
+**Focus areas for general research updates:**
+- Market size and growth changes
+- New competitors or market entrants
+- Regulatory changes
+- Strategic shifts in the industry
+- New best practices or methodologies
 
 **Collect new findings:**
 ```yaml
@@ -1549,14 +1529,14 @@ Compare new findings against existing document content.
    - New developments since last research date
 
 2. **Identify Changed Information:**
-   - Updated recommendations that contradict existing content
-   - Version changes (e.g., "v2.0 now recommends X instead of Y")
-   - Modified best practices
+   - Updated market data or statistics
+   - Changed competitive landscape
+   - Modified strategic recommendations
 
 3. **Identify Deprecated Information:**
-   - Approaches marked as deprecated in new findings
-   - Security vulnerabilities in previously recommended tools
-   - Outdated practices superseded by new developments
+   - Outdated market predictions
+   - Companies no longer relevant
+   - Strategies superseded by new developments
 
 **Diff Result Structure:**
 ```yaml
@@ -1703,7 +1683,7 @@ If Step U4 diff comparison finds no significant changes:
 
 **Detection Criteria:**
 - No new sources found with date filters
-- No changes to existing recommendations
+- No changes to market data or recommendations
 - No deprecated information identified
 
 **Handling:**

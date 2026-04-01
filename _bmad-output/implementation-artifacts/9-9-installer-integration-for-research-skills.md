@@ -1,6 +1,6 @@
 # Story 9.9: Installer Integration for Research Skills
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 

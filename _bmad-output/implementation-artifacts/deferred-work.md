@@ -63,3 +63,9 @@
 ## Deferred from: code review of 9-1-researcher-agent-definition (2026-03-30)
 
 - **Installer template missing docs/research/ directory** [create-scrum-workflow/templates/scrum_workflow/] — Pre-existing gap: The researcher agent references `docs/research/technical-research-agent-patterns-2026-03-30.md` but the installer templates do not include a `docs/research/` directory. Will be addressed by Story 9.9 (installer integration).
+
+## Deferred from: code review of 11-3-review-story-review-agent-ai-assisted-code-review (2026-04-01)
+
+- **Inconsistent prerequisite status vs existing review.md** [scrum_workflow/workflows/review-story.md:17] — Pre-existing state machine inconsistency: New review-story workflow uses `status: review` as prerequisite, but existing review.md uses `status: in-dev` or `status: in-review`. Story 11.4 will address state machine documentation and reconciliation.
+
+- **Missing deprecation note for existing review.md** [scrum_workflow/workflows/review.md] — Pre-existing relationship ambiguity: The new review-story.md workflow does not explicitly deprecate or reference the relationship to the existing review.md workflow. Requires broader discussion about Epic 11 migration path.

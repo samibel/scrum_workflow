@@ -5,98 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9fbb06fc-50c2-4c7e-bb8a-a087cf161358" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/scrum_workflow/commands/refine-story.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scrum_workflow/workflows/refine-story.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.claude/settings.local.json" beforeDir="false" afterPath="$PROJECT_DIR$/.claude/settings.local.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/9-10-integration-tests-for-research-agent.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/9-10-integration-tests-for-research-agent.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/9-11-documentation-and-readme-update.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/9-11-documentation-and-readme-update.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/9-7-research-general-command-and-workflow.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/9-7-research-general-command-and-workflow.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/9-8-incremental-update-mode-for-research.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/9-8-incremental-update-mode-for-research.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/9-9-installer-integration-for-research-skills.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/9-9-installer-integration-for-research-skills.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/deferred-work.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/deferred-work.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/sprint-status.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/sprint-status.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_bmad-output/planning-artifacts/epics.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/planning-artifacts/epics.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/domain-model-extraction-generation.spec.ts" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/domain-model-extraction-generation.spec.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/commands/create-ticket.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/commands/create-ticket.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/commands/dev-story.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/commands/dev-story.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/commands/refine-ticket.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/commands/refine-ticket.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/context/architecture-guidelines.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/context/architecture-guidelines.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/context/platform-adapter-contract.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/context/platform-adapter-contract.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/context/standards.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/context/standards.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/docs/01-installation.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/docs/01-installation.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/docs/03-workflow-overview.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/docs/03-workflow-overview.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/docs/04-command-reference.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/docs/04-command-reference.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/docs/05-state-machine.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/docs/05-state-machine.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/docs/06-phase-details.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/docs/06-phase-details.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/docs/07-write-boundary-rules.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/docs/07-write-boundary-rules.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/docs/08-framework-architecture.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/docs/08-framework-architecture.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/docs/09-examples.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/docs/09-examples.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/docs/13-error-recovery.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/docs/13-error-recovery.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/docs/17-appendix.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/docs/17-appendix.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/skills/prerequisite-validation/SKILL.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/skills/prerequisite-validation/SKILL.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/skills/status-guard-validation/SKILL.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/skills/status-guard-validation/SKILL.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/skills/story-validation/SKILL.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/skills/story-validation/SKILL.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/workflows/approval.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/workflows/approval.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/workflows/development.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/workflows/development.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/workflows/project-context.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/workflows/project-context.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/workflows/readiness-check.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/workflows/readiness-check.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/workflows/refinement.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/workflows/refinement.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/workflows/review.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/workflows/review.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/workflows/ticket-creation.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/workflows/ticket-creation.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/src/core/path-resolver.js" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/src/core/path-resolver.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/commands/create-ticket.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/commands/create-ticket.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/commands/dev-story.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/commands/dev-story.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/commands/refine-ticket.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/commands/refine-ticket.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/context/architecture-guidelines.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/context/architecture-guidelines.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/context/platform-adapter-contract.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/context/platform-adapter-contract.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/context/standards.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/context/standards.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/docs/01-installation.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/docs/01-installation.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/docs/03-workflow-overview.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/docs/03-workflow-overview.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/docs/04-command-reference.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/docs/04-command-reference.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/docs/05-state-machine.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/docs/05-state-machine.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/docs/06-phase-details.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/docs/06-phase-details.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/docs/07-write-boundary-rules.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/docs/07-write-boundary-rules.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/docs/08-framework-architecture.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/docs/08-framework-architecture.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/docs/09-examples.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/docs/09-examples.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/docs/13-error-recovery.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/docs/13-error-recovery.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/docs/17-appendix.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/docs/17-appendix.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/skills/prerequisite-validation/SKILL.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/skills/prerequisite-validation/SKILL.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/skills/status-guard-validation/SKILL.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/skills/status-guard-validation/SKILL.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/skills/story-validation/SKILL.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/skills/story-validation/SKILL.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/workflows/approval.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/workflows/approval.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/workflows/development.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/workflows/development.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/workflows/project-context.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/workflows/project-context.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/workflows/readiness-check.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/workflows/readiness-check.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/workflows/refinement.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/workflows/refinement.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/workflows/review.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/workflows/review.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/workflows/ticket-creation.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/workflows/ticket-creation.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/agents/architect-doc.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/agents/architect-doc.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/commands/create-architecture-docs.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/commands/create-architecture-docs.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/commands/create-project-context.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/commands/create-project-context.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/commands/create-project-docs.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/commands/create-project-docs.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/commands/create-ticket.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/commands/create-ticket.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/commands/dev-story.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/commands/dev-story.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scrum_workflow/commands/refine-ticket.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/commands/refine-ticket.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/context/architecture-guidelines.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/context/architecture-guidelines.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/context/platform-adapter-contract.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/context/platform-adapter-contract.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/context/standards.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/context/standards.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/docs/01-installation.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/docs/01-installation.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/docs/03-workflow-overview.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/docs/03-workflow-overview.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrum_workflow/commands/research-general.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/commands/research-general.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrum_workflow/commands/research-technical.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/commands/research-technical.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scrum_workflow/docs/04-command-reference.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/docs/04-command-reference.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scrum_workflow/docs/05-state-machine.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/docs/05-state-machine.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/docs/06-phase-details.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/docs/06-phase-details.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/docs/07-write-boundary-rules.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/docs/07-write-boundary-rules.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/docs/08-framework-architecture.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/docs/08-framework-architecture.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/docs/09-examples.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/docs/09-examples.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/docs/13-error-recovery.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/docs/13-error-recovery.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/docs/17-appendix.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/docs/17-appendix.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/skills/prerequisite-validation/SKILL.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/skills/prerequisite-validation/SKILL.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/skills/status-guard-validation/SKILL.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/skills/status-guard-validation/SKILL.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/skills/story-validation/SKILL.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/skills/story-validation/SKILL.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/workflows/approval.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/workflows/approval.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/workflows/architecture-documentation.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/workflows/architecture-documentation.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/workflows/development.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/workflows/development.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/workflows/project-context.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/workflows/project-context.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/workflows/project-documentation.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/workflows/project-documentation.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/workflows/readiness-check.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/workflows/readiness-check.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrum_workflow/templates/refinement.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/templates/refinement.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/scrum_workflow/workflows/refinement.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/workflows/refinement.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/workflows/review.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/workflows/review.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/workflows/ticket-creation.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/workflows/ticket-creation.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrum_workflow/workflows/research-technical.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/workflows/research-technical.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -183,7 +111,7 @@
       <updated>1774603126434</updated>
       <workItem from="1774603127567" duration="3440000" />
       <workItem from="1774853903282" duration="10000" />
-      <workItem from="1774855030920" duration="21710000" />
+      <workItem from="1774855030920" duration="31013000" />
     </task>
     <servers />
   </component>

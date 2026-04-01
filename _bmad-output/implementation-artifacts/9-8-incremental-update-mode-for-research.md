@@ -1,6 +1,6 @@
 # Story 9.8: Incremental Update Mode for Research
 
-Status: ready-for-dev
+Status: done
 
 ## Story
 
@@ -53,48 +53,48 @@ so that my research stays current as new information becomes available.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Implement update mode detection (AC: #1)
-  - [ ] 1.1: Update `scrum_workflow/commands/research-technical.md` to document `--update` flag
-  - [ ] 1.2: Update `scrum_workflow/workflows/research-technical.md` Step 0 to detect `--update` flag
-  - [ ] 1.3: Add mode routing: if `--update` flag present, route to Update Mode steps; otherwise proceed with full research
+- [x] Task 1: Implement update mode detection (AC: #1)
+  - [x] 1.1: Update `scrum_workflow/commands/research-technical.md` to document `--update` flag
+  - [x] 1.2: Update `scrum_workflow/workflows/research-technical.md` Step 0 to detect `--update` flag
+  - [x] 1.3: Add mode routing: if `--update` flag present, route to Update Mode steps; otherwise proceed with full research
 
-- [ ] Task 2: Implement research state reading (AC: #1)
-  - [ ] 2.1: Add Step for loading `.research-state.json` from `docs/research/`
-  - [ ] 2.2: Parse state file to find topic entry with last research date
-  - [ ] 2.3: Implement fallback to full-research mode if state file missing or topic not found
+- [x] Task 2: Implement research state reading (AC: #1)
+  - [x] 2.1: Add Step for loading `.research-state.json` from `docs/research/`
+  - [x] 2.2: Parse state file to find topic entry with last research date
+  - [x] 2.3: Implement fallback to full-research mode if state file missing or topic not found
 
-- [ ] Task 3: Implement targeted web research (AC: #2)
-  - [ ] 3.1: Add step for date-filtered WebSearch queries
-  - [ ] 3.2: Generate search queries with date filters: "{topic} updates after:{last_date}"
-  - [ ] 3.3: Focus research on changes, updates, and new developments
+- [x] Task 3: Implement targeted web research (AC: #2)
+  - [x] 3.1: Add step for date-filtered WebSearch queries
+  - [x] 3.2: Generate search queries with date filters: "{topic} updates after:{last_date}"
+  - [x] 3.3: Focus research on changes, updates, and new developments
 
-- [ ] Task 4: Implement diff comparison (AC: #3)
-  - [ ] 4.1: Load existing research document content
-  - [ ] 4.2: Compare new findings against existing sections
-  - [ ] 4.3: Categorize changes: new, modified, deprecated
+- [x] Task 4: Implement diff comparison (AC: #3)
+  - [x] 4.1: Load existing research document content
+  - [x] 4.2: Compare new findings against existing sections
+  - [x] 4.3: Categorize changes: new, modified, deprecated
 
-- [ ] Task 5: Implement diff summary and confirmation (AC: #4, #5)
-  - [ ] 5.1: Generate diff summary in format: "New findings: +N sources, ~M sections updated"
-  - [ ] 5.2: Present summary to user with clear formatting
-  - [ ] 5.3: Implement user confirmation prompt "Apply these changes? [y/N]"
-  - [ ] 5.4: Handle user responses: y/Y proceeds, anything else exits cleanly
+- [x] Task 5: Implement diff summary and confirmation (AC: #4, #5)
+  - [x] 5.1: Generate diff summary in format: "New findings: +N sources, ~M sections updated"
+  - [x] 5.2: Present summary to user with clear formatting
+  - [x] 5.3: Implement user confirmation prompt "Apply these changes? [y/N]"
+  - [x] 5.4: Handle user responses: y/Y proceeds, anything else exits cleanly
 
-- [ ] Task 6: Implement incremental updates (AC: #6)
-  - [ ] 6.1: Update frontmatter `sources` array with new URLs
-  - [ ] 6.2: Update frontmatter `date` field to current date
-  - [ ] 6.3: Update changed sections while preserving unchanged content
-  - [ ] 6.4: Handle deprecated information (mark as outdated or remove)
+- [x] Task 6: Implement incremental updates (AC: #6)
+  - [x] 6.1: Update frontmatter `sources` array with new URLs
+  - [x] 6.2: Update frontmatter `date` field to current date
+  - [x] 6.3: Update changed sections while preserving unchanged content
+  - [x] 6.4: Handle deprecated information (mark as outdated or remove)
 
-- [ ] Task 7: Implement research state update (AC: #7, #8)
-  - [ ] 7.1: Update `.research-state.json` after successful document update
-  - [ ] 7.2: Update `last_updated` timestamp for the topic
-  - [ ] 7.3: Append new sources to the sources list
-  - [ ] 7.4: Handle "no new findings" case with clean exit
+- [x] Task 7: Implement research state update (AC: #7, #8)
+  - [x] 7.1: Update `.research-state.json` after successful document update
+  - [x] 7.2: Update `last_updated` timestamp for the topic
+  - [x] 7.3: Append new sources to the sources list
+  - [x] 7.4: Handle "no new findings" case with clean exit
 
-- [ ] Task 8: Apply same pattern to general research (AC: all)
-  - [ ] 8.1: Ensure update mode works for both technical and general research
-  - [ ] 8.2: Both modes share the same `.research-state.json` file
-  - [ ] 8.3: Verify general research update flow mirrors technical research
+- [x] Task 8: Apply same pattern to general research (AC: all)
+  - [x] 8.1: Ensure update mode works for both technical and general research
+  - [x] 8.2: Both modes share the same `.research-state.json` file
+  - [x] 8.3: Verify general research update flow mirrors technical research
 
 ## Dev Notes
 
@@ -301,5 +301,18 @@ If WebSearch with date filters returns no significant new information:
 
 ### Completion Notes List
 
+- Implemented update mode detection with `--update` flag in both technical and general research commands
+- Added Step 0.4 for update mode detection and routing in both workflows
+- Added Update Mode section (Steps U1-U8) to technical research workflow
+- Added Update Mode section (Steps U1-U8) to general research workflow
+- Update mode includes: state file loading, date-filtered WebSearch, diff comparison, user confirmation, incremental updates
+- Fallback to full research when state file missing or topic not found
+- Clean exit when no new findings detected
+
 ### File List
+
+- scrum_workflow/commands/research-technical.md
+- scrum_workflow/workflows/research-technical.md
+- scrum_workflow/commands/research-general.md
+- scrum_workflow/workflows/research-general.md
 

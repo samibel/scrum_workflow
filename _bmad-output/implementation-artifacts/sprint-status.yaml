@@ -1,5 +1,5 @@
 # generated: 2026-03-25
-# last_updated: 2026-03-31 (Epic 11 created: Agent Pattern Split - 3 agents with agentic patterns)
+# last_updated: 2026-04-01 (Story 11-3: Review Agent - review)
 # project: scrum_workflow
 # project_key: NOKEY
 # tracking_system: file-system
@@ -16,12 +16,17 @@
 #   - backlog → in-progress: Automatically when first story is created (via create-story)
 #   - in-progress → done: Manually when all stories reach 'done' status
 #
-# Story Status:
+# Story Status (Three-Agent Workflow):
 #   - backlog: Story only exists in epic file
-#   - ready-for-dev: Story file created in stories folder
+#   - draft: Story file created, not yet refined
+#   - refinement: Multi-agent refinement in progress
+#   - refined: Refinement complete, awaiting validation
+#   - ready-for-dev: Validated and ready for implementation
 #   - in-progress: Developer actively working on implementation
-#   - review: Ready for code review (via Dev's code-review workflow)
-#   - done: Story completed
+#   - review: Implementation complete, awaiting code review
+#   - approved: Review passed, awaiting human approval
+#   - changes-needed: Review found issues requiring fixes
+#   - done: Story completed with human approval
 #
 # Retrospective Status:
 #   - optional: Can be completed but not required
@@ -32,10 +37,11 @@
 # - Epic transitions to 'in-progress' automatically when first story is created
 # - Stories can be worked in parallel if team capacity allows
 # - SM typically creates next story after previous one is 'done' to incorporate learnings
-# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+# - Three-agent workflow: /scrum-refine-ticket → /scrum-refine-story → /scrum-dev-story → /scrum-review-story
+# - For best results, use different LLM for /scrum-review-story than the one used for /scrum-dev-story
 
 generated: 2026-03-25
-last_updated: 2026-03-31 (story 9-5 code review complete, status updated to done)
+last_updated: 2026-04-01 (Story 11-4: State Machine Update and documentation - review)
 project: scrum_workflow
 project_key: NOKEY
 tracking_system: file-system
@@ -128,22 +134,25 @@ development_status:
   9-3-technical-research-output-template: done
   9-4-web-research-integration-and-swarm-migration-pattern: done
   9-5-reflection-loop-for-quality-assurance: done
-  # Epic 9: Research Agent -- Technical & General
-9: research-general-command and workflow
-10: integration tests for research agent
-11: documentation and readme update
-12: last_updated: 2026-03-31 (story 9-6 code review complete, status updated to review)"
-  9-7-research-general-command-and-workflow: in-progress
-  9-8-incremental-update-mode-for-research: ready-for-dev
-  9-9-installer-integration-for-research-skills: ready-for-dev
-  9-10-integration-tests-for-research-agent: ready-for-dev
-  9-11-documentation-and-readme-update: ready-for-dev
+  9-7-research-general-command-and-workflow: done
+  9-8-incremental-update-mode-for-research: done
+  9-9-installer-integration-for-research-skills: done
+  9-10-integration-tests-for-research-agent: done
+  9-11-documentation-and-readme-update: done
   epic-9-retrospective: optional
 
-  # Epic 11: Agent Pattern Split — Separate Commands for Refine, Dev & Review
-  epic-11: backlog
-  11-1-refine-story-validation-agent-feature-list-as-immutable-contract: backlog
-  11-2-dev-story-simplified-implementation-agent-inversion-of-control: backlog
-  11-3-review-story-review-agent-ai-assisted-code-review: backlog
-  11-4-state-machine-update-and-documentation: backlog
-  epic-11-retrospective: optional
+  # Epic 10: Enhanced Refinement — Doc-Discovery, Cross-Talk & Estimation
+  epic-10: in-progress
+  10-1-doc-discovery-phase-for-refinement: done
+  10-3-estimation-phase-wideband-delphi: review
+  10-4-updated-refinement-workflow: in-progress
+  10-5-integration-tests-for-enhanced-refinement: in-progress
+  10-6-documentation-command-reference-update: review
+  epic-10-retrospective: optional
+
+  # Epic 11: Agent Pattern Split — separate Commands for Refine, Dev & Review
+  epic-11: in-progress
+  11-1-refine-story-validation-agent-feature-list-as-immutable-contract: review
+  11-2-dev-story-simplified-implementation-agent-inversion-of-control: in-progress
+  11-3-review-story-review-agent-ai-assisted-code-review: approved
+  11-4-state-machine-update-and-documentation: review

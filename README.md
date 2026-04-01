@@ -49,13 +49,42 @@ The installer handles everything: framework files, skill registration, output di
 ```mermaid
 flowchart LR
     A[Spec Creation] --> B[Refinement]
-    B --> C{Readiness Check}
-    C -->|PASS| D[Development]
-    C -->|FAIL| B
-    D --> E[Code Review]
-    E --> F{Human Approval}
-    F -->|APPROVE| G[DONE]
-    F -->|REJECT| E
+    B --> C[Validation]
+    C --> D{Ready?}
+    D -->|PASS| E[Development]
+    D -->|FAIL| C
+    E --> F[Review]
+    F --> G{Approved?}
+    G -->|Yes| H[Human Approval]
+    G -->|No| I[Fix Issues]
+    I --> F
+    H --> J[DONE]
+```
+
+### Three-Agent Workflow (Epic 11)
+
+Scrum Workflow now supports a **three-agent workflow** that splits the monolithic dev-story into focused, single-responsibility agents. Each agent applies a specific agentic pattern for maximum focus and enables per-step model selection.
+
+```mermaid
+flowchart LR
+    A[create-ticket] --> B[refine-ticket]
+    B --> C[refine-story]
+    C --> D{Validation PASS?}
+    D -->|Yes| E[dev-story]
+    D -->|No| C
+    E --> F[review-story]
+    F --> G{Review PASS?}
+    G -->|Yes| H[Human Approval]
+    G -->|No| I[Fix Issues]
+    I --> F
+    H --> J[DONE]
+
+    style A fill:#E3F2FD
+    style B fill:#FFF3E0
+    style C fill:#F3E5F5
+    style E fill:#E8F5E9
+    style F fill:#FFF9C4
+    style H fill:#FFEBEE
 ```
 
 ### Commands
@@ -65,13 +94,24 @@ flowchart LR
 | `/scrum-create-project-context` | **Phase 0**: Generate project context files |
 | `/scrum-create-ticket` | Phase 1: Create story from epic |
 | `/scrum-refine-ticket SW-XXX` | Phase 2: Multi-agent refinement |
-| `/scrum-dev-story SW-XXX` | Phase 3: Implement story (requires: ready) |
-| `/scrum-dev-story SW-XXX review` | Phase 4: Code review |
+| `/scrum-refine-story SW-XXX` | Phase 2b: Validation (Feature List as Immutable Contract) |
+| `/scrum-dev-story SW-XXX` | Phase 3: Implement story (Inversion of Control) |
+| `/scrum-review-story SW-XXX` | Phase 4: Code review (AI-Assisted Code Review) |
 | `/scrum-create-project-docs` | Generate business logic documentation |
 | `/scrum-create-architecture-docs` | Generate architecture documentation |
 | `/scrum-research technical <topic>` | Technical research with agentic patterns |
 | `/scrum-research general <topic>` | General research for broader topics |
 | Human approval | Phase 5: Final gate |
+
+### Three-Agent Pattern Reference
+
+| Command | Agentic Pattern | Purpose |
+|---------|-----------------|---------|
+| `/scrum-refine-story` | [Feature List as Immutable Contract](https://www.agentic-patterns.com/patterns/feature-list-as-immutable-contract) | Validation-only agent that checks story against immutable checklist |
+| `/scrum-dev-story` | [Inversion of Control](https://www.agentic-patterns.com/patterns/inversion-of-control) | Simplified implementation agent that follows story spec without modification |
+| `/scrum-review-story` | [AI-Assisted Code Review](https://www.agentic-patterns.com/patterns/ai-assisted-code-review-verification) | Review-only agent with separate perspective from implementer |
+
+**Tip:** For best results, use a **different model** for `/scrum-review-story` than the one used for `/scrum-dev-story`. Different models have different blind spots, reducing groupthink and catching issues the implementer missed.
 
 **Full Documentation:** [docs/00-index.md](scrum_workflow/docs/00-index.md)
 
@@ -148,14 +188,16 @@ your-project/
 ## Status Transitions
 
 ```
-draft → refinement → ready → in-dev → in-review → done
-   ↑                   ↓          ↓          ↑
-   └───────────────────┴──────────┴──────────┘
-              (rejection cycles)
+draft → refinement → refined → ready-for-dev → in-progress → review → approved → done
+   ↑                   ↓            ↓               ↓           ↓          ↑
+   └───────────────────┴────────────┴───────────────┴───────────┴──────────┘
+                         (validation/rejection cycles)
 ```
 
 **Critical Rules:**
-- `/scrum-dev-story` requires `status: ready` (STRICT)
+- `/scrum-refine-story` requires `status: refinement` (STRICT)
+- `/scrum-dev-story` requires `status: ready-for-dev` (STRICT)
+- `/scrum-review-story` requires `status: review` (STRICT)
 - No automatic `done` transition (human gate)
 - Each phase writes only specific files
 
@@ -175,13 +217,21 @@ draft → refinement → ready → in-dev → in-review → done
 
 ## Guard Conditions
 
-**Before Development:**
-- Story must be `status: ready`
-- All 4 readiness criteria must PASS
+**Before Validation (`/scrum-refine-story`):**
+- Story must be `status: refinement`
+- All 5 validation criteria must PASS
+
+**Before Development (`/scrum-dev-story`):**
+- Story must be `status: ready-for-dev`
 - `plan.md` must exist
+
+**Before Review (`/scrum-review-story`):**
+- Story must be `status: review`
+- All tasks must be marked complete [x]
 
 **Before Approval:**
 - Code review must exist (`review-N.md`)
+- Status must be `approved`
 - Human must explicitly approve
 - No automatic DONE transition
 
@@ -211,6 +261,7 @@ draft → refinement → ready → in-dev → in-review → done
 - **Epic 7:** Architecture Documentation Agent
 - **Epic 8:** Installer Integration (Epic 6 & 7 Skills)
 - **Epic 9:** Research Agent — Technical & General
+- **Epic 11:** Agent Pattern Split — Three-Agent Workflow
 
 ---
 
@@ -228,6 +279,6 @@ This framework is designed to be extended. See:
 
 ---
 
-**Version:** 1.1.0
-**Last Updated:** 2026-03-30
+**Version:** 1.2.0
+**Last Updated:** 2026-04-01
 **Documentation:** [scrum_workflow/docs/00-index.md](scrum_workflow/docs/00-index.md)

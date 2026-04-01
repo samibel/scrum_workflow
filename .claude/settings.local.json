@@ -30,7 +30,10 @@
       "WebFetch(domain:www.sitepoint.com)",
       "WebFetch(domain:research.aimultiple.com)",
       "WebFetch(domain:arxiv.org)",
-      "Bash(xargs ls:*)"
+      "Bash(xargs ls:*)",
+      "Bash(gh api:*)",
+      "WebFetch(domain:www.marktechpost.com)",
+      "WebFetch(domain:medium.com)"
     ]
   }
 }

@@ -25,15 +25,19 @@ describe('Story 8-2: Installer Pipeline Update for New Skills', () => {
       vi.clearAllMocks();
     });
 
-    test.skip('[P0] should auto-discover all 6 skill template directories via readdirSync', () => {
+    test.skip('[P0] should auto-discover all 10 skill template directories via readdirSync', () => {
       // THIS TEST WILL FAIL - Need to verify readdirSync discovers all templates
       const sixSkillNames = [
         'scrum-create-project-context',
         'scrum-create-ticket',
         'scrum-refine-ticket',
+        'scrum-refine-story',
         'scrum-dev-story',
+        'scrum-review-story',
         'scrum-create-project-docs',
-        'scrum-create-architecture-docs'
+        'scrum-create-architecture-docs',
+        'scrum-research-general',
+        'scrum-research-technical'
       ];
 
       readdirSync.mockReturnValue(sixSkillNames);
@@ -43,7 +47,7 @@ describe('Story 8-2: Installer Pipeline Update for New Skills', () => {
 
       const result = registerSkills(mockPaths, mockConfig);
 
-      expect(result.skillCount).toBe(6);
+      expect(result.skillCount).toBe(10);
       expect(readdirSync).toHaveBeenCalledWith(mockTemplateDir);
     });
 
@@ -66,8 +70,8 @@ describe('Story 8-2: Installer Pipeline Update for New Skills', () => {
 
       const result = registerSkills(mockPaths, mockConfig);
 
-      expect(result.skillCount).toBe(7); // All skills discovered
-      expect(result.skillCount).toBeGreaterThan(6); // Proves dynamic discovery
+      expect(result.skillCount).toBe(11); // All skills discovered (10 + 1 future)
+      expect(result.skillCount).toBeGreaterThan(10); // Proves dynamic discovery
     });
   });
 
@@ -88,7 +92,7 @@ describe('Story 8-2: Installer Pipeline Update for New Skills', () => {
       vi.clearAllMocks();
     });
 
-    test.skip('[P0] should substitute {{framework_path}} placeholder in all 6 skills', () => {
+    test.skip('[P0] should substitute {{framework_path}} placeholder in all 10 skills', () => {
       // THIS TEST WILL FAIL - Need to verify substitution works
       readdirSync.mockReturnValue(['scrum-create-project-docs']);
       statSync.mockReturnValue({ isDirectory: () => true });
@@ -148,7 +152,7 @@ describe('Story 8-2: Installer Pipeline Update for New Skills', () => {
   });
 
   describe('Installer - Multi-Platform Support (AC2)', () => {
-    test.skip('[P0] should copy all 6 skills to multiple platform directories', () => {
+    test.skip('[P0] should copy all 10 skills to multiple platform directories', () => {
       // THIS TEST WILL FAIL - Need to verify multi-platform copy
       const mockPaths = {
         skillTemplateDir: '/mock/templates',
@@ -166,9 +170,13 @@ describe('Story 8-2: Installer Pipeline Update for New Skills', () => {
         'scrum-create-project-context',
         'scrum-create-ticket',
         'scrum-refine-ticket',
+        'scrum-refine-story',
         'scrum-dev-story',
+        'scrum-review-story',
         'scrum-create-project-docs',
-        'scrum-create-architecture-docs'
+        'scrum-create-architecture-docs',
+        'scrum-research-general',
+        'scrum-research-technical'
       ]);
       statSync.mockReturnValue({ isDirectory: () => true });
       readFileSync.mockReturnValue('content');
@@ -177,15 +185,15 @@ describe('Story 8-2: Installer Pipeline Update for New Skills', () => {
 
       const result = registerSkills(mockPaths, mockConfig);
 
-      // Should copy 6 skills to 2 platforms = 12 writes
-      expect(fse.writeFileSync).toHaveBeenCalledTimes(12);
+      // Should copy 10 skills to 2 platforms = 20 writes
+      expect(fse.writeFileSync).toHaveBeenCalledTimes(20);
       expect(result.platformCount).toBe(2);
-      expect(result.skillCount).toBe(6);
+      expect(result.skillCount).toBe(10);
     });
   });
 
   describe('Lock File Generation (AC5)', () => {
-    test.skip('[P0] should include all 6 skill files in lock file', async () => {
+    test.skip('[P0] should include all 10 skill files in lock file', async () => {
       // THIS TEST WILL FAIL - Need to verify lock file completeness
       const { Installer } = await import('./src/core/installer.js');
       
@@ -209,7 +217,7 @@ describe('Story 8-2: Installer Pipeline Update for New Skills', () => {
 
       await installer.generateLockFile();
 
-      // Verify lock file contains all 6 skills
+      // Verify lock file contains all 10 skills
       // This will fail until lock file generation is complete
       const lockFileData = await installer.getLockFileData();
       expect(Object.keys(lockFileData.files)).toContain('scrum-create-project-docs/SKILL.md');
@@ -218,7 +226,7 @@ describe('Story 8-2: Installer Pipeline Update for New Skills', () => {
   });
 
   describe('Install Summary (AC6)', () => {
-    test.skip('[P0] should display summary with correct skill count (6)', async () => {
+    test.skip('[P0] should display summary with correct skill count (10)', async () => {
       // THIS TEST WILL FAIL - Need to verify summary output
       const { Installer } = await import('./src/core/installer.js');
       
@@ -242,7 +250,7 @@ describe('Story 8-2: Installer Pipeline Update for New Skills', () => {
       installer.printSummary();
 
       expect(mockConsole.log).toHaveBeenCalledWith(
-        expect.stringContaining('6 skills')
+        expect.stringContaining('10 skills')
       );
     });
   });

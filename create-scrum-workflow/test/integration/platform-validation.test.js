@@ -12,7 +12,7 @@ vi.mock('fs-extra');
  * TDD RED PHASE: All tests use test() and will FAIL until implementation is complete.
  *
  * These tests validate that the create-scrum-workflow installer correctly creates
- * skill shims for all 6 platforms and all 6 skills (4 original + 2 new from Epic 6/7).
+ * skill shims for all 6 platforms and all 10 skills (4 original + 2 new from Epic 6/7).
  *
  * Platforms: claude-code, cursor, windsurf, github-copilot, cline, agents-universal
  * Skills: scrum-create-project-context, scrum-create-ticket, scrum-refine-ticket,
@@ -50,14 +50,18 @@ describe('Story 8-4: Platform Registry Validation for New Skills', () => {
     'cline': ['.claude/skills']
   };
 
-  // All 6 skills (4 original + 2 new)
+  // All 10 skills
   const allSkills = [
     'scrum-create-project-context',
     'scrum-create-ticket',
     'scrum-refine-ticket',
+    'scrum-refine-story',
     'scrum-dev-story',
+    'scrum-review-story',
     'scrum-create-project-docs',
-    'scrum-create-architecture-docs'
+    'scrum-create-architecture-docs',
+    'scrum-research-general',
+    'scrum-research-technical'
   ];
 
   beforeEach(() => {
@@ -419,7 +423,7 @@ Cline may require restart after skill installation for skills to be discovered.
       expect(validatedPlatforms).toEqual(expect.arrayContaining(allPlatforms));
     });
 
-    test('[P0] should execute validation covering all 6 skills', async () => {
+    test('[P0] should execute validation covering all 10 skills', async () => {
       // THIS TEST WILL FAIL - Skill validation not implemented yet
       let validatedSkills = [];
 
@@ -429,7 +433,7 @@ Cline may require restart after skill installation for skills to be discovered.
         validatedSkills.push(skill);
       });
 
-      // Verify all 6 skills are validated
+      // Verify all 10 skills are validated
       expect(validatedSkills).toHaveLength(6);
       expect(validatedSkills).toEqual(expect.arrayContaining(allSkills));
     });

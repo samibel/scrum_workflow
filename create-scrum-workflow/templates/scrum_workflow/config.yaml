@@ -38,6 +38,22 @@ token_budgets:
     coordination: 8000
     sub_agent: 4000
 
+# Refinement settings
+# Maximum cross-talk rounds before deadlock escalation
+refinement_max_rounds: 3
+
+# Keep temporary agent files after synthesis for debugging
+keep_agent_temp_files: false
+
+# Estimation variance threshold for Wideband Delphi re-estimation (story points)
+estimation_variance_threshold: 2
+
+# Exit early when only non-blockers remain in cross-talk
+early_exit_on_consensus: true
+
+# Automatically mark security issues as blockers in cross-talk
+security_auto_blocker: true
+
 # Framework version (for copy-based updates)
 # Used to track framework version for distribution and migration
 framework_version: 1.0.0

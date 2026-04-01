@@ -90,7 +90,7 @@ Execute the following validation checks in sequence:
 ### Next Steps
 
 **[if PASS]** Story is ready for implementation. Plan.md will be assembled.
-**[if FAIL]** Story status will revert to draft. Address failure reasons and re-run refinement.
+**[if FAIL]** Story status remains `refined`. Address failure reasons and re-run `/scrum-refine-story`.
 ```
 
 ## Plan Assembly (PASS Case Only)
@@ -103,7 +103,7 @@ When all checks PASS, assemble the execution plan:
 # Execution Plan: [story_title]
 
 **Ticket:** [ticket_id]
-**Status:** ready
+**Status:** ready-for-dev
 **Created:** [ISO_8601_timestamp]
 
 ## Overview
@@ -146,7 +146,7 @@ This skill produces:
 
 - Readiness check result (PASS/FAIL) with specific failure reasons
 - `plan.md` file (on PASS only) -- Execution plan with ordered subtasks
-- Updated `story.md` status -- `ready` on PASS, `draft` on FAIL
+- Updated `story.md` status -- `ready-for-dev` on PASS, `refined` on FAIL (status unchanged)
 
 ## Error Handling
 
@@ -158,15 +158,15 @@ This skill produces:
 ## State Machine Compliance
 
 **Status Transitions:**
-- PASS: `refinement` → `ready`
-- FAIL: `refinement` → `draft`
+- PASS: `refined` → `ready-for-dev`
+- FAIL: `refined` → `refined` (status unchanged)
 
 **Atomic Write Guarantee:**
 - Status update uses atomic write (NFR1 compliance)
 - Plan.md creation uses atomic write (NFR1 compliance)
-- On FAIL, story status reversion preserves all content except status field
+- On FAIL, story status is preserved as `refined`
 
 **Guard Condition Enforcement:**
-- This skill is the ONLY path from `refinement` to `ready`
+- This skill is the ONLY path from `refined` to `ready-for-dev`
 - No status transition bypasses this validation
-- Implementation requires `status == ready` (enforced in dev-story command)
+- Implementation requires `status == ready-for-dev` (enforced in dev-story command)

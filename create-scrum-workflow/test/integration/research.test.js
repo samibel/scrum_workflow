@@ -14,7 +14,7 @@ vi.mock('fs-extra');
  * TDD RED PHASE: All tests use test() and will FAIL until implementation is complete.
  *
  * These tests verify that the create-scrum-workflow installer correctly installs
- * all 8 skills (4 original + 2 docs + 2 research):
+ * all 10 skills (4 original + 2 docs + 2 research):
  * - scrum-create-project-context
  * - scrum-create-ticket
  * - scrum-refine-ticket
@@ -43,12 +43,14 @@ describe('Story 9-10: Integration Tests for Research Agent', () => {
     templateSourceDir: '/mock/templates'
   };
 
-  // All 8 skills (4 original + 2 docs + 2 research)
+  // All 10 skills (4 original + 2 docs + 2 research)
   const eightSkillNames = [
     'scrum-create-project-context',
     'scrum-create-ticket',
     'scrum-refine-ticket',
+    'scrum-refine-story',
     'scrum-dev-story',
+    'scrum-review-story',
     'scrum-create-project-docs',
     'scrum-create-architecture-docs',
     'scrum-research-technical',
@@ -146,10 +148,10 @@ The command file contains the full workflow orchestration including:
    * Then tests verify that both `scrum-research-technical` and `scrum-research-general` exist
    *   in each selected platform's skills directory
    * And tests verify the correct directory structure: `{platform}/skills/{skill-name}/SKILL.md`
-   * And tests check all 8 skills exist (4 original + 2 docs + 2 research)
+   * And tests check all 10 skills exist (4 original + 2 docs + 2 research)
    */
   describe('AC2: Skill File Existence Verification', () => {
-    test('[P0] should verify all 8 skills exist after installation', () => {
+    test('[P0] should verify all 10 skills exist after installation', () => {
       readdirSync.mockReturnValue(eightSkillNames);
       statSync.mockReturnValue({ isDirectory: () => true });
       readFileSync.mockReturnValue('---\nname: {{framework_path}}/commands/test\ndescription: Test\n---');
@@ -158,7 +160,7 @@ The command file contains the full workflow orchestration including:
 
       const result = registerSkills(mockPaths, mockConfig);
 
-      expect(result.skillCount).toBe(8);
+      expect(result.skillCount).toBe(10);
       expect(readdirSync).toHaveBeenCalledWith(mockTemplateDir);
     });
 
@@ -187,7 +189,7 @@ The command file contains the full workflow orchestration including:
       registerSkills(multiPlatformPaths, multiPlatformConfig);
 
       // Verify that writeFileSync was called for each skill-platform combination
-      // 8 skills x 2 platforms = 16 calls
+      // 10 skills x 2 platforms = 20 calls
       expect(fse.writeFileSync).toHaveBeenCalledTimes(16);
     });
 
@@ -980,7 +982,7 @@ Old information that should be preserved
 
       const result = registerSkills(singlePlatformPaths, singlePlatformConfig);
 
-      expect(result.skillCount).toBe(8);
+      expect(result.skillCount).toBe(10);
       expect(result.platformCount).toBe(1);
     });
 
@@ -1006,10 +1008,10 @@ Old information that should be preserved
 
       const result = registerSkills(multiPlatformPaths, multiPlatformConfig);
 
-      // Should copy 8 skills to 2 platforms = 16 writes
+      // Should copy 10 skills to 2 platforms = 16 writes
       expect(fse.writeFileSync).toHaveBeenCalledTimes(16);
       expect(result.platformCount).toBe(2);
-      expect(result.skillCount).toBe(8);
+      expect(result.skillCount).toBe(10);
     });
 
     test.skip('[P2] should complete test suite in less than 30 seconds', async () => {
@@ -1021,7 +1023,7 @@ Old information that should be preserved
       const installer = new Installer(mockConfig);
 
       vi.spyOn(installer, 'registerSkills').mockReturnValue({
-        skillCount: 8,
+        skillCount: 10,
         platformCount: 1
       });
 
@@ -1033,7 +1035,7 @@ Old information that should be preserved
       expect(duration).toBeLessThan(30000); // < 30 seconds
     });
 
-    test('[P0] should verify all 8 skills work in multi-platform scenario', () => {
+    test('[P0] should verify all 10 skills work in multi-platform scenario', () => {
       const multiPlatformConfig = {
         platforms: ['claude-code', 'cursor', 'windsurf']
       };

@@ -15,6 +15,7 @@ This workflow orchestrates multi-agent refinement through 6 phases:
 ## Prerequisites
 
 - Story file exists at `_scrum-output/sprints/SW-XXX/story.md` with `status: draft`
+- Status transitions during this workflow: `draft` → `refinement` (on start) → `refined` (on completion)
 - Project context exists at `_scrum-output/context/index.md`
 - Agent role definitions exist at `scrum_workflow/agents/architect.md`, `scrum_workflow/agents/developer.md`, `scrum_workflow/agents/qa.md`
 
@@ -858,7 +859,7 @@ Add/update the `estimate` field in the YAML frontmatter:
 schema_version: 1
 ticket: "SW-XXX"
 title: "{{story_title}}"
-status: refinement
+status: refined
 estimate: {{final_estimate}}
 confidence: {{confidence_level}}
 created: "{{created_date}}"
@@ -1223,7 +1224,7 @@ After synthesis is complete and validated, run the readiness check to ensure the
 Verify readiness check components exist:
 - `scrum_workflow/skills/readiness-check/SKILL.md` exists
 - `scrum_workflow/workflows/readiness-check.md` exists
-- Current story status is `refinement` (expected from Step 10)
+- Current story status is `refined` (expected from Step 10)
 
 **If prerequisites fail**, halt with error:
 ```
@@ -1248,57 +1249,26 @@ Invoke `scrum_workflow/skills/readiness-check/SKILL.md` (direct skill invocation
 **If readiness check returns PASS:**
 
 1. **Verify plan.md was created** at `_scrum-output/sprints/SW-XXX/plan.md`
-2. **Update story.md status** from `refinement` to `ready`
+2. **Update story.md status** to `refined` (if not already set)
 3. **Update `updated` field** to current date (ISO 8601)
 4. **Use atomic write operation** (NFR1 compliance)
 
 **Output success message:**
 ```
-✅ Story SW-XXX passed readiness check
-Status updated: refinement → ready
-Plan created: _scrum-output/sprints/SW-XXX/plan.md
-Story is ready for implementation
+✅ Story SW-XXX refinement complete
+Status updated: refinement → refined
+Next step: Run '/scrum-refine-story SW-XXX' to validate and create execution plan
 ```
 
-### Step 11.4: Handle FAIL Result
+**Note:** The readiness check and plan.md creation are now handled by the separate `/scrum-refine-story` command, which transitions the story from `refined` → `ready-for-dev`.
 
-**If readiness check returns FAIL:**
+### Step 11.4: Validate State Transition
 
-1. **Document failure reasons** in story.md
-   - Add `## Readiness Check Failure` section after Tasks/Subtasks
-   - List all specific failure reasons from readiness check output
-   - Include timestamp of failed check
+After updating status:
 
-2. **Update story.md status** from `refinement` to `draft`
-3. **Update `updated` field** to current date (ISO 8601)
-4. **Use atomic write operation** (NFR1 compliance)
-
-**Output failure message:**
-```
-❌ Story SW-XXX failed readiness check
-Status reverted: refinement → draft
-Failure reasons:
-1. [Specific reason 1]
-2. [Specific reason 2]
-...
-Address these issues and re-run refinement
-```
-
-**Critical:** Stories that fail readiness check CANNOT proceed to implementation. The user must address the failure reasons and re-run refinement before the story can be marked `ready`.
-
-### Step 11.5: Validate State Transition
-
-After handling PASS or FAIL result:
-
-**For PASS:**
-- Verify story.md status is now `ready`
-- Verify plan.md exists and contains subtasks
+- Verify story.md status is now `refined`
+- Verify refinement.md contains all perspectives, feedback, and synthesis summary
 - Verify no unintended modifications to other story sections
-
-**For FAIL:**
-- Verify story.md status is now `draft`
-- Verify failure reasons are documented
-- Verify refinement.md is preserved (no modifications)
 
 **On validation failure:**
 - Restore from backup if available
@@ -1324,7 +1294,7 @@ This workflow may NOT write:
 ## Validation Rules
 
 - Story status must be `draft` before refinement begins
-- Story status must be updated to `refinement` in a single atomic write
+- Story status must be updated to `refinement` at start, then `refined` on completion, each in a single atomic write
 - All three agents must be spawned with isolated contexts (no cross-contamination)
 - Each agent receives only its role definition file, not other agents' role files
 - Context file references must use correct paths with `scrum_workflow/` prefix for framework files

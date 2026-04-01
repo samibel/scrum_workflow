@@ -1,10 +1,12 @@
-# Code Review Workflow
+# Code Review Workflow (Legacy - Extended Reference)
+
+> **Note:** This is the extended code review workflow triggered via `/scrum-dev-story SW-XXX review`. For the primary review workflow used by `/scrum-review-story`, see `review-story.md`.
 
 Step-by-step workflow for reviewing implemented code against story specifications and acceptance criteria. The review workflow analyzes code changes, evaluates implementation quality, and produces structured findings with severity levels and suggested fixes.
 
 ## Prerequisites
 
-- Story file exists at `_scrum-output/sprints/SW-XXX/story.md` with `status: in-dev` or `status: in-review`
+- Story file exists at `_scrum-output/sprints/SW-XXX/story.md` with `status: in-progress` or `status: review`
 - Code has been implemented (git changes exist or files modified/created)
 - `scrum_workflow/commands/scrum-dev-story.md` exists with review trigger functionality
 - Review template exists at `scrum_workflow/templates/review.md`
@@ -37,13 +39,13 @@ Fix: Ensure story exists before triggering review
 
 Read the `status` field from story.md YAML frontmatter.
 
-**If status is not `in-dev` or `in-review`**, halt with error:
+**If status is not `in-progress` or `review`**, halt with error:
 ```
-Error: Story SW-XXX is in status 'current_status', but code review requires 'in-dev' or 'in-review'
+Error: Story SW-XXX is in status 'current_status', but code review requires 'in-progress' or 'review'
 Fix: Complete implementation before triggering review
 ```
 
-**Note:** Reviews can be triggered multiple times from `in-review` status for incremental reviews.
+**Note:** Reviews can be triggered multiple times from `review` status for incremental reviews.
 
 ## Step 2: Load Story and Plan Context
 
@@ -262,24 +264,24 @@ Add review metadata to review file:
 
 ## Step 7: Update Story Status
 
-### Step 7.1: Update Status to in-review
+### Step 7.1: Update Status to review
 
 Update `_scrum-output/sprints/SW-XXX/story.md` YAML frontmatter:
-- Set `status` field to `in-review`
+- Set `status` field to `review`
 - Update `updated` field to current date (ISO 8601 format)
 - Use atomic write operation (NFR1 compliance)
 
 ### Step 7.2: Verify Status Update
 
 Confirm status was updated successfully:
-- Re-read story.md to verify `status: in-review`
+- Re-read story.md to verify `status: review`
 - If status update fails, halt with error and do NOT mark review complete
 
 ### Step 7.3: Log Review Transition
 
 ```
 ✅ Code review complete for SW-XXX
-Status updated: in-dev → in-review
+Status updated: in-progress → review
 Review findings: _scrum-output/sprints/SW-XXX/review-N.md
 ```
 
@@ -289,7 +291,7 @@ Review findings: _scrum-output/sprints/SW-XXX/review-N.md
 
 The review agent MAY write:
 - `_scrum-output/sprints/SW-XXX/review-N.md` -- Review findings report
-- `_scrum-output/sprints/SW-XXX/story.md` -- Status update only (in-review)
+- `_scrum-output/sprints/SW-XXX/story.md` -- Status update only (review)
 
 ### Step 8.2: Prohibited Write Operations
 
@@ -319,7 +321,7 @@ Before each file write:
 
 ## Validation Rules
 
-- Story status must be `in-dev` or `in-review` before review begins
+- Story status must be `in-progress` or `review` before review begins
 - Review file format must follow template structure
 - All findings must have severity level assigned
 - All findings must reference AC or subtask
@@ -330,7 +332,7 @@ Before each file write:
 ## Error Handling
 
 - If story file is missing or invalid, halt with actionable error
-- If status is not `in-dev` or `in-review`, halt with specific error
+- If status is not `in-progress` or `review`, halt with specific error
 - If no code changes detected, halt with error:
   ```
   Error: No code changes detected for review
@@ -346,6 +348,6 @@ Code review is complete when:
 1. Review file (review-N.md) is created successfully
 2. Summary table and Findings table are populated
 3. All findings have severity, AC reference, and suggested fix
-4. Story status is updated to `in-review`
+4. Story status is updated to `review`
 
 **Note:** First review creates `review-1.md`. Subsequent reviews increment N (`review-2.md`, `review-3.md`, etc.) to preserve review history and track issue resolution.

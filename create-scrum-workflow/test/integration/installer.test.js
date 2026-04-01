@@ -14,7 +14,7 @@ vi.mock('fs-extra');
  * TDD RED PHASE: All tests use test() and will FAIL until implementation is complete.
  *
  * These tests verify that the create-scrum-workflow installer correctly installs
- * all 6 skills (4 original + 2 new from Epic 6/7):
+ * all 10 skills (4 original + 2 new from Epic 6/7):
  * - scrum-create-project-context
  * - scrum-create-ticket
  * - scrum-refine-ticket
@@ -45,9 +45,13 @@ describe('Story 8-3: Integration Tests for Epic 6/7 Skills', () => {
     'scrum-create-project-context',
     'scrum-create-ticket',
     'scrum-refine-ticket',
+    'scrum-refine-story',
     'scrum-dev-story',
+    'scrum-review-story',
     'scrum-create-project-docs',
-    'scrum-create-architecture-docs'
+    'scrum-create-architecture-docs',
+    'scrum-research-general',
+    'scrum-research-technical'
   ];
 
   beforeEach(() => {
@@ -103,11 +107,11 @@ describe('Story 8-3: Integration Tests for Epic 6/7 Skills', () => {
    * When the integration tests execute
    * Then tests verify that both `scrum-create-project-docs.md` and `scrum-create-architecture-docs.md` exist in each selected platform's skills directory
    * And tests verify the correct directory structure: `{platform}/skills/{skill-name}/SKILL.md`
-   * And tests check all 6 skills exist (4 original + 2 new)
+   * And tests check all 10 skills exist (4 original + 2 new)
    */
   describe('AC2: Skill File Existence Verification', () => {
-    test('[P0] should verify all 6 skills exist after installation', () => {
-      // THIS TEST WILL FAIL - Need to verify all 6 skills are created
+    test('[P0] should verify all 10 skills exist after installation', () => {
+      // THIS TEST WILL FAIL - Need to verify all 10 skills are created
       readdirSync.mockReturnValue(sixSkillNames);
       statSync.mockReturnValue({ isDirectory: () => true });
       readFileSync.mockReturnValue('---\nname: {{framework_path}}/commands/test\ndescription: Test\n---');
@@ -116,7 +120,7 @@ describe('Story 8-3: Integration Tests for Epic 6/7 Skills', () => {
 
       const result = registerSkills(mockPaths, mockConfig);
 
-      expect(result.skillCount).toBe(6);
+      expect(result.skillCount).toBe(10);
       expect(readdirSync).toHaveBeenCalledWith(mockTemplateDir);
     });
 
@@ -146,7 +150,7 @@ describe('Story 8-3: Integration Tests for Epic 6/7 Skills', () => {
       registerSkills(multiPlatformPaths, multiPlatformConfig);
 
       // Verify that writeFileSync was called for each skill-platform combination
-      // 6 skills x 2 platforms = 12 calls
+      // 10 skills x 2 platforms = 12 calls
       expect(fse.writeFileSync).toHaveBeenCalledTimes(12);
     });
 
@@ -284,7 +288,7 @@ describe('Story 8-3: Integration Tests for Epic 6/7 Skills', () => {
     test.skip('[P0] should generate lock file with all 6 skill entries', async () => {
       // SKIPPED: Requires real file system or complex mocking of recursive hashDirectory()
       // This functionality is tested in story 8-2 tests
-      // THIS TEST WILL FAIL - Need to verify lock file contains all 6 skills
+      // THIS TEST WILL FAIL - Need to verify lock file contains all 10 skills
       const mockHashes = {
         'scrum-create-project-context/SKILL.md': 'abc123',
         'scrum-create-ticket/SKILL.md': 'def456',
@@ -398,12 +402,12 @@ describe('Story 8-3: Integration Tests for Epic 6/7 Skills', () => {
    *
    * Given the installer prints a summary after installation
    * When the installation completes
-   * Then tests verify the summary shows all 6 skills
-   * And tests verify the skill count is correct (6 skills)
+   * Then tests verify the summary shows all 10 skills
+   * And tests verify the skill count is correct (10 skills)
    * And tests parse and validate the summary output format
    */
   describe('AC5: Install Summary Verification', () => {
-    test.skip('[P0] should display install summary with 6 skills', () => {
+    test.skip('[P0] should display install summary with 10 skills', () => {
       // SKIPPED: Requires real file system or complex mocking of countFiles()
       // Summary functionality is tested in story 8-2
       // THIS TEST WILL FAIL - Need to verify summary output
@@ -415,18 +419,18 @@ describe('Story 8-3: Integration Tests for Epic 6/7 Skills', () => {
       const installer = new Installer(mockConfig);
 
       vi.spyOn(installer, 'registerSkills').mockReturnValue({
-        skillCount: 6,
+        skillCount: 10,
         platformCount: 1
       });
 
       installer.printSummary();
 
       expect(mockConsole.log).toHaveBeenCalledWith(
-        expect.stringContaining('6 skills')
+        expect.stringContaining('10 skills')
       );
     });
 
-    test.skip('[P0] should verify skill count is correct (6 skills)', () => {
+    test.skip('[P0] should verify skill count is correct (10 skills)', () => {
       // SKIPPED: Requires real file system or complex mocking
       // Summary skill count is tested in story 8-2
       // THIS TEST WILL FAIL - Need to verify skill count in summary
@@ -438,7 +442,7 @@ describe('Story 8-3: Integration Tests for Epic 6/7 Skills', () => {
       const installer = new Installer(mockConfig);
 
       vi.spyOn(installer, 'registerSkills').mockReturnValue({
-        skillCount: 6,
+        skillCount: 10,
         platformCount: 1
       });
 
@@ -462,7 +466,7 @@ describe('Story 8-3: Integration Tests for Epic 6/7 Skills', () => {
       const installer = new Installer(mockConfig);
 
       vi.spyOn(installer, 'registerSkills').mockReturnValue({
-        skillCount: 6,
+        skillCount: 10,
         platformCount: 1,
         skills: sixSkillNames
       });
@@ -531,7 +535,7 @@ describe('Story 8-3: Integration Tests for Epic 6/7 Skills', () => {
 
       const result = registerSkills(singlePlatformPaths, singlePlatformConfig);
 
-      expect(result.skillCount).toBe(6);
+      expect(result.skillCount).toBe(10);
       expect(result.platformCount).toBe(1);
     });
 
@@ -558,10 +562,10 @@ describe('Story 8-3: Integration Tests for Epic 6/7 Skills', () => {
 
       const result = registerSkills(multiPlatformPaths, multiPlatformConfig);
 
-      // Should copy 6 skills to 2 platforms = 12 writes
+      // Should copy 10 skills to 2 platforms = 12 writes
       expect(fse.writeFileSync).toHaveBeenCalledTimes(12);
       expect(result.platformCount).toBe(2);
-      expect(result.skillCount).toBe(6);
+      expect(result.skillCount).toBe(10);
     });
 
     test.skip('[P2] should complete test suite in less than 30 seconds', async () => {
@@ -574,7 +578,7 @@ describe('Story 8-3: Integration Tests for Epic 6/7 Skills', () => {
       const installer = new Installer(mockConfig);
 
       vi.spyOn(installer, 'registerSkills').mockReturnValue({
-        skillCount: 6,
+        skillCount: 10,
         platformCount: 1
       });
 
@@ -586,7 +590,7 @@ describe('Story 8-3: Integration Tests for Epic 6/7 Skills', () => {
       expect(duration).toBeLessThan(30000); // < 30 seconds
     });
 
-    test('[P0] should verify all 6 skills work in multi-platform scenario', () => {
+    test('[P0] should verify all 10 skills work in multi-platform scenario', () => {
       // THIS TEST WILL FAIL - Need to verify all skills exist in all platforms
       const multiPlatformConfig = {
         platforms: ['claude-code', 'cursor', 'windsurf']

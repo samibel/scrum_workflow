@@ -102,7 +102,7 @@ This validation report was generated using the automated validation test suite i
 
 ## Conclusion
 
-All 6 platforms successfully validated for all 6 skills. The create-scrum-workflow installer correctly creates skill shims across all supported platforms, and fallback scan behavior works as expected for platforms that support it.
+All 6 platforms successfully validated for all 10 skills. The create-scrum-workflow installer correctly creates skill shims across all supported platforms, and fallback scan behavior works as expected for platforms that support it.
 
 ---
 

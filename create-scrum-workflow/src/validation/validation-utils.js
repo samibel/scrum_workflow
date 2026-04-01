@@ -251,7 +251,7 @@ export function formatPlatformDetails(platformData) {
     lines.push(`- fallback_scan: ${platformData.fallbackScan.join(', ')}`);
   }
 
-  lines.push(`- Skills Discovered: ${platformData.skillsFound}/${platformData.totalSkills || 6}`);
+  lines.push(`- Skills Discovered: ${platformData.skillsFound}/${platformData.totalSkills || '?'}`);
 
   if (platformData.notes) {
     lines.push(`- Notes: ${platformData.notes}`);
@@ -307,7 +307,7 @@ export function generateValidationReport(validationData) {
 
   const platforms = Object.keys(validationData.platforms);
   lines.push(`- Platforms Tested: ${platforms.length}`);
-  lines.push(`- Skills Tested: ${validationData.skillsTested || 6}`);
+  lines.push(`- Skills Tested: ${validationData.skillsTested || '?'}`);
 
   // Calculate statistics
   const results = {};

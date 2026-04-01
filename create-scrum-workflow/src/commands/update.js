@@ -84,41 +84,51 @@ export async function update(options) {
     }
   }
 
-  // ── "Up to date" check ─────────────────────────────────────────────
-  // If no files are user-modified or missing, check whether the source
-  // templates have actually changed compared to what is installed. If
-  // every tracked file already matches the new template, nothing needs
-  // to happen.
-  if (userModified.length === 0 && missing.length === 0) {
-    // Compute hashes for the current installer templates
+  // ── Detect new files in templates ────────────────────────────────────
+  // Check if the installer templates contain files that aren't tracked
+  // in the lock file (e.g., new skills or workflows added in a new version).
+  const newFiles = []
+  {
     const sourceFrameworkHashes = hashDirectory(paths.templateSourceDir, paths.templateSourceDir)
+    for (const relPath of Object.keys(sourceFrameworkHashes)) {
+      const targetRelPath = join(config.frameworkPath, relPath)
+      if (!lockData.files[targetRelPath]) {
+        newFiles.push(targetRelPath)
+      }
+    }
 
-    // Re-key source hashes: template-relative paths → target-relative paths
-    // e.g., "config.yaml" → "scrum_workflow/config.yaml"
+    // Also check for new skill registration templates
+    const { readdirSync, statSync } = await import('node:fs')
+    const skillTemplateNames = readdirSync(paths.skillTemplateDir).filter((entry) => {
+      return statSync(join(paths.skillTemplateDir, entry)).isDirectory()
+    })
+    for (const skillName of skillTemplateNames) {
+      for (const [, platformSkillDir] of paths.platformDirs) {
+        const relSkillPath = join(platformSkillDir.replace(targetDir + '/', ''), skillName, 'SKILL.md')
+        if (!lockData.files[relSkillPath]) {
+          newFiles.push(relSkillPath)
+        }
+      }
+    }
+  }
+
+  // ── "Up to date" check ─────────────────────────────────────────────
+  if (userModified.length === 0 && missing.length === 0 && newFiles.length === 0) {
+    const sourceFrameworkHashes = hashDirectory(paths.templateSourceDir, paths.templateSourceDir)
     const sourceHashes = {}
     for (const [relPath, hash] of Object.entries(sourceFrameworkHashes)) {
       const targetRelPath = join(config.frameworkPath, relPath)
       sourceHashes[targetRelPath] = hash
     }
 
-    // Also hash skill registration templates after substitution would apply
-    // (we compare against already-installed skill files, which are already
-    // hashed in the lock file). For skills, the lock file stores the hash of
-    // the *substituted* content. If the template + frameworkPath haven't
-    // changed, the installed skill files will match. We can simply compare
-    // the lock file hashes against the currently installed files -- which we
-    // already know all match (unchanged array covers them all). So we only
-    // need to check framework files against source templates.
     let isUpToDate = true
     for (const relPath of unchanged) {
       const storedHash = lockData.files[relPath]
       const sourceHash = sourceHashes[relPath]
-      // If a source hash exists and differs from stored, templates have changed
       if (sourceHash && sourceHash !== storedHash) {
         isUpToDate = false
         break
       }
-      // Skill files (not in sourceHashes) are unchanged, so they are fine
     }
 
     if (isUpToDate) {
@@ -126,6 +136,29 @@ export async function update(options) {
       outro('Update complete!')
       return
     }
+  }
+
+  if (newFiles.length > 0) {
+    log.info(`New files available: ${newFiles.length} (will be added during update)`)
+  }
+
+  // ── Dry run: show what would happen, then exit ──────────────────────
+  if (options.dryRun) {
+    log.info(
+      `Dry run — no changes will be made\n\n` +
+      `  Files to update:   ${unchanged.length + missing.length}\n` +
+      `  Files to preserve: ${userModified.length} (user-modified)\n` +
+      `  Files to restore:  ${missing.length} (currently missing)\n` +
+      `  New files to add:  ${newFiles.length}`
+    )
+    if (userModified.length > 0) {
+      log.info('Would preserve:\n' + userModified.map((f) => `  ${f}`).join('\n'))
+    }
+    if (newFiles.length > 0) {
+      log.info('Would add:\n' + newFiles.map((f) => `  ${f}`).join('\n'))
+    }
+    outro('Dry run complete — run without --dry-run to update')
+    return
   }
 
   // ── Step 3-5: Backup, overwrite, restore ────────────────────────────
@@ -241,17 +274,28 @@ export async function update(options) {
   }
 
   // ── Step 7: Print summary ───────────────────────────────────────────
-  log.success(
-    `Update summary:\n` +
-    `  Files updated:   ${unchanged.length + missing.length}\n` +
-    `  Files preserved: ${userModified.length} (user-modified)\n` +
-    `  Files missing:   ${missing.length} (re-created from installer)`
-  )
+  const summaryLines = [
+    `Update summary:`,
+    `  Files updated:   ${unchanged.length + missing.length}`,
+    `  Files preserved: ${userModified.length} (user-modified)`,
+    `  Files restored:  ${missing.length} (were missing, re-created)`
+  ]
+  if (newFiles.length > 0) {
+    summaryLines.push(`  Files added:     ${newFiles.length} (new in this version)`)
+  }
+  log.success(summaryLines.join('\n'))
 
   if (userModified.length > 0) {
     log.info(
       'Preserved files:\n' +
       userModified.map((f) => `  ${f}`).join('\n')
+    )
+  }
+
+  if (newFiles.length > 0) {
+    log.info(
+      'New files added:\n' +
+      newFiles.map((f) => `  ${f}`).join('\n')
     )
   }
 

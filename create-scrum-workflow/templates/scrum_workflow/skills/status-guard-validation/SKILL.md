@@ -18,10 +18,10 @@ Each command has a specific required status. The command may only execute when t
 |---|---|---|
 | `/scrum-create-ticket` | No status (new story) | Story file must not exist |
 | `/scrum-refine-ticket` | `draft` | Story must be in `draft` status |
-| Readiness check | `refinement` | Story must be in `refinement` status |
-| `/scrum-dev-story` | `ready` | Story must be in `ready` status |
-| Code review | `in-dev` | Story must be in `in-dev` status |
-| Approval | `in-review` | Story must be in `in-review` status |
+| `/scrum-refine-story` | `refined` | Story must be in `refined` status |
+| `/scrum-dev-story` | `ready-for-dev` | Story must be in `ready-for-dev` status |
+| `/scrum-review-story` | `review` | Story must be in `review` status |
+| Approval | `approved` | Story must be in `approved` status |
 
 ## Status Value Validation
 
@@ -30,9 +30,12 @@ Read the current `status` field from the story file's YAML frontmatter and valid
 **Valid status values:**
 - `draft` -- Story created, not yet refined
 - `refinement` -- Multi-agent refinement in progress
-- `ready` -- Spec approved, implementation allowed
-- `in-dev` -- Implementation in progress
-- `in-review` -- Code review in progress
+- `refined` -- Refinement complete, awaiting validation
+- `ready-for-dev` -- Validated and ready for implementation
+- `in-progress` -- Implementation in progress
+- `review` -- Code review requested
+- `approved` -- Review passed, awaiting human sign-off
+- `changes-needed` -- Review found issues, changes required
 - `done` -- Story completed and approved
 
 ## Guard Condition Checks
@@ -63,56 +66,56 @@ Error: Story SW-XXX is in status 'current_status', but '/scrum-refine-ticket' re
 Fix: Ensure the story is in draft status before running refinement
 ```
 
-### Readiness Check Command
+### Refine Story Command (`/scrum-refine-story`)
 
-**Guard condition**: Story status must be `refinement`
+**Guard condition**: Story status must be `refined`
 
-**Rationale**: The readiness check evaluates whether the refinement output is sufficient to proceed to development. It can only run after refinement is complete.
+**Rationale**: The validation agent evaluates whether the refinement output is sufficient to proceed to development. It can only run after refinement is complete and the story has been marked as `refined`.
 
 **On guard condition failure**, return an error:
 
 ```
-Error: Story SW-XXX is in status 'current_status', but readiness check requires 'refinement'
+Error: Story SW-XXX is in status 'current_status', but '/scrum-refine-story' requires 'refined'
 Fix: Run '/scrum-refine-ticket SW-XXX' first to complete refinement
 ```
 
 ### Dev Story Command (`/scrum-dev-story`)
 
-**Guard condition**: Story status must be `ready`
+**Guard condition**: Story status must be `ready-for-dev` (or `changes-needed` for re-implementation after review)
 
-**Rationale**: Development can only begin after the story has been refined and passed the readiness check. This ensures the spec is complete and approved before implementation starts.
-
-**On guard condition failure**, return an error:
-
-```
-Error: Story SW-XXX is in status 'current_status', but '/scrum-dev-story' requires 'ready'
-Fix: Run '/scrum-refine-ticket SW-XXX' and pass readiness check before starting development
-```
-
-### Code Review Command
-
-**Guard condition**: Story status must be `in-dev`
-
-**Rationale**: Code review is the phase after implementation completes. It can only run when development is finished but the story is not yet approved.
+**Rationale**: Development can only begin after the story has been refined and passed the validation check. This ensures the spec is complete and approved before implementation starts.
 
 **On guard condition failure**, return an error:
 
 ```
-Error: Story SW-XXX is in status 'current_status', but code review requires 'in-dev'
-Fix: Complete implementation first before running code review
+Error: Story SW-XXX is in status 'current_status', but '/scrum-dev-story' requires 'ready-for-dev'
+Fix: Run '/scrum-refine-ticket SW-XXX' and '/scrum-refine-story SW-XXX' to complete refinement and validation before starting development
+```
+
+### Review Story Command (`/scrum-review-story`)
+
+**Guard condition**: Story status must be `review`
+
+**Rationale**: Code review is the phase after implementation completes. It can only run when development is finished and the story has been submitted for review.
+
+**On guard condition failure**, return an error:
+
+```
+Error: Story SW-XXX is in status 'current_status', but '/scrum-review-story' requires 'review'
+Fix: Complete implementation first and run '/scrum-dev-story SW-XXX review' to submit for review
 ```
 
 ### Approval Command
 
-**Guard condition**: Story status must be `in-review`
+**Guard condition**: Story status must be `approved`
 
-**Rationale**: Human approval is the final phase after code review. It can only run when the review is complete and the story is awaiting sign-off.
+**Rationale**: Human approval is the final phase after code review passes. It can only run when the review is complete and the story is awaiting sign-off.
 
 **On guard condition failure**, return an error:
 
 ```
-Error: Story SW-XXX is in status 'current_status', but approval requires 'in-review'
-Fix: Complete code review first before requesting approval
+Error: Story SW-XXX is in status 'current_status', but approval requires 'approved'
+Fix: Complete code review first by running '/scrum-review-story SW-XXX'
 ```
 
 ## Status Transition Validation
@@ -121,14 +124,18 @@ Ensure that status transitions only follow the defined state machine paths:
 
 **Valid transitions:**
 - `draft` → `refinement` (via `/scrum-refine-ticket`)
-- `refinement` → `ready` (via readiness check PASS)
-- `refinement` → `draft` (via readiness check FAIL)
-- `ready` → `in-dev` (via `/scrum-dev-story`)
-- `in-dev` → `in-review` (via code review)
-- `in-review` → `done` (via approval)
+- `refinement` → `refined` (via `/scrum-refine-ticket` completion)
+- `refined` → `ready-for-dev` (via `/scrum-refine-story` PASS)
+- `refined` → `refined` (via `/scrum-refine-story` FAIL, status unchanged)
+- `ready-for-dev` → `in-progress` (via `/scrum-dev-story`)
+- `in-progress` → `review` (via `/scrum-dev-story review`)
+- `review` → `approved` (via `/scrum-review-story` APPROVED)
+- `review` → `changes-needed` (via `/scrum-review-story` CHANGES-NEEDED)
+- `changes-needed` → `in-progress` (via `/scrum-dev-story` fix findings)
+- `approved` → `done` (via user approval)
 
 **Invalid transitions:**
-- Any transition not listed above (e.g., `draft` → `ready` skipping refinement)
+- Any transition not listed above (e.g., `draft` → `ready-for-dev` skipping refinement)
 - Skipping phases (e.g., running `/scrum-dev-story` on a `draft` story)
 
 ## Current Status Detection

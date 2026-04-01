@@ -1,5 +1,5 @@
 import fse from 'fs-extra'
-import { existsSync, readdirSync, statSync } from 'node:fs'
+import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
 import { spinner, confirm, log, isCancel, cancel } from '@clack/prompts'
 import { resolveInstallPaths } from './path-resolver.js'
@@ -40,6 +40,7 @@ export class Installer {
     this.registerSkills()
     this.createOutputDirs()
     this.generateLockFile()
+    this.verifyInstallation()
     this.printSummary()
   }
 
@@ -146,6 +147,45 @@ export class Installer {
     } catch (err) {
       s.stop('Lock file generation failed')
       throw err
+    }
+  }
+
+  /**
+   * Quick post-install verification: check that critical files exist
+   * and skill shims have no unresolved placeholders.
+   */
+  verifyInstallation() {
+    const issues = []
+
+    // Verify framework config exists
+    const configPath = join(this.paths.frameworkDir, 'config.yaml')
+    if (!existsSync(configPath)) {
+      issues.push('Framework config.yaml missing after copy')
+    }
+
+    // Verify skill shims have no unresolved placeholders
+    for (const [, platformSkillDir] of this.paths.platformDirs) {
+      if (!existsSync(platformSkillDir)) continue
+      const skills = readdirSync(platformSkillDir).filter(
+        (e) => statSync(join(platformSkillDir, e)).isDirectory()
+      )
+      for (const skillName of skills) {
+        const skillPath = join(platformSkillDir, skillName, 'SKILL.md')
+        if (!existsSync(skillPath)) continue
+        const content = readFileSync(skillPath, 'utf8')
+        if (content.includes('{{framework_path}}')) {
+          issues.push(`Unresolved placeholder in ${skillName}/SKILL.md`)
+        }
+      }
+    }
+
+    if (issues.length > 0) {
+      log.warn(`Post-install verification found ${issues.length} issue(s):`)
+      for (const issue of issues) {
+        log.warn(`  - ${issue}`)
+      }
+    } else {
+      log.info('Post-install verification passed')
     }
   }
 

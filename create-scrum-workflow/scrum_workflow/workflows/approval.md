@@ -4,7 +4,7 @@ Step-by-step workflow for human-in-the-loop approval of reviewed stories. The ap
 
 ## Prerequisites
 
-- Story file exists at `_scrum-output/sprints/SW-XXX/story.md` with `status: in-review`
+- Story file exists at `_scrum-output/sprints/SW-XXX/story.md` with `status: approved`
 - Code review file exists at `_scrum-output/sprints/SW-XXX/review-N.md` (typically `review-1.md`)
 - `scrum_workflow/templates/approval.md` exists for approval record format
 - Human reviewer is available to provide explicit approval decision
@@ -45,13 +45,13 @@ Error: Status field is empty in story.md
 Fix: Ensure status field has a valid value
 ```
 
-**If status is not `in-review`**, halt with error:
+**If status is not `approved`**, halt with error:
 ```
-Error: Story SW-XXX is in status 'current_status', but approval requires 'in-review'
+Error: Story SW-XXX is in status 'current_status', but approval requires 'approved'
 Fix: Complete code review before triggering approval
 ```
 
-**Critical:** Approval requires story to be in `in-review` status after code review is complete.
+**Critical:** Approval requires story to be in `approved` status after code review is complete.
 
 ### Step 1.3: Verify Review File Exists
 
@@ -290,19 +290,19 @@ When human approves:
 3. Log approval completion:
    ```
    ✅ Story SW-XXX approved by {approver}
-   Status updated: in-review → done
+   Status updated: approved → done
    Approval record: _scrum-output/sprints/SW-XXX/approval.md
    ```
 
-### Step 5.2: If Rejected — Keep Status in in-review
+### Step 5.2: If Rejected — Keep Status in approved
 
 When human rejects:
-1. Keep `_scrum-output/sprints/SW-XXX/story.md` status as `in-review`
+1. Keep `_scrum-output/sprints/SW-XXX/story.md` status as `approved`
 2. Document rejection reason in approval.md
 3. Provide instructions for next steps:
    ```
    ⛔ Story SW-XXX rejected
-   Status remains: in-review
+   Status remains: approved
    Rejection reason: {reason}
 
    Next Steps:
@@ -332,7 +332,7 @@ Approval decisions are permanent and create audit trail:
 
 The approval workflow MAY write:
 - `_scrum-output/sprints/SW-XXX/approval.md` -- Approval record (new file or update)
-- `_scrum-output/sprints/SW-XXX/story.md` -- Status update only (in-review → done)
+- `_scrum-output/sprints/SW-XXX/story.md` -- Status update only (approved → done)
 
 ### Step 6.2: Prohibited Write Operations
 
@@ -362,7 +362,7 @@ Before each file write:
 
 ## Validation Rules
 
-- Story status must be `in-review` before approval begins
+- Story status must be `approved` before approval begins
 - Review file must exist before approval can proceed
 - Human must explicitly approve or reject (no default approval)
 - Approval record must include all required fields (approver, date, decision, comments)
@@ -373,7 +373,7 @@ Before each file write:
 ## Error Handling
 
 - If story file is missing or invalid, halt with actionable error
-- If status is not `in-review`, halt with specific error
+- If status is not `approved`, halt with specific error
 - If no review file exists, halt with error and suggest code review
 - If human input is invalid, prompt again with clear options
 - If approval file creation fails, halt with error and suggest manual intervention
@@ -387,9 +387,9 @@ Approval workflow is complete when:
 2. Human provides explicit approval decision (APPROVE or REJECT)
 3. Approval record (approval.md) is created successfully
 4. If approved: Story status is updated to `done`
-5. If rejected: Story status remains `in-review` with documented reason
+5. If rejected: Story status remains `approved` with documented reason
 
-**Note:** This is the final workflow in the development pipeline. After approval, the story is marked as DONE and the development cycle is complete. Rejected stories return to `in-review` status for additional work and re-review.
+**Note:** This is the final workflow in the development pipeline. After approval, the story is marked as DONE and the development cycle is complete. Rejected stories return to `approved` status for additional work and re-review.
 
 ## Re-Review Cycle
 

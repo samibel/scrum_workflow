@@ -5,7 +5,7 @@ Step-by-step workflow for implementing stories based on approved specifications 
 ## Prerequisites
 
 - Story identifier matches `SW-XXX` format (where XXX is 3-digit number: `SW-001`, `SW-042`, `SW-103`)
-- Story file exists at `_scrum-output/sprints/SW-XXX/story.md` with `status: ready`
+- Story file exists at `_scrum-output/sprints/SW-XXX/story.md` with `status: ready-for-dev`
 - Execution plan exists at `_scrum-output/sprints/SW-XXX/plan.md` (created by readiness check)
 - Story has passed readiness check (all 4 criteria validated)
 - `scrum_workflow/commands/scrum-dev-story.md` exists with guard condition enforcement
@@ -34,13 +34,13 @@ Fix: Use correct story identifier format with 3-digit number.
 
 Read the `status` field from story.md YAML frontmatter.
 
-**If status is not `ready`**, halt with error:
+**If status is not `ready-for-dev`**, halt with error:
 ```
 Error: Story SW-XXX is in status 'current_status', but '/scrum-dev-story' requires 'ready'
 Fix: Stories must pass readiness check before implementation. Run '/scrum-refine-ticket SW-XXX' to complete refinement and readiness check.
 ```
 
-**Critical:** There is NO flag or option to bypass this guard condition. The only path to `in-dev` is through `ready` (refinement → ready → in-dev).
+**Critical:** There is NO flag or option to bypass this guard condition. The only path to `in-progress` is through `ready-for-dev` (refined → ready-for-dev → in-progress).
 
 ### Step 1.3: Validate Frontmatter Structure
 
@@ -48,7 +48,7 @@ Verify YAML frontmatter is well-formed and contains expected fields:
 - `schema_version`
 - `ticket`
 - `title`
-- `status` (must be `ready`)
+- `status` (must be `ready-for-dev`)
 - `created`
 - `updated`
 
@@ -171,33 +171,33 @@ Read `scrum_workflow/context/standards.md` for:
 - Status value conventions
 - Markdown formatting standards
 
-## Step 4: Update Story Status to in-dev
+## Step 4: Update Story Status to in-progress
 
 ### Step 4.1: Update Status Field
 
 Update `_scrum-output/sprints/SW-XXX/story.md` YAML frontmatter:
-- Set `status` field to `in-dev`
+- Set `status` field to `in-progress`
 - Update `updated` field to current date (ISO 8601 format)
 - Use atomic write operation: write to temporary file, then rename (NFR1 compliance)
 
 **Atomic Write Implementation:** Write complete content to temporary file (`.tmp` suffix), then use atomic rename operation to replace original. This ensures no partial corruption if write fails midway.
 
-**Concurrent Invocation Handling:** If another process has already updated status to `in-dev`, log info and continue (resuming implementation rather than starting fresh).
+**Concurrent Invocation Handling:** If another process has already updated status to `in-progress`, log info and continue (resuming implementation rather than starting fresh).
 
 ### Step 4.2: Verify Status Update
 
 Confirm status was updated successfully:
-- Re-read story.md to verify `status: in-dev`
+- Re-read story.md to verify `status: in-progress`
 - Resolve symlinks to real paths before verification to prevent bypass
 - If status update failed, rollback to previous status and halt with error
 - If verification read fails, halt with error and suggest manual intervention
 
-**Rollback Mechanism:** If status update succeeds but any subsequent step fails, revert story status to `ready` and log failure reason for manual recovery.
+**Rollback Mechanism:** If status update succeeds but any subsequent step fails, revert story status to `ready-for-dev` and log failure reason for manual recovery.
 
 ### Step 4.3: Log Status Transition
 
 ```
-🚀 Story SW-XXX status updated: ready → in-dev
+🚀 Story SW-XXX status updated: ready-for-dev → in-progress
 Beginning implementation...
 ```
 
@@ -315,10 +315,10 @@ Error: Story not ready for review - incomplete tasks or failing tests
 Fix: Complete all tasks and ensure tests pass before triggering review
 ```
 
-### Step 7.3: Update Status to in-review
+### Step 7.3: Update Status to review
 
 Update `_scrum-output/sprints/SW-XXX/story.md` YAML frontmatter:
-- Set `status` field to `in-review`
+- Set `status` field to `review`
 - Update `updated` field to current date (ISO 8601 format)
 - Use atomic write operation (NFR1 compliance)
 
@@ -326,7 +326,7 @@ Update `_scrum-output/sprints/SW-XXX/story.md` YAML frontmatter:
 
 ```
 ✅ Story SW-XXX implementation complete
-Status updated: in-dev → in-review
+Status updated: in-progress → review
 Ready for code review
 ```
 
@@ -334,7 +334,7 @@ Ready for code review
 
 This workflow may write:
 
-- `_scrum-output/sprints/SW-XXX/story.md` -- Status updates (in-dev, in-review) only
+- `_scrum-output/sprints/SW-XXX/story.md` -- Status updates (in-progress, review) only
 - Code files in project directory -- Implementation outputs
 - Test files -- Validation and regression tests
 
@@ -348,7 +348,7 @@ This workflow may NOT write:
 
 ## Validation Rules
 
-- Story status must be `ready` before development begins (FR17 guard condition)
+- Story status must be `ready-for-dev` before development begins (FR17 guard condition)
 - All four readiness checks must have passed (description, AC, estimation, subtasks)
 - Tests must exist and pass for all implemented functionality
 - No regressions in existing test suite
@@ -359,7 +359,7 @@ This workflow may NOT write:
 ## Error Handling
 
 - If story file is missing or invalid, halt with actionable error
-- If status is not `ready`, halt with specific error suggesting refinement
+- If status is not `ready-for-dev`, halt with specific error suggesting refinement
 - If plan.md is missing, issue warning and continue with story.md tasks
 - If domain context or skills are missing, log warning and continue
 - If write boundary violation attempted, halt immediately with error
@@ -373,6 +373,6 @@ Story implementation is complete when:
 2. ALL acceptance criteria are satisfied
 3. ALL tests pass (no regressions)
 4. File List includes all changed files
-5. Story status transitions to `in-review` (via review trigger)
+5. Story status transitions to `review` (via review trigger)
 
-**Note:** Regular `/scrum-dev-story SW-XXX` updates status to `in-dev` and begins implementation. `/scrum-dev-story SW-XXX review` updates status to `in-review` after implementation is complete.
+**Note:** Regular `/scrum-dev-story SW-XXX` updates status to `in-progress` and begins implementation. `/scrum-dev-story SW-XXX review` updates status to `review` after implementation is complete.

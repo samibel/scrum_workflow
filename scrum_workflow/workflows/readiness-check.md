@@ -4,7 +4,7 @@ Step-by-step workflow for validating story completeness before implementation. T
 
 ## Prerequisites
 
-- Story file exists at `_scrum-output/sprints/SW-XXX/story.md` with `status: refinement`
+- Story file exists at `_scrum-output/sprints/SW-XXX/story.md` with `status: refined`
 - Refinement completed with synthesis (from Story 3.3)
 - `scrum_workflow/skills/readiness-check/SKILL.md` exists
 
@@ -24,7 +24,7 @@ Fix: Ensure refinement has completed and story file exists
 
 Read the `status` field from story.md YAML frontmatter.
 
-**If status is not `refinement`**, halt with error:
+**If status is not `refined`**, halt with error:
 ```
 Error: Story SW-XXX is in status 'current_status', but readiness check requires 'refinement'
 Fix: Complete refinement process before running readiness check
@@ -36,7 +36,7 @@ Verify YAML frontmatter is well-formed and contains expected fields:
 - `schema_version`
 - `ticket`
 - `title`
-- `status` (must be `refinement`)
+- `status` (must be `refined`)
 - `created`
 - `updated`
 
@@ -87,9 +87,9 @@ The skill produces:
 
 2. **Verify plan.md was created successfully**
    - If plan.md creation failed, halt with error and do NOT update story status
-   - This prevents inconsistent state (story marked ready but no plan exists)
+   - This prevents inconsistent state (story marked ready-for-dev but no plan exists)
 
-3. **Update story.md status** to `ready` ONLY after plan.md is verified
+3. **Update story.md status** to `ready-for-dev` ONLY after plan.md is verified
    - Update `status` field in YAML frontmatter
    - Update `updated` field to current date (ISO 8601)
    - Use atomic write operation (NFR1 compliance)
@@ -97,9 +97,9 @@ The skill produces:
 4. **Log success:**
 ```
 ✅ Story SW-XXX passed readiness check
-Status updated: refinement → ready
+Status updated: refined → ready-for-dev
 Plan created: _scrum-output/sprints/SW-XXX/plan.md
-Story is ready for implementation
+Story is ready-for-dev
 ```
 
 ### Step 3.2: FAIL Case - Revert Status and Document Reasons
@@ -111,15 +111,15 @@ Story is ready for implementation
    - List all specific failure reasons from skill output
    - Include timestamp of failed check
 
-2. **Update story.md status** to `draft`
-   - Update `status` field in YAML frontmatter to `draft`
+2. **Update story.md status** to `refined` (preserve for re-validation)
+   - Update `status` field in YAML frontmatter to `refined`
    - Update `updated` field to current date (ISO 8601)
    - Use atomic write operation
 
 3. **Log failure:**
 ```
 ❌ Story SW-XXX failed readiness check
-Status reverted: refinement → draft
+Status preserved: refined (fix issues and re-run /scrum-refine-story)
 Failure reasons:
 1. [Specific reason 1]
 2. [Specific reason 2]
@@ -132,7 +132,7 @@ Address these issues and re-run refinement
 This workflow may write:
 
 - `_scrum-output/sprints/SW-XXX/plan.md` -- Execution plan (on PASS only)
-- `_scrum-output/sprints/SW-XXX/story.md` -- Status update (ready on PASS, draft on FAIL) and failure reasons section (on FAIL)
+- `_scrum-output/sprints/SW-XXX/story.md` -- Status update (ready-for-dev on PASS, refined on FAIL) and failure reasons section (on FAIL)
 
 This workflow may NOT write:
 
@@ -143,7 +143,7 @@ This workflow may NOT write:
 
 ## Validation Rules
 
-- Story status must be `refinement` before readiness check begins
+- Story status must be `refined` before readiness check begins
 - All four validation checks must pass for PASS result
 - Any single check failure results in FAIL result
 - Status transitions must follow state machine (no bypassing)

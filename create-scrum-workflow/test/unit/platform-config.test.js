@@ -224,24 +224,32 @@ windsurf:
    */
 
   describe('Skill List Validation', () => {
-    test('[P0] should verify all 6 skills are in the skill list', async () => {
+    test('[P0] should verify all 10 skills are in the skill list', async () => {
       // THIS TEST WILL FAIL - Skill list validation not implemented yet
       const expectedSkills = [
         'scrum-create-project-context',
         'scrum-create-ticket',
         'scrum-refine-ticket',
+        'scrum-refine-story',
         'scrum-dev-story',
+        'scrum-review-story',
         'scrum-create-project-docs',
-        'scrum-create-architecture-docs'
+        'scrum-create-architecture-docs',
+        'scrum-research-general',
+        'scrum-research-technical'
       ];
 
       const actualSkills = [
         'scrum-create-project-context',
         'scrum-create-ticket',
         'scrum-refine-ticket',
+        'scrum-refine-story',
         'scrum-dev-story',
+        'scrum-review-story',
         'scrum-create-project-docs',
-        'scrum-create-architecture-docs'
+        'scrum-create-architecture-docs',
+        'scrum-research-general',
+        'scrum-research-technical'
       ];
 
       // This will fail until validateSkillList is implemented

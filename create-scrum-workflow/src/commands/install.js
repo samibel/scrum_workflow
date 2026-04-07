@@ -65,5 +65,5 @@ export async function install(options) {
     return
   }
 
-  outro('Installation complete!')
+  outro("Installation complete! Try: /scrum-create-ticket 'your feature description'")
 }

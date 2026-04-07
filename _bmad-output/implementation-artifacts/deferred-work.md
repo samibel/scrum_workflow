@@ -7,3 +7,7 @@
 ## Deferred from: code review of 1-8-verify-align-research-commands (2026-04-07)
 
 - Step 0.4 appears before Step 0.3 in both `research-technical.md` and `research-general.md` workflow files. Pre-existing step ordering issue; cosmetic only, does not affect runtime behavior.
+
+## Deferred from: code review of 1-9-verify-align-artifact-contract (2026-04-07)
+
+- Sprint status lifecycle skip: story 1.9 moved directly from `backlog` → `review` without going through `ready-for-dev` and `in-progress` intermediate states. This is a brownfield verification story authored directly without a standard dev cycle. Pre-existing process deviation; no runtime impact.

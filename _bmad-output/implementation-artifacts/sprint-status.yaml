@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-04-07T12:00:49Z
-last_updated: 2026-04-07T23:45:00Z
+last_updated: 2026-04-07T23:59:00Z
 project: scrum_workflow
 project_key: NOKEY
 tracking_system: file-system
@@ -52,7 +52,7 @@ development_status:
   1-6-verify-align-installation-onboarding: done
   1-7-verify-align-runtime-extension-model: done
   1-8-verify-align-research-commands: done
-  1-9-verify-align-artifact-contract: review
+  1-9-verify-align-artifact-contract: done
   epic-1-retrospective: optional
 
   # Epic 2: Story Approval & Lifecycle Completion

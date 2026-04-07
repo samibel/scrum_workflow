@@ -34,12 +34,12 @@ describe('AC1: Delta Analysis — Story implementation documents required analys
   const prdFile = join(process.cwd(), '_bmad-output', 'planning-artifacts', 'prd.md');
 
   // Test 1.1: Story implementation file exists
-  test.skip('[P0] Story 1.9 implementation file should exist', () => {
+  test('[P0] Story 1.9 implementation file should exist', () => {
     expect(existsSync(storyFile)).toBe(true);
   });
 
   // Test 1.2: PRD file exists and contains FR-46 specification
-  test.skip('[P0] PRD file should exist and contain FR-46 specification', () => {
+  test('[P0] PRD file should exist and contain FR-46 specification', () => {
     expect(existsSync(prdFile)).toBe(true);
     const prdContent = readFileSync(prdFile, 'utf8');
     expect(prdContent).toMatch(/FR-46/);
@@ -48,7 +48,7 @@ describe('AC1: Delta Analysis — Story implementation documents required analys
   });
 
   // Test 1.3: Story documents which commands produce artifacts at correct locations
-  test.skip('[P0] Story should document which commands produce artifacts at correct locations', () => {
+  test('[P0] Story should document which commands produce artifacts at correct locations', () => {
     const storyContent = readFileSync(storyFile, 'utf8');
     // Must have a compliance table or section covering command-to-artifact mapping
     expect(storyContent).toMatch(/Command.*Artifact|command.*artifact/i);
@@ -57,21 +57,21 @@ describe('AC1: Delta Analysis — Story implementation documents required analys
   });
 
   // Test 1.4: Story documents which commands/outputs DIVERGE from FR-46
-  test.skip('[P0] Story should document which commands diverge from FR-46 specification', () => {
+  test('[P0] Story should document which commands diverge from FR-46 specification', () => {
     const storyContent = readFileSync(storyFile, 'utf8');
     // Must explicitly document divergences
     expect(storyContent).toMatch(/DIVERGE|diverge|delta|Delta/i);
   });
 
   // Test 1.5: Story documents what is MISSING relative to FR-46 specification
-  test.skip('[P0] Story should document what is MISSING vs FR-46 specification', () => {
+  test('[P0] Story should document what is MISSING vs FR-46 specification', () => {
     const storyContent = readFileSync(storyFile, 'utf8');
     // Must document missing items (e.g., /scrum-approve, /wrap-up, /session-start)
     expect(storyContent).toMatch(/missing|MISSING|not.*implemented|NOT IMPLEMENTED|deferred|DEFERRED/i);
   });
 
   // Test 1.6: Story documents resolution for all identified deltas
-  test.skip('[P0] Story should document resolution for all identified deltas', () => {
+  test('[P0] Story should document resolution for all identified deltas', () => {
     const storyContent = readFileSync(storyFile, 'utf8');
     // Must document resolutions
     expect(storyContent).toMatch(/resolve|RESOLUTION|resolved|Decision|ACCEPTABLE VARIANCE/i);
@@ -80,7 +80,7 @@ describe('AC1: Delta Analysis — Story implementation documents required analys
   });
 
   // Test 1.7: Story contains a compliance table mapping commands to artifacts
-  test.skip('[P0] Story should include a compliance verification table', () => {
+  test('[P0] Story should include a compliance verification table', () => {
     const storyContent = readFileSync(storyFile, 'utf8');
     // Must have a markdown table
     expect(storyContent).toMatch(/\|.*Command.*\|.*Artifact.*\|/i);
@@ -89,7 +89,7 @@ describe('AC1: Delta Analysis — Story implementation documents required analys
   });
 
   // Test 1.8: Delta analysis covers all FR-46 commands
-  test.skip('[P0] Delta analysis should cover all 9 commands listed in FR-46', () => {
+  test('[P0] Delta analysis should cover all 9 commands listed in FR-46', () => {
     const storyContent = readFileSync(storyFile, 'utf8');
     // All 9 FR-46 commands must be referenced
     expect(storyContent).toMatch(/scrum-create-ticket/);
@@ -104,7 +104,7 @@ describe('AC1: Delta Analysis — Story implementation documents required analys
   });
 
   // Test 1.9: Story documents the critical directory structure delta
-  test.skip('[P0] Story should document the critical _scrum-output vs _bmad-output directory delta', () => {
+  test('[P0] Story should document the critical _scrum-output vs _bmad-output directory delta', () => {
     const storyContent = readFileSync(storyFile, 'utf8');
     // Must document the directory naming difference
     expect(storyContent).toMatch(/_scrum-output/);
@@ -112,7 +112,7 @@ describe('AC1: Delta Analysis — Story implementation documents required analys
   });
 
   // Test 1.10: All tasks in story are completed (all checkboxes checked)
-  test.skip('[P0] All story tasks should be completed (checkboxes checked)', () => {
+  test('[P0] All story tasks should be completed (checkboxes checked)', () => {
     const storyContent = readFileSync(storyFile, 'utf8');
     // Count unchecked boxes — should be zero
     const uncheckedBoxes = (storyContent.match(/- \[ \]/g) || []).length;
@@ -128,7 +128,7 @@ describe('AC1: PRD FR-46 Specification Content', () => {
   const prdFile = join(process.cwd(), '_bmad-output', 'planning-artifacts', 'prd.md');
 
   // Test 1.11: FR-46 specifies predictable artifact locations
-  test.skip('[P0] FR-46 should specify predictable artifact locations for commands', () => {
+  test('[P0] FR-46 should specify predictable artifact locations for commands', () => {
     expect(existsSync(prdFile)).toBe(true);
     const prdContent = readFileSync(prdFile, 'utf8');
     // FR-46 artifact contract section
@@ -138,19 +138,19 @@ describe('AC1: PRD FR-46 Specification Content', () => {
   });
 
   // Test 1.12: FR-46 specifies the /scrum-create-ticket artifact
-  test.skip('[P0] FR-46 should specify story.md output for /scrum-create-ticket', () => {
+  test('[P0] FR-46 should specify story.md output for /scrum-create-ticket', () => {
     const prdContent = readFileSync(prdFile, 'utf8');
     expect(prdContent).toMatch(/story\.md/);
   });
 
   // Test 1.13: FR-46 references the research artifact RR-XXX.md
-  test.skip('[P0] FR-46 should specify RR-XXX.md output for /scrum-research-* commands', () => {
+  test('[P0] FR-46 should specify RR-XXX.md output for /scrum-research-* commands', () => {
     const prdContent = readFileSync(prdFile, 'utf8');
     expect(prdContent).toMatch(/RR-XXX\.md|RR-\d{3}\.md/);
   });
 
   // Test 1.14: FR-46 mentions consistent naming convention principle
-  test.skip('[P1] FR-46 should state the consistent naming convention principle', () => {
+  test('[P1] FR-46 should state the consistent naming convention principle', () => {
     const prdContent = readFileSync(prdFile, 'utf8');
     // Principle: predictable location, consistent naming
     expect(prdContent).toMatch(/consistent.*naming|naming.*convention|predictable.*location/i);

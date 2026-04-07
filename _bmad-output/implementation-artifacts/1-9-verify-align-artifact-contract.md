@@ -1,6 +1,6 @@
 # Story 1.9: Verify & Align Artifact Contract
 
-Status: review
+Status: done
 
 ## Story
 
@@ -243,9 +243,9 @@ Every slash-command that produces an artifact must generate it in a predictable 
 - **Story 1.2 (Agent Spawning & Perspectives) -- DONE:** Verified refinement workflow. Story 1.9 will verify `refinement.md` artifact location.
 - **Story 1.3 (Cross-Talk & Synthesis) -- DONE:** Verified refinement synthesis. Story 1.9 will verify artifact output.
 - **Story 1.4 (Wideband Delphi Estimation) -- DONE:** Verified estimation in refinement artifact. Story 1.9 will verify artifact location.
-- **Story 1.5 (Code Review) -- READY-FOR-DEV:** Will verify review workflow. Story 1.9 will verify `review-N.md` artifact location and naming.
-- **Story 1.6 (Installation & Onboarding) -- READY-FOR-DEV:** CLI installer behavior. No direct dependency on artifact contract.
-- **Story 1.7 (Runtime Extension Model) -- READY-FOR-DEV:** Verified file-based extension. No direct dependency on artifact output locations.
+- **Story 1.5 (Code Review) -- DONE:** Verified review workflow. Story 1.9 verified `review-N.md` artifact location and naming.
+- **Story 1.6 (Installation & Onboarding) -- DONE:** CLI installer behavior. No direct dependency on artifact contract.
+- **Story 1.7 (Runtime Extension Model) -- DONE:** Verified file-based extension. No direct dependency on artifact output locations.
 - **Story 1.8 (Research Commands) -- BACKLOG:** Will verify research commands. Story 1.9 will verify `RR-XXX.md` artifact location and naming.
 
 ### Previous Story Intelligence (Stories 1.1-1.7)
@@ -300,6 +300,14 @@ Recent commits (last 5):
 - [Source: scrum_workflow/commands/ -- All command specifications]
 - [Source: scrum_workflow/workflows/ -- All workflow specifications]
 - [Source: _bmad-output/implementation-artifacts/1-7-verify-align-runtime-extension-model.md -- Previous story pattern and learnings]
+
+### Review Findings
+
+- [x] [Review][Patch] Stale cross-story dependency status references in Dev Notes [_bmad-output/implementation-artifacts/1-9-verify-align-artifact-contract.md:246-248] — fixed, updated Stories 1.5/1.6/1.7 from READY-FOR-DEV to DONE
+- [x] [Review][Patch] Tests in RED phase (83 × test.skip()) — fixed, removed test.skip() from all 4 test files in tests/unit/artifact-contract/
+- [x] [Review][Patch] create-ticket.md out of sync across three copies — fixed, synced create-scrum-workflow/scrum_workflow/commands/create-ticket.md and create-scrum-workflow/templates/scrum_workflow/commands/create-ticket.md to match primary
+- [x] [Review][Patch] Test TC-2.13 false-positive assertion too broad — fixed, narrowed regex to accurately check that dev-story does not CREATE new artifacts (not just reference story.md)
+- [x] [Review][Defer] Sprint status lifecycle skip: story moved directly from backlog → review without in-progress intermediate state [_bmad-output/implementation-artifacts/sprint-status.yaml] — deferred, pre-existing; this is a brownfield verification story that was authored directly without a standard dev cycle
 
 ## Dev Agent Record
 

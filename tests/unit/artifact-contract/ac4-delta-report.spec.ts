@@ -32,14 +32,14 @@ describe('AC4: Delta Report — Comprehensive discrepancy documentation', () => 
   );
 
   // Test 4.1: Story contains a delta report section
-  test.skip('[P0] Story should contain a comprehensive delta report section', () => {
+  test('[P0] Story should contain a comprehensive delta report section', () => {
     expect(existsSync(storyFile)).toBe(true);
     const content = readFileSync(storyFile, 'utf8');
     expect(content).toMatch(/Delta.*Report|delta.*report|Delta Analysis Report/i);
   });
 
   // Test 4.2: Delta report documents the _scrum-output vs _bmad-output delta
-  test.skip('[P0] Delta report should document the directory structure delta (_scrum-output vs _bmad-output)', () => {
+  test('[P0] Delta report should document the directory structure delta (_scrum-output vs _bmad-output)', () => {
     const content = readFileSync(storyFile, 'utf8');
     expect(content).toMatch(/_scrum-output/);
     expect(content).toMatch(/_bmad-output/);
@@ -48,7 +48,7 @@ describe('AC4: Delta Report — Comprehensive discrepancy documentation', () => 
   });
 
   // Test 4.3: Delta report documents the story ID format delta (SW-XXX vs X-Y-name.md)
-  test.skip('[P0] Delta report should document the story ID format delta', () => {
+  test('[P0] Delta report should document the story ID format delta', () => {
     const content = readFileSync(storyFile, 'utf8');
     expect(content).toMatch(/SW-XXX/);
     // Must reference the actual implementation format
@@ -56,14 +56,14 @@ describe('AC4: Delta Report — Comprehensive discrepancy documentation', () => 
   });
 
   // Test 4.4: Delta report documents the per-story directory vs flat file structure delta
-  test.skip('[P0] Delta report should document the directory-per-story vs flat file structure delta', () => {
+  test('[P0] Delta report should document the directory-per-story vs flat file structure delta', () => {
     const content = readFileSync(storyFile, 'utf8');
     // Must mention single-file vs directory-based structure
     expect(content).toMatch(/single.*file|flat.*file|single-file|directory.*based|Delta 3/i);
   });
 
   // Test 4.5: Delta report documents the missing commands (deferred features)
-  test.skip('[P0] Delta report should document missing commands as deferred features', () => {
+  test('[P0] Delta report should document missing commands as deferred features', () => {
     const content = readFileSync(storyFile, 'utf8');
     // Missing commands must be explicitly listed
     expect(content).toMatch(/Delta 4|missing.*command|deferred.*command/i);
@@ -73,7 +73,7 @@ describe('AC4: Delta Report — Comprehensive discrepancy documentation', () => 
   });
 
   // Test 4.6: Delta report documents additional commands not in FR-46
-  test.skip('[P1] Delta report should document additional commands not listed in FR-46', () => {
+  test('[P1] Delta report should document additional commands not listed in FR-46', () => {
     const content = readFileSync(storyFile, 'utf8');
     // Additional commands found beyond FR-46 scope
     expect(content).toMatch(/additional.*command|Delta 5|scrum-create-architecture/i);
@@ -93,21 +93,21 @@ describe('AC4: Delta Report — Fixes applied and resolution decisions', () => {
   );
 
   // Test 4.7: Delta report documents resolution decision for each delta
-  test.skip('[P0] Delta report should document resolution decision for each identified delta', () => {
+  test('[P0] Delta report should document resolution decision for each identified delta', () => {
     const content = readFileSync(storyFile, 'utf8');
     // Resolution keywords
     expect(content).toMatch(/ACCEPTABLE VARIANCE|NO FIX REQUIRED|Fix Applied|resolved/i);
   });
 
   // Test 4.8: Delta 1 resolution documented (directory naming variance)
-  test.skip('[P0] Delta 1 (_scrum-output vs _bmad-output) should have documented resolution', () => {
+  test('[P0] Delta 1 (_scrum-output vs _bmad-output) should have documented resolution', () => {
     const content = readFileSync(storyFile, 'utf8');
     // Must explicitly state whether this is acceptable or requires a fix
     expect(content).toMatch(/ACCEPTABLE VARIANCE|acceptable.*variance|NO FIX REQUIRED|no.*fix.*required/i);
   });
 
   // Test 4.9: Delta 4 resolution documented (missing commands deferred appropriately)
-  test.skip('[P0] Delta 4 (missing commands) should be documented as appropriately deferred', () => {
+  test('[P0] Delta 4 (missing commands) should be documented as appropriately deferred', () => {
     const content = readFileSync(storyFile, 'utf8');
     expect(content).toMatch(/deferred|DEFERRED|Epic 2|Epic 7/i);
     // Deferred items should NOT be marked as requiring immediate fixes
@@ -115,7 +115,7 @@ describe('AC4: Delta Report — Fixes applied and resolution decisions', () => {
   });
 
   // Test 4.10: Story completion notes are present
-  test.skip('[P0] Story should have completion notes in Dev Agent Record section', () => {
+  test('[P0] Story should have completion notes in Dev Agent Record section', () => {
     const content = readFileSync(storyFile, 'utf8');
     expect(content).toMatch(/Completion Notes|Dev Agent Record/i);
   });
@@ -134,7 +134,7 @@ describe('AC4: FR-46 Compliance — Overall compliance status', () => {
   );
 
   // Test 4.11: Story documents overall FR-46 compliance verdict
-  test.skip('[P0] Story should document an overall FR-46 compliance verdict', () => {
+  test('[P0] Story should document an overall FR-46 compliance verdict', () => {
     const content = readFileSync(storyFile, 'utf8');
     // Must have an explicit compliance verdict
     expect(content).toMatch(/FR-46.*Compliance|Compliance.*FR-46|compliance.*status/i);
@@ -143,27 +143,27 @@ describe('AC4: FR-46 Compliance — Overall compliance status', () => {
   });
 
   // Test 4.12: Story confirms artifact contract principle is upheld
-  test.skip('[P0] Story should confirm the artifact contract principle is upheld', () => {
+  test('[P0] Story should confirm the artifact contract principle is upheld', () => {
     const content = readFileSync(storyFile, 'utf8');
     // The principle: predictable locations + consistent naming
     expect(content).toMatch(/predictable.*location|consistent.*naming|artifact.*contract.*principle/i);
   });
 
   // Test 4.13: Story confirms write boundaries are correctly enforced
-  test.skip('[P0] Story should confirm write boundaries are correctly enforced', () => {
+  test('[P0] Story should confirm write boundaries are correctly enforced', () => {
     const content = readFileSync(storyFile, 'utf8');
     // Write boundary compliance (dev-story → source code, not artifacts)
     expect(content).toMatch(/write.*boundary|boundary.*enforced|source.*tree|source code/i);
   });
 
   // Test 4.14: Story documents next steps for incomplete items
-  test.skip('[P1] Story should document next steps for deferred and pending items', () => {
+  test('[P1] Story should document next steps for deferred and pending items', () => {
     const content = readFileSync(storyFile, 'utf8');
     expect(content).toMatch(/NEXT STEPS|next.*steps|Recommendations/i);
   });
 
   // Test 4.15: Story is marked as COMPLETE
-  test.skip('[P0] Story status should be marked as COMPLETE', () => {
+  test('[P0] Story status should be marked as COMPLETE', () => {
     const content = readFileSync(storyFile, 'utf8');
     expect(content).toMatch(/STORY STATUS.*COMPLETE|Status.*COMPLETE|COMPLETE|story.*complete/i);
   });
@@ -182,12 +182,12 @@ describe('AC4: Sprint Status Reflects Story 1.9 Completion', () => {
   );
 
   // Test 4.16: Sprint status file exists
-  test.skip('[P0] Sprint status file should exist', () => {
+  test('[P0] Sprint status file should exist', () => {
     expect(existsSync(sprintStatusFile)).toBe(true);
   });
 
   // Test 4.17: Sprint status file references story 1.9
-  test.skip('[P0] Sprint status should reference story 1.9 (artifact-contract)', () => {
+  test('[P0] Sprint status should reference story 1.9 (artifact-contract)', () => {
     const content = readFileSync(sprintStatusFile, 'utf8');
     expect(content).toMatch(/1-9|1\.9|artifact.*contract/i);
   });
@@ -214,22 +214,22 @@ describe('AC4: Three Synchronized Copies — Consistency across scrum_workflow c
   );
 
   // Test 4.18: Primary commands directory exists
-  test.skip('[P0] Primary scrum_workflow/commands/ directory should exist', () => {
+  test('[P0] Primary scrum_workflow/commands/ directory should exist', () => {
     expect(existsSync(primaryCommandDir)).toBe(true);
   });
 
   // Test 4.19: create-scrum-workflow copy commands directory exists
-  test.skip('[P0] create-scrum-workflow/scrum_workflow/commands/ copy should exist', () => {
+  test('[P0] create-scrum-workflow/scrum_workflow/commands/ copy should exist', () => {
     expect(existsSync(createScrumsCommandDir)).toBe(true);
   });
 
   // Test 4.20: templates copy commands directory exists
-  test.skip('[P0] create-scrum-workflow/templates/scrum_workflow/commands/ copy should exist', () => {
+  test('[P0] create-scrum-workflow/templates/scrum_workflow/commands/ copy should exist', () => {
     expect(existsSync(templatesCommandDir)).toBe(true);
   });
 
   // Test 4.21: create-ticket command is synchronized across all three copies
-  test.skip('[P1] create-ticket command should be identical across all three synchronized copies', () => {
+  test('[P1] create-ticket command should be identical across all three synchronized copies', () => {
     const primaryFile = join(primaryCommandDir, 'create-ticket.md');
     const copyFile = join(createScrumsCommandDir, 'create-ticket.md');
     const templateFile = join(templatesCommandDir, 'create-ticket.md');
@@ -248,7 +248,7 @@ describe('AC4: Three Synchronized Copies — Consistency across scrum_workflow c
   });
 
   // Test 4.22: review-story command is synchronized across all three copies
-  test.skip('[P1] review-story command should be identical across all three synchronized copies', () => {
+  test('[P1] review-story command should be identical across all three synchronized copies', () => {
     const primaryFile = join(primaryCommandDir, 'review-story.md');
     const copyFile = join(createScrumsCommandDir, 'review-story.md');
     const templateFile = join(templatesCommandDir, 'review-story.md');

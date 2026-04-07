@@ -1,6 +1,6 @@
 # Ticket Creation Workflow
 
-Step-by-step workflow for the `/scrum-create-ticket` command. Transforms a natural language idea into a structured story file conforming to the story file schema (schema_version: 1). The workflow parses input, evaluates quality, loads project context, generates story content, estimates complexity, and writes the complete story file atomically.
+Step-by-step workflow for the `/scrum-create-ticket` command. Transforms a natural language idea into a structured story file conforming to the story file schema (schema_version: "1.0.0"). The workflow parses input, evaluates quality, loads project context, generates story content, estimates complexity, and writes the complete story file atomically.
 
 ## Prerequisites
 

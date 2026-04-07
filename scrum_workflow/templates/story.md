@@ -1,11 +1,20 @@
 ---
-schema_version: 1
+schema_version: "1.0.0"
 ticket: "{{ticket_id}}"
 title: "{{story_title}}"
 status: draft
+type: "{{story_type}}"
+risk_level: "{{risk_level}}"
+domain_tags: {{domain_tags}}
 estimation: null
 created: "{{created_date}}"
 updated: "{{updated_date}}"
+status_history:
+  - from: null
+    to: draft
+    timestamp: "{{created_date}}"
+    trigger: /scrum-create-ticket
+    actor: human
 ---
 
 # {{story_title}}

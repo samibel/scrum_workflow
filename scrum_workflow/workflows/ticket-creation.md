@@ -256,17 +256,65 @@ Read the story template from `scrum_workflow/templates/story.md`.
 
 Replace template placeholders with generated content:
 
-**YAML frontmatter fields** (in this exact order):
+**YAML frontmatter fields** (in this exact order per Architecture spec):
 
 | Field | Value |
 |---|---|
-| `schema_version` | `1` |
+| `schema_version` | `"1.0.0"` |
 | `ticket` | `"SW-XXX"` (from input) |
 | `title` | `"<generated title>"` (from Step 4.1) |
 | `status` | `draft` |
+| `type` | `"<inferred type>"` (from Step 7.2a) |
+| `risk_level` | `"<assigned risk>"` (from Step 7.2b) |
+| `domain_tags` | `<tags array>` (from Step 7.2c) |
 | `estimation` | `<calculated>` (from Step 5.3) |
-| `created` | `<today>` (ISO 8601 format: YYYY-MM-DD) |
-| `updated` | `<today>` (ISO 8601 format: YYYY-MM-DD) |
+| `created` | `<today>` (ISO 8601 UTC format: YYYY-MM-DDTHH:MM:SSZ) |
+| `updated` | `<today>` (ISO 8601 UTC format: YYYY-MM-DDTHH:MM:SSZ) |
+| `status_history` | `<initial entry>` (from Step 7.2d) |
+
+#### Step 7.2a: Infer Story Type
+
+Infer the `type` field from keywords in the ticket description:
+
+| Keywords | Inferred Type |
+|---|---|
+| "add", "create", "new", "implement", "introduce" | `feature` |
+| "fix", "bug", "broken", "error", "crash", "regression" | `bugfix` |
+| "refactor", "clean up", "restructure", "simplify", "reorganize" | `refactor` |
+| "CI", "deploy", "pipeline", "Docker", "infrastructure", "config" | `infrastructure` |
+
+If no keywords match, default to `feature`.
+
+#### Step 7.2b: Assign Risk Level
+
+Assign the `risk_level` field. For Phase 1, default to `medium` for all stories. Valid values: `low`, `medium`, `high`, `critical`.
+
+#### Step 7.2c: Populate Domain Tags
+
+Populate the `domain_tags` array from the domain context files loaded in Step 3:
+
+- For each domain context file loaded (backend, frontend, testing, devops, architecture), add the domain name as a tag
+- If no domain context was loaded, set `domain_tags` to an empty array `[]`
+- Example: `[backend, testing]` if backend and testing context files were loaded
+
+#### Step 7.2d: Generate Initial Status History Entry
+
+Generate the initial `status_history` entry:
+
+```yaml
+status_history:
+  - from: null
+    to: draft
+    timestamp: <ISO 8601 UTC timestamp, e.g., 2026-04-06T10:00:00Z>
+    trigger: /scrum-create-ticket
+    actor: human
+```
+
+- `from` is always `null` for the initial entry (no previous status)
+- `to` is always `draft` (entry point to lifecycle)
+- `timestamp` is the current UTC time in ISO 8601 format
+- `trigger` is always `/scrum-create-ticket` for this command
+- `actor` is always `human` for user-triggered ticket creation
 
 **Markdown body sections:**
 
@@ -321,7 +369,13 @@ This workflow may NOT write:
 ## Validation Rules
 
 - Generated `story.md` must have valid YAML frontmatter with all required fields
-- YAML frontmatter field order must match: `schema_version`, `ticket`, `title`, `status`, `estimation`, `created`, `updated`
+- YAML frontmatter field order must match: `schema_version`, `ticket`, `title`, `status`, `type`, `risk_level`, `domain_tags`, `estimation`, `created`, `updated`, `status_history`
+- `schema_version` must be `"1.0.0"` (semver string, per Architecture spec)
+- `type` must be one of: `feature`, `bugfix`, `refactor`, `infrastructure`
+- `risk_level` must be one of: `low`, `medium`, `high`, `critical`
+- `domain_tags` must be a YAML array (may be empty `[]`)
+- `status_history` must contain exactly one entry with `from: null`, `to: draft`, valid ISO 8601 UTC `timestamp`, `trigger: /scrum-create-ticket`, `actor: human`
+- All timestamps (`created`, `updated`, `status_history[].timestamp`) must use ISO 8601 UTC format (e.g., `2026-04-06T10:00:00Z`)
 - Status must be set to `draft` (entry point to state machine)
 - All YAML fields must use snake_case
 - All file names and paths must use kebab-case

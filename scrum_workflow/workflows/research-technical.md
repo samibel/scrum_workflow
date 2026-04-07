@@ -239,7 +239,7 @@ Project Context: {domain} / {tech_stack} (or "No project context available")
 Proposed Scope:
   - Primary focus: {inferred focus areas}
   - Source type: {online research via WebSearch}
-  - Output: technical-research-{topic-slug}-{date}.md
+  - Output: RR-XXX.md (sequential numbering in _scrum-output/memory/research/)
 ```
 
 ### Step 3.2: User Approval Gate
@@ -284,7 +284,7 @@ Check if `_scrum-output/memory/research/` directory exists (or custom output pat
 If directory does not exist, create it:
 
 ```bash
-mkdir -p docs/research
+mkdir -p _scrum-output/memory/research
 ```
 
 If directory creation fails:
@@ -1294,6 +1294,9 @@ sources:
   - {source_url_1}
   - {source_url_2}
   - ...
+tags:
+  - {tag_1}
+  - {tag_2}
 ai_optimized: true
 version: 1.0
 research_confidence: high  # or medium | low
@@ -1305,17 +1308,20 @@ Frontmatter field definitions:
 - `topic`: Research topic as a concise string
 - `date`: Research completion date (YYYY-MM-DD format)
 - `sources`: List of source URLs referenced in the research
+- `tags`: List of relevant tags derived from research content and topic domain
 - `ai_optimized`: Must be `true` -- indicates output structured for AI consumption
 - `version`: Schema version (`1.0`)
 - `research_confidence`: Confidence level (`high`, `medium`, or `low`)
 
 ### Step 9.3: Filename and Output
 
-Generate output filename following the pattern: `technical-research-{topic-slug}-{date}.md`
+Generate output filename following the sequential `RR-XXX.md` pattern:
 
-- Topic slug: kebab-case transformation of the research topic (e.g., "Agentic Patterns for Documentation" becomes "agentic-patterns-for-documentation")
-- Date: YYYY-MM-DD format (e.g., "2026-03-30")
-- Example: `_scrum-output/memory/research/technical-research-agentic-patterns-for-documentation-2026-03-30.md`
+1. Scan existing files in `_scrum-output/memory/research/` matching `RR-[0-9][0-9][0-9].md`
+2. Find the highest existing number (e.g., if `RR-003.md` exists, highest = 3)
+3. Increment by 1 and zero-pad to 3 digits (e.g., next = `RR-004.md`)
+4. If no existing files, start with `RR-001.md`
+- Example: `_scrum-output/memory/research/RR-001.md`
 
 Write the assembled document to the output directory (`_scrum-output/memory/research/` or custom `--output` path).
 
@@ -1485,7 +1491,7 @@ Load the existing research document for comparison.
 
 **Locate existing document:**
 1. Use `output_file` path from state file, OR
-2. Search for document matching pattern: `_scrum-output/memory/research/technical-research-{topic-slug}-*.md`
+2. Search for documents matching pattern: `_scrum-output/memory/research/RR-*.md` (and match by topic in frontmatter)
 
 **Read existing document:**
 ```yaml

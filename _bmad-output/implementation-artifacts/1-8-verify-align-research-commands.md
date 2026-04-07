@@ -1,6 +1,6 @@
 # Story 1.8: Verify & Align Research Commands
 
-Status: review
+Status: in-progress
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 

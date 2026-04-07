@@ -28,7 +28,7 @@ Parse the `<topic>` argument from the command invocation:
 ### Step 0.2: Parse Optional Flags
 
 - `--sources <urls...>`: Space-separated list of source URLs to prioritize in research
-- `--output <path>`: Custom output directory path (default: `docs/research/`)
+- `--output <path>`: Custom output directory path (default: `_scrum-output/memory/research/`)
 - `--update`: Incremental update mode flag (updates existing research with new findings)
 
 Store parsed values for use in subsequent steps.
@@ -49,7 +49,7 @@ Check if `--update` flag was provided:
 ### Step 0.3: Determine Output Path
 
 Set output directory:
-- Default: `docs/research/` relative to project root
+- Default: `_scrum-output/memory/research/` relative to project root
 - If `--output` flag provided: use the specified path
 
 ## Step 1: Validation
@@ -83,14 +83,14 @@ Before starting new research, check if there is an interrupted research session 
 **Check for existing state file:**
 
 ```bash
-test -f docs/research/.research-state.json
+test -f _scrum-output/memory/research/.research-state.json
 ```
 
 **If state file exists:**
 
 1. Read the existing state file:
    ```yaml
-   existing_state = read_file("docs/research/.research-state.json")
+   existing_state = read_file("_scrum-output/memory/research/.research-state.json")
    ```
 
 2. Parse the JSON content
@@ -123,7 +123,7 @@ Resume from last checkpoint? [Y/n/fresh]
 | fresh | Start fresh research, backup existing state |
 
 **Fresh Start Process:**
-1. Backup existing state to `docs/research/.research-state.backup.json`
+1. Backup existing state to `_scrum-output/memory/research/.research-state.backup.json`
 2. Create new state file (proceed to Step 1.4)
 
 **Resume Process:**
@@ -159,7 +159,7 @@ Where:
 
 **Initialize State File:**
 
-Write to `docs/research/.research-state.json`:
+Write to `_scrum-output/memory/research/.research-state.json`:
 
 ```json
 {
@@ -217,7 +217,7 @@ If `context/index.md` is missing, proceed without project-specific context as wa
 
 ### Step 2.3: Load Research Patterns Reference
 
-Load `docs/research/technical-research-agent-patterns-2026-03-30.md` (if exists) for detailed pattern implementation guidance:
+Load `_scrum-output/memory/research/technical-research-agent-patterns-2026-03-30.md` (if exists) for detailed pattern implementation guidance:
 - Sequential phase definitions and execution strategy
 - Orchestration strategy for distributed task execution
 - Iterative quality thresholds and evaluation criteria
@@ -271,15 +271,15 @@ After user confirms scope, update the research state file:
 ```
 
 **Atomic Write Process:**
-1. Write state to temporary file: `docs/research/.research-state.tmp.json`
+1. Write state to temporary file: `_scrum-output/memory/research/.research-state.tmp.json`
 2. Validate JSON is valid
-3. Rename to actual file: `docs/research/.research-state.json`
+3. Rename to actual file: `_scrum-output/memory/research/.research-state.json`
 
 ## Step 4: Output Directory Creation
 
 Before proceeding to research phases, ensure the output directory exists.
 
-Check if `docs/research/` directory exists (or custom output path from `--output` flag).
+Check if `_scrum-output/memory/research/` directory exists (or custom output path from `--output` flag).
 
 If directory does not exist, create it:
 
@@ -288,7 +288,7 @@ mkdir -p docs/research
 ```
 
 If directory creation fails:
-- **HALT** with error: "Cannot create output directory 'docs/research/'. Check permissions."
+- **HALT** with error: "Cannot create output directory '_scrum-output/memory/research/'. Check permissions."
 
 All research output files are written to this directory.
 
@@ -823,7 +823,7 @@ After verification phase completes, update the research state file:
 ## Step 8: Phase 5 -- Reflection Loop
 
 Self-critique and quality assurance with up to 2 iterations maximum.
-**Reference**: Quality criteria and thresholds are defined in `docs/research/technical-research-agent-patterns-2026-03-30.md` Section 2.4.
+**Reference**: Quality criteria and thresholds are defined in `_scrum-output/memory/research/technical-research-agent-patterns-2026-03-30.md` Section 2.4.
 
 ### Step 8.0: Entry Conditions
 
@@ -1315,9 +1315,9 @@ Generate output filename following the pattern: `technical-research-{topic-slug}
 
 - Topic slug: kebab-case transformation of the research topic (e.g., "Agentic Patterns for Documentation" becomes "agentic-patterns-for-documentation")
 - Date: YYYY-MM-DD format (e.g., "2026-03-30")
-- Example: `docs/research/technical-research-agentic-patterns-for-documentation-2026-03-30.md`
+- Example: `_scrum-output/memory/research/technical-research-agentic-patterns-for-documentation-2026-03-30.md`
 
-Write the assembled document to the output directory (`docs/research/` or custom `--output` path).
+Write the assembled document to the output directory (`_scrum-output/memory/research/` or custom `--output` path).
 
 ### Step 9.4: Update Research State (Synthesis Complete)
 
@@ -1394,7 +1394,7 @@ Research Interrupted
 ========================================
 Reason: {interruption_reason}
 Last completed step: {last_completed_step}
-Progress preserved in: docs/research/.research-state.json
+Progress preserved in: _scrum-output/memory/research/.research-state.json
 
 To resume: Run /scrum-research technical "{topic}" again
 ```
@@ -1422,14 +1422,14 @@ error_handler:
 ## Write Boundaries
 
 **This workflow MAY write:**
-- All files under `docs/research/` directory (or custom `--output` path)
+- All files under `_scrum-output/memory/research/` directory (or custom `--output` path)
 - The output research document file
-- The research state file: `docs/research/.research-state.json`
-- The backup state file: `docs/research/.research-state.backup.json`
-- The temporary state file: `docs/research/.research-state.tmp.json`
+- The research state file: `_scrum-output/memory/research/.research-state.json`
+- The backup state file: `_scrum-output/memory/research/.research-state.backup.json`
+- The temporary state file: `_scrum-output/memory/research/.research-state.tmp.json`
 
 **This workflow MUST NOT write:**
-- Any files outside `docs/research/` (or custom `--output` path)
+- Any files outside `_scrum-output/memory/research/` (or custom `--output` path)
 - This workflow may NOT write to `scrum_workflow/` directory (framework files are read-only during execution)
 - Any project source files
 - Any configuration files
@@ -1444,9 +1444,9 @@ The state files (`.research-state.json`, `.research-state.backup.json`, and `.re
 
 ```
 # Research state - checkpoint recovery for long-running research tasks
-docs/research/.research-state.json
-docs/research/.research-state.backup.json
-docs/research/.research-state.tmp.json
+_scrum-output/memory/research/.research-state.json
+_scrum-output/memory/research/.research-state.backup.json
+_scrum-output/memory/research/.research-state.tmp.json
 ```
 
 ---
@@ -1461,11 +1461,11 @@ Load the existing research state file to determine when research was last conduc
 
 **Check for state file:**
 ```bash
-test -f docs/research/.research-state.json
+test -f _scrum-output/memory/research/.research-state.json
 ```
 
 **If state file exists:**
-1. Read the state file: `read_file("docs/research/.research-state.json")`
+1. Read the state file: `read_file("_scrum-output/memory/research/.research-state.json")`
 2. Parse JSON content
 3. Find the research session matching the current topic (by `topic` or `topic_slug` field)
 4. Extract:
@@ -1485,7 +1485,7 @@ Load the existing research document for comparison.
 
 **Locate existing document:**
 1. Use `output_file` path from state file, OR
-2. Search for document matching pattern: `docs/research/technical-research-{topic-slug}-*.md`
+2. Search for document matching pattern: `_scrum-output/memory/research/technical-research-{topic-slug}-*.md`
 
 **Read existing document:**
 ```yaml
@@ -1694,7 +1694,7 @@ Sources added: +{count}
 Sections updated: ~{count}
 Deprecated sections marked: -{count}
 
-Research state updated: docs/research/.research-state.json
+Research state updated: _scrum-output/memory/research/.research-state.json
 ```
 
 ### Step U8: No New Findings Handling

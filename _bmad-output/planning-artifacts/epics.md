@@ -1368,9 +1368,10 @@ So that low-risk work moves fast and high-risk work gets thorough treatment.
 **And** the selected depth is stored in `story.md` frontmatter
 
 **Given** the developer wants to override the automatic classification
-**When** the developer provides a `--depth` flag explicitly (via manual override mechanism)
-**Then** the manual override takes precedence over automatic classification
-**And** a note is added to frontmatter indicating manual override
+**When** the developer provides a `--depth` flag explicitly during ticket creation or refinement
+**Then** Story 9.2 implements the manual override mechanism (independent of Epic 5)
+**And** the manual override takes precedence over automatic classification
+**And** a note is added to frontmatter indicating manual override with source: adaptive-workflow-override
 **And** the override mechanism allows choice of: `--depth light`, `--depth standard`, or `--depth heavy`
 
 ### Story 9.3: Implement Dynamic Agent Dispatcher

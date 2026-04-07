@@ -540,6 +540,10 @@ After Round 3 (or configured max rounds), check for remaining blockers:
 ⚠️ REFINEMENT DEADLOCK after 3 rounds
 
 Blocking Issues:
+1. [Blocker description] — [Agent]'s proposal
+2. [Blocker description] — [Agent]'s proposal
+
+Resolution Options:
 1. Accept [Agent]'s proposal
 2. Provide alternative
 3. Cancel and revert story to Draft

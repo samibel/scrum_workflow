@@ -175,7 +175,9 @@ export function canContinueReEstimationRound(state) {
  */
 export function formatInitialEstimatesTable(estimates) {
   const rows = [
-    '| Agent | Estimate (SP) | Rationale |'
+    '| Agent | Estimate (SP) | Rationale |',
+    '|-------|----------------|-----------|'
+  // Add separator row for markdown table formatting
   ];
 
   if (estimates.architect) {

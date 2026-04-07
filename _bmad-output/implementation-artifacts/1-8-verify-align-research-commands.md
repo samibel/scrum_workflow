@@ -1,6 +1,6 @@
 # Story 1.8: Verify & Align Research Commands
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -356,3 +356,8 @@ Apply this pattern to Story 1.8:
 - Fixed `scrum_workflow/__tests__/research/filesystem-state.test.md`: updated 17 state file path references
 - Fixed `scrum_workflow/__tests__/research/atdd-checklist-9-6.md`: updated AC1 state file path reference
 - All tasks and subtasks validated complete; story ready for review
+
+### Review Findings
+
+- [x] [Review][Patch] Frontmatter field order in RR-001.md inconsistent with spec [_scrum-output/memory/research/RR-001.md:1-16]
+- [x] [Review][Defer] Step 0.4 appears before Step 0.3 in both workflow files [scrum_workflow/workflows/research-technical.md:36, research-general.md:36] — deferred, pre-existing

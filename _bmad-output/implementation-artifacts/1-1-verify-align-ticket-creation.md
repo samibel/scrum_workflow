@@ -200,8 +200,10 @@ Files modified:
 
 - [x] [Review][Patch] Workflow preamble says `schema_version: 1` instead of `"1.0.0"` [scrum_workflow/workflows/ticket-creation.md:1] — FIXED: Updated preamble description to match operational sections
 - [x] [Review][Defer] Step 3.1 contradicts Step 0.1 on context requirement (Step 0.1 says optional, Step 3.1 returns error) [scrum_workflow/workflows/ticket-creation.md:131-137] — deferred, pre-existing inconsistency not introduced by this story
+- [x] [Review][Patch] Timestamp format string uses `MM` for minutes instead of `mm` [scrum_workflow/workflows/ticket-creation.md:271-272] — FIXED: Changed `YYYY-MM-DDTHH:MM:SSZ` to `YYYY-MM-DDTHH:mm:ssZ`
 
 ## Change Log
 
 - 2026-04-07: Completed delta analysis — zero deltas found between current implementation and PRD/Architecture specs for FR-1 and FR-2. All tasks verified and checked. Story status set to review.
 - 2026-04-07: Code review complete. 1 patch fixed (schema_version preamble), 1 deferred (pre-existing Step 3.1 vs 0.1 contradiction), 1 dismissed. Status set to done.
+- 2026-04-07: Second code review (BMAD pipeline). 1 patch fixed (timestamp format MM→mm for minutes), 9 dismissed as noise. Status remains done.

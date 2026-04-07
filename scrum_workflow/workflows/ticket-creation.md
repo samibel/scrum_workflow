@@ -268,8 +268,8 @@ Replace template placeholders with generated content:
 | `risk_level` | `"<assigned risk>"` (from Step 7.2b) |
 | `domain_tags` | `<tags array>` (from Step 7.2c) |
 | `estimation` | `<calculated>` (from Step 5.3) |
-| `created` | `<today>` (ISO 8601 UTC format: YYYY-MM-DDTHH:MM:SSZ) |
-| `updated` | `<today>` (ISO 8601 UTC format: YYYY-MM-DDTHH:MM:SSZ) |
+| `created` | `<today>` (ISO 8601 UTC format: YYYY-MM-DDTHH:mm:ssZ) |
+| `updated` | `<today>` (ISO 8601 UTC format: YYYY-MM-DDTHH:mm:ssZ) |
 | `status_history` | `<initial entry>` (from Step 7.2d) |
 
 #### Step 7.2a: Infer Story Type

@@ -1,0 +1,170 @@
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  domain-model-extraction-generation.spec.ts [ domain-model-extraction-generation.spec.ts ]
+ FAIL  domain-model-extraction-generation.spec.ts [ domain-model-extraction-generation.spec.ts ]
+ReferenceError: describe is not defined
+ ❯ domain-model-extraction-generation.spec.ts:88:1
+ReferenceError: describe is not defined
+ ❯ domain-model-extraction-generation.spec.ts:88:1
+     86| }
+     87| 
+     88| describe('Story 6-5: Domain Model Extraction & Generation', () => {
+       | ^
+     89|   // =================================================================…
+     90|   // AC1: Grep-based domain entity scanning
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/integration/installer.test.js > Story 8-3: Integration Tests for Epic 6/7 Skills > AC2: Skill File Existence Verification > [P0] should verify skill directory structure for all platforms
+AssertionError: expected "writeFileSync" to be called 12 times, but got 20 times
+ ❯ test/integration/installer.test.js:154:33
+    152|       // Verify that writeFileSync was called for each skill-platform …
+    153|       // 10 skills x 2 platforms = 12 calls
+    154|       expect(fse.writeFileSync).toHaveBeenCalledTimes(12);
+       |                                 ^
+    155|     });
+    156| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  test/integration/installer.test.js > Story 8-3: Integration Tests for Epic 6/7 Skills > AC6: Test Suite Execution > [P1] should pass multi-platform installation tests
+AssertionError: expected "writeFileSync" to be called 12 times, but got 20 times
+ ❯ test/integration/installer.test.js:566:33
+    564| 
+    565|       // Should copy 10 skills to 2 platforms = 12 writes
+    566|       expect(fse.writeFileSync).toHaveBeenCalledTimes(12);
+       |                                 ^
+    567|       expect(result.platformCount).toBe(2);
+    568|       expect(result.skillCount).toBe(10);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  test/integration/platform-validation.test.js > Story 8-4: Platform Registry Validation for New Skills > AC5: Validation Test Execution > [P0] should execute validation covering all 10 skills
+     86| }
+     87| 
+     88| describe('Story 6-5: Domain Model Extraction & Generation', () => {
+       | ^
+     89|   // =================================================================…
+     90|   // AC1: Grep-based domain entity scanning
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/6]⎯
+
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  test/integration/installer.test.js > Story 8-3: Integration Tests for Epic 6/7 Skills > AC2: Skill File Existence Verification > [P0] should verify skill directory structure for all platforms
+AssertionError: expected "writeFileSync" to be called 12 times, but got 20 times
+ ❯ test/integration/installer.test.js:154:33
+    152|       // Verify that writeFileSync was called for each skill-platform …
+    153|       // 10 skills x 2 platforms = 12 calls
+    154|       expect(fse.writeFileSync).toHaveBeenCalledTimes(12);
+       |                                 ^
+    155|     });
+    156| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/6]⎯
+
+ FAIL  test/integration/installer.test.js > Story 8-3: Integration Tests for Epic 6/7 Skills > AC6: Test Suite Execution > [P1] should pass multi-platform installation tests
+AssertionError: expected "writeFileSync" to be called 12 times, but got 20 times
+ ❯ test/integration/installer.test.js:566:33
+    564| 
+    565|       // Should copy 10 skills to 2 platforms = 12 writes
+    566|       expect(fse.writeFileSync).toHaveBeenCalledTimes(12);
+       |                                 ^
+    567|       expect(result.platformCount).toBe(2);
+    568|       expect(result.skillCount).toBe(10);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/6]⎯
+
+ FAIL  test/integration/platform-validation.test.js > Story 8-4: Platform Registry Validation for New Skills > AC5: Validation Test Execution > [P0] should execute validation covering all 10 skills
+AssertionError: expected [ …(10) ] to have a length of 6 but got 10
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 6[39m
+[31m+ 10[39m
+
+ ❯ test/integration/platform-validation.test.js:437:31
+AssertionError: expected [ …(10) ] to have a length of 6 but got 10
+
+[32m- Expected[39m
+[31m+ Received[39m
+
+[32m- 6[39m
+[31m+ 10[39m
+
+ ❯ test/integration/platform-validation.test.js:437:31
+    435| 
+    436|       // Verify all 10 skills are validated
+    437|       expect(validatedSkills).toHaveLength(6);
+       |                               ^
+    438|       expect(validatedSkills).toEqual(expect.arrayContaining(allSkills…
+    439|     });
+    435| 
+    436|       // Verify all 10 skills are validated
+    437|       expect(validatedSkills).toHaveLength(6);
+       |                               ^
+    438|       expect(validatedSkills).toEqual(expect.arrayContaining(allSkills…
+    439|     });
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/6]⎯
+
+ FAIL  test/integration/research.test.js > Story 9-10: Integration Tests for Research Agent > AC2: Skill File Existence Verification > [P0] should verify skill directory structure for all platforms
+ FAIL  test/integration/research.test.js > Story 9-10: Integration Tests for Research Agent > AC2: Skill File Existence Verification > [P0] should verify skill directory structure for all platforms
+AssertionError: expected "writeFileSync" to be called 16 times, but got 20 times
+ ❯ test/integration/research.test.js:193:33
+AssertionError: expected "writeFileSync" to be called 16 times, but got 20 times
+ ❯ test/integration/research.test.js:193:33
+    191|       // Verify that writeFileSync was called for each skill-platform …
+    192|       // 10 skills x 2 platforms = 20 calls
+    193|       expect(fse.writeFileSync).toHaveBeenCalledTimes(16);
+       |                                 ^
+    194|     });
+    195| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  test/integration/research.test.js > Story 9-10: Integration Tests for Research Agent > AC12: Test Suite Execution > [P1] should pass multi-platform installation tests
+    191|       // Verify that writeFileSync was called for each skill-platform …
+    192|       // 10 skills x 2 platforms = 20 calls
+    193|       expect(fse.writeFileSync).toHaveBeenCalledTimes(16);
+       |                                 ^
+    194|     });
+    195| 
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/6]⎯
+
+ FAIL  test/integration/research.test.js > Story 9-10: Integration Tests for Research Agent > AC12: Test Suite Execution > [P1] should pass multi-platform installation tests
+AssertionError: expected "writeFileSync" to be called 16 times, but got 20 times
+ ❯ test/integration/research.test.js:1012:33
+AssertionError: expected "writeFileSync" to be called 16 times, but got 20 times
+ ❯ test/integration/research.test.js:1012:33
+    1010| 
+    1011|       // Should copy 10 skills to 2 platforms = 16 writes
+    1012|       expect(fse.writeFileSync).toHaveBeenCalledTimes(16);
+       |                                 ^
+    1013|       expect(result.platformCount).toBe(2);
+    1014|       expect(result.skillCount).toBe(10);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+
+    1010| 
+    1011|       // Should copy 10 skills to 2 platforms = 16 writes
+    1012|       expect(fse.writeFileSync).toHaveBeenCalledTimes(16);
+       |                                 ^
+    1013|       expect(result.platformCount).toBe(2);
+    1014|       expect(result.skillCount).toBe(10);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/6]⎯
+

@@ -2,14 +2,6 @@
 stepsCompleted: [1, 2, 3, 4, 5, 6, 7]
 ---
 
-## Project Context Analysis
-
-
----
-
-## Project Context Analysis
-
-
 inputDocuments:
   - _bmad-output/planning-artifacts/prd.md
   - docs/vision/vision.md
@@ -88,18 +80,21 @@ _scrum-output/
 ```
 scrum_workflow/
 ├── commands/
-│   └── {command-name}/
-│       └── command.md
+│   └── {command-name}.md        # Flat file structure (e.g., refine-ticket.md)
 ├── workflows/
-│   └── {workflow-name}/
-│       └── workflow.md
+│   └── {workflow-name}.md       # Flat file structure (e.g., refinement.md)
 ├── skills/
 │   └── {skill-name}/
-│       └── SKILL.md
-└── agents/
-    └── {agent-name}/
-        └── agent.md
+│       └── SKILL.md             # Subdirectory structure with uppercase SKILL.md
+├── agents/
+│   └── {agent-name}.md          # Flat file structure (e.g., developer.md)
+├── templates/                   # Output templates for all workflow phases
+├── context/                    # Framework-level standards and guidelines
+├── data/                        # Reference data in YAML format
+└── docs/                        # Framework documentation
 ```
+
+**Note:** The `skills/` directory uses a subdirectory structure (`{skill-name}/SKILL.md`) while `commands/`, `workflows/`, and `agents/` use flat file structures (`{name}.md`). This structural variance is documented and accepted as it maintains FR-44 compliance (runtime discovery without registration, build, or restart).
 
 ### 3. Format Patterns
 
@@ -268,22 +263,22 @@ ticket: scrum-001  # Should be: SW-001
 **Functional Requirements Coverage:**
 
 | FR-Area | Covered by | Status |
-|------------|-----------------|--------|
-| FR-1 bis FR-7 (Story Lifecycle) | commands/scrum-*.md, 9-State Machine | ✅ |
-| FR-8 bis FR-11 (State Machine & Guards) | skills/status-guard-validation, skills/prerequisite-validation | ✅ |
-| FR-12 bis FR-17 (Multi-Agent Refinement) | agents/, skills/synthesis | ✅ |
-| FR-18 bis FR-21 (Validation & Readiness) | skills/readiness-check, skills/story-validation | ✅ |
-| FR-22 bis FR-25 (Review & Quality) | commands/scrum-review-story, workflows/review.md | ✅ |
-| FR-26 bis FR-31 (Memory & Session) | commands/session-start, commands/wrap-up, templates/ | ✅ |
-| FR-32 bis FR-36 (Adaptive Workflow) | Phase 4 - Planned | 📋 Phase 4 |
-| FR-37 bis FR-40 (Audit & Governance) | Phase 3 - Planned | 📋 Phase 3 |
-| FR-41 bis FR-45 (Developer Experience) | CLI Installer, commands/ | ✅ |
+|----------|------------|--------|
+| FR-1 to FR-7 (Story Lifecycle) | commands/scrum-*.md, 9-State Machine | ✅ |
+| FR-8 to FR-11 (State Machine & Guards) | skills/status-guard-validation, skills/prerequisite-validation | ✅ |
+| FR-12 to FR-17 (Multi-Agent Refinement) | agents/, skills/synthesis | ✅ |
+| FR-18 to FR-21 (Validation & Readiness) | skills/readiness-check, skills/story-validation | ✅ |
+| FR-22 to FR-25 (Review & Quality) | commands/scrum-review-story, workflows/review.md | ✅ |
+| FR-26 to FR-31 (Memory & Session) | commands/session-start, commands/wrap-up, templates/ | ✅ |
+| FR-32 to FR-36 (Adaptive Workflow) | Phase 4 - Planned | 📋 Phase 4 |
+| FR-37 to FR-40 (Audit & Governance) | Phase 3 - Planned | 📋 Phase 3 |
+| FR-41 to FR-45 (Developer Experience) | CLI Installer, commands/ | ✅ |
 | FR-46 (Artifact Contract) | templates/, Directory Structure | ✅ |
 
 **Non-Functional Requirements Coverage:**
 
-| NFR | Abgedeckt durch | Status |
-|-----|-----------------|--------|
+| NFR | Covered by | Status |
+|-----|------------|--------|
 | NFR-1 (Token Efficiency) | config.yaml token budgets | ✅ |
 | NFR-2 (No External Dependency) | File-based state | ✅ |
 | NFR-3 (Offline Capability) | Local Markdown files | ✅ |
@@ -295,6 +290,7 @@ ticket: scrum-001  # Should be: SW-001
 | NFR-9 (Inspectability) | Human-readable Markdown | ✅ |
 | NFR-10 (Worst-Case Safety) | Git-versioned artifacts | ✅ |
 | NFR-11 (Zero-Config Extensibility) | Runtime discovery | ✅ |
+| NFR-12 (Extensibility Without Restart) | Runtime file discovery | ✅ |
 | NFR-13 (Zero-Knowledge Onboarding) | SC-10 validation | ✅ |
 | NFR-14 (Error Recovery) | Actionable error messages | ✅ |
 | NFR-15 (Skill Execution Reliability) | 95%+ pass rate target | ✅ |

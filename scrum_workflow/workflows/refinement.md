@@ -252,7 +252,7 @@ Store as `{discovered_documents}` array with structure:
 
 Create an isolated agent context and invoke the Architect agent with architecture-focused inputs.
 
-### Step 4.1: Prepare Architect Agent Context
+### Step 5.1: Prepare Architect Agent Context
 
 Create an isolated context bundle containing:
 
@@ -268,7 +268,7 @@ Create an isolated context bundle containing:
 - Other agents' perspectives or outputs
 - Conversation history from other agents
 
-### Step 4.2: Invoke Architect Agent
+### Step 5.2: Invoke Architect Agent
 
 Invoke the Architect agent with the prepared context bundle. The agent analyzes the story from an architectural perspective, focusing on:
 
@@ -277,7 +277,7 @@ Invoke the Architect agent with the prepared context bundle. The agent analyzes 
 - Security and performance implications
 - Dependencies and maintainability
 
-### Step 4.3: Collect Architect Perspective
+### Step 5.3: Collect Architect Perspective
 
 Collect the Architect agent's output in the standard table-based format:
 
@@ -291,7 +291,7 @@ Store the output as `{architect_perspective}` for presentation in Step 8.
 
 Create an isolated agent context and invoke the Developer agent with technical implementation inputs.
 
-### Step 5.1: Prepare Developer Agent Context
+### Step 6.1: Prepare Developer Agent Context
 
 Create an isolated context bundle containing:
 
@@ -308,7 +308,7 @@ Create an isolated context bundle containing:
 - Architecture-specific context unless `{ticket-domain}` is `architecture`
 - Conversation history from other agents
 
-### Step 5.2: Invoke Developer Agent
+### Step 6.2: Invoke Developer Agent
 
 Invoke the Developer agent with the prepared context bundle. The agent analyzes the story from a technical implementation perspective, focusing on:
 
@@ -317,7 +317,7 @@ Invoke the Developer agent with the prepared context bundle. The agent analyzes 
 - Code quality and technical debt
 - Testing strategy and documentation needs
 
-### Step 5.3: Collect Developer Perspective
+### Step 6.3: Collect Developer Perspective
 
 Collect the Developer agent's output in the standard table-based format:
 
@@ -331,7 +331,7 @@ Store the output as `{developer_perspective}` for presentation in Step 8.
 
 Create an isolated agent context and invoke the QA agent with testing and quality inputs.
 
-### Step 6.1: Prepare QA Agent Context
+### Step 7.1: Prepare QA Agent Context
 
 Create an isolated context bundle containing:
 
@@ -348,7 +348,7 @@ Create an isolated context bundle containing:
 - Other agents' perspectives or outputs
 - Conversation history from other agents
 
-### Step 6.2: Invoke QA Agent
+### Step 7.2: Invoke QA Agent
 
 Invoke the QA agent with the prepared context bundle. The agent analyzes the story from a quality assurance perspective, focusing on:
 
@@ -357,7 +357,7 @@ Invoke the QA agent with the prepared context bundle. The agent analyzes the sto
 - Test coverage and testing tools
 - Integration testing and regression risk
 
-### Step 6.3: Collect QA Perspective
+### Step 7.3: Collect QA Perspective
 
 Collect the QA agent's output in the standard table-based format:
 

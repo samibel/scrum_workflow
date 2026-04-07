@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-04-07T12:00:49Z
-last_updated: 2026-04-07T20:00:00Z
+last_updated: 2026-04-07T22:00:00Z
 project: scrum_workflow
 project_key: NOKEY
 tracking_system: file-system
@@ -45,7 +45,7 @@ development_status:
   # Epic 1: Establish Reliable Foundation
   epic-1: in-progress
   1-1-verify-align-ticket-creation: done
-  1-2-verify-align-agent-spawning-perspectives: ready-for-dev
+  1-2-verify-align-agent-spawning-perspectives: in-progress
   1-3-verify-align-cross-talk-synthesis: backlog
   1-4-verify-align-wideband-delphi-estimation: backlog
   1-5-verify-align-code-review: backlog

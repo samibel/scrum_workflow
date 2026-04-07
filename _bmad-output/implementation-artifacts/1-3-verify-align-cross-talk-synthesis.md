@@ -1,6 +1,6 @@
 # Story 1.3: Verify & Align Cross-Talk & Synthesis
 
-Status: ready-for-dev
+Status: in-progress
 
 ## Story
 

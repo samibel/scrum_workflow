@@ -537,12 +537,12 @@ After Round 3 (or configured max rounds), check for remaining blockers:
 **If blockers remain:**
 
 ```
-⚠️ REFINEMENT DEADLOCK nach 3 rounds
+⚠️ REFINEMENT DEADLOCK after 3 rounds
 
-Blockierende Punkte:
-1. [Agent]'s Vorschlag übernehmen
-2. Alternative eingeben
-3. Abbrechen und Story zurück zu Draft
+Blocking Issues:
+1. Accept [Agent]'s proposal
+2. Provide alternative
+3. Cancel and revert story to Draft
 
 What would you like to do?
 ```

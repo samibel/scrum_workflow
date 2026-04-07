@@ -144,17 +144,17 @@ agents:
 <!-- Only shown if blockers remain after max rounds -->
 
 {{#if deadlock}}
-⚠️ **REFINEMENT DEADLOCK nach {{max_rounds}} rounds**
+⚠️ **REFINEMENT DEADLOCK after {{max_rounds}} rounds**
 
-Blockierende Punkte:
+Blocking Issues:
 {{#each blockers}}
-{{@index}}. {{this.description}} [{{this.agent}}'s Vorschlag]
+{{@index}}. {{this.description}} [{{this.agent}}'s proposal]
 {{/each}}
 
 **Resolution Options:**
-1. [Agent]'s Vorschlag übernehmen
-2. Alternative eingeben
-3. Abbrechen und Story zurück zu Draft
+1. Accept [Agent]'s proposal
+2. Provide alternative
+3. Cancel and revert story to Draft
 
 **User Decision:** {{deadlock_resolution}}
 {{/if}}

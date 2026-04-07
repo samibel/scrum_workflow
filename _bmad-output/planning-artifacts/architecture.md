@@ -188,8 +188,8 @@ status_history:
 **Context Isolation:**
 - Architect agent receives: story.md + domain context (no other agent definitions)
 - Developer agent receives: story.md + plan.md + relevant code context
- QA agent receives: story.md + plan.md + testing context
- Review agent receives: story.md + plan.md + implementation + previous reviews
+- QA agent receives: story.md + plan.md + testing context
+- Review agent receives: story.md + plan.md + implementation + previous reviews
 
 **Feedback Collection:**
 - Pattern: Structured accept/reject per perspective

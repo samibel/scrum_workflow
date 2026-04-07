@@ -267,7 +267,7 @@ ticket: scrum-001  # Should be: SW-001
 
 **Functional Requirements Coverage:**
 
-| FR-Bereich | Abgedeckt durch | Status |
+| FR-Area | Covered by | Status |
 |------------|-----------------|--------|
 | FR-1 bis FR-7 (Story Lifecycle) | commands/scrum-*.md, 9-State Machine | ✅ |
 | FR-8 bis FR-11 (State Machine & Guards) | skills/status-guard-validation, skills/prerequisite-validation | ✅ |

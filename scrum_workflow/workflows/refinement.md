@@ -367,7 +367,7 @@ Collect the QA agent's output in the standard table-based format:
 
 Store the output as `{qa_perspective}` for presentation in Step 8.
 
-### Step 7.1: Create Temp Directory for Round 0
+### Step 7.4: Create Temp Directory for Round 0
 
 Create the temp directory for storing agent analyses:
 
@@ -380,7 +380,7 @@ sprints/SW-XXX/temp/
 - If not, create using `mkdir -p sprints/SW-XXX/temp/`
 - Store path as `{temp_dir}` for subsequent steps
 
-### Step 7.2: Write Round 0 Analyses to Temp Files
+### Step 7.4.1: Write Round 0 Analyses to Temp Files
 
 After all three agents complete their initial analyses, write each to a temp file:
 
@@ -395,7 +395,7 @@ Each temp file contains the agent's complete perspective output including:
 - Proposed Acceptance Criteria
 - Any additional analysis notes
 
-### Step 7.3: Initialize Cross-Talk State
+### Step 7.4.2: Initialize Cross-Talk State
 
 Initialize state tracking for discussion rounds:
 
@@ -940,7 +940,7 @@ After estimation is complete, proceed to Step 8 for synthesis.
 
 Present all three agent perspectives to the user in sequential, clearly labeled sections.
 
-### Step 7.1: Present Architect Perspective
+### Step 8.1: Present Architect Perspective
 
 Display the Architect agent's perspective with a clear section header:
 
@@ -950,7 +950,7 @@ Display the Architect agent's perspective with a clear section header:
 {architect_perspective}
 ```
 
-### Step 7.2: Present Developer Perspective
+### Step 8.2: Present Developer Perspective
 
 Display the Developer agent's perspective with a clear section header:
 
@@ -960,7 +960,7 @@ Display the Developer agent's perspective with a clear section header:
 {developer_perspective}
 ```
 
-### Step 7.3: Present QA Perspective
+### Step 8.3: Present QA Perspective
 
 Display the QA agent's perspective with a clear section header:
 

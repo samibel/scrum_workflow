@@ -23,4 +23,4 @@ Ticket number and natural language description in the format: `/scrum-create-tic
 
 ## Output
 
-- `_scrum-output/sprints/SW-XXX/story.md` -- Structured story file with valid YAML frontmatter (`schema_version: 1`, `ticket: SW-XXX`, `title: "<generated title>"`, `status: draft`, `estimation: <calculated>`, `created: <today>`, `updated: <today>`) and a Markdown body containing a generated description, acceptance criteria in Given/When/Then format, and subtasks
+- `_scrum-output/sprints/SW-XXX/story.md` -- Structured story file with valid YAML frontmatter (`schema_version: "1.0.0"`, `ticket: SW-XXX`, `title: "<generated title>"`, `status: draft`, `type: <inferred>`, `risk_level: <assigned>`, `domain_tags: <array>`, `estimation: <calculated>`, `created: <ISO 8601 UTC>`, `updated: <ISO 8601 UTC>`, `status_history: [{from: null, to: draft, timestamp: <ISO 8601 UTC>, trigger: /scrum-create-ticket, actor: human}]`) and a Markdown body containing a generated description, acceptance criteria in Given/When/Then format, and subtasks

@@ -503,7 +503,7 @@ After Round 1, display progress:
 ### Step 7.5.4: Early Consensus Check
 
 **Check if early exit is possible:**
-- If `blockers.length === 0` AND `non_blockers.length > 0`
+- If `blockers.length === 0`
 - AND `early_exit_on_consensus` is `true` (default)
 
 ```
@@ -514,7 +514,7 @@ All blockers resolved. Proceeding to synthesis without further rounds.
 - Remaining non-blockers: Y (documented for reference)
 ```
 
-If early consensus reached, skip to Step 8 (Synthesis).
+If early consensus reached, skip remaining cross-talk rounds and proceed to Step 8 (Display Agent Perspectives).
 
 ### Step 7.5.5: Round 2 - Cross-Talk (300 words per agent)
 
@@ -537,12 +537,16 @@ After Round 3 (or configured max rounds), check for remaining blockers:
 **If blockers remain:**
 
 ```
-⚠️ REFINEMENT DEADLOCK nach 3 rounds
+⚠️ REFINEMENT DEADLOCK after 3 rounds
 
-Blockierende Punkte:
-1. [Agent]'s Vorschlag übernehmen
-2. Alternative eingeben
-3. Abbrechen und Story zurück zu Draft
+Blocking Issues:
+1. [Blocker description] — [Agent]'s proposal
+2. [Blocker description] — [Agent]'s proposal
+
+Resolution Options:
+1. Accept [Agent]'s proposal
+2. Provide alternative
+3. Cancel and revert story to Draft
 
 What would you like to do?
 ```

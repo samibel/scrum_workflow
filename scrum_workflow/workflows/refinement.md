@@ -252,7 +252,7 @@ Store as `{discovered_documents}` array with structure:
 
 Create an isolated agent context and invoke the Architect agent with architecture-focused inputs.
 
-### Step 4.1: Prepare Architect Agent Context
+### Step 5.1: Prepare Architect Agent Context
 
 Create an isolated context bundle containing:
 
@@ -268,7 +268,7 @@ Create an isolated context bundle containing:
 - Other agents' perspectives or outputs
 - Conversation history from other agents
 
-### Step 4.2: Invoke Architect Agent
+### Step 5.2: Invoke Architect Agent
 
 Invoke the Architect agent with the prepared context bundle. The agent analyzes the story from an architectural perspective, focusing on:
 
@@ -277,7 +277,7 @@ Invoke the Architect agent with the prepared context bundle. The agent analyzes 
 - Security and performance implications
 - Dependencies and maintainability
 
-### Step 4.3: Collect Architect Perspective
+### Step 5.3: Collect Architect Perspective
 
 Collect the Architect agent's output in the standard table-based format:
 
@@ -291,7 +291,7 @@ Store the output as `{architect_perspective}` for presentation in Step 8.
 
 Create an isolated agent context and invoke the Developer agent with technical implementation inputs.
 
-### Step 5.1: Prepare Developer Agent Context
+### Step 6.1: Prepare Developer Agent Context
 
 Create an isolated context bundle containing:
 
@@ -308,7 +308,7 @@ Create an isolated context bundle containing:
 - Architecture-specific context unless `{ticket-domain}` is `architecture`
 - Conversation history from other agents
 
-### Step 5.2: Invoke Developer Agent
+### Step 6.2: Invoke Developer Agent
 
 Invoke the Developer agent with the prepared context bundle. The agent analyzes the story from a technical implementation perspective, focusing on:
 
@@ -317,7 +317,7 @@ Invoke the Developer agent with the prepared context bundle. The agent analyzes 
 - Code quality and technical debt
 - Testing strategy and documentation needs
 
-### Step 5.3: Collect Developer Perspective
+### Step 6.3: Collect Developer Perspective
 
 Collect the Developer agent's output in the standard table-based format:
 
@@ -331,7 +331,7 @@ Store the output as `{developer_perspective}` for presentation in Step 8.
 
 Create an isolated agent context and invoke the QA agent with testing and quality inputs.
 
-### Step 6.1: Prepare QA Agent Context
+### Step 7.1: Prepare QA Agent Context
 
 Create an isolated context bundle containing:
 
@@ -348,7 +348,7 @@ Create an isolated context bundle containing:
 - Other agents' perspectives or outputs
 - Conversation history from other agents
 
-### Step 6.2: Invoke QA Agent
+### Step 7.2: Invoke QA Agent
 
 Invoke the QA agent with the prepared context bundle. The agent analyzes the story from a quality assurance perspective, focusing on:
 
@@ -357,7 +357,7 @@ Invoke the QA agent with the prepared context bundle. The agent analyzes the sto
 - Test coverage and testing tools
 - Integration testing and regression risk
 
-### Step 6.3: Collect QA Perspective
+### Step 7.3: Collect QA Perspective
 
 Collect the QA agent's output in the standard table-based format:
 
@@ -367,7 +367,7 @@ Collect the QA agent's output in the standard table-based format:
 
 Store the output as `{qa_perspective}` for presentation in Step 8.
 
-### Step 7.1: Create Temp Directory for Round 0
+### Step 7.4: Create Temp Directory for Round 0
 
 Create the temp directory for storing agent analyses:
 
@@ -380,7 +380,7 @@ sprints/SW-XXX/temp/
 - If not, create using `mkdir -p sprints/SW-XXX/temp/`
 - Store path as `{temp_dir}` for subsequent steps
 
-### Step 7.2: Write Round 0 Analyses to Temp Files
+### Step 7.4.1: Write Round 0 Analyses to Temp Files
 
 After all three agents complete their initial analyses, write each to a temp file:
 
@@ -395,7 +395,7 @@ Each temp file contains the agent's complete perspective output including:
 - Proposed Acceptance Criteria
 - Any additional analysis notes
 
-### Step 7.3: Initialize Cross-Talk State
+### Step 7.4.2: Initialize Cross-Talk State
 
 Initialize state tracking for discussion rounds:
 
@@ -503,7 +503,7 @@ After Round 1, display progress:
 ### Step 7.5.4: Early Consensus Check
 
 **Check if early exit is possible:**
-- If `blockers.length === 0` AND `non_blockers.length > 0`
+- If `blockers.length === 0`
 - AND `early_exit_on_consensus` is `true` (default)
 
 ```
@@ -514,7 +514,7 @@ All blockers resolved. Proceeding to synthesis without further rounds.
 - Remaining non-blockers: Y (documented for reference)
 ```
 
-If early consensus reached, skip to Step 8 (Synthesis).
+If early consensus reached, skip remaining cross-talk rounds and proceed to Step 8 (Display Agent Perspectives).
 
 ### Step 7.5.5: Round 2 - Cross-Talk (300 words per agent)
 
@@ -537,12 +537,16 @@ After Round 3 (or configured max rounds), check for remaining blockers:
 **If blockers remain:**
 
 ```
-⚠️ REFINEMENT DEADLOCK nach 3 rounds
+⚠️ REFINEMENT DEADLOCK after 3 rounds
 
-Blockierende Punkte:
-1. [Agent]'s Vorschlag übernehmen
-2. Alternative eingeben
-3. Abbrechen und Story zurück zu Draft
+Blocking Issues:
+1. [Blocker description] — [Agent]'s proposal
+2. [Blocker description] — [Agent]'s proposal
+
+Resolution Options:
+1. Accept [Agent]'s proposal
+2. Provide alternative
+3. Cancel and revert story to Draft
 
 What would you like to do?
 ```
@@ -940,7 +944,7 @@ After estimation is complete, proceed to Step 8 for synthesis.
 
 Present all three agent perspectives to the user in sequential, clearly labeled sections.
 
-### Step 7.1: Present Architect Perspective
+### Step 8.1: Present Architect Perspective
 
 Display the Architect agent's perspective with a clear section header:
 
@@ -950,7 +954,7 @@ Display the Architect agent's perspective with a clear section header:
 {architect_perspective}
 ```
 
-### Step 7.2: Present Developer Perspective
+### Step 8.2: Present Developer Perspective
 
 Display the Developer agent's perspective with a clear section header:
 
@@ -960,7 +964,7 @@ Display the Developer agent's perspective with a clear section header:
 {developer_perspective}
 ```
 
-### Step 7.3: Present QA Perspective
+### Step 8.3: Present QA Perspective
 
 Display the QA agent's perspective with a clear section header:
 

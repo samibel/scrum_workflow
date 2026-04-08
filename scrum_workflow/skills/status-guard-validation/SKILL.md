@@ -25,18 +25,21 @@ Each command has a specific required status. The command may only execute when t
 
 ## Status Value Validation
 
-Read the current `status` field from the story file's YAML frontmatter and validate it against the command's required status:
+Read the current `status` field from the story file's YAML frontmatter and validate it against the command's required status.
 
-**Valid status values:**
+**Authoritative source:** All valid states and transitions are defined in [`scrum_workflow/context/standards.md`](../../context/standards.md) — Story Status State Machine section. This skill reads and enforces that definition.
+
+**Valid status values** (per `scrum_workflow/context/standards.md`):
 - `draft` -- Story created, not yet refined
-- `refinement` -- Multi-agent refinement in progress
+- `refinement` -- Multi-agent refinement in progress (implementation-internal sub-state)
 - `refined` -- Refinement complete, awaiting validation
 - `ready-for-dev` -- Validated and ready for implementation
 - `in-progress` -- Implementation in progress
 - `review` -- Code review requested
 - `approved` -- Review passed, awaiting human sign-off
 - `changes-needed` -- Review found issues, changes required
-- `done` -- Story completed and approved
+- `done` -- Story completed and approved (terminal)
+- `cancelled` -- Story cancelled by explicit user decision (terminal, from any state)
 
 ## Guard Condition Checks
 
@@ -120,9 +123,9 @@ Fix: Complete code review first by running '/scrum-review-story SW-XXX'
 
 ## Status Transition Validation
 
-Ensure that status transitions only follow the defined state machine paths:
+Ensure that status transitions only follow the defined state machine paths. The authoritative transitions list is maintained in [`scrum_workflow/context/standards.md`](../../context/standards.md) — Valid Transitions table.
 
-**Valid transitions:**
+**Valid transitions** (per `scrum_workflow/context/standards.md`):
 - `draft` → `refinement` (via `/scrum-refine-ticket`)
 - `refinement` → `refined` (via `/scrum-refine-ticket` completion)
 - `refined` → `ready-for-dev` (via `/scrum-refine-story` PASS)
@@ -132,7 +135,8 @@ Ensure that status transitions only follow the defined state machine paths:
 - `review` → `approved` (via `/scrum-review-story` APPROVED)
 - `review` → `changes-needed` (via `/scrum-review-story` CHANGES-NEEDED)
 - `changes-needed` → `in-progress` (via `/scrum-dev-story` fix findings)
-- `approved` → `done` (via user approval)
+- `approved` → `done` (via `/scrum-approve` with explicit user sign-off)
+- `any` → `cancelled` (via manual decision, explicit user cancellation)
 
 **Invalid transitions:**
 - Any transition not listed above (e.g., `draft` → `ready-for-dev` skipping refinement)

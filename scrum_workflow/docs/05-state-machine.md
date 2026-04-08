@@ -4,19 +4,24 @@
 
 ---
 
+> **Note:** The authoritative definition of all states and transitions lives in [`scrum_workflow/context/standards.md`](../context/standards.md) — Story Status State Machine section. This document provides diagrams and supplementary detail. In case of any conflict, `standards.md` is the single source of truth.
+
+---
+
 ## Status Values
 
 | Status | Description | Next States |
 |--------|-------------|-------------|
 | `draft` | Story created, not yet refined | → refinement |
-| `refinement` | Multi-agent refinement in progress | → refined (on completion) |
+| `refinement` | Multi-agent refinement in progress (implementation-internal sub-state, not in FR-4's 9 states) | → refined (on completion) |
 | `refined` | Refinement complete, awaiting validation | → ready-for-dev |
 | `ready-for-dev` | Validated and ready for implementation | → in-progress |
 | `in-progress` | Development in progress | → review |
 | `review` | Implementation complete, awaiting review | → approved / changes-needed |
 | `approved` | Review passed, awaiting human approval | → done |
-| `changes-needed` | Review found issues requiring fixes | → review (after fixes) |
+| `changes-needed` | Review found issues requiring fixes | → in-progress (after fixes) |
 | `done` | Story complete with human approval | Terminal state |
+| `cancelled` | Story cancelled by explicit user decision | Terminal state (from any state) |
 
 ---
 
@@ -33,24 +38,36 @@ stateDiagram-v2
     inProgress --> review: Implementation complete
     review --> approved: /scrum-review-story APPROVED
     review --> changesNeeded: /scrum-review-story CHANGES-NEEDED
-    changesNeeded --> review: Fixes applied
-    approved --> done: Human APPROVE
+    changesNeeded --> inProgress: /scrum-dev-story (fix findings)
+    approved --> done: /scrum-approve (human sign-off)
     done --> [*]
+    draft --> cancelled: Manual decision
+    refinement --> cancelled: Manual decision
+    refined --> cancelled: Manual decision
+    readyForDev --> cancelled: Manual decision
+    inProgress --> cancelled: Manual decision
+    review --> cancelled: Manual decision
+    approved --> cancelled: Manual decision
+    changesNeeded --> cancelled: Manual decision
+    cancelled --> [*]
 ```
 
 ---
 
 ## Guard Conditions
 
+See [`scrum_workflow/context/standards.md`](../context/standards.md) for the authoritative Valid Transitions table. Summary of guard conditions:
+
 | Transition | Guard Condition | Error if Violated |
 |------------|-----------------|-------------------|
 | → `refined` | Refinement agents complete | Status unchanged |
 | → `ready-for-dev` | All 5 validation criteria pass | Status remains `refined` |
-| → `in-progress` | Status must be `ready-for-dev` | Halt with error |
+| → `in-progress` | Status must be `ready-for-dev` OR `changes-needed` | Halt with error |
 | → `review` | Implementation complete, all tasks [x] | Halt if tasks incomplete |
 | → `approved` | Review verdict: APPROVED | Never automatic |
 | → `changes-needed` | Review verdict: CHANGES-NEEDED | Requires findings documented |
-| → `done` | Status must be `approved`, explicit human approval | Never automatic |
+| → `done` | Status must be `approved`, explicit human approval via /scrum-approve | Never automatic |
+| any → `cancelled` | Explicit user cancellation | Manual decision required |
 
 ---
 

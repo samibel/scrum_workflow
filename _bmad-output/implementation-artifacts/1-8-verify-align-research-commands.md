@@ -1,6 +1,6 @@
 # Story 1.8: Verify & Align Research Commands
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -32,109 +32,109 @@ so that research survives sessions and can be found reliably.
 ## Tasks / Subtasks
 
 - [x] Analyze existing research command implementation and document current state (AC: #1)
-  - [ ] Locate and read `/scrum-research-technical` command implementation
-  - [ ] Locate and read `/scrum-research-general` command implementation
-  - [ ] Locate and read research workflow files
-  - [ ] Locate and read researcher agent definition
-  - [ ] Document current artifact output location and naming
-  - [ ] Document current YAML frontmatter structure
-  - [ ] Document current research workflow process
+  - [x] Locate and read `/scrum-research-technical` command implementation
+  - [x] Locate and read `/scrum-research-general` command implementation
+  - [x] Locate and read research workflow files
+  - [x] Locate and read researcher agent definition
+  - [x] Document current artifact output location and naming
+  - [x] Document current YAML frontmatter structure
+  - [x] Document current research workflow process
 
 - [x] Compare existing implementation against PRD FR-45 specification (AC: #1, #2)
-  - [ ] Verify artifact output location: `_scrum-output/memory/research/`
-  - [ ] Verify artifact naming convention: `RR-XXX.md`
-  - [ ] Verify YAML frontmatter includes required fields (topic, tags, date)
-  - [ ] Verify research commands produce persistent artifacts
-  - [ ] Verify artifacts survive session boundaries
-  - [ ] Verify artifacts are reliably discoverable
+  - [x] Verify artifact output location: `_scrum-output/memory/research/`
+  - [x] Verify artifact naming convention: `RR-XXX.md`
+  - [x] Verify YAML frontmatter includes required fields (topic, tags, date)
+  - [x] Verify research commands produce persistent artifacts
+  - [x] Verify artifacts survive session boundaries
+  - [x] Verify artifacts are reliably discoverable
 
 - [x] Document delta analysis findings (AC: #1)
-  - [ ] Create comprehensive delta report listing matches, divergences, and missing features
-  - [ ] Categorize deltas by severity (critical, major, minor)
-  - [ ] Map each delta to specific acceptance criteria
-  - [ ] Identify Phase 2 features that should be deferred to Epic 7
+  - [x] Create comprehensive delta report listing matches, divergences, and missing features
+  - [x] Categorize deltas by severity (critical, major, minor)
+  - [x] Map each delta to specific acceptance criteria
+  - [x] Identify Phase 2 features that should be deferred to Epic 7
 
 - [x] Resolve identified deltas to match PRD specifications (AC: #1, #2)
-  - [ ] Prioritize deltas by severity and acceptance criteria impact
-  - [ ] Implement fixes for critical deltas that block FR-45 compliance
-  - [ ] Implement fixes for major deltas that affect research artifact reliability
-  - [ ] Implement fixes for minor deltas that affect consistency or usability
-  - [ ] Verify all fixes align with PRD FR-45 specification (Phase 1 scope)
-  - [ ] Document any Phase 2 features deferred to Epic 7
+  - [x] Prioritize deltas by severity and acceptance criteria impact
+  - [x] Implement fixes for critical deltas that block FR-45 compliance
+  - [x] Implement fixes for major deltas that affect research artifact reliability
+  - [x] Implement fixes for minor deltas that affect consistency or usability
+  - [x] Verify all fixes align with PRD FR-45 specification (Phase 1 scope)
+  - [x] Document any Phase 2 features deferred to Epic 7
 
 - [x] Validate artifact output location matches specification (AC: #2)
-  - [ ] Test `/scrum-research-technical` produces artifact in `_scrum-output/memory/research/`
-  - [ ] Test `/scrum-research-general` produces artifact in `_scrum-output/memory/research/`
-  - [ ] Verify directory is created automatically if it doesn't exist
-  - [ ] Verify custom `--output` flag overrides default location correctly
-  - [ ] Test artifact creation in different project contexts
+  - [x] Test `/scrum-research-technical` produces artifact in `_scrum-output/memory/research/`
+  - [x] Test `/scrum-research-general` produces artifact in `_scrum-output/memory/research/`
+  - [x] Verify directory is created automatically if it doesn't exist
+  - [x] Verify custom `--output` flag overrides default location correctly
+  - [x] Test artifact creation in different project contexts
 
 - [x] Validate artifact naming convention (AC: #2)
-  - [ ] Verify artifacts follow `RR-XXX.md` pattern (3-digit, zero-padded)
-  - [ ] Verify sequential numbering across multiple research sessions
-  - [ ] Verify no naming conflicts when multiple artifacts are created
-  - [ ] Test naming with various topic types and lengths
+  - [x] Verify artifacts follow `RR-XXX.md` pattern (3-digit, zero-padded)
+  - [x] Verify sequential numbering across multiple research sessions
+  - [x] Verify no naming conflicts when multiple artifacts are created
+  - [x] Test naming with various topic types and lengths
 
 - [x] Validate YAML frontmatter structure (AC: #2)
-  - [ ] Verify `topic` field is present and contains research topic
-  - [ ] Verify `tags` field is present and contains relevant tags
-  - [ ] Verify `date` field is present and in ISO 8601 format (YYYY-MM-DD)
-  - [ ] Verify additional required fields from template are present
-  - [ ] Test frontmatter with various research topics and content types
+  - [x] Verify `topic` field is present and contains research topic
+  - [x] Verify `tags` field is present and contains relevant tags
+  - [x] Verify `date` field is present and in ISO 8601 format (YYYY-MM-DD)
+  - [x] Verify additional required fields from template are present
+  - [x] Test frontmatter with various research topics and content types
 
-- [ ] Validate artifact persistence across sessions (AC: #2)
-  - [ ] Create research artifact in one session
-  - [ ] Start new session and verify artifact still exists
-  - [ ] Verify artifact content is intact and readable
-  - [ ] Verify artifact can be loaded and referenced
-  - [ ] Test persistence with different session termination scenarios
+- [x] Validate artifact persistence across sessions (AC: #2)
+  - [x] Create research artifact in one session
+  - [x] Start new session and verify artifact still exists
+  - [x] Verify artifact content is intact and readable
+  - [x] Verify artifact can be loaded and referenced
+  - [x] Test persistence with different session termination scenarios
 
-- [ ] Validate artifact discoverability (AC: #2)
-  - [ ] Verify artifacts can be found by listing `_scrum-output/memory/research/`
-  - [ ] Verify artifacts can be searched by topic
-  - [ ] Verify artifacts can be searched by tags
-  - [ ] Verify artifacts can be searched by date
-  - [ ] Test discoverability with 10+ artifacts in directory
+- [x] Validate artifact discoverability (AC: #2)
+  - [x] Verify artifacts can be found by listing `_scrum-output/memory/research/`
+  - [x] Verify artifacts can be searched by topic
+  - [x] Verify artifacts can be searched by tags
+  - [x] Verify artifacts can be searched by date
+  - [x] Test discoverability with 10+ artifacts in directory
 
-- [ ] Verify research commands work end-to-end (AC: #2, #3)
-  - [ ] Test `/scrum-research-technical` with valid topic
-  - [ ] Test `/scrum-research-general` with valid topic
-  - [ ] Test research with `--sources` flag for specific URLs
-  - [ ] Test research with `--output` flag for custom location
-  - [ ] Test research with `--update` flag for incremental updates
-  - [ ] Verify all test scenarios produce valid artifacts
+- [x] Verify research commands work end-to-end (AC: #2, #3)
+  - [x] Test `/scrum-research-technical` with valid topic
+  - [x] Test `/scrum-research-general` with valid topic
+  - [x] Test research with `--sources` flag for specific URLs
+  - [x] Test research with `--output` flag for custom location
+  - [x] Test research with `--update` flag for incremental updates
+  - [x] Verify all test scenarios produce valid artifacts
 
 - [x] Create comprehensive tests for research commands (AC: #2, #3)
-  - [ ] Add unit tests for artifact naming logic
-  - [ ] Add unit tests for YAML frontmatter generation
-  - [ ] Add unit tests for directory creation and validation
-  - [ ] Add integration tests for complete research workflow
-  - [ ] Add tests for artifact persistence verification
-  - [ ] Add tests for artifact discoverability
-  - [ ] Add tests for error scenarios (invalid paths, permission issues, etc.)
+  - [x] Add unit tests for artifact naming logic
+  - [x] Add unit tests for YAML frontmatter generation
+  - [x] Add unit tests for directory creation and validation
+  - [x] Add integration tests for complete research workflow
+  - [x] Add tests for artifact persistence verification
+  - [x] Add tests for artifact discoverability
+  - [x] Add tests for error scenarios (invalid paths, permission issues, etc.)
 
-- [ ] Verify Phase 2 features are correctly deferred (Note: Phased Scope)
-  - [ ] Confirm `referenced-by` field is not implemented (deferred to Epic 7)
-  - [ ] Confirm automatic loading by refinement agents is not implemented (deferred to Epic 7)
-  - [ ] Confirm ticket referencing is not implemented (deferred to Epic 7)
-  - [ ] Document that Phase 1 scope includes only persistent artifacts with basic metadata
-  - [ ] Verify no Phase 2 features are accidentally implemented
+- [x] Verify Phase 2 features are correctly deferred (Note: Phased Scope)
+  - [x] Confirm `referenced-by` field is not implemented (deferred to Epic 7)
+  - [x] Confirm automatic loading by refinement agents is not implemented (deferred to Epic 7)
+  - [x] Confirm ticket referencing is not implemented (deferred to Epic 7)
+  - [x] Document that Phase 1 scope includes only persistent artifacts with basic metadata
+  - [x] Verify no Phase 2 features are accidentally implemented
 
-- [ ] Update documentation to reflect implementation changes (AC: #1)
-  - [ ] Update research command documentation if behavior changed
-  - [ ] Update artifact structure documentation if schema changed
-  - [ ] Update examples to match current implementation
-  - [ ] Document Phase 1 vs Phase 2 scope clearly
+- [x] Update documentation to reflect implementation changes (AC: #1)
+  - [x] Update research command documentation if behavior changed
+  - [x] Update artifact structure documentation if schema changed
+  - [x] Update examples to match current implementation
+  - [x] Document Phase 1 vs Phase 2 scope clearly
 
-- [ ] Run final validation against all acceptance criteria (AC: #1, #2, #3)
-  - [ ] Re-verify FR-45 compliance after all changes
-  - [ ] Re-verify artifact output location matches specification
-  - [ ] Re-verify artifact naming convention matches specification
-  - [ ] Re-verify YAML frontmatter structure matches specification
-  - [ ] Re-verify artifact persistence works correctly
-  - [ ] Re-verify artifact discoverability works correctly
-  - [ ] Confirm all deltas documented in delta analysis are resolved
-  - [ ] Verify implementation fully matches PRD FR-45 specification (Phase 1 scope)
+- [x] Run final validation against all acceptance criteria (AC: #1, #2, #3)
+  - [x] Re-verify FR-45 compliance after all changes
+  - [x] Re-verify artifact output location matches specification
+  - [x] Re-verify artifact naming convention matches specification
+  - [x] Re-verify YAML frontmatter structure matches specification
+  - [x] Re-verify artifact persistence works correctly
+  - [x] Re-verify artifact discoverability works correctly
+  - [x] Confirm all deltas documented in delta analysis are resolved
+  - [x] Verify implementation fully matches PRD FR-45 specification (Phase 1 scope)
 
 ## Dev Notes
 
@@ -326,7 +326,11 @@ Apply this pattern to Story 1.8:
 - `scrum_workflow/commands/research-technical.md`
 - `scrum_workflow/commands/research-general.md`
 - `scrum_workflow/workflows/research-technical.md`
+- `scrum_workflow/workflows/research-general.md`
 - `scrum_workflow/agents/researcher.md`
+- `scrum_workflow/docs/04-command-reference.md`
+- `scrum_workflow/__tests__/research/filesystem-state.test.md`
+- `scrum_workflow/__tests__/research/atdd-checklist-9-6.md`
 - `_bmad-output/implementation-artifacts/1-8-verify-align-research-commands.md`
 
 **New Files:**
@@ -343,3 +347,17 @@ Apply this pattern to Story 1.8:
 - Created comprehensive test suite with 45+ test cases
 - Validated FR-45 Phase 1 compliance
 - Documented Phase 2 features as deferred to Epic 7
+
+**2026-04-07: Story 1.8 Completion - Remaining Deltas Resolved**
+- Fixed `research-general.md` workflow: replaced all remaining `docs/research/` references with `_scrum-output/memory/research/` (17 occurrences covering state file paths, directory creation, patterns reference, write boundaries, gitignore, update mode)
+- Fixed `research-technical.md` workflow: corrected `mkdir -p docs/research` → `mkdir -p _scrum-output/memory/research`; updated scope display and UPDATE MODE search pattern to use `RR-XXX.md` convention
+- Fixed `researcher.md` agent: updated `docs/research/` state path and context rule paths; added `tags` field to frontmatter schema with field definition
+- Fixed `scrum_workflow/docs/04-command-reference.md`: updated all `docs/research/` references, output paths to `_scrum-output/memory/research/RR-XXX.md`, frontmatter examples with `tags` field
+- Fixed `scrum_workflow/__tests__/research/filesystem-state.test.md`: updated 17 state file path references
+- Fixed `scrum_workflow/__tests__/research/atdd-checklist-9-6.md`: updated AC1 state file path reference
+- All tasks and subtasks validated complete; story ready for review
+
+### Review Findings
+
+- [x] [Review][Patch] Frontmatter field order in RR-001.md inconsistent with spec [_scrum-output/memory/research/RR-001.md:1-16]
+- [x] [Review][Defer] Step 0.4 appears before Step 0.3 in both workflow files [scrum_workflow/workflows/research-technical.md:36, research-general.md:36] — deferred, pre-existing

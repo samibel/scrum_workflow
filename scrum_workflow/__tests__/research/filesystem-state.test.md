@@ -9,13 +9,13 @@
 
 ## Test Objective
 
-Validate that the Filesystem-Based State pattern correctly persists research state to `docs/research/.research-state.json`, enables checkpoint recovery on interruption, and allows resuming from the last completed step.
+Validate that the Filesystem-Based State pattern correctly persists research state to `_scrum-output/memory/research/.research-state.json`, enables checkpoint recovery on interruption, and allows resuming from the last completed step.
 
 ## Acceptance Criteria Under Test
 
 From Story 9-6:
 
-1. AC1: The workflow creates `docs/research/.research-state.json` at the start of each research task
+1. AC1: The workflow creates `_scrum-output/memory/research/.research-state.json` at the start of each research task
 2. AC2: The state file tracks: `research_id`, `topic`, `start_time`, `status`, `completed_steps`, `findings`, `sources_consulted`
 3. AC3: The state file is updated incrementally during research -- not only at the end
 4. AC4: If interrupted, `status` is set to `interrupted` and `last_completed_step` is recorded
@@ -39,7 +39,7 @@ From Story 9-6:
 
 **Steps**:
 1. Invoke `/scrum-research technical "test topic"`
-2. Check for existence of `docs/research/.research-state.json` immediately after Step 0 (Input Parsing)
+2. Check for existence of `_scrum-output/memory/research/.research-state.json` immediately after Step 0 (Input Parsing)
 
 **Expected Result**:
 ```json
@@ -59,7 +59,7 @@ From Story 9-6:
 ```javascript
 // FAILING TEST - Feature not yet implemented
 test.skip('TC-01: State file created at research start', async () => {
-  const stateFile = 'docs/research/.research-state.json';
+  const stateFile = '_scrum-output/memory/research/.research-state.json';
   await expect(fs.exists(stateFile)).resolves.toBe(true);
 
   const state = JSON.parse(await fs.readFile(stateFile, 'utf8'));
@@ -83,7 +83,7 @@ test.skip('TC-01: State file created at research start', async () => {
 - Research in progress with state file created
 
 **Steps**:
-1. Read `docs/research/.research-state.json`
+1. Read `_scrum-output/memory/research/.research-state.json`
 2. Verify all required fields are present and have correct types
 
 **Expected Result**:
@@ -104,7 +104,7 @@ test.skip('TC-01: State file created at research start', async () => {
 ```javascript
 // FAILING TEST - Feature not yet implemented
 test.skip('TC-02: State file contains all required fields', async () => {
-  const state = JSON.parse(await fs.readFile('docs/research/.research-state.json', 'utf8'));
+  const state = JSON.parse(await fs.readFile('_scrum-output/memory/research/.research-state.json', 'utf8'));
 
   // Required fields per AC2
   expect(typeof state.research_id).toBe('string');
@@ -162,7 +162,7 @@ test.skip('TC-03: State updated incrementally during research', async () => {
   // Capture state after each step
   for (const step of ['step-1', 'step-2', 'step-3']) {
     await workflow.advanceToStep(step);
-    const state = JSON.parse(await fs.readFile('docs/research/.research-state.json', 'utf8'));
+    const state = JSON.parse(await fs.readFile('_scrum-output/memory/research/.research-state.json', 'utf8'));
     states.push(state);
   }
 
@@ -214,7 +214,7 @@ test.skip('TC-04: Interruption sets status to interrupted', async () => {
   // Simulate interruption
   await workflow.simulateInterruption('user_cancelled');
 
-  const state = JSON.parse(await fs.readFile('docs/research/.research-state.json', 'utf8'));
+  const state = JSON.parse(await fs.readFile('_scrum-output/memory/research/.research-state.json', 'utf8'));
 
   expect(state.status).toBe('interrupted');
   expect(state.last_completed_step).toBeDefined();
@@ -258,7 +258,7 @@ Would you like to:
 // FAILING TEST - Feature not yet implemented
 test.skip('TC-05: Resume offered on re-run with same topic', async () => {
   // Setup: Create interrupted state
-  await fs.writeFile('docs/research/.research-state.json', JSON.stringify({
+  await fs.writeFile('_scrum-output/memory/research/.research-state.json', JSON.stringify({
     research_id: 'test-123',
     topic: 'test topic',
     status: 'interrupted',
@@ -320,14 +320,14 @@ test.skip('TC-06: User can choose resume or fresh start', async () => {
 
   // Test Resume option
   await workflow.selectOption('R');
-  let state = JSON.parse(await fs.readFile('docs/research/.research-state.json', 'utf8'));
+  let state = JSON.parse(await fs.readFile('_scrum-output/memory/research/.research-state.json', 'utf8'));
   expect(state.resumed_from).toBeDefined();
   expect(state.status).not.toBe('interrupted');
 
   // Reset and test Fresh option
   await setupInterruptedState('test topic');
   await workflow.selectOption('F');
-  state = JSON.parse(await fs.readFile('docs/research/.research-state.json', 'utf8'));
+  state = JSON.parse(await fs.readFile('_scrum-output/memory/research/.research-state.json', 'utf8'));
   expect(state.research_id).not.toBe('test-123');
   expect(state.completed_steps).toEqual(['step-0-input-parsing']);
 });
@@ -416,7 +416,7 @@ test.skip('TC-07: Resume skips completed steps', async () => {
 ```javascript
 // FAILING TEST - Feature not yet implemented
 test.skip('TC-08: State file is valid JSON and human-readable', async () => {
-  const content = await fs.readFile('docs/research/.research-state.json', 'utf8');
+  const content = await fs.readFile('_scrum-output/memory/research/.research-state.json', 'utf8');
 
   // Should parse without error
   let state;
@@ -445,12 +445,12 @@ test.skip('TC-08: State file is valid JSON and human-readable', async () => {
 
 **Steps**:
 1. Check workflow documentation for `.gitignore` recommendations
-2. Verify `docs/research/.research-state.json` or pattern is included
+2. Verify `_scrum-output/memory/research/.research-state.json` or pattern is included
 
 **Expected Result**:
 ```gitignore
 # Research state (local, not committed)
-docs/research/.research-state.json
+_scrum-output/memory/research/.research-state.json
 ```
 
 **Assertion**:
@@ -512,11 +512,11 @@ test.skip('TC-10: Findings and sources persisted incrementally', async () => {
 
   // Capture state after first subagent
   await workflow.completeSubagent(1);
-  const state1 = JSON.parse(await fs.readFile('docs/research/.research-state.json', 'utf8'));
+  const state1 = JSON.parse(await fs.readFile('_scrum-output/memory/research/.research-state.json', 'utf8'));
 
   // Capture state after second subagent
   await workflow.completeSubagent(2);
-  const state2 = JSON.parse(await fs.readFile('docs/research/.research-state.json', 'utf8'));
+  const state2 = JSON.parse(await fs.readFile('_scrum-output/memory/research/.research-state.json', 'utf8'));
 
   // Verify incremental growth
   expect(state2.findings.length).toBeGreaterThan(state1.findings.length);
@@ -575,7 +575,7 @@ interface Finding {
 
 ## Implementation Notes
 
-1. **State File Location**: `docs/research/.research-state.json`
+1. **State File Location**: `_scrum-output/memory/research/.research-state.json`
 2. **Update Frequency**: After each workflow step completes
 3. **Interruption Handling**: Try/catch around workflow steps, set status on error/cancel
 4. **Resume Logic**: Check for existing state file on startup, compare topic, offer resume

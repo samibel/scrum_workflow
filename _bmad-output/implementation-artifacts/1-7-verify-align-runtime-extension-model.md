@@ -187,8 +187,8 @@ scrum_workflow/
 - **Story 1.2 (Agent Spawning & Perspectives) -- DONE:** Verified agent definitions exist and can be spawned. Extension model ensures new agents can be added without registration.
 - **Story 1.3 (Cross-Talk & Synthesis) -- DONE:** Verified workflow execution. Extension model ensures new workflows can be added without registration.
 - **Story 1.4 (Wideband Delphi Estimation) -- DONE:** Verified estimation workflow. Extension model applies to estimation workflow as well.
-- **Story 1.5 (Code Review) -- BACKLOG:** Will verify review workflow. Extension model ensures review-related skills can be added.
-- **Story 1.6 (Installation & Onboarding) -- BACKLOG:** Will verify CLI installer. May overlap with installer registration analysis (Task 8).
+- **Story 1.5 (Code Review) -- DONE:** Verified review workflow. Extension model ensures review-related skills can be added.
+- **Story 1.6 (Installation & Onboarding) -- DONE:** Verified CLI installer. Confirmed installer distribution is separate from runtime extension (Task 8 findings validated).
 - **Story 1.8 (Research Commands) -- BACKLOG:** Will verify research command. Extension model ensures research command can be added without registration.
 - **Story 1.9 (Artifact Contract) -- BACKLOG:** Will verify artifact output locations. No direct dependency on extension model.
 
@@ -439,6 +439,7 @@ N/A
 |------|---------------------|
 | 2026-04-07 | Story 1.7 verification complete. Delta analysis identified structural variance (flat files vs subdirectories) in workflows/agents/commands. Architecture documentation updated to reflect implementation. FR-44 compliance verified - all core requirements met. |
 | 2026-04-07 | Code review complete. 12 findings identified and resolved: duplicate section, German text, missing NFR-12, inconsistent indentation. All fixes applied. Status moved to done. |
+| 2026-04-07 | Code review round 2 complete. 3 issues found and fixed: stale NFR count (15→16), context/ alignment, stale cross-story dependency statuses. 1 deferred (duplicate review record entries). |
 
 ---
 
@@ -478,3 +479,33 @@ All actionable issues have been resolved. The architecture.md file now:
 - Has consistent formatting and alignment
 
 ### Reviewer: Claude Opus 4.6 (Code Review Agent)
+
+---
+
+## Code Review Record (Round 2)
+
+### Review Date: 2026-04-07
+
+### Findings Summary
+
+| # | Finding | Severity | Resolution |
+|---|---------|----------|------------|
+| 1 | Stale NFR count "15 NFRs" in architecture.md line 370 (should be 16 after NFR-12 added) | Major | Updated count to 16 NFRs |
+| 2 | Inconsistent alignment in `context/` directory tree line (1 space short vs siblings) | Minor | Fixed spacing to align with other entries |
+| 3 | Cross-Story Dependencies list Stories 1.5 and 1.6 as "BACKLOG" when both are "done" | Minor | Updated to reflect current DONE status |
+| 4 | Code Review Record findings #3 and #9 describe the same issue (missing NFR-12) | Minor | Deferred — no functional impact, documentation quality only |
+
+### Triage Summary
+
+- **Major:** 1 finding (stale NFR count) - FIXED
+- **Minor:** 2 findings (alignment, stale status) - FIXED
+- **Deferred:** 1 finding (duplicate review record entries) - DEFERRED
+
+### Resolution Status
+
+All actionable issues resolved. The architecture.md file now:
+- Accurately reports 16 NFRs in the requirements coverage summary
+- Has consistent directory tree comment alignment
+Story file cross-story dependencies now reflect actual sprint status.
+
+### Reviewer: Claude Sonnet 4.6 (Code Review Agent)

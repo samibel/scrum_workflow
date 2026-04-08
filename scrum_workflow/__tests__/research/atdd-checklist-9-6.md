@@ -27,7 +27,7 @@ inputDocuments:
 
 | # | Criterion | Test Coverage |
 |---|-----------|---------------|
-| AC1 | The workflow creates `docs/research/.research-state.json` at the start of each research task | TC-01 |
+| AC1 | The workflow creates `_scrum-output/memory/research/.research-state.json` at the start of each research task | TC-01 |
 | AC2 | State file tracks: `research_id`, `topic`, `start_time`, `status`, `completed_steps`, `findings`, `sources_consulted` | TC-02 |
 | AC3 | State file is updated incrementally during research | TC-03, TC-10 |
 | AC4 | If interrupted, `status` is set to `interrupted` and `last_completed_step` is recorded | TC-04 |

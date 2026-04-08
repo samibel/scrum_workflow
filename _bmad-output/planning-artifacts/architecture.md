@@ -89,7 +89,7 @@ scrum_workflow/
 ├── agents/
 │   └── {agent-name}.md          # Flat file structure (e.g., developer.md)
 ├── templates/                   # Output templates for all workflow phases
-├── context/                    # Framework-level standards and guidelines
+├── context/                     # Framework-level standards and guidelines
 ├── data/                        # Reference data in YAML format
 └── docs/                        # Framework documentation
 ```
@@ -367,7 +367,7 @@ ticket: scrum-001  # Should be: SW-001
 - Complete 7-Layer Architecture with Pattern mapping
 - Detailed Write Boundary Rules for all commands
 - Consistent ID and Naming conventions
-- Comprehensive Requirements coverage (46 FRs, 15 NFRs)
+- Comprehensive Requirements coverage (46 FRs, 16 NFRs)
 
 **Areas for Future Enhancement:**
 - Phase 3-4 Features (Verification, Adaptive Workflows)

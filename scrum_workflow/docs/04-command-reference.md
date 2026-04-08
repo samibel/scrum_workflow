@@ -206,7 +206,7 @@ This workflow implements patterns from multi-agent consensus research:
 - **Progressive Truncation**: 400→300→200 words to force convergence
 - **Wideband Delphi**: Independent estimation with variance discussion
 
-See: `docs/research/multi-agent-consensus-patterns-refinement-2026-03-31.md`
+See: `_scrum-output/memory/research/multi-agent-consensus-patterns-refinement-2026-03-31.md`
 
 ### Example refinement.md Output
 
@@ -483,7 +483,7 @@ Examples:
 
 ### Prerequisites
 - WebSearch tool available (for external research)
-- `docs/research/` directory exists (created automatically)
+- `_scrum-output/memory/research/` directory exists (created automatically)
 
 ### What happens
 1. **Scope Confirmation**: Confirms research topic and boundaries
@@ -500,10 +500,10 @@ Examples:
 | **Plan-Then-Execute** | Separate planning from execution. Define scope first, then execute systematically. |
 | **Swarm Migration** | 10x+ speedup via parallel subagents. Each researcher explores independent aspects. |
 | **Reflection Loop** | Self-critique after synthesis. Checks completeness, citations, structure, clarity. |
-| **Filesystem-Based State** | Persist to `docs/research/.research-state.json` for checkpoint recovery. |
+| **Filesystem-Based State** | Persist to `_scrum-output/memory/research/.research-state.json` for checkpoint recovery. |
 
 ### Output
-- `docs/research/technical-research-{topic-slug}-{date}.md` (NEW)
+- `_scrum-output/memory/research/RR-XXX.md` (sequential numbering, e.g. `RR-001.md`)
 
 ### Frontmatter Example
 ```yaml
@@ -514,6 +514,10 @@ date: 2026-03-30
 sources:
   - https://oauth.net/2/
   - https://datatracker.ietf.org/doc/html/rfc6749
+tags:
+  - authentication
+  - oauth2
+  - security
 ai_optimized: true
 version: 1.0
 research_confidence: high  # high | medium | low
@@ -533,7 +537,7 @@ Behavior:
 4. Preserves unchanged content
 
 ### See also
-[Research Patterns](../docs/research/technical-research-agent-patterns-2026-03-30.md)
+[Research Patterns](_scrum-output/memory/research/technical-research-agent-patterns-2026-03-30.md)
 
 ---
 
@@ -555,7 +559,7 @@ Examples:
 
 ### Prerequisites
 - WebSearch tool available (for external research)
-- `docs/research/` directory exists (created automatically)
+- `_scrum-output/memory/research/` directory exists (created automatically)
 
 ### What happens
 1. **Scope Confirmation**: Confirms research topic and business context
@@ -576,7 +580,7 @@ Examples:
 | **Example Topics** | "React 18 concurrent features", "PostgreSQL optimization" | "AI market trends 2026", "Competitive analysis: CI/CD tools" |
 
 ### Output
-- `docs/research/general-research-{topic-slug}-{date}.md` (NEW)
+- `_scrum-output/memory/research/RR-XXX.md` (sequential numbering, e.g. `RR-002.md`)
 
 ### Frontmatter Example
 ```yaml
@@ -587,6 +591,10 @@ date: 2026-03-30
 sources:
   - https://example.com/market-report
   - https://example.com/industry-analysis
+tags:
+  - market-analysis
+  - artificial-intelligence
+  - trends
 ai_optimized: true
 version: 1.0
 research_confidence: medium
@@ -600,7 +608,7 @@ Use `--update` to refresh existing research:
 ```
 
 ### See also
-[Research Patterns](../docs/research/technical-research-agent-patterns-2026-03-30.md)
+[Research Patterns](_scrum-output/memory/research/technical-research-agent-patterns-2026-03-30.md)
 
 ---
 

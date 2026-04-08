@@ -61,6 +61,32 @@ review → approved         (via /scrum-review-story, verdict: APPROVED)
 review → changes-needed   (via /scrum-review-story, verdict: CHANGES-NEEDED)
 ```
 
+## Error Handling
+
+### Story File Not Found
+
+If the story file does not exist:
+
+```
+❌ Status Guard Violation: Story file '_scrum-output/sprints/SW-XXX/story.md' not found
+
+**Details:** The /scrum-review-story command requires an existing story file to process. No file was found at the expected path.
+
+**Next Step:** Ensure the story exists before triggering review. Run '/scrum-create-ticket SW-XXX' to create the story, then complete the development pipeline before running '/scrum-review-story SW-XXX'.
+```
+
+### Status Guard Violation
+
+If story is not in `review` status:
+
+```
+❌ Status Guard Violation: Story SW-XXX requires 'review' but is currently '{current_status}'
+
+**Details:** The /scrum-review-story command can only execute on stories in 'review' status. The story must first complete implementation.
+
+**Next Step:** Complete implementation first. Run '/scrum-dev-story SW-XXX' to implement the story and submit it for review. The status will automatically move to 'review' when implementation is complete.
+```
+
 ## Severity Levels
 
 | Severity | Definition | Examples |
@@ -69,7 +95,7 @@ review → changes-needed   (via /scrum-review-story, verdict: CHANGES-NEEDED)
 | **Major** | Impacts quality, not blocking | Architecture violation, missing error handling, incomplete feature |
 | **Minor** | Style, optimization, non-essential | Naming convention violation, minor optimization, edge case |
 
-## Relationship to Other Epic 11 Commands
+## Relationship to Other Epic 3 Commands
 
 **Important:** This is a review-only command that runs AFTER implementation.
 
@@ -106,6 +132,19 @@ This workflow may write:
 This workflow may NOT write:
 - `_scrum-output/sprints/SW-XXX/plan.md` - Read-only during review
 - `_scrum-output/sprints/SW-XXX/refinement.md` - Read-only during review
-- `_scrum-output/sprints/SW-XXX/approval.md` - Managed by approval workflow
-- Code files in project directory - Review is read-only for code
+- `_scrum-output/sprints/SW-XXX/approval-N.md` - Managed by `/scrum-approve`
+- Code files in project directory - Review is read-only for code; MUST NOT modify source code
 - `scrum_workflow/` - Framework files are read-only during execution
+
+### Anti-Pattern Warning
+
+**Self-Fix:** The review agent MUST NOT modify source code. Review is read-only for code. Modifying source code during review bypasses the separation of implementation and verification — halt and report to the user.
+
+If a write boundary would be violated, halt with:
+```
+❌ Write Boundary Violation: /scrum-review-story attempted to write '{file_path}'
+
+**Details:** The /scrum-review-story command may only write review-N.md and story.md status updates. Code files and all other artifacts are read-only during review.
+
+**Next Step:** Halt immediately. Do not write the file. Report this boundary violation to the user.
+```

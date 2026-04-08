@@ -40,36 +40,61 @@ Ticket number in the format: `/scrum-dev-story SW-XXX`
 1. **Status Verification**: Before any implementation begins, verify story status is `ready-for-dev` OR `changes-needed`
 2. **Actionable Error on Failure**: If status is not `ready-for-dev` or `changes-needed`, halt with:
    ```
-   Error: Story SW-XXX is in status 'current_status', but '/scrum-dev-story' requires 'ready-for-dev' or 'changes-needed'
-   Fix: Stories must pass validation before implementation. Run '/scrum-refine-ticket SW-XXX' then '/scrum-refine-story SW-XXX' to complete refinement and validation.
-   OR If story was rejected: Run '/scrum-review-story SW-XXX' to complete the review first.
+   ❌ Status Guard Violation: Story SW-XXX requires 'ready-for-dev' or 'changes-needed' but is currently '{current_status}'
+
+   **Details:** The /scrum-dev-story command can only execute on stories in 'ready-for-dev' or 'changes-needed' status. This story is not yet ready for implementation.
+
+   **Next Step:** Run '/scrum-refine-ticket SW-XXX' and '/scrum-refine-story SW-XXX' to complete refinement and validation before starting development. If the story was rejected after review, run '/scrum-review-story SW-XXX' to complete the review first.
    ```
 3. **No Bypass**: There is no flag or option to bypass this guard condition
 4. **State Machine Compliance**: The paths to `in-progress` are:
    - Initial implementation: `refined → ready-for-dev → in-progress`
    - Re-implementation after rejection: `review → changes-needed → in-progress`
 
-**Valid Status Transitions:**
-- `draft` → `refinement` (via `/scrum-refine-ticket`)
-- `refinement` → `refined` (via `/scrum-refine-ticket` completion)
-- `refined` → `ready-for-dev` (via `/scrum-refine-story` PASS)
-- `ready-for-dev` → `in-progress` (via `/scrum-dev-story` - initial implementation)
-- `in-progress` → `review` (via `/scrum-dev-story` completion)
-- `review` → `changes-needed` (via `/scrum-review-story` - verdict: CHANGES-NEEDED)
-- **`changes-needed` → `in-progress` (via `/scrum-dev-story` - re-implementation)**
-- `review` → `approved` (via `/scrum-review-story` - verdict: APPROVED)
-- `approved` → `done` (via `/scrum-approve` - human approval gate)
-- `refined` → `ready-for-dev` (via `/scrum-refine-story` PASS)
-- `ready-for-dev` → `in-progress` (via `/scrum-dev-story` - THIS COMMAND)
-- `in-progress` → `review` (via `/scrum-dev-story review`)
-- `review` → `approved` (via `/scrum-review-story` APPROVED)
-- `review` → `changes-needed` (via `/scrum-review-story` CHANGES-NEEDED)
-- `changes-needed` → `in-progress` (via `/scrum-dev-story` fix findings)
-- `approved` → `done` (via human approval)
+**Valid Status Transitions** — see the authoritative list in [`scrum_workflow/context/standards.md`](../context/standards.md) — Story Status State Machine section. All valid states, transitions, and guard conditions are defined there.
 
 ## Error Handling
 
-- If story file does not exist, provide actionable error suggesting `/scrum-create-ticket`
-- If status is not `ready-for-dev`, provide actionable error suggesting `/scrum-refine-story`
+### Story File Not Found
+
+If the story file does not exist:
+
+```
+❌ Status Guard Violation: Story file '_scrum-output/sprints/SW-XXX/story.md' not found
+
+**Details:** The /scrum-dev-story command requires an existing story file to process. No file was found at the expected path.
+
+**Next Step:** Run '/scrum-create-ticket SW-XXX' to create the story file first, then complete refinement and validation before running '/scrum-dev-story SW-XXX'.
+```
+
+- If status is not `ready-for-dev` or `changes-needed`, the Guard Condition Enforcement block above handles the error
 - If plan.md does not exist, provide warning but continue (plan is guidance, not requirement)
 - If story file is corrupted, provide specific validation error
+
+## Write Boundary Rules
+
+This workflow may write:
+- Source code files and test files in the project directory (per plan.md guidance)
+- `_scrum-output/sprints/SW-XXX/story.md` - Status field only (`status: in-progress` or `status: review`); MUST NOT modify story content
+
+This workflow may NOT write:
+- `_scrum-output/sprints/SW-XXX/plan.md` - Read-only during implementation (created by `/scrum-refine-story`)
+- `_scrum-output/sprints/SW-XXX/refinement.md` - Read-only during implementation
+- `_scrum-output/sprints/SW-XXX/review-*.md` - Managed by `/scrum-review-story`
+- `_scrum-output/sprints/SW-XXX/approval-N.md` - Managed by `/scrum-approve`
+- `scrum_workflow/` - Framework files are read-only during execution
+
+### Anti-Pattern Warnings
+
+**Spec Drift:** The implementation agent MUST NOT modify story.md content (only the status field). Modifying acceptance criteria, tasks, or other story body content during implementation is a Spec Drift violation — halt and report to the user.
+
+**Self-Fix:** The implementation agent MUST NOT validate its own work. Validation is performed by separate commands (`/scrum-review-story`, `/scrum-refine-story`). Self-validation bypasses the multi-agent quality gate.
+
+If a write boundary would be violated, halt with:
+```
+❌ Write Boundary Violation: /scrum-dev-story attempted to write '{file_path}'
+
+**Details:** The /scrum-dev-story command may only write source code, test files, and story.md status updates. Attempted write target is outside the allowed boundary.
+
+**Next Step:** Halt immediately. Do not write the file. Report this boundary violation to the user.
+```

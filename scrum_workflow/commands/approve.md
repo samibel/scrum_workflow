@@ -71,32 +71,38 @@ The human approver should consider:
 If story is not in `approved` status:
 
 ```
-Status Guard Violation: Story SW-XXX has status '{current_status}'
+❌ Status Guard Violation: Story SW-XXX requires 'approved' but is currently '{current_status}'
 
-**Details:** The story must be in 'approved' status (post-review) before it can be marked as done.
+**Details:** The /scrum-approve command can only execute on stories in 'approved' status (post-review). The story must first pass code review before human approval.
 
-**Next Step:** Run /scrum-review-story SW-XXX to complete the review process first.
+**Next Step:** Complete code review first by running '/scrum-review-story SW-XXX'. If the review result is APPROVED, the story will move to 'approved' status and human sign-off can proceed.
 ```
 
 ### Missing Story File
 
 ```
-Error: Story file '_scrum-output/sprints/SW-XXX/story.md' not found
+❌ Status Guard Violation: Story file '_scrum-output/sprints/SW-XXX/story.md' not found
 
-Fix: Ensure story exists before triggering approval
+**Details:** The /scrum-approve command requires an existing story file to process.
+
+**Next Step:** Ensure story exists before triggering approval. Run '/scrum-create-ticket SW-XXX' to create the story first.
 ```
 
 ### Missing Review File
 
 ```
-Error: No review file found for SW-XXX
+❌ Precondition Error: No review file found for SW-XXX
 
-Fix: Run code review first: '/scrum-review-story SW-XXX'
+**Details:** The /scrum-approve command requires a completed code review before approval can proceed. No review-N.md file was found in the sprint directory.
+
+**Next Step:** Run code review first: '/scrum-review-story SW-XXX'
 ```
 
 ## Relationship to Other Commands
 
 **Important:** This is the final gate in the development pipeline.
+
+> **Authoritative lifecycle reference:** All states and valid transitions are defined in [`scrum_workflow/context/standards.md`](../context/standards.md) — Story Status State Machine section.
 
 | Command | Purpose | Status Transition | Pattern |
 |---------|---------|-------------------|---------|
@@ -118,16 +124,27 @@ Fix: Run code review first: '/scrum-review-story SW-XXX'
 
 This workflow may write:
 - `_scrum-output/sprints/SW-XXX/approval-N.md` - Approval record (NEW file)
-- `_scrum-output/sprints/SW-XXX/story.md` - Status field only (`status: done`)
-- `_scrum-output/sprints/SW-XXX/story.md` - `status_history` array (append entry)
-- `_scrum-output/sprints/SW-XXX/story.md` - `updated` field
+- `_scrum-output/sprints/SW-XXX/story.md` - Status field only (`status: done`), `status_history` array (append entry), and `updated` field
 
 This workflow may NOT write:
-- `_scrum-output/sprints/SW-XXX/refinement.md` - Read-only during approval
-- `_scrum-output/sprints/SW-XXX/plan.md` - Read-only during approval
-- `_scrum-output/sprints/SW-XXX/review-N.md` - Read-only (review is complete)
+- `_scrum-output/sprints/SW-XXX/refinement.md` - Read-only during approval; MUST NOT modify refinement.md
+- `_scrum-output/sprints/SW-XXX/plan.md` - Read-only during approval; MUST NOT modify plan.md
+- `_scrum-output/sprints/SW-XXX/review-N.md` - Read-only (review is complete); MUST NOT modify review files
 - Code files in project directory - No code modifications during approval
 - `scrum_workflow/` - Framework files are read-only during execution
+
+### Anti-Pattern Warning
+
+**Bounded Authority Violation:** The approval agent MUST NOT modify refinement.md, plan.md, or source code. Approval is strictly limited to writing the approval record and updating the story status to `done`. Any write outside this boundary is a Bounded Authority Violation — halt and report to the user.
+
+If a write boundary would be violated, halt with:
+```
+❌ Write Boundary Violation: /scrum-approve attempted to write '{file_path}'
+
+**Details:** The /scrum-approve command may only write approval-N.md and story.md status/history updates. Attempted write target is outside the allowed boundary.
+
+**Next Step:** Halt immediately. Do not write the file. Report this boundary violation to the user.
+```
 
 ## Approval Artifact Structure
 

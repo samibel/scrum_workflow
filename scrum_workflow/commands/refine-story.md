@@ -76,15 +76,55 @@ refined → refined        (via /scrum-refine-story, any criterion FAIL - status
 4. User runs `/scrum-refine-story SW-XXX` to validate completeness
 5. Status moves from `refined` → `ready-for-dev` (if validation passes)
 
+## Error Handling
+
+### Story File Not Found
+
+If the story file does not exist:
+
+```
+❌ Status Guard Violation: Story file '_scrum-output/sprints/SW-XXX/story.md' not found
+
+**Details:** The /scrum-refine-story command requires an existing story file to process. No file was found at the expected path.
+
+**Next Step:** Run '/scrum-create-ticket SW-XXX' to create the story file first, then run '/scrum-refine-ticket SW-XXX' to complete refinement before re-running '/scrum-refine-story SW-XXX'.
+```
+
+### Status Guard Violation
+
+If story is not in `refined` status:
+
+```
+❌ Status Guard Violation: Story SW-XXX requires 'refined' but is currently '{current_status}'
+
+**Details:** The /scrum-refine-story command can only execute on stories in 'refined' status. The story must first complete the refinement phase.
+
+**Next Step:** Run '/scrum-refine-ticket SW-XXX' first to complete refinement, then re-run '/scrum-refine-story SW-XXX' once the story reaches 'refined' status.
+```
+
 ## Write Boundary Rules
 
 This workflow may write:
-- `_scrum-output/sprints/SW-XXX/story.md` - Status field only (`status: ready-for-dev` or unchanged)
+- `_scrum-output/sprints/SW-XXX/story.md` - Status field only (`status: ready-for-dev` or unchanged on FAIL)
+- `_scrum-output/sprints/SW-XXX/plan.md` - Execution plan assembled from synthesized subtasks (created on validation PASS)
 - `_scrum-output/sprints/SW-XXX/refinement.md` - Append validation report
 
 This workflow may NOT write:
-- `plan.md` - Managed by readiness-check
-- `review-*.md` - Managed by `/scrum-dev-story`
-- `approval.md` - Managed by approval workflow
+- `_scrum-output/sprints/SW-XXX/review-*.md` - Managed by `/scrum-review-story`
+- `_scrum-output/sprints/SW-XXX/approval-N.md` - Managed by `/scrum-approve`
+- Source code files in project directory - No code changes during validation
 - `scrum_workflow/` - Framework files are read-only during execution
 - `_scrum-output/context/` - Context files are managed by `/scrum-create-project-context`
+
+### Anti-Pattern Warning
+
+**Bounded Authority Violation:** This command MUST NOT modify story acceptance criteria or task content — validation is read-only for the story body. Only the status field may be updated. MUST NOT write source code.
+
+If a write boundary would be violated, halt with:
+```
+❌ Write Boundary Violation: /scrum-refine-story attempted to write '{file_path}'
+
+**Details:** The /scrum-refine-story command may only write story.md status updates, plan.md (on PASS), and append to refinement.md. Attempted write target is outside the allowed boundary.
+
+**Next Step:** Halt immediately. Do not write the file. Report this boundary violation to the user.
+```

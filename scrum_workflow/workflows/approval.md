@@ -349,8 +349,11 @@ Before each file write:
 1. Check if file path is in prohibited list
 2. If attempting to write prohibited file, halt with error:
    ```
-   Error: Write boundary violation - approval cannot modify '{file_path}'
-   Fix: Approval workflow may only write approval.md and story.md status updates.
+   ❌ Write Boundary Violation: /scrum-approve attempted to write '{file_path}'
+
+   **Details:** The /scrum-approve command may only write approval-N.md and story.md status/history updates. Attempted write target is outside the allowed boundary.
+
+   **Next Step:** Halt immediately. Do not write the file. Report this boundary violation to the user.
    ```
 
 ### Step 6.4: Human Gate Enforcement

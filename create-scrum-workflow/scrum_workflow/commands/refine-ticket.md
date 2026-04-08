@@ -95,3 +95,29 @@ If story is not in `draft` status:
 
 **Next Step:** Check the current status and run the appropriate next command. If the story needs re-refinement, manually set status back to 'draft' first (use with caution).
 ```
+
+## Write Boundary Rules
+
+This workflow may write:
+- `_scrum-output/sprints/SW-XXX/story.md` - Status transitions (`draft` → `refinement` → `refined`) and synthesized content from accepted perspectives ONLY; MUST NOT modify story acceptance criteria independently
+- `_scrum-output/sprints/SW-XXX/refinement.md` - Refinement audit file (new file)
+
+This workflow may NOT write:
+- `_scrum-output/sprints/SW-XXX/plan.md` - MUST NOT write plan.md — that belongs to `/scrum-refine-story`
+- `_scrum-output/sprints/SW-XXX/review-*.md` - Managed by `/scrum-review-story`
+- `_scrum-output/sprints/SW-XXX/approval-N.md` - Managed by `/scrum-approve`
+- Source code files in project directory - No code changes during refinement
+- `scrum_workflow/` - Framework files are read-only during execution
+
+### Anti-Pattern Warning
+
+**Bounded Authority Violation:** This command MUST NOT modify story.md content beyond status transitions and synthesized perspectives from accepted agent views. MUST NOT write plan.md — that belongs to `/scrum-refine-story`.
+
+If a write boundary would be violated, halt with:
+```
+❌ Write Boundary Violation: /scrum-refine-ticket attempted to write '{file_path}'
+
+**Details:** The /scrum-refine-ticket command may only write refinement.md and story.md status/synthesis updates. Attempted write target is outside the allowed boundary.
+
+**Next Step:** Halt immediately. Do not write the file. Report this boundary violation to the user.
+```

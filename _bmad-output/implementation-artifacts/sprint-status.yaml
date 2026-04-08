@@ -67,7 +67,7 @@ development_status:
   epic-3: in-progress
   3-1-consolidate-9-state-lifecycle-definition: review
   3-2-implement-status-guard-validation: review
-  3-3-implement-write-boundary-enforcement: ready-for-dev
+  3-3-implement-write-boundary-enforcement: in-progress
   epic-3-retrospective: optional
 
   # Epic 4: Plan Enforcement & Readiness Validation

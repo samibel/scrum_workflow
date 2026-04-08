@@ -70,3 +70,31 @@ If the story file does not exist:
 - If status is not `ready-for-dev` or `changes-needed`, the Guard Condition Enforcement block above handles the error
 - If plan.md does not exist, provide warning but continue (plan is guidance, not requirement)
 - If story file is corrupted, provide specific validation error
+
+## Write Boundary Rules
+
+This workflow may write:
+- Source code files and test files in the project directory (per plan.md guidance)
+- `_scrum-output/sprints/SW-XXX/story.md` - Status field only (`status: in-progress` or `status: review`); MUST NOT modify story content
+
+This workflow may NOT write:
+- `_scrum-output/sprints/SW-XXX/plan.md` - Read-only during implementation (created by `/scrum-refine-story`)
+- `_scrum-output/sprints/SW-XXX/refinement.md` - Read-only during implementation
+- `_scrum-output/sprints/SW-XXX/review-*.md` - Managed by `/scrum-review-story`
+- `_scrum-output/sprints/SW-XXX/approval-N.md` - Managed by `/scrum-approve`
+- `scrum_workflow/` - Framework files are read-only during execution
+
+### Anti-Pattern Warnings
+
+**Spec Drift:** The implementation agent MUST NOT modify story.md content (only the status field). Modifying acceptance criteria, tasks, or other story body content during implementation is a Spec Drift violation — halt and report to the user.
+
+**Self-Fix:** The implementation agent MUST NOT validate its own work. Validation is performed by separate commands (`/scrum-review-story`, `/scrum-refine-story`). Self-validation bypasses the multi-agent quality gate.
+
+If a write boundary would be violated, halt with:
+```
+❌ Write Boundary Violation: /scrum-dev-story attempted to write '{file_path}'
+
+**Details:** The /scrum-dev-story command may only write source code, test files, and story.md status updates. Attempted write target is outside the allowed boundary.
+
+**Next Step:** Halt immediately. Do not write the file. Report this boundary violation to the user.
+```

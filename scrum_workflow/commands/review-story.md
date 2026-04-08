@@ -132,6 +132,19 @@ This workflow may write:
 This workflow may NOT write:
 - `_scrum-output/sprints/SW-XXX/plan.md` - Read-only during review
 - `_scrum-output/sprints/SW-XXX/refinement.md` - Read-only during review
-- `_scrum-output/sprints/SW-XXX/approval.md` - Managed by approval workflow
-- Code files in project directory - Review is read-only for code
+- `_scrum-output/sprints/SW-XXX/approval-N.md` - Managed by `/scrum-approve`
+- Code files in project directory - Review is read-only for code; MUST NOT modify source code
 - `scrum_workflow/` - Framework files are read-only during execution
+
+### Anti-Pattern Warning
+
+**Self-Fix:** The review agent MUST NOT modify source code. Review is read-only for code. Modifying source code during review bypasses the separation of implementation and verification — halt and report to the user.
+
+If a write boundary would be violated, halt with:
+```
+❌ Write Boundary Violation: /scrum-review-story attempted to write '{file_path}'
+
+**Details:** The /scrum-review-story command may only write review-N.md and story.md status updates. Code files and all other artifacts are read-only during review.
+
+**Next Step:** Halt immediately. Do not write the file. Report this boundary violation to the user.
+```

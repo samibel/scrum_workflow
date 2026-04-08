@@ -124,16 +124,27 @@ If story is not in `approved` status:
 
 This workflow may write:
 - `_scrum-output/sprints/SW-XXX/approval-N.md` - Approval record (NEW file)
-- `_scrum-output/sprints/SW-XXX/story.md` - Status field only (`status: done`)
-- `_scrum-output/sprints/SW-XXX/story.md` - `status_history` array (append entry)
-- `_scrum-output/sprints/SW-XXX/story.md` - `updated` field
+- `_scrum-output/sprints/SW-XXX/story.md` - Status field only (`status: done`), `status_history` array (append entry), and `updated` field
 
 This workflow may NOT write:
-- `_scrum-output/sprints/SW-XXX/refinement.md` - Read-only during approval
-- `_scrum-output/sprints/SW-XXX/plan.md` - Read-only during approval
-- `_scrum-output/sprints/SW-XXX/review-N.md` - Read-only (review is complete)
+- `_scrum-output/sprints/SW-XXX/refinement.md` - Read-only during approval; MUST NOT modify refinement.md
+- `_scrum-output/sprints/SW-XXX/plan.md` - Read-only during approval; MUST NOT modify plan.md
+- `_scrum-output/sprints/SW-XXX/review-N.md` - Read-only (review is complete); MUST NOT modify review files
 - Code files in project directory - No code modifications during approval
 - `scrum_workflow/` - Framework files are read-only during execution
+
+### Anti-Pattern Warning
+
+**Bounded Authority Violation:** The approval agent MUST NOT modify refinement.md, plan.md, or source code. Approval is strictly limited to writing the approval record and updating the story status to `done`. Any write outside this boundary is a Bounded Authority Violation — halt and report to the user.
+
+If a write boundary would be violated, halt with:
+```
+❌ Write Boundary Violation: /scrum-approve attempted to write '{file_path}'
+
+**Details:** The /scrum-approve command may only write approval-N.md and story.md status/history updates. Attempted write target is outside the allowed boundary.
+
+**Next Step:** Halt immediately. Do not write the file. Report this boundary violation to the user.
+```
 
 ## Approval Artifact Structure
 

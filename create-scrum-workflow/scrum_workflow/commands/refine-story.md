@@ -76,6 +76,32 @@ refined → refined        (via /scrum-refine-story, any criterion FAIL - status
 4. User runs `/scrum-refine-story SW-XXX` to validate completeness
 5. Status moves from `refined` → `ready-for-dev` (if validation passes)
 
+## Error Handling
+
+### Story File Not Found
+
+If the story file does not exist:
+
+```
+❌ Status Guard Violation: Story file '_scrum-output/sprints/SW-XXX/story.md' not found
+
+**Details:** The /scrum-refine-story command requires an existing story file to process. No file was found at the expected path.
+
+**Next Step:** Run '/scrum-create-ticket SW-XXX' to create the story file first, then run '/scrum-refine-ticket SW-XXX' to complete refinement before re-running '/scrum-refine-story SW-XXX'.
+```
+
+### Status Guard Violation
+
+If story is not in `refined` status:
+
+```
+❌ Status Guard Violation: Story SW-XXX requires 'refined' but is currently '{current_status}'
+
+**Details:** The /scrum-refine-story command can only execute on stories in 'refined' status. The story must first complete the refinement phase.
+
+**Next Step:** Run '/scrum-refine-ticket SW-XXX' first to complete refinement, then re-run '/scrum-refine-story SW-XXX' once the story reaches 'refined' status.
+```
+
 ## Write Boundary Rules
 
 This workflow may write:
@@ -83,7 +109,7 @@ This workflow may write:
 - `_scrum-output/sprints/SW-XXX/refinement.md` - Append validation report
 
 This workflow may NOT write:
-- `plan.md` - Managed by readiness-check
+- `plan.md` - Managed by `/scrum-refine-story`
 - `review-*.md` - Managed by `/scrum-dev-story`
 - `approval.md` - Managed by approval workflow
 - `scrum_workflow/` - Framework files are read-only during execution

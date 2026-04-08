@@ -181,9 +181,9 @@ When a guard validates a story's status, it also detects whether the `status` fi
 1. Read story YAML frontmatter
 2. Extract current status field: `status_field = frontmatter.status`
 3. Extract last history entry: `last_entry = frontmatter.status_history[-1]`
-4. Compare: if `status_field != last_entry.to` → manual edit detected
-5. Emit warning: `⚠️ Manual Edit Detected: status field ('{status_field}') does not match last status_history entry ('{last_entry.to}'). The story's status was manually edited outside of a command. Proceeding with current status field value for guard evaluation.`
-6. Guard evaluation still uses `status_field` — the user's manual edit is intentional and the current status field value takes precedence for guard evaluation
+4. Compare: if `[status_field] != [last_entry.to]` → manual edit detected
+5. Emit warning: `⚠️ Manual Edit Detected: status field ('[status_field]') does not match last status_history entry ('[last_entry.to]'). The story's status was manually edited outside of a command. Proceeding with current status field value for guard evaluation. (actor: human)`
+6. Guard evaluation still uses `[status_field]` — the user's manual edit is intentional and the current status field value takes precedence for guard evaluation
 
 **Edge Cases:**
 
@@ -202,6 +202,7 @@ current_status: "draft"
 required_status: "draft"
 can_proceed: true/false
 manual_edit_detected: false
+actor: null
 warning: null
 ```
 
@@ -209,7 +210,7 @@ warning: null
 
 **When `valid: false` and `can_proceed: false`**: Current status does not match required status. Workflow must halt with an actionable error message explaining the mismatch and which command to run first.
 
-**When `manual_edit_detected: true`**: The `warning` field is populated with the human-readable warning message: `⚠️ Manual Edit Detected: status field ('X') does not match last status_history entry ('Y')`. The guard still evaluates using the current `status` field value.
+**When `manual_edit_detected: true`**: The `actor` field is set to `"human"` and the `warning` field is populated with the human-readable warning message: `⚠️ Manual Edit Detected: status field ('[status_field]') does not match last status_history entry ('[last_entry.to]'). (actor: human)`. The guard still evaluates using the current `[status_field]` value.
 
 # Context Rules
 

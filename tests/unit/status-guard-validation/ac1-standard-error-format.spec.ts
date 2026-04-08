@@ -107,7 +107,8 @@ describe('AC1: SKILL.md — Architecture-standard error format for all guard fai
   // Test 1.9: SKILL.md approval guard uses standard format
   test('[P0] SKILL.md approval guard error should use ❌ Status Guard Violation: format', () => {
     const content = readFileSync(SKILL_FILE, 'utf8');
-    const approvalSection = content.match(/Approval Command[\s\S]*?(?=###|\n## |\n# )/i);
+    // Section is titled `/scrum-approve` (matches guard table pattern for all commands)
+    const approvalSection = content.match(/###\s+`\/scrum-approve`[\s\S]*?(?=###|\n## |\n# )/i);
     expect(approvalSection).not.toBeNull();
     expect(approvalSection![0]).toMatch(/❌ Status Guard Violation:/);
   });

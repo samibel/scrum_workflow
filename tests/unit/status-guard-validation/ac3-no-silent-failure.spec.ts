@@ -36,6 +36,36 @@ const REFINE_TICKET_CMD = join(process.cwd(), 'scrum_workflow', 'commands', 'ref
 const REFINE_STORY_CMD = join(process.cwd(), 'scrum_workflow', 'commands', 'refine-story.md');
 const CREATE_TICKET_CMD = join(process.cwd(), 'scrum_workflow', 'commands', 'create-ticket.md');
 
+// create-scrum-workflow/ sync copy paths
+const SYNC_DEV_STORY_CMD = join(
+  process.cwd(),
+  'create-scrum-workflow',
+  'scrum_workflow',
+  'commands',
+  'dev-story.md',
+);
+const SYNC_REVIEW_STORY_CMD = join(
+  process.cwd(),
+  'create-scrum-workflow',
+  'scrum_workflow',
+  'commands',
+  'review-story.md',
+);
+const SYNC_REFINE_TICKET_CMD = join(
+  process.cwd(),
+  'create-scrum-workflow',
+  'scrum_workflow',
+  'commands',
+  'refine-ticket.md',
+);
+const SYNC_REFINE_STORY_CMD = join(
+  process.cwd(),
+  'create-scrum-workflow',
+  'scrum_workflow',
+  'commands',
+  'refine-story.md',
+);
+
 // ============================================================================
 // AC3: SKILL.md documents no-silent-failure policy
 // ============================================================================
@@ -165,5 +195,91 @@ describe('AC3: SKILL.md and command files — old silent error format eliminated
     if (guardSection) {
       expect(guardSection[0]).not.toMatch(/^Error:/m);
     }
+  });
+});
+
+// ============================================================================
+// AC3: Sync-copy verification — primary and create-scrum-workflow/ copies match
+// ============================================================================
+
+describe('AC3: Sync-copy verification — create-scrum-workflow/ copies match primary error format', () => {
+  // Test 3.17: create-scrum-workflow/dev-story.md uses ❌ Status Guard Violation: format
+  test('[P0] create-scrum-workflow/commands/dev-story.md should use ❌ Status Guard Violation: format', () => {
+    const primary = readFileSync(DEV_STORY_CMD, 'utf8');
+    const sync = readFileSync(SYNC_DEV_STORY_CMD, 'utf8');
+    // Both must contain the standard error prefix
+    expect(primary).toMatch(/❌ Status Guard Violation:/);
+    expect(sync).toMatch(/❌ Status Guard Violation:/);
+    // Both must contain **Details:** and **Next Step:**
+    expect(sync).toMatch(/\*\*Details:\*\*/);
+    expect(sync).toMatch(/\*\*Next Step:\*\*/);
+  });
+
+  // Test 3.18: create-scrum-workflow/review-story.md uses ❌ Status Guard Violation: format
+  test('[P0] create-scrum-workflow/commands/review-story.md should use ❌ Status Guard Violation: format', () => {
+    const primary = readFileSync(REVIEW_STORY_CMD, 'utf8');
+    const sync = readFileSync(SYNC_REVIEW_STORY_CMD, 'utf8');
+    expect(primary).toMatch(/❌ Status Guard Violation:/);
+    expect(sync).toMatch(/❌ Status Guard Violation:/);
+    expect(sync).toMatch(/\*\*Details:\*\*/);
+    expect(sync).toMatch(/\*\*Next Step:\*\*/);
+  });
+
+  // Test 3.19: create-scrum-workflow/refine-ticket.md uses ❌ Status Guard Violation: format
+  test('[P0] create-scrum-workflow/commands/refine-ticket.md should use ❌ Status Guard Violation: format', () => {
+    const primary = readFileSync(REFINE_TICKET_CMD, 'utf8');
+    const sync = readFileSync(SYNC_REFINE_TICKET_CMD, 'utf8');
+    expect(primary).toMatch(/❌ Status Guard Violation:/);
+    expect(sync).toMatch(/❌ Status Guard Violation:/);
+    expect(sync).toMatch(/\*\*Details:\*\*/);
+    expect(sync).toMatch(/\*\*Next Step:\*\*/);
+  });
+
+  // Test 3.20: create-scrum-workflow/refine-story.md uses ❌ Status Guard Violation: format
+  test('[P0] create-scrum-workflow/commands/refine-story.md should use ❌ Status Guard Violation: format', () => {
+    const primary = readFileSync(REFINE_STORY_CMD, 'utf8');
+    const sync = readFileSync(SYNC_REFINE_STORY_CMD, 'utf8');
+    expect(primary).toMatch(/❌ Status Guard Violation:/);
+    expect(sync).toMatch(/❌ Status Guard Violation:/);
+    expect(sync).toMatch(/\*\*Details:\*\*/);
+    expect(sync).toMatch(/\*\*Next Step:\*\*/);
+  });
+});
+
+// ============================================================================
+// AC3: create-scrum-workflow/ sync copies contain standard error format strings
+// ============================================================================
+
+describe('AC3: create-scrum-workflow/ sync copies — standard error format present', () => {
+  // Test 3.21: create-scrum-workflow/dev-story.md Story File Not Found block present
+  test('[P0] create-scrum-workflow/commands/dev-story.md should contain Story File Not Found error block', () => {
+    const content = readFileSync(SYNC_DEV_STORY_CMD, 'utf8');
+    expect(content).toMatch(/❌ Status Guard Violation: Story file.*not found/);
+    expect(content).toMatch(/\*\*Details:\*\*/);
+    expect(content).toMatch(/\*\*Next Step:\*\*/);
+  });
+
+  // Test 3.22: create-scrum-workflow/review-story.md Story File Not Found block present
+  test('[P0] create-scrum-workflow/commands/review-story.md should contain Story File Not Found error block', () => {
+    const content = readFileSync(SYNC_REVIEW_STORY_CMD, 'utf8');
+    expect(content).toMatch(/❌ Status Guard Violation: Story file.*not found/);
+    expect(content).toMatch(/\*\*Details:\*\*/);
+    expect(content).toMatch(/\*\*Next Step:\*\*/);
+  });
+
+  // Test 3.23: create-scrum-workflow/refine-ticket.md Story File Not Found block present
+  test('[P0] create-scrum-workflow/commands/refine-ticket.md should contain Story File Not Found error block', () => {
+    const content = readFileSync(SYNC_REFINE_TICKET_CMD, 'utf8');
+    expect(content).toMatch(/❌ Status Guard Violation: Story file.*not found/);
+    expect(content).toMatch(/\*\*Details:\*\*/);
+    expect(content).toMatch(/\*\*Next Step:\*\*/);
+  });
+
+  // Test 3.24: create-scrum-workflow/refine-story.md Story File Not Found block present
+  test('[P0] create-scrum-workflow/commands/refine-story.md should contain Story File Not Found error block', () => {
+    const content = readFileSync(SYNC_REFINE_STORY_CMD, 'utf8');
+    expect(content).toMatch(/❌ Status Guard Violation: Story file.*not found/);
+    expect(content).toMatch(/\*\*Details:\*\*/);
+    expect(content).toMatch(/\*\*Next Step:\*\*/);
   });
 });

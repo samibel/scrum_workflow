@@ -95,7 +95,7 @@ If story is not in `review` status:
 | **Major** | Impacts quality, not blocking | Architecture violation, missing error handling, incomplete feature |
 | **Minor** | Style, optimization, non-essential | Naming convention violation, minor optimization, edge case |
 
-## Relationship to Other Epic 11 Commands
+## Relationship to Other Epic 3 Commands
 
 **Important:** This is a review-only command that runs AFTER implementation.
 

@@ -109,7 +109,7 @@ This workflow may write:
 - `_scrum-output/sprints/SW-XXX/refinement.md` - Append validation report
 
 This workflow may NOT write:
-- `plan.md` - Managed by readiness-check
+- `plan.md` - Managed by `/scrum-refine-story`
 - `review-*.md` - Managed by `/scrum-dev-story`
 - `approval.md` - Managed by approval workflow
 - `scrum_workflow/` - Framework files are read-only during execution

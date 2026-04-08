@@ -38,7 +38,7 @@ const STATUS_GUARD_SKILL = join(
 describe('AC2: standards.md — all 9 states defined in single authoritative section', () => {
   // Test 2.1: standards.md Story Status State Machine table contains exactly 9+ rows
   // (9 from FR-4, plus refinement noted separately = minimum 9)
-  test.skip('[P0] standards.md State Machine table should contain at least 9 state rows', () => {
+  test('[P0] standards.md State Machine table should contain at least 9 state rows', () => {
     const content = readFileSync(STANDARDS_FILE, 'utf8');
     // Extract the state machine section
     expect(content).toMatch(/Story Status State Machine/i);
@@ -60,34 +60,34 @@ describe('AC2: standards.md — all 9 states defined in single authoritative sec
   });
 
   // Test 2.2: standards.md is marked as the authoritative source of truth
-  test.skip('[P0] standards.md should be marked as AUTHORITATIVE SOURCE', () => {
+  test('[P0] standards.md should be marked as AUTHORITATIVE SOURCE', () => {
     const content = readFileSync(STANDARDS_FILE, 'utf8');
     expect(content).toMatch(/authoritative|AUTHORITATIVE|single source of truth|single.*source.*truth/i);
   });
 
   // Test 2.3: standards.md explicitly enumerates all required transitions including Epic 2 additions
-  test.skip('[P0] standards.md should explicitly enumerate review→changes-needed transition', () => {
+  test('[P0] standards.md should explicitly enumerate review→changes-needed transition', () => {
     const content = readFileSync(STANDARDS_FILE, 'utf8');
     expect(content).toMatch(/review.*changes-needed|`review`.*`changes-needed`/i);
   });
 
-  test.skip('[P0] standards.md should explicitly enumerate changes-needed→in-progress transition', () => {
+  test('[P0] standards.md should explicitly enumerate changes-needed→in-progress transition', () => {
     const content = readFileSync(STANDARDS_FILE, 'utf8');
     expect(content).toMatch(/changes-needed.*in-progress|`changes-needed`.*`in-progress`/i);
   });
 
-  test.skip('[P0] standards.md should explicitly enumerate approved→done transition', () => {
+  test('[P0] standards.md should explicitly enumerate approved→done transition', () => {
     const content = readFileSync(STANDARDS_FILE, 'utf8');
     expect(content).toMatch(/approved.*done|`approved`.*`done`/i);
   });
 
-  test.skip('[P0] standards.md should explicitly enumerate any→cancelled transition', () => {
+  test('[P0] standards.md should explicitly enumerate any→cancelled transition', () => {
     const content = readFileSync(STANDARDS_FILE, 'utf8');
     expect(content).toMatch(/any.*cancelled|`any`.*`cancelled`/i);
   });
 
   // Test 2.4: standards.md Valid Transitions table has all 11 transitions (including all enumerated in story)
-  test.skip('[P0] standards.md Valid Transitions table should enumerate all required transitions', () => {
+  test('[P0] standards.md Valid Transitions table should enumerate all required transitions', () => {
     const content = readFileSync(STANDARDS_FILE, 'utf8');
     // All state-to-state transitions from the authoritative list
     const requiredTransitions: Array<[string, string]> = [
@@ -109,7 +109,7 @@ describe('AC2: standards.md — all 9 states defined in single authoritative sec
   });
 
   // Test 2.5: standards.md cancelled state is listed in the Status Values table
-  test.skip('[P0] standards.md should list cancelled in Status Values table with description', () => {
+  test('[P0] standards.md should list cancelled in Status Values table with description', () => {
     const content = readFileSync(STANDARDS_FILE, 'utf8');
     // cancelled must be in a table row
     expect(content).toMatch(/\| *`cancelled` *\|/);
@@ -118,7 +118,7 @@ describe('AC2: standards.md — all 9 states defined in single authoritative sec
   });
 
   // Test 2.6: standards.md valid status values includes 'cancelled'
-  test.skip('[P0] standards.md should include cancelled as a valid status value', () => {
+  test('[P0] standards.md should include cancelled as a valid status value', () => {
     const content = readFileSync(STANDARDS_FILE, 'utf8');
     const statusValuesSection = content.match(/### Status Values([\s\S]*?)###/i);
     if (statusValuesSection) {
@@ -130,7 +130,7 @@ describe('AC2: standards.md — all 9 states defined in single authoritative sec
   });
 
   // Test 2.7: standards.md Story Status State Machine has a guard enforcement note
-  test.skip('[P1] standards.md should have guard enforcement rules for invalid transitions', () => {
+  test('[P1] standards.md should have guard enforcement rules for invalid transitions', () => {
     const content = readFileSync(STANDARDS_FILE, 'utf8');
     // Must state that anything not listed is invalid
     expect(content).toMatch(/invalid.*transition|Guard.*Enforcement|guard.*condition/i);
@@ -143,19 +143,19 @@ describe('AC2: standards.md — all 9 states defined in single authoritative sec
 
 describe('AC2: 05-state-machine.md — all Epic 2 transitions present', () => {
   // Test 2.8: 05-state-machine.md includes changes-needed→in-progress in guard conditions table
-  test.skip('[P0] docs/05-state-machine.md Guard Conditions table should include changes-needed', () => {
+  test('[P0] docs/05-state-machine.md Guard Conditions table should include changes-needed', () => {
     const content = readFileSync(STATE_MACHINE_DOC, 'utf8');
     expect(content).toMatch(/changes-needed.*in-progress|in-progress.*changes-needed/i);
   });
 
   // Test 2.9: 05-state-machine.md includes review→changes-needed transition
-  test.skip('[P0] docs/05-state-machine.md should include review→changes-needed transition', () => {
+  test('[P0] docs/05-state-machine.md should include review→changes-needed transition', () => {
     const content = readFileSync(STATE_MACHINE_DOC, 'utf8');
     expect(content).toMatch(/review.*changes-needed/i);
   });
 
   // Test 2.10: 05-state-machine.md Status Values table contains 'cancelled'
-  test.skip('[P0] docs/05-state-machine.md Status Values table should contain cancelled', () => {
+  test('[P0] docs/05-state-machine.md Status Values table should contain cancelled', () => {
     const content = readFileSync(STATE_MACHINE_DOC, 'utf8');
     expect(content).toMatch(/cancelled/);
   });
@@ -167,19 +167,19 @@ describe('AC2: 05-state-machine.md — all Epic 2 transitions present', () => {
 
 describe('AC2: status-guard-validation/SKILL.md — all Epic 2 transitions present', () => {
   // Test 2.11: SKILL.md valid transitions list includes changes-needed→in-progress
-  test.skip('[P0] SKILL.md valid transitions should include changes-needed→in-progress', () => {
+  test('[P0] SKILL.md valid transitions should include changes-needed→in-progress', () => {
     const content = readFileSync(STATUS_GUARD_SKILL, 'utf8');
     expect(content).toMatch(/changes-needed.*in-progress|`changes-needed`.*`in-progress`/i);
   });
 
   // Test 2.12: SKILL.md valid transitions list includes review→changes-needed
-  test.skip('[P0] SKILL.md valid transitions should include review→changes-needed', () => {
+  test('[P0] SKILL.md valid transitions should include review→changes-needed', () => {
     const content = readFileSync(STATUS_GUARD_SKILL, 'utf8');
     expect(content).toMatch(/review.*changes-needed|`review`.*`changes-needed`/i);
   });
 
   // Test 2.13: SKILL.md valid status values includes 'cancelled'
-  test.skip('[P0] SKILL.md valid status values list should include cancelled', () => {
+  test('[P0] SKILL.md valid status values list should include cancelled', () => {
     const content = readFileSync(STATUS_GUARD_SKILL, 'utf8');
     // Must appear in the valid status values section
     expect(content).toMatch(/\bcancelled\b/);

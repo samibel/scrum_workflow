@@ -49,7 +49,7 @@ Ticket number in the format: `/scrum-dev-story SW-XXX`
    - Initial implementation: `refined → ready-for-dev → in-progress`
    - Re-implementation after rejection: `review → changes-needed → in-progress`
 
-**Valid Status Transitions:**
+**Valid Status Transitions** (authoritative list: [`scrum_workflow/context/standards.md`](../context/standards.md)):
 - `draft` → `refinement` (via `/scrum-refine-ticket`)
 - `refinement` → `refined` (via `/scrum-refine-ticket` completion)
 - `refined` → `ready-for-dev` (via `/scrum-refine-story` PASS)

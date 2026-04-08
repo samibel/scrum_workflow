@@ -36,7 +36,7 @@ const WORKFLOWS_DIR = join(process.cwd(), 'scrum_workflow', 'workflows');
 
 describe('AC3: 05-state-machine.md references standards.md as authoritative source', () => {
   // Test 3.1: 05-state-machine.md references standards.md
-  test.skip('[P0] docs/05-state-machine.md should reference standards.md as authoritative source', () => {
+  test('[P0] docs/05-state-machine.md should reference standards.md as authoritative source', () => {
     const content = readFileSync(STATE_MACHINE_DOC, 'utf8');
     expect(content).toMatch(/standards\.md/);
     // Must explicitly state that standards.md is the authoritative source
@@ -44,7 +44,7 @@ describe('AC3: 05-state-machine.md references standards.md as authoritative sour
   });
 
   // Test 3.2: 05-state-machine.md does NOT re-define the full lifecycle independently
-  test.skip(
+  test(
     '[P0] docs/05-state-machine.md should NOT contain a full independent lifecycle re-definition',
     () => {
       const content = readFileSync(STATE_MACHINE_DOC, 'utf8');
@@ -63,20 +63,20 @@ describe('AC3: 05-state-machine.md references standards.md as authoritative sour
 
 describe('AC3: status-guard-validation/SKILL.md references standards.md as authoritative source', () => {
   // Test 3.3: SKILL.md references standards.md
-  test.skip('[P0] SKILL.md should reference standards.md as source of truth for valid transitions', () => {
+  test('[P0] SKILL.md should reference standards.md as source of truth for valid transitions', () => {
     const content = readFileSync(STATUS_GUARD_SKILL, 'utf8');
     expect(content).toMatch(/standards\.md/);
   });
 
   // Test 3.4: SKILL.md references standards.md in the Context Rules / Reads section
-  test.skip('[P0] SKILL.md Context Rules should list standards.md as a read source', () => {
+  test('[P0] SKILL.md Context Rules should list standards.md as a read source', () => {
     const content = readFileSync(STATUS_GUARD_SKILL, 'utf8');
     // Already present in current SKILL.md: "State machine definitions: scrum_workflow/context/standards.md"
     expect(content).toMatch(/context\/standards\.md|scrum_workflow\/context\/standards/i);
   });
 
   // Test 3.5: SKILL.md valid status values exactly match the 9 FR-4 states (plus refinement)
-  test.skip('[P0] SKILL.md valid status values should match standards.md exactly', () => {
+  test('[P0] SKILL.md valid status values should match standards.md exactly', () => {
     const content = readFileSync(STATUS_GUARD_SKILL, 'utf8');
     const requiredStatuses = [
       'draft',
@@ -111,7 +111,7 @@ describe('AC3: Command files do not independently re-define the full lifecycle',
 
   // Test 3.6: No command file contains a full standalone lifecycle table
   // (Commands may define required/sets_status — that's acceptable per architecture)
-  test.skip(
+  test(
     '[P0] Command files should NOT contain full standalone lifecycle re-definitions',
     () => {
       const commandFiles = getMarkdownFiles(COMMANDS_DIR);
@@ -134,7 +134,7 @@ describe('AC3: Command files do not independently re-define the full lifecycle',
   );
 
   // Test 3.7: No workflow file independently re-defines the full lifecycle
-  test.skip(
+  test(
     '[P0] Workflow files should NOT contain full standalone lifecycle re-definitions',
     () => {
       const workflowFiles = getMarkdownFiles(WORKFLOWS_DIR);
@@ -154,7 +154,7 @@ describe('AC3: Command files do not independently re-define the full lifecycle',
   );
 
   // Test 3.8: dev-story command only declares its required/sets_status (not the full lifecycle)
-  test.skip('[P0] dev-story command should only declare its own required/sets_status', () => {
+  test('[P0] dev-story command should only declare its own required/sets_status', () => {
     const devStoryCommand = join(COMMANDS_DIR, 'dev-story.md');
     expect(existsSync(devStoryCommand)).toBe(true);
     const content = readFileSync(devStoryCommand, 'utf8');
@@ -163,7 +163,7 @@ describe('AC3: Command files do not independently re-define the full lifecycle',
   });
 
   // Test 3.9: review-story command only declares its required/sets_status
-  test.skip('[P0] review-story command should only declare its own required/sets_status', () => {
+  test('[P0] review-story command should only declare its own required/sets_status', () => {
     const reviewStoryCommand = join(COMMANDS_DIR, 'review-story.md');
     expect(existsSync(reviewStoryCommand)).toBe(true);
     const content = readFileSync(reviewStoryCommand, 'utf8');
@@ -185,7 +185,7 @@ describe('AC3: prerequisite-validation skill references standards.md for guard c
   );
 
   // Test 3.10: prerequisite-validation skill directory or SKILL.md exists
-  test.skip(
+  test(
     '[P1] prerequisite-validation skill should exist (directory or SKILL.md)',
     () => {
       const dirExists = existsSync(prereqSkillDir);
@@ -209,7 +209,7 @@ describe('AC3: prerequisite-validation skill references standards.md for guard c
 
 describe('AC3: standards.md has clear AUTHORITATIVE SOURCE designation', () => {
   // Test 3.11: standards.md Story Status State Machine section has an authoritative designation
-  test.skip(
+  test(
     '[P0] standards.md Story Status State Machine section should declare itself as authoritative',
     () => {
       const content = readFileSync(STANDARDS_FILE, 'utf8');
@@ -221,7 +221,7 @@ describe('AC3: standards.md has clear AUTHORITATIVE SOURCE designation', () => {
   );
 
   // Test 3.12: standards.md is human-readable without tooling (NFR-9 compliance)
-  test.skip('[P1] standards.md should be human-readable Markdown (NFR-9 compliance)', () => {
+  test('[P1] standards.md should be human-readable Markdown (NFR-9 compliance)', () => {
     const content = readFileSync(STANDARDS_FILE, 'utf8');
     // Must be valid Markdown (has headers and at least one table)
     expect(content).toMatch(/^#+ /m);
@@ -232,7 +232,7 @@ describe('AC3: standards.md has clear AUTHORITATIVE SOURCE designation', () => {
   });
 
   // Test 3.13: Error messages in standards.md reference the authoritative transitions list (NFR-14)
-  test.skip(
+  test(
     '[P1] standards.md error message templates should reference authoritative transitions',
     () => {
       const content = readFileSync(STANDARDS_FILE, 'utf8');

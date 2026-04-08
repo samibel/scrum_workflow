@@ -5,23 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9fbb06fc-50c2-4c7e-bb8a-a087cf161358" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/_bmad-output/test-artifacts/atdd-checklist-2.1.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/create-scrum-workflow/test/unit/status-history.test.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/create-scrum-workflow/vitest.config.js" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/scrum_workflow/utils/status_history.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/2-1-implement-status-history-tracking.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/2-1-implement-status-history-tracking.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/2-2-implement-scrum-approve-command.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/2-2-implement-scrum-approve-command.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/2-3-implement-rejection-flow.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/2-3-implement-rejection-flow.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/2-4-implement-multi-round-review-tracking.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/2-4-implement-multi-round-review-tracking.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/sprint-status.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/sprint-status.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/src/core/approval/approve.js" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/src/core/approval/approve.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/src/core/status-history.js" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/src/core/status-history.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/__tests__/multi-round-review-tracking.test.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/__tests__/multi-round-review/multi-round-review-tracking.test.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/utils/review.js" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/utils/review.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/vitest.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/vitest.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/workflows/refine-story.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/workflows/refine-story.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/workflows/refine-story.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/workflows/refine-story.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrum_workflow/skills/readiness-check/SKILL.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/skills/readiness-check/SKILL.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrum_workflow/workflows/refine-story.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/workflows/refine-story.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +40,7 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "fix__sotry__2__1",
+    "git-widget-placeholder": "story__4",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",

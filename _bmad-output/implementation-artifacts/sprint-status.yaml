@@ -65,21 +65,21 @@ development_status:
 
   # Epic 3: Lifecycle Guards & Write Boundaries
   epic-3: in-progress
-  3-1-consolidate-9-state-lifecycle-definition: review
-  3-2-implement-status-guard-validation: review
+  3-1-consolidate-9-state-lifecycle-definition: done
+  3-2-implement-status-guard-validation: done
   3-3-implement-write-boundary-enforcement: done
   epic-3-retrospective: optional
 
   # Epic 4: Plan Enforcement & Readiness Validation
-  epic-4: backlog
-  4-1-implement-story-readiness-validation-plan-generation: backlog
-  4-2-implement-plan-existence-check-before-dev: backlog
+  epic-4: done
+  4-1-implement-story-readiness-validation-plan-generation: done
+  4-2-implement-plan-existence-check-before-dev: done
   epic-4-retrospective: optional
 
   # Epic 5: Workflow Depth & CLI Migration
-  epic-5: backlog
-  5-1-implement-manual-workflow-depth-override: backlog
-  5-2-implement-cli-update-migration-command: backlog
+  epic-5: in-progress
+  5-1-implement-manual-workflow-depth-override: done
+  5-2-implement-cli-update-migration-command: done
   epic-5-retrospective: optional
 
   # Epic 6: CLI UX & Installation Experience

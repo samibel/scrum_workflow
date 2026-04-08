@@ -264,14 +264,21 @@ Create validation report:
 
 1. **Update story.md status** from `refined` to `ready-for-dev`
 2. **Update `updated` field** to current date (ISO 8601 format: YYYY-MM-DD)
-3. **Use atomic write operation** (NFR1 compliance)
-4. **Create plan.md** at `_scrum-output/sprints/SW-XXX/plan.md` with execution plan assembled from synthesized subtasks
-5. **Append validation report** to `_scrum-output/sprints/SW-XXX/refinement.md`
+3. **Append `status_history` entry** with:
+   - `from: refined`
+   - `to: ready-for-dev`
+   - `timestamp: {current_ISO8601_UTC}`
+   - `trigger: /scrum-refine-story`
+   - `actor: readiness-check-skill`
+4. **Use atomic write operation** (NFR4 compliance)
+5. **Create plan.md** at `_scrum-output/sprints/SW-XXX/plan.md` with execution plan assembled from synthesized subtasks
+6. **Append validation report** to `_scrum-output/sprints/SW-XXX/refinement.md`
 
 **Output success message:**
 ```
 ✅ Story SW-XXX passed validation
 Status updated: refined → ready-for-dev
+Status history entry appended with trigger: /scrum-refine-story, actor: readiness-check-skill
 Plan created: _scrum-output/sprints/SW-XXX/plan.md
 Story is ready for implementation
 ```
@@ -343,17 +350,30 @@ Address these issues before development
 ## Write Boundaries
 
 This workflow may write:
-- `_scrum-output/sprints/SW-XXX/story.md` - Status field only (`status: ready-for-dev` or unchanged)
-- `_scrum-output/sprints/SW-XXX/plan.md` - Execution plan (created on PASS)
+- `_scrum-output/sprints/SW-XXX/story.md` - Status field (`status: ready-for-dev`) and `status_history` array entry on PASS; unchanged on FAIL
+- `_scrum-output/sprints/SW-XXX/plan.md` - Execution plan (created on PASS only)
 - `_scrum-output/sprints/SW-XXX/refinement.md` - Append validation report
 
 This workflow may NOT write:
 - Story content (acceptance criteria, tasks, dev notes) - READ ONLY
-- `plan.md` - Managed by readiness-check
 - `review-*.md` - Managed by `/scrum-dev-story`
-- `approval.md` - Managed by approval workflow
+- `approval-*.md` - Managed by `/scrum-approve`
+- Source code files - No code changes during validation
 - `scrum_workflow/` - Framework files are read-only during execution
 - `_scrum-output/context/` - Context files are managed by `/scrum-create-project-context`
+
+### status_history Entry Format
+
+On PASS, append this entry to the story's `status_history` array:
+
+```yaml
+status_history:
+  - from: refined
+    to: ready-for-dev
+    timestamp: {current_ISO8601_UTC}
+    trigger: /scrum-refine-story
+    actor: readiness-check-skill
+```
 
 ---
 

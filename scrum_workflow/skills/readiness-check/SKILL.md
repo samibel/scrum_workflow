@@ -14,55 +14,67 @@ The readiness-check skill is a validation gate that ensures stories are fully sp
 
 Execute the following validation checks in sequence:
 
-### Check 1: Story Description
+### Check 1: Completeness
 
-**Rule:** Story must have a non-empty description field.
-
-**Validation:**
-- Description exists after `## Story` section
-- Description is not empty or whitespace-only
-- Description is not placeholder text (configurable list: "TODO", "TBD", "Coming soon", "PLACEHOLDER")
-- Check is case-insensitive for placeholder detection
-
-**Failure Reason:** "Story description is missing, empty, or contains placeholder text."
-
-### Check 2: Acceptance Criteria
-
-**Rule:** Story must have at least one defined acceptance criterion.
+**Rule:** Story has all required structural elements.
 
 **Validation:**
+- `## Story` section exists with user story format (As a..., I want..., so that...)
 - `## Acceptance Criteria` section exists
-- At least one criterion is present (in BDD Given/When/Then format or checklist format)
-- Criteria are specific and testable (not "do the thing")
+- `## Tasks / Subtasks` section exists with at least one task
+- YAML frontmatter contains: `ticket` (SW-XXX), `status`, `created`, `updated`
 
-**Failure Reason:** "Story has no acceptance criteria or criteria are not testable."
+**Failure Reason:** "Completeness: Missing [section name]"
 
-### Check 3: Estimation
+### Check 2: Refinement
 
-**Rule:** Story must have a positive estimation value.
-
-**Validation:**
-- `estimation` field exists in YAML frontmatter or in Estimation section
-- Estimation is a positive number (integer or float)
-- Estimation is not zero or negative
-
-**Failure Reason:** "Story estimation is missing, zero, or negative."
-
-### Check 4: Subtasks
-
-**Rule:** Story must have at least one defined subtask.
+**Rule:** Story has been refined and has refinement artifact.
 
 **Validation:**
-- `## Tasks / Subtasks` section exists
-- Section is not empty (contains at least one task/subtask definition)
-- At least one subtask with [x] or [ ] checkbox is present
-- Subtasks are specific and actionable (not "do stuff", "implementation", generic placeholders)
+- Story status is `refined` (not `draft`)
+- `refinement.md` exists in the story's sprint directory
+- Refinement contains meaningful content (not just template)
 
-**Failure Reason:** "Story has no subtasks, section is empty, or subtasks are not actionable."
+**Failure Reason:** "Refinement: Story has not been refined or refinement.md is missing/empty"
+
+### Check 3: Estimability
+
+**Rule:** Story has story points or explicit note about estimation challenges.
+
+**Validation:**
+- `estimation` or `story_points` field exists in YAML frontmatter or Tasks section
+- OR explicit note explaining why estimation is not possible
+- Tasks have estimated effort indicators
+
+**Failure Reason:** "Estimability: Story estimation is missing or estimation challenges are not documented"
+
+### Check 4: Testability
+
+**Rule:** All acceptance criteria are testable and unambiguous.
+
+**Validation:**
+- Each acceptance criterion uses Given/When/Then format or specific checklist format
+- Criteria are specific (not vague like "do good testing")
+- Each criterion has clear expected outcomes
+- No criterion contains contradictions
+
+**Failure Reason:** "Testability: Acceptance criterion [N] is not testable/ambiguous"
+
+### Check 5: Dependencies
+
+**Rule:** All dependencies are identified and addressed.
+
+**Validation:**
+- `Dependencies` section exists OR dependencies mentioned in Dev Notes
+- External library dependencies are listed
+- Internal dependencies (other stories, modules) are identified
+- Assumptions about existing infrastructure are documented
+
+**Failure Reason:** "Dependencies: [specific issue]"
 
 ## PASS/FAIL Result
 
-**PASS Condition:** All four checks pass.
+**PASS Condition:** All five checks pass.
 
 **FAIL Condition:** Any check fails.
 
@@ -77,10 +89,11 @@ Execute the following validation checks in sequence:
 
 ### Validation Summary
 
-- [x] Description: [PASS|FAIL]
-- [x] Acceptance Criteria: [PASS|FAIL]
-- [x] Estimation: [PASS|FAIL]
-- [x] Subtasks: [PASS|FAIL]
+- [x] Completeness: [PASS|FAIL]
+- [x] Refinement: [PASS|FAIL]
+- [x] Estimability: [PASS|FAIL]
+- [x] Testability: [PASS|FAIL]
+- [x] Dependencies: [PASS|FAIL]
 
 ### Failure Reasons (if any)
 

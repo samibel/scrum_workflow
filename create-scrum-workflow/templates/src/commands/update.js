@@ -30,7 +30,7 @@ const BREAKING_CHANGES = [
       {
         field: 'plan.md',
         description: 'Stories at ready-for-dev now require plan.md before /scrum-dev-story',
-        migration: 'Warning issued for stories missing plan.md - this is a warning only, migration continues without halting'
+        migration: 'Warning issued for stories missing plan.md (non-blocking)'
       }
     ]
   }
@@ -218,7 +218,6 @@ function validateMigration(targetDir) {
     }
 
     // Validate status_history array if present
-    // Each status_history entry must have: from, to, timestamp, trigger, actor
     if (frontmatter.status_history) {
       if (!Array.isArray(frontmatter.status_history)) {
         issues.push('status_history must be an array')
@@ -491,8 +490,6 @@ export async function update(options) {
     }
 
     // ── Step 5: Restore user-modified files ───────────────────────────
-    // User-modified files include custom skills, agents, and workflows
-    // (detected by hash mismatch via the lock file mechanism)
     if (userModified.length > 0 && backupDir) {
       const s = spinner()
       s.start('Restoring user modifications...')
@@ -641,14 +638,6 @@ export async function update(options) {
       'New files added:\n' +
       newFiles.map((f) => `  ${f}`).join('\n')
     )
-  }
-
-  // Show any manual actions required (e.g., stories flagged for missing plan.md)
-  if (planMdResult && planMdResult.flagged.length > 0) {
-    log.warn('Manual actions required:')
-    for (let i = 0; i < planMdResult.flagged.length; i++) {
-      log.warn(`  - Run ${planMdResult.suggestions[i]}`)
-    }
   }
 
   outro('Update complete!')

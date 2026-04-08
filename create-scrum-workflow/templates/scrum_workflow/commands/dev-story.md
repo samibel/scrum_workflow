@@ -1,16 +1,16 @@
 ---
 name: dev-story
 trigger: "/scrum-dev-story"
-requires_status: ready-for-dev
+requires_status: "ready-for-dev | changes-needed"
 sets_status: in-progress
 spawns_agents: []
 ---
 
 ## Purpose
 
-Implement the story following the specification and plan from the refined story file. The command verifies the guard condition (status must be `ready-for-dev`), implements code based on the story specification and execution plan, and updates the story status to `in-progress` during implementation.
+Implement the story following the specification and plan from the refined story file. The command verifies the guard condition (status must be `ready-for-dev` or `changes-needed`), implements code based on the story specification and execution plan, and updates the story status to `in-progress` during implementation.
 
-**FR17 Guard Condition:** No implementation can begin on a story that has not passed the readiness check. This command enforces that guard by requiring `status: ready-for-dev` before execution.
+**FR17 Guard Condition:** No implementation can begin on a story that has not passed the readiness check. This command enforces that guard by requiring `status: ready-for-dev` for new stories or `status: changes-needed` for re-implementation.
 
 ## Workflow Reference
 
@@ -23,8 +23,8 @@ workflows/dev-story.md
 Ticket number in the format: `/scrum-dev-story SW-XXX`
 
 - **Ticket number**: `SW-XXX` format where XXX is a zero-padded 3-digit number (e.g., `SW-001`, `SW-042`, `SW-103`)
-- **Prerequisite**: The story file `_scrum-output/sprints/SW-XXX/story.md` must exist with `status: ready-for-dev`
-- **Plan**: The execution plan file `_scrum-output/sprints/SW-XXX/plan.md` should exist (created by `/scrum-refine-story`)
+- **Prerequisite**: The story file `_scrum-output/sprints/SW-XXX/story.md` must exist with `status: ready-for-dev` OR `status: changes-needed`
+- **Plan**: The execution plan file `_scrum-output/sprints/SW-XXX/plan.md` MUST exist (created by `/scrum-refine-story`) — this is enforced by FR-20 guard condition
 
 ## Output
 
@@ -36,25 +36,63 @@ Ticket number in the format: `/scrum-dev-story SW-XXX`
 
 **FR17 Compliance:** This command enforces the readiness check guard condition:
 
-1. **Status Verification**: Before any implementation begins, verify story status is `ready-for-dev`
-2. **Actionable Error on Failure**: If status is not `ready-for-dev`, halt with:
-   ```
-   Error: Story SW-XXX is in status 'current_status', but '/scrum-dev-story' requires 'ready-for-dev'
-   Fix: Stories must pass validation before implementation. Run '/scrum-refine-ticket SW-XXX' then '/scrum-refine-story SW-XXX' to complete refinement and validation.
-   ```
-3. **No Bypass**: There is no flag or option to bypass this guard condition
-4. **State Machine Compliance**: The only path to `in-progress` is through `ready-for-dev` (refined → ready-for-dev → in-progress)
+### Step 1: Prerequisite Check — plan.md Existence (FR-20)
 
-**Valid Status Transitions:**
-- `draft` → `refinement` (via `/scrum-refine-ticket`)
-- `refinement` → `refined` (via `/scrum-refine-ticket` completion)
-- `refined` → `ready-for-dev` (via `/scrum-refine-story` PASS)
-- `ready-for-dev` → `in-progress` (via `/scrum-dev-story` - THIS COMMAND)
-- `in-progress` → `review` (via `/scrum-dev-story review`)
-- `review` → `approved` (via `/scrum-review-story` APPROVED)
-- `review` → `changes-needed` (via `/scrum-review-story` CHANGES-NEEDED)
-- `changes-needed` → `in-progress` (via `/scrum-dev-story` fix findings)
-- `approved` → `done` (via human approval)
+**Critical (FR-20):** Before any implementation begins, verify that `plan.md` exists.
+
+1. **Plan Existence Check**: Check if `_scrum-output/sprints/SW-XXX/plan.md` exists
+2. **On Missing Plan**: If plan.md does not exist, HALT immediately with:
+
+   ```
+   ❌ Prerequisite Missing: plan.md not found for SW-XXX
+
+   **Details:** The /scrum-dev-story command requires a validated execution plan before implementation can begin. No plan.md was found at '_scrum-output/sprints/SW-XXX/plan.md'.
+
+   **Next Step:** Run '/scrum-refine-story SW-XXX' to generate the execution plan, then re-run '/scrum-dev-story SW-XXX'.
+   ```
+
+3. **Outdated Plan Detection (changes-needed cycle)**: If plan.md exists, check if the story has gone through a `changes-needed` cycle since the plan was generated:
+   - Compare the plan.md `updated` timestamp with the story's `changes-needed → in-progress` transition in status_history
+   - If the plan was created BEFORE the last `changes-needed` transition, emit a warning:
+
+     ```
+     ⚠️ Plan May Be Outdated: The execution plan for SW-XXX was generated before the last review cycle.
+
+     **Details:** Review findings may have changed the scope. The current plan may not reflect the agreed changes.
+
+     **Next Step:** Consider running '/scrum-refine-story SW-XXX' to regenerate the plan with updated scope, or proceed with the current plan if the changes were incorporated differently.
+     ```
+
+   - **This is a warning only** — the command proceeds after warning
+   - Compare timestamps: if `plan.updated < status_history[last changes-needed transition].timestamp`, plan may be outdated
+
+### Step 2: Status Verification
+
+After plan.md check passes (or warning is emitted), verify story status is `ready-for-dev` OR `changes-needed`.
+
+**On Status Guard Violation**: If status is not `ready-for-dev` or `changes-needed`, halt with:
+
+```
+❌ Status Guard Violation: Story SW-XXX requires 'ready-for-dev' or 'changes-needed' but is currently '{current_status}'
+
+**Details:** The /scrum-dev-story command can only execute on stories in 'ready-for-dev' or 'changes-needed' status. This story is not yet ready for implementation.
+
+**Next Step:** Run '/scrum-refine-ticket SW-XXX' and '/scrum-refine-story SW-XXX' to complete refinement and validation before starting development. If the story was rejected after review, run '/scrum-review-story SW-XXX' to complete the review first.
+```
+
+### Step 3: Load Plan Context
+
+After status check passes, load plan.md content:
+
+1. **Read plan.md**: Load `_scrum-output/sprints/SW-XXX/plan.md` content
+2. **Make Available**: Pass plan content as context for the implementation agent
+3. **Proceed**: Continue with implementation using plan as guidance
+
+### State Machine Compliance
+
+The paths to `in-progress` are:
+- Initial implementation: `refined → ready-for-dev → in-progress`
+- Re-implementation after rejection: `review → changes-needed → in-progress`
 
 ## Error Handling
 
@@ -70,8 +108,8 @@ If the story file does not exist:
 **Next Step:** Run '/scrum-create-ticket SW-XXX' to create the story file first, then complete refinement and validation before running '/scrum-dev-story SW-XXX'.
 ```
 
-- If status is not `ready-for-dev` or `changes-needed`, the Guard Condition Enforcement block above handles the error
-- If plan.md does not exist, provide warning but continue (plan is guidance, not requirement)
+- If status is not `ready-for-dev` or `changes-needed`, the Guard Condition Enforcement block handles the error
+- If plan.md does not exist, the FR-20 guard condition in Step 1 handles the error — the command is BLOCKED, not warned
 - If story file is corrupted, provide specific validation error
 
 ## Write Boundary Rules

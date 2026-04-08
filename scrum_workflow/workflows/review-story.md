@@ -76,9 +76,39 @@ Scan the sprint folder for existing review files:
 ### Step 1.6: Load Previous Review Context
 
 If previous review files exist (N > 1):
-- Load the most recent review file: `review-(N-1).md`
-- Extract previous findings and verdict
+- Load ALL previous review files: `review-1.md`, `review-2.md`, ..., `review-(N-1).md`
+- Store each review file's content as `{previous_review_X}` where X is the review number
+- Extract the most recent review file: `review-(N-1).md`
+- Extract previous findings and verdict from the most recent review
 - Note which findings were addressed vs. new findings
+- Store findings mapping to enable comparison in the new review
+
+**Previous Review Findings Loading:**
+- For each previous review, extract:
+  - Verdict (approved/changes-needed)
+  - Findings table with severity, AC reference, and suggested fixes
+  - Review date and reviewer information
+  - Any recommendations or notes
+
+**Error Handling:**
+- If a previous review file is unreadable or corrupted: log warning, skip that file, continue with others
+- If verdict field is missing or invalid: treat as "changes-needed" (conservative approach)
+- If no previous reviews can be loaded: log warning, proceed without comparison (degraded functionality)
+
+**Findings Comparison Data Structure:**
+```
+{previous_findings} = [
+  {
+    review_number: X,
+    verdict: "changes-needed",
+    findings: [
+      { id: 1, severity: "Critical", description: "...", ac_ref: "AC-3", file: "file.js:42" },
+      { id: 2, severity: "Major", description: "...", ac_ref: "Task-2.1", file: "config.yaml" }
+    ],
+    review_date: "YYYY-MM-DD"
+  }
+]
+```
 
 **Note:** If N=1, this is the first review and there is no previous context to load.
 
@@ -179,6 +209,38 @@ Check implementation against project standards:
 - Validate against each standard defined
 - Flag violations with specific standard reference
 
+### Step 3.5: Compare with Previous Review Findings (if applicable)
+
+**Only execute this step if previous review files exist (N > 1):**
+
+1. **Cross-reference current findings with previous findings:**
+   - For each current finding, check if a similar issue existed in previous reviews
+   - Identify which previous findings have been addressed (resolved)
+   - Identify which previous findings persist (unresolved)
+   - Identify new findings introduced in the current implementation
+
+2. **Findings status classification:**
+   - **Resolved:** Previous finding that no longer exists in current implementation
+   - **Unresolved:** Previous finding that still exists in current implementation
+   - **New:** Finding that did not exist in previous reviews
+   - **Regression:** Issue that was fixed but has reappeared
+
+3. **Previous findings verification checklist:**
+   For each finding from the most recent previous review (review-(N-1).md):
+   - [ ] Finding resolved: Issue no longer exists
+   - [ ] Finding persists: Issue still exists (should be flagged in current review)
+   - [ ] Finding partially addressed: Some improvement made but issue remains
+   - [ ] Finding irrelevant: Code changed making finding no longer applicable
+
+4. **Store comparison results for review report:**
+   - Create findings comparison table
+   - Include in review report under "Previous Findings Resolution" section
+   - Highlight unresolved critical/major findings
+
+**If N=1 (first review):**
+- Skip this step
+- Note in review report that this is the first review
+
 ## Step 4: Generate Review Findings
 
 ### Step 4.1: Identify Issues and Assign Severity
@@ -258,12 +320,22 @@ Based on findings:
 Create review file at `_scrum-output/sprints/SW-XXX/review-N.md`:
 
 ```markdown
-# Review Report
+---
+schema_version: 1
+ticket: SW-XXX
+title: "{{story_title}}"
+review_date: YYYY-MM-DDTHH:MM:SSZ
+review_number: N
+reviewer: review-agent
+verdict: approved  # MUST be either: "approved" or "changes-needed" (validated at runtime)
+---
+
+# Code Review: {{story_title}}
 
 **Story:** SW-XXX
 **Date:** YYYY-MM-DD
 **Review Number:** N
-**Verdict:** APPROVED / CHANGES-NEEDED
+**Verdict:** approved or changes-needed (validated: must be exact string match)
 
 ## Summary
 
@@ -326,13 +398,42 @@ Provide clear explanation of verdict:
 
 Update `_scrum-output/sprints/SW-XXX/story.md`:
 
+**First, validate verdict:**
+- Verify verdict is either "approved" or "changes-needed" (exact string match)
+- If verdict is invalid: halt with error specifying required values
+
 **If verdict is APPROVED:**
 - Set `status: approved`
-- Update `updated` field to current date
+- Update `updated` field to current date (ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ)
+- Append `status_history` entry with:
+  ```yaml
+  - from: review
+    to: approved
+    timestamp: <current_time_iso8601>
+    trigger: /scrum-review-story
+    actor: review-agent
+  ```
 
 **If verdict is CHANGES-NEEDED:**
 - Set `status: changes-needed`
-- Update `updated` field to current date
+- Update `updated` field to current date (ISO 8601 format: YYYY-MM-DDTHH:MM:SSZ)
+- Append `status_history` entry with:
+  ```yaml
+  - from: review
+    to: changes-needed
+    timestamp: <current_time_iso8601>
+    trigger: /scrum-review-story
+    actor: review-agent
+  ```
+
+### Step 6.2: Handle Legacy Stories Without status_history
+
+**For stories created before status_history was implemented:**
+- Check if `status_history` field exists in story.md
+- If missing: Initialize `status_history` array with the current transition entry
+- If present: Append new transition entry to existing `status_history` array
+- Do not modify historical status transitions (they don't exist for legacy stories)
+- Use `ensureStatusHistoryExists()` utility from status-history.js for consistent handling
 
 ### Step 6.2: Use Atomic Write
 
@@ -388,10 +489,12 @@ Before each write:
 
 - Story status must be `review` before review begins
 - Review file format must follow template structure
+- **Verdict field MUST be set to either `approved` or `changes-needed`**
 - All findings must have severity level assigned
 - All findings must reference AC or Task
 - All findings must include suggested fixes
 - Status transitions must follow state machine
+- **status_history array MUST be updated with review agent as actor**
 - Atomic writes required for all file updates (NFR1)
 
 ## Error Handling

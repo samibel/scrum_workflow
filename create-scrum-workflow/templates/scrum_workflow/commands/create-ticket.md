@@ -38,3 +38,29 @@ If story file already exists for the ticket number:
 
 **Next Step:** Delete the existing story file first, or use a different ticket number. If you want to continue working on SW-XXX, use the appropriate command for its current status.
 ```
+
+## Write Boundary Rules
+
+This workflow may write:
+- `_scrum-output/sprints/SW-XXX/story.md` - New file only (`status: draft`); MUST NOT overwrite an existing story.md — halt with Status Guard Violation if the story file already exists
+
+This workflow may NOT write:
+- `_scrum-output/sprints/SW-XXX/refinement.md` - Managed by `/scrum-refine-ticket`
+- `_scrum-output/sprints/SW-XXX/plan.md` - Managed by `/scrum-refine-story`
+- `_scrum-output/sprints/SW-XXX/review-*.md` - Managed by `/scrum-review-story`
+- `_scrum-output/sprints/SW-XXX/approval-N.md` - Managed by `/scrum-approve`
+- Source code files in project directory - No code creation during ticket creation
+- `scrum_workflow/` - Framework files are read-only during execution
+
+### Anti-Pattern Warning
+
+**Bounded Authority Violation:** This command MUST NOT overwrite an existing story.md. If a story file already exists for the given ticket number, halt immediately and report the violation to the user.
+
+If a write boundary would be violated, halt with:
+```
+❌ Write Boundary Violation: /scrum-create-ticket attempted to write '{file_path}'
+
+**Details:** The /scrum-create-ticket command may only create new story files. Attempted write target is outside the allowed boundary.
+
+**Next Step:** Halt immediately. Do not write the file. Report this boundary violation to the user.
+```

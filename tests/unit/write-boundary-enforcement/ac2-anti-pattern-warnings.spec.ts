@@ -33,26 +33,26 @@ const APPROVE_CMD = join(process.cwd(), 'scrum_workflow', 'commands', 'approve.m
 
 describe('AC2: dev-story.md — Spec Drift anti-pattern warning', () => {
   // Test 2.1: dev-story.md contains "Spec Drift" anti-pattern name
-  test.skip('[P0] commands/dev-story.md should mention "Spec Drift" anti-pattern', () => {
+  test('[P0] commands/dev-story.md should mention "Spec Drift" anti-pattern', () => {
     const content = readFileSync(DEV_STORY_CMD, 'utf8');
     expect(content).toMatch(/Spec Drift/);
   });
 
   // Test 2.2: dev-story.md contains MUST NOT language for story.md modification
-  test.skip('[P0] commands/dev-story.md should have MUST NOT language for story.md content modification', () => {
+  test('[P0] commands/dev-story.md should have MUST NOT language for story.md content modification', () => {
     const content = readFileSync(DEV_STORY_CMD, 'utf8');
     // Must explicitly instruct agent what NOT to do — Spec Drift prevention
     expect(content).toMatch(/MUST NOT.*story\.md|story\.md.*MUST NOT/i);
   });
 
   // Test 2.3: dev-story.md contains "Self-Fix" anti-pattern name
-  test.skip('[P0] commands/dev-story.md should mention "Self-Fix" anti-pattern', () => {
+  test('[P0] commands/dev-story.md should mention "Self-Fix" anti-pattern', () => {
     const content = readFileSync(DEV_STORY_CMD, 'utf8');
     expect(content).toMatch(/Self-Fix/);
   });
 
   // Test 2.4: dev-story.md MUST NOT validate its own work
-  test.skip('[P1] commands/dev-story.md should warn that implementation agent MUST NOT validate its own work', () => {
+  test('[P1] commands/dev-story.md should warn that implementation agent MUST NOT validate its own work', () => {
     const content = readFileSync(DEV_STORY_CMD, 'utf8');
     const wbSection = content.match(/## Write Boundary Rules[\s\S]*/);
     expect(wbSection).not.toBeNull();
@@ -67,20 +67,20 @@ describe('AC2: dev-story.md — Spec Drift anti-pattern warning', () => {
 
 describe('AC2: review-story.md — Self-Fix anti-pattern warning', () => {
   // Test 2.5: review-story.md contains "Self-Fix" anti-pattern name
-  test.skip('[P0] commands/review-story.md should mention "Self-Fix" anti-pattern', () => {
+  test('[P0] commands/review-story.md should mention "Self-Fix" anti-pattern', () => {
     const content = readFileSync(REVIEW_STORY_CMD, 'utf8');
     expect(content).toMatch(/Self-Fix/);
   });
 
   // Test 2.6: review-story.md contains MUST NOT modify source code language
-  test.skip('[P0] commands/review-story.md should have MUST NOT modify source code language', () => {
+  test('[P0] commands/review-story.md should have MUST NOT modify source code language', () => {
     const content = readFileSync(REVIEW_STORY_CMD, 'utf8');
     // Must explicitly instruct review agent not to modify source code
     expect(content).toMatch(/MUST NOT.*source code|MUST NOT.*modify.*code|review.*MUST NOT.*code/i);
   });
 
   // Test 2.7: review-story.md write boundary section specifies read-only for code
-  test.skip('[P0] commands/review-story.md Write Boundary should state review is read-only for code', () => {
+  test('[P0] commands/review-story.md Write Boundary should state review is read-only for code', () => {
     const content = readFileSync(REVIEW_STORY_CMD, 'utf8');
     const wbSection = content.match(/## Write Boundary Rules[\s\S]*/);
     expect(wbSection).not.toBeNull();
@@ -94,13 +94,13 @@ describe('AC2: review-story.md — Self-Fix anti-pattern warning', () => {
 
 describe('AC2: approve.md — Bounded Authority Violation anti-pattern warning', () => {
   // Test 2.8: approve.md contains "Bounded Authority Violation" anti-pattern name
-  test.skip('[P0] commands/approve.md should mention "Bounded Authority Violation" anti-pattern', () => {
+  test('[P0] commands/approve.md should mention "Bounded Authority Violation" anti-pattern', () => {
     const content = readFileSync(APPROVE_CMD, 'utf8');
     expect(content).toMatch(/Bounded Authority Violation/);
   });
 
   // Test 2.9: approve.md has MUST NOT language for refinement.md, plan.md, source code
-  test.skip('[P0] commands/approve.md Write Boundary should have MUST NOT language for prohibited files', () => {
+  test('[P0] commands/approve.md Write Boundary should have MUST NOT language for prohibited files', () => {
     const content = readFileSync(APPROVE_CMD, 'utf8');
     const wbSection = content.match(/## Write Boundary Rules[\s\S]*/);
     expect(wbSection).not.toBeNull();
@@ -115,7 +115,7 @@ describe('AC2: approve.md — Bounded Authority Violation anti-pattern warning',
 
 describe('AC2: create-ticket.md — Status Guard Violation for overwrite prevention', () => {
   // Test 2.10: create-ticket.md has MUST NOT overwrite existing story.md warning
-  test.skip('[P0] commands/create-ticket.md should warn MUST NOT overwrite existing story.md', () => {
+  test('[P0] commands/create-ticket.md should warn MUST NOT overwrite existing story.md', () => {
     const content = readFileSync(CREATE_TICKET_CMD, 'utf8');
     const wbSection = content.match(/## Write Boundary Rules[\s\S]*/);
     expect(wbSection).not.toBeNull();
@@ -124,7 +124,7 @@ describe('AC2: create-ticket.md — Status Guard Violation for overwrite prevent
   });
 
   // Test 2.11: create-ticket.md references halt behavior for existing story
-  test.skip('[P0] commands/create-ticket.md Write Boundary should instruct to halt if story exists', () => {
+  test('[P0] commands/create-ticket.md Write Boundary should instruct to halt if story exists', () => {
     const content = readFileSync(CREATE_TICKET_CMD, 'utf8');
     const wbSection = content.match(/## Write Boundary Rules[\s\S]*/);
     expect(wbSection).not.toBeNull();
@@ -138,7 +138,7 @@ describe('AC2: create-ticket.md — Status Guard Violation for overwrite prevent
 
 describe('AC2: refine-ticket.md — MUST NOT modify story content independently', () => {
   // Test 2.12: refine-ticket.md has MUST NOT modify story content beyond status
-  test.skip('[P0] commands/refine-ticket.md should warn MUST NOT modify story content beyond status/synthesis', () => {
+  test('[P0] commands/refine-ticket.md should warn MUST NOT modify story content beyond status/synthesis', () => {
     const content = readFileSync(REFINE_TICKET_CMD, 'utf8');
     const wbSection = content.match(/## Write Boundary Rules[\s\S]*/);
     expect(wbSection).not.toBeNull();
@@ -146,7 +146,7 @@ describe('AC2: refine-ticket.md — MUST NOT modify story content independently'
   });
 
   // Test 2.13: refine-ticket.md warns plan.md belongs to refine-story
-  test.skip('[P1] commands/refine-ticket.md Write Boundary should warn plan.md belongs to /scrum-refine-story', () => {
+  test('[P1] commands/refine-ticket.md Write Boundary should warn plan.md belongs to /scrum-refine-story', () => {
     const content = readFileSync(REFINE_TICKET_CMD, 'utf8');
     const wbSection = content.match(/## Write Boundary Rules[\s\S]*/);
     expect(wbSection).not.toBeNull();
@@ -160,7 +160,7 @@ describe('AC2: refine-ticket.md — MUST NOT modify story content independently'
 
 describe('AC2: refine-story.md — anti-pattern warning', () => {
   // Test 2.14: refine-story.md warns MUST NOT modify story acceptance criteria
-  test.skip('[P0] commands/refine-story.md should warn MUST NOT modify story acceptance criteria', () => {
+  test('[P0] commands/refine-story.md should warn MUST NOT modify story acceptance criteria', () => {
     const content = readFileSync(REFINE_STORY_CMD, 'utf8');
     const wbSection = content.match(/## Write Boundary Rules[\s\S]*/);
     expect(wbSection).not.toBeNull();
@@ -175,7 +175,7 @@ describe('AC2: refine-story.md — anti-pattern warning', () => {
 
 describe('AC2: All command files — explicit MUST NOT anti-pattern instruction', () => {
   // Test 2.15: All 6 commands have at least one MUST NOT instruction in Write Boundary section
-  test.skip('[P0] All 6 command files should have at least one MUST NOT instruction in Write Boundary Rules', () => {
+  test('[P0] All 6 command files should have at least one MUST NOT instruction in Write Boundary Rules', () => {
     const commandFiles = [
       { name: 'create-ticket.md', path: CREATE_TICKET_CMD },
       { name: 'refine-ticket.md', path: REFINE_TICKET_CMD },

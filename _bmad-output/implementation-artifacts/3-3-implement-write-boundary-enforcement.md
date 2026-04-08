@@ -1,6 +1,6 @@
 # Story 3.3: Implement Write Boundary Enforcement
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -20,48 +20,48 @@ So that agents cannot accidentally modify files outside their scope.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Add Write Boundary Rules section to `commands/create-ticket.md` (AC: #1, #2, #3)
-  - [ ] 1.1 Add `## Write Boundary Rules` section at the end of `scrum_workflow/commands/create-ticket.md`
-  - [ ] 1.2 Declare "may write": `_scrum-output/sprints/SW-XXX/story.md` (new file only, `status: draft`)
-  - [ ] 1.3 Declare "may NOT write": `refinement.md`, `plan.md`, `review-*.md`, `approval-N.md`, source code files, `scrum_workflow/`
-  - [ ] 1.4 Add anti-pattern warning: "MUST NOT overwrite existing story.md — halt with Status Guard Violation if story already exists"
-  - [ ] 1.5 Sync identical section to `create-scrum-workflow/scrum_workflow/commands/create-ticket.md`
-  - [ ] 1.6 Sync identical section to `create-scrum-workflow/templates/scrum_workflow/commands/create-ticket.md`
+- [x] Task 1: Add Write Boundary Rules section to `commands/create-ticket.md` (AC: #1, #2, #3)
+  - [x] 1.1 Add `## Write Boundary Rules` section at the end of `scrum_workflow/commands/create-ticket.md`
+  - [x] 1.2 Declare "may write": `_scrum-output/sprints/SW-XXX/story.md` (new file only, `status: draft`)
+  - [x] 1.3 Declare "may NOT write": `refinement.md`, `plan.md`, `review-*.md`, `approval-N.md`, source code files, `scrum_workflow/`
+  - [x] 1.4 Add anti-pattern warning: "MUST NOT overwrite existing story.md — halt with Status Guard Violation if story already exists"
+  - [x] 1.5 Sync identical section to `create-scrum-workflow/scrum_workflow/commands/create-ticket.md`
+  - [x] 1.6 Sync identical section to `create-scrum-workflow/templates/scrum_workflow/commands/create-ticket.md`
 
-- [ ] Task 2: Add Write Boundary Rules section to `commands/refine-ticket.md` (AC: #1, #2, #3)
-  - [ ] 2.1 Add `## Write Boundary Rules` section at the end of `scrum_workflow/commands/refine-ticket.md`
-  - [ ] 2.2 Declare "may write": `_scrum-output/sprints/SW-XXX/story.md` (status update and synthesized content only), `_scrum-output/sprints/SW-XXX/refinement.md` (new file)
-  - [ ] 2.3 Declare "may NOT write": `plan.md`, `review-*.md`, `approval-N.md`, source code files, `scrum_workflow/`
-  - [ ] 2.4 Add anti-pattern warning: "MUST NOT modify story content beyond status and synthesized perspectives; MUST NOT write plan.md — that belongs to /scrum-refine-story"
+- [x] Task 2: Add Write Boundary Rules section to `commands/refine-ticket.md` (AC: #1, #2, #3)
+  - [x] 2.1 Add `## Write Boundary Rules` section at the end of `scrum_workflow/commands/refine-ticket.md`
+  - [x] 2.2 Declare "may write": `_scrum-output/sprints/SW-XXX/story.md` (status update and synthesized content only), `_scrum-output/sprints/SW-XXX/refinement.md` (new file)
+  - [x] 2.3 Declare "may NOT write": `plan.md`, `review-*.md`, `approval-N.md`, source code files, `scrum_workflow/`
+  - [x] 2.4 Add anti-pattern warning: "MUST NOT modify story content beyond status and synthesized perspectives; MUST NOT write plan.md — that belongs to /scrum-refine-story"
 
-- [ ] Task 3: Add Write Boundary Rules section to `commands/dev-story.md` (AC: #1, #2, #3)
-  - [ ] 3.1 Add `## Write Boundary Rules` section at the end of `scrum_workflow/commands/dev-story.md`
-  - [ ] 3.2 Declare "may write": source code files and test files (per plan.md guidance), `_scrum-output/sprints/SW-XXX/story.md` (status field only: `status: in-progress`)
-  - [ ] 3.3 Declare "may NOT write": `_scrum-output/sprints/SW-XXX/plan.md` (read-only), `_scrum-output/sprints/SW-XXX/refinement.md` (read-only), `_scrum-output/sprints/SW-XXX/review-*.md`, `_scrum-output/sprints/SW-XXX/approval-N.md`, `scrum_workflow/`
-  - [ ] 3.4 Add anti-pattern warnings: "Spec Drift: implementation agent MUST NOT modify story.md content (only status field)", "Self-Fix: implementation agent MUST NOT validate its own work — validation is done by separate commands"
+- [x] Task 3: Add Write Boundary Rules section to `commands/dev-story.md` (AC: #1, #2, #3)
+  - [x] 3.1 Add `## Write Boundary Rules` section at the end of `scrum_workflow/commands/dev-story.md`
+  - [x] 3.2 Declare "may write": source code files and test files (per plan.md guidance), `_scrum-output/sprints/SW-XXX/story.md` (status field only: `status: in-progress`)
+  - [x] 3.3 Declare "may NOT write": `_scrum-output/sprints/SW-XXX/plan.md` (read-only), `_scrum-output/sprints/SW-XXX/refinement.md` (read-only), `_scrum-output/sprints/SW-XXX/review-*.md`, `_scrum-output/sprints/SW-XXX/approval-N.md`, `scrum_workflow/`
+  - [x] 3.4 Add anti-pattern warnings: "Spec Drift: implementation agent MUST NOT modify story.md content (only status field)", "Self-Fix: implementation agent MUST NOT validate its own work — validation is done by separate commands"
 
-- [ ] Task 4: Fix Write Boundary Rules section in `commands/refine-story.md` (AC: #1, #2)
-  - [ ] 4.1 Read current `scrum_workflow/commands/refine-story.md` Write Boundary Rules section
-  - [ ] 4.2 Fix "may NOT write" list: remove `plan.md` from the prohibited list (it IS written on PASS, per the Output section and `workflows/refine-story.md`)
-  - [ ] 4.3 Update "may write" list to include `_scrum-output/sprints/SW-XXX/plan.md` (created on validation PASS)
-  - [ ] 4.4 Add anti-pattern warning: "MUST NOT modify story acceptance criteria or task content — validation is read-only for story body"
-  - [ ] 4.5 Sync corrected section to `create-scrum-workflow/scrum_workflow/commands/refine-story.md`
-  - [ ] 4.6 Sync corrected section to `create-scrum-workflow/templates/scrum_workflow/commands/refine-story.md`
+- [x] Task 4: Fix Write Boundary Rules section in `commands/refine-story.md` (AC: #1, #2)
+  - [x] 4.1 Read current `scrum_workflow/commands/refine-story.md` Write Boundary Rules section
+  - [x] 4.2 Fix "may NOT write" list: remove `plan.md` from the prohibited list (it IS written on PASS, per the Output section and `workflows/refine-story.md`)
+  - [x] 4.3 Update "may write" list to include `_scrum-output/sprints/SW-XXX/plan.md` (created on validation PASS)
+  - [x] 4.4 Add anti-pattern warning: "MUST NOT modify story acceptance criteria or task content — validation is read-only for story body"
+  - [x] 4.5 Sync corrected section to `create-scrum-workflow/scrum_workflow/commands/refine-story.md`
+  - [x] 4.6 Sync corrected section to `create-scrum-workflow/templates/scrum_workflow/commands/refine-story.md`
 
-- [ ] Task 5: Verify and enhance existing Write Boundary sections (AC: #2, #3)
-  - [ ] 5.1 Verify `commands/review-story.md` Write Boundary section matches architecture table and add anti-pattern warnings if missing: "Self-Fix: review agent MUST NOT modify source code — review is read-only for code"
-  - [ ] 5.2 Verify `commands/approve.md` Write Boundary section matches architecture table and add anti-pattern warnings if missing: "Bounded Authority Violation: approval agent MUST NOT modify refinement.md, plan.md, or source code"
-  - [ ] 5.3 Update the error format in `workflows/approval.md` Step 6.3 to use the Architecture-standard error format: `❌ Write Boundary Violation: {description}` with `**Details:**` and `**Next Step:**` (currently uses non-standard "Error:" prefix)
+- [x] Task 5: Verify and enhance existing Write Boundary sections (AC: #2, #3)
+  - [x] 5.1 Verify `commands/review-story.md` Write Boundary section matches architecture table and add anti-pattern warnings if missing: "Self-Fix: review agent MUST NOT modify source code — review is read-only for code"
+  - [x] 5.2 Verify `commands/approve.md` Write Boundary section matches architecture table and add anti-pattern warnings if missing: "Bounded Authority Violation: approval agent MUST NOT modify refinement.md, plan.md, or source code"
+  - [x] 5.3 Update the error format in `workflows/approval.md` Step 6.3 to use the Architecture-standard error format: `❌ Write Boundary Violation: {description}` with `**Details:**` and `**Next Step:**` (currently uses non-standard "Error:" prefix)
 
-- [ ] Task 6: Write ATDD tests (RED phase) for all 3 ACs (AC: #1, #2, #3)
-  - [ ] 6.1 Create `tests/unit/write-boundary-enforcement/ac1-boundary-declarations.spec.ts` — verify all 6 command files have `## Write Boundary Rules` section with "may write" and "may NOT write" lists
-  - [ ] 6.2 Create `tests/unit/write-boundary-enforcement/ac2-anti-pattern-warnings.spec.ts` — verify key commands include explicit anti-pattern language: "MUST NOT modify", "Spec Drift", "Self-Fix", or equivalent
-  - [ ] 6.3 Create `tests/unit/write-boundary-enforcement/ac3-halt-on-violation.spec.ts` — verify commands instruct agent to halt and report on write boundary violation; verify `❌ Write Boundary Violation:` format in workflow files that have runtime enforcement
+- [x] Task 6: Write ATDD tests (RED phase) for all 3 ACs (AC: #1, #2, #3)
+  - [x] 6.1 Create `tests/unit/write-boundary-enforcement/ac1-boundary-declarations.spec.ts` — verify all 6 command files have `## Write Boundary Rules` section with "may write" and "may NOT write" lists
+  - [x] 6.2 Create `tests/unit/write-boundary-enforcement/ac2-anti-pattern-warnings.spec.ts` — verify key commands include explicit anti-pattern language: "MUST NOT modify", "Spec Drift", "Self-Fix", or equivalent
+  - [x] 6.3 Create `tests/unit/write-boundary-enforcement/ac3-halt-on-violation.spec.ts` — verify commands instruct agent to halt and report on write boundary violation; verify `❌ Write Boundary Violation:` format in workflow files that have runtime enforcement
 
-- [ ] Task 7: Activate ATDD tests (GREEN phase) — confirm implementation is complete (AC: #1–#3)
-  - [ ] 7.1 Run all tests in `tests/unit/write-boundary-enforcement/` and confirm they pass
-  - [ ] 7.2 If any test fails, fix the command or workflow file (do NOT modify the test expectations)
-  - [ ] 7.3 Confirm tests pass for all 3 ACs
+- [x] Task 7: Activate ATDD tests (GREEN phase) — confirm implementation is complete (AC: #1–#3)
+  - [x] 7.1 Run all tests in `tests/unit/write-boundary-enforcement/` and confirm they pass
+  - [x] 7.2 If any test fails, fix the command or workflow file (do NOT modify the test expectations)
+  - [x] 7.3 Confirm tests pass for all 3 ACs
 
 ## Dev Notes
 
@@ -274,14 +274,26 @@ None
 
 ### Completion Notes List
 
-(To be filled by dev agent upon completion)
+- All 6 command files verified to have complete `## Write Boundary Rules` sections with "may write", "may NOT write", and Anti-Pattern Warning subsections
+- Tasks 1–5 were already implemented in a prior session (the command files already contained complete Write Boundary sections): create-ticket.md, refine-ticket.md, dev-story.md had sections added; refine-story.md bug fixed (plan.md moved from prohibited to allowed); review-story.md and approve.md Anti-Pattern Warnings added; workflows/approval.md Step 6.3 already used standard `❌ Write Boundary Violation:` format
+- Task 6: ATDD tests existed as `test.skip()` files — activated by converting all 64 tests from `test.skip(` to `test(` in 3 spec files
+- Task 7: All 64 tests confirmed passing (64/64 GREEN)
+- Also synced `create-scrum-workflow/templates/scrum_workflow/commands/create-ticket.md` and both copies of `create-scrum-workflow/scrum_workflow/commands/review-story.md` and `create-scrum-workflow/templates/scrum_workflow/commands/review-story.md` to resolve artifact-contract sync test failures
+- Full regression suite: 268 tests pass; 5 pre-existing parse-error failures in `research-update-mode` and `review-story` spec files (unrelated to this story, present before any changes)
 
 ### File List
 
-(To be filled by dev agent upon completion)
+- `tests/unit/write-boundary-enforcement/ac1-boundary-declarations.spec.ts` — activated (test.skip → test, 32 tests)
+- `tests/unit/write-boundary-enforcement/ac2-anti-pattern-warnings.spec.ts` — activated (test.skip → test, 15 tests)
+- `tests/unit/write-boundary-enforcement/ac3-halt-on-violation.spec.ts` — activated (test.skip → test, 17 tests)
+- `create-scrum-workflow/templates/scrum_workflow/commands/create-ticket.md` — synced with primary (added Write Boundary Rules section)
+- `create-scrum-workflow/scrum_workflow/commands/review-story.md` — synced with primary (added Anti-Pattern Warning)
+- `create-scrum-workflow/templates/scrum_workflow/commands/review-story.md` — synced with primary (added Anti-Pattern Warning)
+- `_bmad-output/implementation-artifacts/sprint-status.yaml` — status updated to review
 
 ## Change Log
 
 | Date | Change | Author |
 |------|--------|--------|
 | 2026-04-08 | Story created — ready-for-dev | claude-sonnet-4-6 |
+| 2026-04-08 | All 64 ATDD tests activated and passing; sync copies updated; story marked review | claude-sonnet-4-6 |

@@ -301,7 +301,7 @@ The story status state machine defines the lifecycle of a story from creation to
 | Status | Set By | Guard | Meaning |
 |---|---|---|---|
 | `draft` | /scrum-create-ticket | -- | Story created, not yet refined |
-| `refinement` | /scrum-refine-ticket | entered via: status was draft | **Implementation-internal sub-state** (not in FR-4's 9 states): ephemeral sub-phase during multi-agent refinement execution. Included here to prevent validation errors for stories currently in this state. |
+| `refinement` | /scrum-refine-ticket | entered via: prior status was `draft` | **Implementation-internal sub-state** (not in FR-4's 9 states): ephemeral sub-phase during multi-agent refinement execution. Included here to prevent validation errors for stories currently in this state. |
 | `refined` | /scrum-refine-ticket | refinement agents complete | Refinement complete, awaiting validation |
 | `ready-for-dev` | /scrum-refine-story | all 5 validation criteria PASS | Validated and ready for implementation |
 | `in-progress` | /scrum-dev-story | status == ready-for-dev OR status == changes-needed (FR17) | Implementation in progress (initial or re-implementation) |

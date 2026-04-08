@@ -39,7 +39,7 @@ Read the current `status` field from the story file's YAML frontmatter and valid
 - `approved` -- Review passed, awaiting human sign-off
 - `changes-needed` -- Review found issues, changes required
 - `done` -- Story completed and approved (terminal)
-- `cancelled` -- Story cancelled by explicit user decision (terminal, from any state)
+- `cancelled` -- Story cancelled by explicit user decision (terminal, from any non-terminal state)
 
 ## Guard Condition Checks
 

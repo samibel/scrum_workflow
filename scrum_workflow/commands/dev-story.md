@@ -49,11 +49,7 @@ Ticket number in the format: `/scrum-dev-story SW-XXX`
    - Initial implementation: `refined → ready-for-dev → in-progress`
    - Re-implementation after rejection: `review → changes-needed → in-progress`
 
-**Valid Status Transitions** — see authoritative list in [`scrum_workflow/context/standards.md`](../context/standards.md) — Story Status State Machine section. Key transitions relevant to this command:
-- `ready-for-dev` → `in-progress` (via `/scrum-dev-story` — initial implementation)
-- `changes-needed` → `in-progress` (via `/scrum-dev-story` — re-implementation)
-- `in-progress` → `review` (via `/scrum-dev-story review`)
-- `any` → `cancelled` (via manual decision — explicit user cancellation)
+**Valid Status Transitions** — see the authoritative list in [`scrum_workflow/context/standards.md`](../context/standards.md) — Story Status State Machine section. All valid states, transitions, and guard conditions are defined there.
 
 ## Error Handling
 

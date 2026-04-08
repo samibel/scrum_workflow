@@ -61,7 +61,7 @@ ls _scrum-output/sprints/*/plan.md
 ### What Happens During Migration
 
 - Stories at `ready-for-dev` without `plan.md` will be flagged with a warning
-- The warning will suggest: `Run /scrum-refine-story SW-XXX to generate plan.md`
+- The warning will suggest: `Run /scrum-refine-ticket SW-XXX to generate plan.md`
 - This is a **warning only** - migration will not be blocked
 - You should address these warnings after migration completes
 
@@ -69,7 +69,7 @@ ls _scrum-output/sprints/*/plan.md
 
 ```
 Warning: Story SW-XXX is at ready-for-dev but missing plan.md
-Suggestion: Run /scrum-refine-story SW-XXX to generate plan.md
+Suggestion: Run /scrum-refine-ticket SW-XXX to generate plan.md
 ```
 
 ---

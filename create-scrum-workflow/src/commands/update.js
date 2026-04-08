@@ -84,11 +84,14 @@ function migrateStoryStatusHistory(targetDir) {
   }
 
   // Scan all subdirectories for story.md
-  const storyDirs = readdirSync(sprintsDir).filter((entry) => {
-    return readdirSync(join(sprintsDir, entry), { withFileTypes: true }).some(
-      (dent) => dent.isFile() && dent.name === 'story.md'
-    )
-  })
+  const storyDirs = readdirSync(sprintsDir, { withFileTypes: true })
+    .filter((dirent) => dirent.isDirectory())
+    .filter((dirent) => {
+      return readdirSync(join(sprintsDir, dirent.name), { withFileTypes: true }).some(
+        (dent) => dent.isFile() && dent.name === 'story.md'
+      )
+    })
+    .map((dirent) => dirent.name)
 
   for (const storyDir of storyDirs) {
     const storyPath = join(sprintsDir, storyDir, 'story.md')
@@ -147,11 +150,14 @@ function checkPlanMdForReadyStories(targetDir) {
   }
 
   // Scan all subdirectories for story.md
-  const storyDirs = readdirSync(sprintsDir).filter((entry) => {
-    return readdirSync(join(sprintsDir, entry), { withFileTypes: true }).some(
-      (dent) => dent.isFile() && dent.name === 'story.md'
-    )
-  })
+  const storyDirs = readdirSync(sprintsDir, { withFileTypes: true })
+    .filter((dirent) => dirent.isDirectory())
+    .filter((dirent) => {
+      return readdirSync(join(sprintsDir, dirent.name), { withFileTypes: true }).some(
+        (dent) => dent.isFile() && dent.name === 'story.md'
+      )
+    })
+    .map((dirent) => dirent.name)
 
   for (const storyDir of storyDirs) {
     const storyPath = join(sprintsDir, storyDir, 'story.md')
@@ -166,7 +172,7 @@ function checkPlanMdForReadyStories(targetDir) {
         // Extract ticket ID from directory name or frontmatter
         const ticketId = frontmatter.ticket || storyDir
         flagged.push(ticketId)
-        suggestions.push(`Run /scrum-refine-story ${ticketId} to generate plan.md`)
+        suggestions.push(`Run /scrum-refine-ticket ${ticketId} to generate plan.md`)
       }
     }
   }
@@ -190,11 +196,14 @@ function validateMigration(targetDir) {
   }
 
   // Scan all subdirectories for story.md
-  const storyDirs = readdirSync(sprintsDir).filter((entry) => {
-    return readdirSync(join(sprintsDir, entry), { withFileTypes: true }).some(
-      (dent) => dent.isFile() && dent.name === 'story.md'
-    )
-  })
+  const storyDirs = readdirSync(sprintsDir, { withFileTypes: true })
+    .filter((dirent) => dirent.isDirectory())
+    .filter((dirent) => {
+      return readdirSync(join(sprintsDir, dirent.name), { withFileTypes: true }).some(
+        (dent) => dent.isFile() && dent.name === 'story.md'
+      )
+    })
+    .map((dirent) => dirent.name)
 
   for (const storyDir of storyDirs) {
     const storyPath = join(sprintsDir, storyDir, 'story.md')
@@ -438,6 +447,13 @@ export async function update(options) {
       `  Files to restore:  ${missing.length} (currently missing)\n` +
       `  New files to add:  ${newFiles.length}`
     )
+    log.info('Breaking changes in this update:')
+    for (const bc of BREAKING_CHANGES) {
+      log.info(`  ${bc.from} → ${bc.to}:`)
+      for (const change of bc.changes) {
+        log.info(`    - ${change.field}: ${change.description}`)
+      }
+    }
     if (userModified.length > 0) {
       log.info('Would preserve:\n' + userModified.map((f) => `  ${f}`).join('\n'))
     }
@@ -450,6 +466,7 @@ export async function update(options) {
 
   // ── Step 3-5: Backup, overwrite, restore ────────────────────────────
   let backupDir = null
+  let planMdResult = { flagged: [], suggestions: [] }
 
   try {
     // ── Step 3: Back up user-modified files ────────────────────────────
@@ -543,11 +560,6 @@ export async function update(options) {
       const s = spinner()
       s.start('Running post-migration validation...')
       const validationResult = validateMigration(targetDir)
-
-      // Generate and display validation report
-      const migrationResult = { migrated: [], warnings: [], errors: [] }
-      const planMdResult = { flagged: [], suggestions: [] }
-      const report = generateValidationReport(validationResult, migrationResult, planMdResult)
 
       if (validationResult.valid) {
         log.success('Post-migration validation passed')

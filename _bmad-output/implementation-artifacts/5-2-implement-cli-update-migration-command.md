@@ -1,6 +1,6 @@
 # Story 5.2: Implement CLI Update & Migration Command
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -180,3 +180,13 @@ Implementation completed in single session following bmad-dev-story workflow.
 3. `create-scrum-workflow/templates/breaking-changes.md` - SYNC: Template copy
 4. `create-scrum-workflow/templates/src/commands/update.js` - SYNC: Template copy
 5. `create-scrum-workflow/test/unit/cli-update/*.test.js` - MODIFIED: Fixed path resolution
+
+### Review Findings
+
+- [x] [Review][Patch] Fix `scrum-refine-story` → `scrum-refine-ticket` in update.js suggestion and breaking-changes.md [update.js:169, breaking-changes.md:64,72]
+- [x] [Review][Patch] Remove dead `generateValidationReport` call with shadowed empty objects [update.js:548-550]
+- [x] [Review][Patch] Display `BREAKING_CHANGES` in dry-run output [update.js:431-446]
+- [x] [Review][Patch] Move `planMdResult` to function scope for Step 7 access [update.js:452,649-655]
+- [x] [Review][Patch] Guard against null frontmatter in `migrateStoryStatusHistory` [update.js:107-112]
+
+### Completion Notes

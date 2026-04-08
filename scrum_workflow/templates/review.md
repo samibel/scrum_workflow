@@ -5,6 +5,7 @@ title: "{{story_title}}"
 review_date: "{{review_date}}"
 review_number: "{{review_number}}"
 reviewer: "[AI Code Reviewer]"
+verdict: "{{verdict}}"  # REQUIRED: Must be either "approved" or "changes-needed" - validation enforced
 ---
 
 # Code Review: {{story_title}}
@@ -13,6 +14,7 @@ reviewer: "[AI Code Reviewer]"
 **Status:** In Review
 **Review Date:** {{review_date}}
 **Review Number:** {{review_number}}
+**Verdict:** {{verdict}}
 
 ## Summary
 
@@ -51,6 +53,27 @@ reviewer: "[AI Code Reviewer]"
 ## Recommendations
 
 {{recommendations}}
+
+## Previous Findings Resolution
+
+{{#if previous_reviews_exist}}
+**Previous Review:** {{previous_review_number}} ({{previous_review_date}})
+
+| Previous Finding | Status | Notes |
+|-----------------|---------|-------|
+| {{previous_finding_1}} | Resolved/Unresolved/New | {{notes}} |
+| {{previous_finding_2}} | Resolved/Unresolved/New | {{notes}} |
+
+**Summary:**
+- Total previous findings: {{previous_total}}
+- Resolved: {{resolved_count}}
+- Unresolved: {{unresolved_count}}
+- New findings: {{new_findings_count}}
+{{/if}}
+
+{{#unless previous_reviews_exist}}
+*This is the first review for this story.*
+{{/unless}}
 
 ## Approval Assessment
 

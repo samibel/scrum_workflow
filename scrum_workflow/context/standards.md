@@ -302,7 +302,7 @@ The story status state machine defines the lifecycle of a story from creation to
 | `refinement` | /scrum-refine-ticket | status == draft | Multi-agent refinement in progress |
 | `refined` | /scrum-refine-ticket | refinement complete | Refinement complete, awaiting validation |
 | `ready-for-dev` | /scrum-refine-story | all 5 validation criteria PASS | Validated and ready for implementation |
-| `in-progress` | /scrum-dev-story | status == ready-for-dev (FR17) | Implementation in progress |
+| `in-progress` | /scrum-dev-story | status == ready-for-dev OR status == changes-needed (FR17) | Implementation in progress (initial or re-implementation) |
 | `review` | /scrum-dev-story review | status == in-progress | Code review requested |
 | `approved` | /scrum-review-story | verdict == APPROVED | Review passed, awaiting human sign-off |
 | `changes-needed` | /scrum-review-story | verdict == CHANGES-NEEDED | Review found issues, changes required |
@@ -318,11 +318,11 @@ All transitions are explicit and guarded. No implicit status changes are permitt
 | `refinement` | `refined` | /scrum-refine-ticket | refinement agents complete |
 | `refined` | `ready-for-dev` | /scrum-refine-story | all 5 validation criteria PASS |
 | `refined` | `refined` | /scrum-refine-story | any validation criterion FAIL (status unchanged) |
-| `ready-for-dev` | `in-progress` | /scrum-dev-story | status == ready-for-dev (FR17) |
+| `ready-for-dev` | `in-progress` | /scrum-dev-story | status == ready-for-dev (FR17) - initial implementation |
 | `in-progress` | `review` | /scrum-dev-story review | status == in-progress |
 | `review` | `approved` | /scrum-review-story | verdict == APPROVED |
 | `review` | `changes-needed` | /scrum-review-story | verdict == CHANGES-NEEDED |
-| `changes-needed` | `in-progress` | /scrum-dev-story | developer addresses findings |
+| `changes-needed` | `in-progress` | /scrum-dev-story | status == changes-needed - re-implementation with findings loaded |
 | `approved` | `done` | User approval | Explicit user sign-off (FR28) |
 
 ### State Transition Diagram
@@ -382,6 +382,9 @@ Commands **MUST** use actionable error messages following these templates when g
 ```
 Error: Story SW-042 is in status 'draft', but '/scrum-dev-story' requires 'ready-for-dev'
 Fix: Run '/scrum-refine-ticket SW-042' to refine the story, then '/scrum-refine-story SW-042' to validate and pass readiness check
+
+Error: Story SW-089 is in status 'changes-needed', but '/scrum-review-story' requires 'review'
+Fix: Run '/scrum-dev-story SW-089' to address the review findings first, then mark as ready for review
 
 Error: File '_scrum-output/sprints/SW-101/story.md' not found. Run '/scrum-create-ticket SW-101' first
 Fix: Create the story file before attempting refinement

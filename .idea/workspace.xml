@@ -5,11 +5,18 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="9fbb06fc-50c2-4c7e-bb8a-a087cf161358" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/jsLibraryMappings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/2-1-implement-status-history-tracking.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/2-1-status-history-integration-guide.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/create-scrum-workflow/src/core/status-history.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/create-scrum-workflow/test/atdd/story-2-1-status-history-tracking.test.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/1-4-verify-align-wideband-delphi-estimation.md" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/1-4-verify-align-wideband-delphi-estimation.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/sprint-status.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/sprint-status.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/src/commands/install.js" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/src/commands/install.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrum_workflow/commands/dev-story.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/commands/dev-story.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrum_workflow/context/architecture-guidelines.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/context/architecture-guidelines.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrum_workflow/context/standards.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/context/standards.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrum_workflow/templates/review.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/templates/review.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrum_workflow/workflows/dev-story.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/workflows/dev-story.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrum_workflow/workflows/review-story.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/workflows/review-story.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />

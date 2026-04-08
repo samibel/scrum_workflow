@@ -1,5 +1,6 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import yaml from 'js-yaml';
 
 /**
  * Story 2.2: /scrum-approve Command Implementation
@@ -295,7 +296,7 @@ export function executeScrumApprove(ticketId, options) {
   // Read story file
   const storyContent = readFileSync(actualStoryPath, 'utf8');
 
-  // Parse story (basic YAML frontmatter parsing)
+  // Parse story (YAML frontmatter parsing)
   const frontmatterMatch = storyContent.match(/^---\n([\s\S]+?)\n---/);
   if (!frontmatterMatch) {
     return {
@@ -304,20 +305,15 @@ export function executeScrumApprove(ticketId, options) {
     };
   }
 
-  // Parse frontmatter (basic key-value parsing)
-  const frontmatter = {};
-  const lines = frontmatterMatch[1].split('\n');
-  for (const line of lines) {
-    const match = line.match(/^(\w+):\s*(.+)$/);
-    if (match) {
-      const [, key, value] = match;
-      // Parse status_history as array if present
-      if (key === 'status_history') {
-        frontmatter[key] = [];
-      } else {
-        frontmatter[key] = value.replace(/^"|"$/g, '');
-      }
-    }
+  // Parse frontmatter using js-yaml to properly preserve complex structures like status_history
+  let frontmatter;
+  try {
+    frontmatter = yaml.load(frontmatterMatch[1]);
+  } catch (err) {
+    return {
+      success: false,
+      error: `YAML Parsing Error: ${err.message}`
+    };
   }
 
   const story = {
@@ -375,18 +371,12 @@ export function executeScrumApprove(ticketId, options) {
     };
   }
 
-  // Update story file with new status
-  const updatedFrontmatter = { ...frontmatter };
-  updatedFrontmatter.status = 'done';
-  updatedFrontmatter.updated = new Date().toISOString();
+  // Update story file with new status and history
+  const updatedFrontmatter = updatedStory.frontmatter;
 
-  // Reconstruct story file with updated frontmatter
-  const newStoryContent = storyContent.replace(
-    /^---\n([\s\S]+?)\n---/,
-    `---\n${Object.entries(updatedFrontmatter)
-      .map(([k, v]) => `${k}: ${typeof v === 'string' ? `"${v}"` : v}`)
-      .join('\n')}\n---`
-  );
+  // Reconstruct story file with updated frontmatter using js-yaml
+  const fmString = `---\n${yaml.dump(updatedFrontmatter)}---`;
+  const newStoryContent = storyContent.replace(/^---\n[\s\S]+?\n---/, fmString);
 
   writeFileSync(actualStoryPath, newStoryContent, 'utf8');
 

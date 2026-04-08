@@ -97,9 +97,10 @@ export function getNextApprovalNumber(outputDir) {
  * Creates the approval artifact file
  * @param {string} ticketId - The story ticket ID
  * @param {Object} approvalData - Approval metadata
+ * @param {string} templatePath - Path to the approval template
  * @returns {string} Path to the created approval file
  */
-export function createApprovalArtifact(ticketId, approvalData) {
+export function createApprovalArtifact(ticketId, approvalData, templatePath) {
   const {
     storyTitle,
     approver,
@@ -107,7 +108,8 @@ export function createApprovalArtifact(ticketId, approvalData) {
     reviewReference,
     reviewDate,
     reasoning,
-    outputDir
+    outputDir,
+    findings = {}
   } = approvalData;
 
   // Input validation
@@ -122,7 +124,31 @@ export function createApprovalArtifact(ticketId, approvalData) {
   const approvalFile = join(outputDir, `approval-${approvalNumber}.md`);
   const approvalDate = new Date().toISOString();
 
-  const content = `---
+  let content;
+  if (templatePath && existsSync(templatePath)) {
+    const template = readFileSync(templatePath, 'utf8');
+    content = template
+      .replace(/{{ticket_id}}/g, ticketId)
+      .replace(/{{story_title}}/g, storyTitle)
+      .replace(/{{approval_date}}/g, approvalDate)
+      .replace(/{{approver_name}}/g, approver)
+      .replace(/{{decision}}/g, decision)
+      .replace(/{{review_file}}/g, reviewReference)
+      .replace(/{{review_date}}/g, reviewDate)
+      .replace(/{{total_findings\s*\|\s*0}}/g, findings.total || '0')
+      .replace(/{{critical_count\s*\|\s*0}}/g, findings.critical || '0')
+      .replace(/{{major_count\s*\|\s*0}}/g, findings.major || '0')
+      .replace(/{{minor_count\s*\|\s*0}}/g, findings.minor || '0')
+      .replace(/{{key_findings_summary\s*\|\s*"No findings provided"}}/g, findings.summary || '"No findings provided"')
+      .replace(/{{approval_rationale}}/g, reasoning || 'No additional rationale provided.')
+      .replace(/{{approval_conditions\s*\|\s*"None specified"}}/g, approvalData.conditions || '"None specified"')
+      .replace(/{{approval_timestamp\s*\|\s*"N\/A"}}/g, approvalDate)
+      .replace(/{{session_identifier\s*\|\s*"N\/A"}}/g, approvalData.session || '"N/A"')
+      .replace(/{{access_method\s*\|\s*"N\/A"}}/g, approvalData.access || '"N/A"')
+      .replace(/{{next_steps}}/g, decision === 'approved' ? 'Story marked as DONE' : 'Additional work required before approval');
+  } else {
+    // Fallback to minimal template if file missing
+    content = `---
 schema_version: 1
 ticket: ${ticketId}
 title: "${storyTitle}"
@@ -167,6 +193,7 @@ ${decision === 'approved' ? 'Story marked as DONE' : 'Additional work required b
 
 *This approval record is part of the permanent audit trail for story ${ticketId}.*
 `;
+  }
 
   // Ensure directory exists
   if (!existsSync(outputDir)) {

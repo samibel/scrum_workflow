@@ -1,5 +1,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
+import yaml from 'js-yaml';
+import { appendStatusHistory } from './status_history.js';
 
 /**
  * Story 2.4: Multi-Round Review Tracking Implementation
@@ -7,6 +9,22 @@ import { join } from 'node:path';
  * This module provides utility functions for multi-round review tracking
  * with incremental artifact numbering.
  */
+
+/**
+ * Determines the review verdict based on finding severity
+ * @param {Array} findings - Array of findings with severity field
+ * @returns {string} "approved" or "changes-needed"
+ */
+export function determineReviewVerdict(findings = []) {
+  const criticalCount = findings.filter(f => f.severity === 'Critical').length;
+  const majorCount = findings.filter(f => f.severity === 'Major').length;
+
+  if (criticalCount > 0 || majorCount >= 2) {
+    return 'changes-needed';
+  }
+
+  return 'approved';
+}
 
 /**
  * Generates the next sequential review number for a story
@@ -374,5 +392,120 @@ export function verifyReviewWriteBoundaryCompliance(ticketId, modifiedFiles) {
   return {
     compliant: violations.length === 0,
     violations
+  };
+}
+
+/**
+ * Executes the /scrum-review-story command
+ * @param {string} ticketId - The story ticket ID (e.g., 'SW-001')
+ * @param {Object} options - Review options
+ * @param {Array} options.findings - Array of findings
+ * @param {string} options.reviewer - Name of the reviewer agent
+ * @param {string} options.storyPath - Path to the story file (optional)
+ * @param {string} options.projectRoot - Project root directory (optional)
+ * @returns {Object} Result of the review operation
+ */
+export function executeScrumReview(ticketId, options) {
+  const {
+    findings = [],
+    reviewer = 'review-agent',
+    storyPath,
+    projectRoot = process.cwd()
+  } = options;
+
+  // Infer story path if not provided
+  const actualStoryPath = storyPath || join(projectRoot, '_scrum-output', 'sprints', ticketId, 'story.md');
+
+  // Check if story file exists
+  if (!existsSync(actualStoryPath)) {
+    return {
+      success: false,
+      error: `Story file '${actualStoryPath}' not found`
+    };
+  }
+
+  // Read story file
+  const storyContent = readFileSync(actualStoryPath, 'utf8');
+
+  // Parse story (YAML frontmatter parsing)
+  const frontmatterMatch = storyContent.match(/^---\n([\s\S]+?)\n---/);
+  if (!frontmatterMatch) {
+    return {
+      success: false,
+      error: 'Story file has missing or invalid YAML frontmatter'
+    };
+  }
+
+  // Parse frontmatter using js-yaml to properly preserve complex structures like status_history
+  let frontmatter;
+  try {
+    frontmatter = yaml.load(frontmatterMatch[1]);
+  } catch (err) {
+    return {
+      success: false,
+      error: `YAML Parsing Error: ${err.message}`
+    };
+  }
+
+  // Validate current status
+  if (frontmatter.status !== 'review') {
+    return {
+      success: false,
+      error: `Status Guard Violation: Story is in status '${frontmatter.status}', but review requires 'review'`
+    };
+  }
+
+  const story = {
+    frontmatter,
+    content: storyContent
+  };
+
+  const outputDir = join(projectRoot, '_scrum-output', 'sprints', ticketId);
+  const previousReviewContext = loadPreviousReviewContext(outputDir);
+
+  const verdict = determineReviewVerdict(findings);
+  const reviewDate = new Date().toISOString();
+
+  // Create review artifact
+  const artifactPath = createReviewArtifact({
+    ticketId,
+    storyTitle: frontmatter.title || 'Unknown Story',
+    reviewDate,
+    verdict,
+    findings,
+    outputDir,
+    previousReviewContext
+  });
+
+  // Update status and history
+  const updatedStory = appendStatusHistory(story, '/scrum-review-story', verdict);
+
+  // Verify write boundary compliance
+  const modifiedFiles = [artifactPath, actualStoryPath];
+  const complianceCheck = verifyReviewWriteBoundaryCompliance(ticketId, modifiedFiles);
+
+  if (!complianceCheck.compliant) {
+    return {
+      success: false,
+      error: `Write boundary violations detected:\n${complianceCheck.violations.join('\n')}`
+    };
+  }
+
+  // Update story file with new status and history
+  const updatedFrontmatter = updatedStory.frontmatter;
+  
+  // Reconstruct frontmatter string using js-yaml
+  const fmString = `---\n${yaml.dump(updatedFrontmatter)}---`;
+
+  const newStoryContent = storyContent.replace(/^---\n[\s\S]+?\n---/, fmString);
+  writeFileSync(actualStoryPath, newStoryContent, 'utf8');
+
+  return {
+    success: true,
+    ticketId,
+    verdict,
+    artifactPath,
+    story: updatedStory,
+    modifiedFiles
   };
 }

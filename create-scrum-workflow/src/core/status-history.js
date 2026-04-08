@@ -135,7 +135,7 @@ function detectManualEdit(story) {
   return result;
 }
 
-module.exports = {
+export {
   generateTimestamp,
   validateActorFormat,
   ensureStatusHistoryExists,

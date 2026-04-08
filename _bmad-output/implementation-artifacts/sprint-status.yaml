@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-04-07T12:00:49Z
-last_updated: 2026-04-08T15:45:00Z
+last_updated: 2026-04-10T10:00:00Z
 project: scrum_workflow
 project_key: NOKEY
 tracking_system: file-system
@@ -58,9 +58,9 @@ development_status:
   # Epic 2: Story Approval & Lifecycle Completion
   epic-2: in-progress
   2-1-implement-status-history-tracking: done
-  2-2-implement-scrum-approve-command: approved
-  2-3-implement-rejection-flow: review
-  2-4-implement-multi-round-review-tracking: review
+  2-2-implement-scrum-approve-command: done
+  2-3-implement-rejection-flow: done
+  2-4-implement-multi-round-review-tracking: done
   epic-2-retrospective: optional
 
   # Epic 3: Lifecycle Guards & Write Boundaries

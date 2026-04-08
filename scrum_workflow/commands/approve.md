@@ -91,9 +91,9 @@ If story is not in `approved` status:
 ### Missing Review File
 
 ```
-❌ Status Guard Violation: No review file found for SW-XXX
+❌ Precondition Error: No review file found for SW-XXX
 
-**Details:** The /scrum-approve command requires a completed code review before approval can proceed.
+**Details:** The /scrum-approve command requires a completed code review before approval can proceed. No review-N.md file was found in the sprint directory.
 
 **Next Step:** Run code review first: '/scrum-review-story SW-XXX'
 ```

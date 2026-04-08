@@ -78,6 +78,18 @@ refined → refined        (via /scrum-refine-story, any criterion FAIL - status
 
 ## Error Handling
 
+### Story File Not Found
+
+If the story file does not exist:
+
+```
+❌ Status Guard Violation: Story file '_scrum-output/sprints/SW-XXX/story.md' not found
+
+**Details:** The /scrum-refine-story command requires an existing story file to process. No file was found at the expected path.
+
+**Next Step:** Run '/scrum-create-ticket SW-XXX' to create the story file first, then run '/scrum-refine-ticket SW-XXX' to complete refinement before re-running '/scrum-refine-story SW-XXX'.
+```
+
 ### Status Guard Violation
 
 If story is not in `refined` status:

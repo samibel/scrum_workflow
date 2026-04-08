@@ -72,6 +72,18 @@ The following settings can be configured in `config.yaml`:
 
 ## Error Handling
 
+### Story File Not Found
+
+If the story file does not exist:
+
+```
+❌ Status Guard Violation: Story file '_scrum-output/sprints/SW-XXX/story.md' not found
+
+**Details:** The /scrum-refine-ticket command requires an existing story file to process. No file was found at the expected path.
+
+**Next Step:** Run '/scrum-create-ticket SW-XXX' to create the story file first, then re-run '/scrum-refine-ticket SW-XXX'.
+```
+
 ### Status Guard Violation
 
 If story is not in `draft` status:

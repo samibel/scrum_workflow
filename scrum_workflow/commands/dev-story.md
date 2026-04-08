@@ -55,7 +55,18 @@ Ticket number in the format: `/scrum-dev-story SW-XXX`
 
 ## Error Handling
 
-- If story file does not exist, provide actionable error suggesting `/scrum-create-ticket`
-- If status is not `ready-for-dev`, provide actionable error suggesting `/scrum-refine-story`
+### Story File Not Found
+
+If the story file does not exist:
+
+```
+❌ Status Guard Violation: Story file '_scrum-output/sprints/SW-XXX/story.md' not found
+
+**Details:** The /scrum-dev-story command requires an existing story file to process. No file was found at the expected path.
+
+**Next Step:** Run '/scrum-create-ticket SW-XXX' to create the story file first, then complete refinement and validation before running '/scrum-dev-story SW-XXX'.
+```
+
+- If status is not `ready-for-dev` or `changes-needed`, the Guard Condition Enforcement block above handles the error
 - If plan.md does not exist, provide warning but continue (plan is guidance, not requirement)
 - If story file is corrupted, provide specific validation error

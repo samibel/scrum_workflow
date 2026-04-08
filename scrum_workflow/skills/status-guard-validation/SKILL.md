@@ -23,7 +23,7 @@ Each command has a specific required status. The command may only execute when t
 | `/scrum-refine-story` | `refined` | Story must be in `refined` status |
 | `/scrum-dev-story` | `ready-for-dev` OR `changes-needed` | Story must be in `ready-for-dev` or `changes-needed` status |
 | `/scrum-review-story` | `review` | Story must be in `review` status |
-| Approval (`/scrum-approve`) | `approved` | Story must be in `approved` status |
+| `/scrum-approve` | `approved` | Story must be in `approved` status |
 
 ## Status Value Validation
 
@@ -125,11 +125,11 @@ Read the current `status` field from the story file's YAML frontmatter and valid
 **Next Step:** Complete implementation first. Run '/scrum-dev-story SW-XXX' to implement the story and submit it for review. The status will automatically move to 'review' when implementation is complete.
 ```
 
-### Approval Command (`/scrum-approve`)
+### `/scrum-approve`
 
-**Guard condition**: Story status must be `approved`
+**Guard condition**: Story must be in `approved` status — reject if not approved
 
-**Rationale**: Human approval is the final phase after code review passes. It can only run when the review is complete and the story is awaiting sign-off.
+**Rationale**: Human approval is the final phase after code review passes. It can only run when the review is complete and the story is awaiting sign-off. The guard fires when the story's current status IS NOT `approved`.
 
 **On guard condition failure**, return an error:
 
@@ -188,7 +188,7 @@ When a guard validates a story's status, it also detects whether the `status` fi
 **Edge Cases:**
 
 - If `status_history` is empty → no comparison possible, skip detection (treat as no discrepancy)
-- If `status_history` is present but malformed or invalid → skip detection, log as unable to compare
+- If `status_history` is present but malformed or invalid → skip detection and set `warning: "Unable to compare: status_history malformed"` in the output
 - The warning is non-blocking and informational only — it does not block the command from executing
 - A `trigger: manual-edit` entry in `status_history` is optional and informational only; it is visible to all agents and commands that read the story, but the system does not auto-generate it (no write hook exists)
 

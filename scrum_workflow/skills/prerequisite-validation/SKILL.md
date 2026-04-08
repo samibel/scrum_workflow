@@ -148,7 +148,6 @@ prerequisite_commands:
 - Refinement file (`_scrum-output/sprints/SW-XXX/refinement.md`) for readiness check
 - Plan file (`_scrum-output/sprints/SW-XXX/plan.md`) for development workflow
 - Command being executed (to determine which prerequisites to check)
-- State machine definitions and guard conditions: [`scrum_workflow/context/standards.md`](../../context/standards.md) — Story Status State Machine section (authoritative source for valid states and transitions)
 
 ## Writes
 

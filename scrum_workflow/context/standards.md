@@ -301,7 +301,7 @@ The story status state machine defines the lifecycle of a story from creation to
 | Status | Set By | Guard | Meaning |
 |---|---|---|---|
 | `draft` | /scrum-create-ticket | -- | Story created, not yet refined |
-| `refinement` | /scrum-refine-ticket | status == draft | **Implementation-internal sub-state** (not in FR-4's 9 states): ephemeral sub-phase during multi-agent refinement execution. Included here to prevent validation errors for stories currently in this state. |
+| `refinement` | /scrum-refine-ticket | entered via: status was draft | **Implementation-internal sub-state** (not in FR-4's 9 states): ephemeral sub-phase during multi-agent refinement execution. Included here to prevent validation errors for stories currently in this state. |
 | `refined` | /scrum-refine-ticket | refinement agents complete | Refinement complete, awaiting validation |
 | `ready-for-dev` | /scrum-refine-story | all 5 validation criteria PASS | Validated and ready for implementation |
 | `in-progress` | /scrum-dev-story | status == ready-for-dev OR status == changes-needed (FR17) | Implementation in progress (initial or re-implementation) |
@@ -309,7 +309,7 @@ The story status state machine defines the lifecycle of a story from creation to
 | `approved` | /scrum-review-story | verdict == APPROVED | Review passed, awaiting human sign-off |
 | `changes-needed` | /scrum-review-story | verdict == CHANGES-NEEDED | Review found issues, changes required |
 | `done` | /scrum-approve | explicit sign-off (FR28) | Human approval complete (terminal state) |
-| `cancelled` | Manual decision | explicit user cancellation | Story cancelled from any state (terminal state) |
+| `cancelled` | Manual decision | explicit user cancellation from any non-terminal state | Story cancelled (terminal state) |
 
 **Note on `refinement`:** This implementation-internal sub-state was introduced in Epic 1 for tracking the multi-agent refinement process. It is NOT one of FR-4's 9 official states. It represents an ephemeral sub-phase within the `draft → refined` transition. It is listed here solely to prevent status-guard validation errors for stories that may currently be in this state.
 
@@ -446,6 +446,7 @@ Each command has strict write boundaries. A command may only create or modify fi
 | /scrum-dev-story | Code files, `story.md` (status update) | `refinement.md`, `plan.md`, `review-*.md`, `approval.md` |
 | /scrum-review-story | `review-N.md`, `story.md` (status update) | `refinement.md`, `plan.md`, `approval.md` |
 | Approval | `approval.md`, `story.md` (status -> done) | `refinement.md`, `plan.md`, `review-*.md` |
+| Human (manual) | `story.md` (status -> cancelled) | All other files — no other changes permitted during cancellation |
 
 ### Markdown-Only Constraint
 

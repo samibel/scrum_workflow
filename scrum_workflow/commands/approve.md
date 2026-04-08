@@ -96,7 +96,9 @@ Fix: Run code review first: '/scrum-review-story SW-XXX'
 
 ## Relationship to Other Commands
 
-**Important:** This is the final gate in the development pipeline. The authoritative lifecycle definition (all states and valid transitions) is maintained in [`scrum_workflow/context/standards.md`](../context/standards.md) — Story Status State Machine section.
+**Important:** This is the final gate in the development pipeline.
+
+> **Authoritative lifecycle reference:** All states and valid transitions are defined in [`scrum_workflow/context/standards.md`](../context/standards.md) — Story Status State Machine section.
 
 | Command | Purpose | Status Transition | Pattern |
 |---------|---------|-------------------|---------|

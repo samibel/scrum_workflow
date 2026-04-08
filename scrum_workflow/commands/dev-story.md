@@ -49,23 +49,11 @@ Ticket number in the format: `/scrum-dev-story SW-XXX`
    - Initial implementation: `refined → ready-for-dev → in-progress`
    - Re-implementation after rejection: `review → changes-needed → in-progress`
 
-**Valid Status Transitions** (authoritative list: [`scrum_workflow/context/standards.md`](../context/standards.md)):
-- `draft` → `refinement` (via `/scrum-refine-ticket`)
-- `refinement` → `refined` (via `/scrum-refine-ticket` completion)
-- `refined` → `ready-for-dev` (via `/scrum-refine-story` PASS)
-- `ready-for-dev` → `in-progress` (via `/scrum-dev-story` - initial implementation)
-- `in-progress` → `review` (via `/scrum-dev-story` completion)
-- `review` → `changes-needed` (via `/scrum-review-story` - verdict: CHANGES-NEEDED)
-- **`changes-needed` → `in-progress` (via `/scrum-dev-story` - re-implementation)**
-- `review` → `approved` (via `/scrum-review-story` - verdict: APPROVED)
-- `approved` → `done` (via `/scrum-approve` - human approval gate)
-- `refined` → `ready-for-dev` (via `/scrum-refine-story` PASS)
-- `ready-for-dev` → `in-progress` (via `/scrum-dev-story` - THIS COMMAND)
+**Valid Status Transitions** — see authoritative list in [`scrum_workflow/context/standards.md`](../context/standards.md) — Story Status State Machine section. Key transitions relevant to this command:
+- `ready-for-dev` → `in-progress` (via `/scrum-dev-story` — initial implementation)
+- `changes-needed` → `in-progress` (via `/scrum-dev-story` — re-implementation)
 - `in-progress` → `review` (via `/scrum-dev-story review`)
-- `review` → `approved` (via `/scrum-review-story` APPROVED)
-- `review` → `changes-needed` (via `/scrum-review-story` CHANGES-NEEDED)
-- `changes-needed` → `in-progress` (via `/scrum-dev-story` fix findings)
-- `approved` → `done` (via human approval)
+- `any` → `cancelled` (via manual decision — explicit user cancellation)
 
 ## Error Handling
 

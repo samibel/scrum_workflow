@@ -21,7 +21,7 @@
 | `approved` | Review passed, awaiting human approval | → done |
 | `changes-needed` | Review found issues requiring fixes | → in-progress (after fixes) |
 | `done` | Story complete with human approval | Terminal state |
-| `cancelled` | Story cancelled by explicit user decision | Terminal state (from any state) |
+| `cancelled` | Story cancelled by explicit user decision | Terminal state (from any non-terminal state) |
 
 ---
 
@@ -52,22 +52,13 @@ stateDiagram-v2
     cancelled --> [*]
 ```
 
+> **Note on `any → cancelled`:** The diagram lists each non-terminal source state explicitly (draft, refinement, refined, ready-for-dev, in-progress, review, approved, changes-needed). `done` is intentionally omitted — it is a terminal state and cannot be cancelled. The authoritative rule is: **any non-terminal state → cancelled** (see `standards.md` Valid Transitions table).
+
 ---
 
 ## Guard Conditions
 
-See [`scrum_workflow/context/standards.md`](../context/standards.md) for the authoritative Valid Transitions table. Summary of guard conditions:
-
-| Transition | Guard Condition | Error if Violated |
-|------------|-----------------|-------------------|
-| → `refined` | Refinement agents complete | Status unchanged |
-| → `ready-for-dev` | All 5 validation criteria pass | Status remains `refined` |
-| → `in-progress` | Status must be `ready-for-dev` OR `changes-needed` | Halt with error |
-| → `review` | Implementation complete, all tasks [x] | Halt if tasks incomplete |
-| → `approved` | Review verdict: APPROVED | Never automatic |
-| → `changes-needed` | Review verdict: CHANGES-NEEDED | Requires findings documented |
-| → `done` | Status must be `approved`, explicit human approval via /scrum-approve | Never automatic |
-| any → `cancelled` | Explicit user cancellation | Manual decision required |
+See [`scrum_workflow/context/standards.md`](../context/standards.md) — Valid Transitions table for the complete, authoritative guard conditions for every transition. That table is the single source of truth; no duplicate summary is maintained here.
 
 ---
 

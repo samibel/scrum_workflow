@@ -8,6 +8,8 @@ description: "Validates that story status matches required guard conditions befo
 
 The status-guard-validation skill enforces the story status state machine by ensuring commands only execute when the story is in the correct state. It prevents workflows from running in the wrong status (e.g., running `/scrum-dev-story` on a `draft` story), which would violate the state machine transitions defined in the standards. This maintains workflow integrity and prevents users from skipping phases or executing commands out of order.
 
+**No silent failures:** Every guard condition check produces an actionable error message. No command leaves the story in an inconsistent state — the status field and status_history always agree after command execution. Guard checks occur BEFORE any file writes, ensuring atomic state transitions.
+
 # Instructions
 
 ## State Machine Guard Conditions
@@ -19,15 +21,15 @@ Each command has a specific required status. The command may only execute when t
 | `/scrum-create-ticket` | No status (new story) | Story file must not exist |
 | `/scrum-refine-ticket` | `draft` | Story must be in `draft` status |
 | `/scrum-refine-story` | `refined` | Story must be in `refined` status |
-| `/scrum-dev-story` | `ready-for-dev` | Story must be in `ready-for-dev` status |
+| `/scrum-dev-story` | `ready-for-dev` OR `changes-needed` | Story must be in `ready-for-dev` or `changes-needed` status |
 | `/scrum-review-story` | `review` | Story must be in `review` status |
-| Approval | `approved` | Story must be in `approved` status |
+| Approval (`/scrum-approve`) | `approved` | Story must be in `approved` status |
 
 ## Status Value Validation
 
 Read the current `status` field from the story file's YAML frontmatter and validate it against the command's required status.
 
-**Authoritative source:** All valid states and transitions are defined in [`scrum_workflow/context/standards.md`](../../context/standards.md) — Story Status State Machine section. This skill reads and enforces that definition.
+**Authoritative source:** All valid states and transitions are defined in [`scrum_workflow/context/standards.md`](../../context/standards.md) — Story Status State Machine section. This skill reads and enforces that definition. The guard checks all requested transitions against `scrum_workflow/context/standards.md` and only transitions explicitly defined as valid are permitted. Any transition not listed in `standards.md` is invalid and must be blocked.
 
 **Valid status values** (per `scrum_workflow/context/standards.md`):
 - `draft` -- Story created, not yet refined
@@ -52,8 +54,11 @@ Read the current `status` field from the story file's YAML frontmatter and valid
 **On guard condition failure**, return an error:
 
 ```
-Error: Story file '_scrum-output/sprints/SW-XXX/story.md' already exists
-Fix: Delete the existing story file first, or use a different ticket number
+❌ Status Guard Violation: Story file '_scrum-output/sprints/SW-XXX/story.md' already exists
+
+**Details:** The /scrum-create-ticket command can only create new stories. A story file for this ticket number already exists and cannot be overwritten.
+
+**Next Step:** Delete the existing story file first, or use a different ticket number. If you want to continue working on SW-XXX, use the appropriate command for its current status.
 ```
 
 ### Refine Ticket Command (`/scrum-refine-ticket`)
@@ -65,8 +70,11 @@ Fix: Delete the existing story file first, or use a different ticket number
 **On guard condition failure**, return an error:
 
 ```
-Error: Story SW-XXX is in status 'current_status', but '/scrum-refine-ticket' requires 'draft'
-Fix: Ensure the story is in draft status before running refinement
+❌ Status Guard Violation: Story SW-XXX requires 'draft' but is currently '{current_status}'
+
+**Details:** The /scrum-refine-ticket command can only execute on stories in 'draft' status. This story has already progressed past the drafting phase.
+
+**Next Step:** Check the current status and run the appropriate next command. If the story needs re-refinement, manually set status back to 'draft' first (use with caution).
 ```
 
 ### Refine Story Command (`/scrum-refine-story`)
@@ -78,21 +86,27 @@ Fix: Ensure the story is in draft status before running refinement
 **On guard condition failure**, return an error:
 
 ```
-Error: Story SW-XXX is in status 'current_status', but '/scrum-refine-story' requires 'refined'
-Fix: Run '/scrum-refine-ticket SW-XXX' first to complete refinement
+❌ Status Guard Violation: Story SW-XXX requires 'refined' but is currently '{current_status}'
+
+**Details:** The /scrum-refine-story command can only execute on stories in 'refined' status. The story must first complete the refinement phase.
+
+**Next Step:** Run '/scrum-refine-ticket SW-XXX' first to complete refinement, then re-run '/scrum-refine-story SW-XXX' once the story reaches 'refined' status.
 ```
 
 ### Dev Story Command (`/scrum-dev-story`)
 
 **Guard condition**: Story status must be `ready-for-dev` (or `changes-needed` for re-implementation after review)
 
-**Rationale**: Development can only begin after the story has been refined and passed the validation check. This ensures the spec is complete and approved before implementation starts.
+**Rationale**: Development can only begin after the story has been refined and passed the validation check. This ensures the spec is complete and approved before implementation starts. Both `ready-for-dev` and `changes-needed` are valid entry points because `changes-needed` represents stories returned from review for re-implementation.
 
 **On guard condition failure**, return an error:
 
 ```
-Error: Story SW-XXX is in status 'current_status', but '/scrum-dev-story' requires 'ready-for-dev'
-Fix: Run '/scrum-refine-ticket SW-XXX' and '/scrum-refine-story SW-XXX' to complete refinement and validation before starting development
+❌ Status Guard Violation: Story SW-XXX requires 'ready-for-dev' or 'changes-needed' but is currently '{current_status}'
+
+**Details:** The /scrum-dev-story command can only execute on stories in 'ready-for-dev' or 'changes-needed' status. This story is not yet ready for implementation.
+
+**Next Step:** Run '/scrum-refine-ticket SW-XXX' and '/scrum-refine-story SW-XXX' to complete refinement and validation before starting development. If the story was rejected after review, run '/scrum-review-story SW-XXX' to complete the review first.
 ```
 
 ### Review Story Command (`/scrum-review-story`)
@@ -104,11 +118,14 @@ Fix: Run '/scrum-refine-ticket SW-XXX' and '/scrum-refine-story SW-XXX' to compl
 **On guard condition failure**, return an error:
 
 ```
-Error: Story SW-XXX is in status 'current_status', but '/scrum-review-story' requires 'review'
-Fix: Complete implementation first and run '/scrum-dev-story SW-XXX review' to submit for review
+❌ Status Guard Violation: Story SW-XXX requires 'review' but is currently '{current_status}'
+
+**Details:** The /scrum-review-story command can only execute on stories in 'review' status. The story must first complete implementation.
+
+**Next Step:** Complete implementation first. Run '/scrum-dev-story SW-XXX' to implement the story and submit it for review. The status will automatically move to 'review' when implementation is complete.
 ```
 
-### Approval Command
+### Approval Command (`/scrum-approve`)
 
 **Guard condition**: Story status must be `approved`
 
@@ -117,13 +134,16 @@ Fix: Complete implementation first and run '/scrum-dev-story SW-XXX review' to s
 **On guard condition failure**, return an error:
 
 ```
-Error: Story SW-XXX is in status 'current_status', but approval requires 'approved'
-Fix: Complete code review first by running '/scrum-review-story SW-XXX'
+❌ Status Guard Violation: Story SW-XXX requires 'approved' but is currently '{current_status}'
+
+**Details:** The /scrum-approve command can only execute on stories in 'approved' status (post-review). The story must first pass code review before human approval.
+
+**Next Step:** Complete code review first by running '/scrum-review-story SW-XXX'. If the review result is APPROVED, the story will move to 'approved' status and human sign-off can proceed.
 ```
 
 ## Status Transition Validation
 
-Ensure that status transitions only follow the defined state machine paths. The authoritative transitions list is maintained in [`scrum_workflow/context/standards.md`](../../context/standards.md) — Valid Transitions table.
+Ensure that status transitions only follow the defined state machine paths. The guard checks all requested transitions against the authoritative transitions list in [`scrum_workflow/context/standards.md`](../../context/standards.md) — Valid Transitions table. Only transitions explicitly defined as valid are permitted. Any transition not listed in `standards.md` is blocked as invalid.
 
 **Valid transitions** (per `scrum_workflow/context/standards.md`):
 - `draft` → `refinement` (via `/scrum-refine-ticket`)
@@ -136,11 +156,12 @@ Ensure that status transitions only follow the defined state machine paths. The 
 - `review` → `changes-needed` (via `/scrum-review-story` CHANGES-NEEDED)
 - `changes-needed` → `in-progress` (via `/scrum-dev-story` fix findings)
 - `approved` → `done` (via `/scrum-approve` with explicit user sign-off)
-- `any` → `cancelled` (via manual decision, explicit user cancellation)
+- `any` → `cancelled` (via manual decision, explicit user cancellation from any non-terminal state)
 
 **Invalid transitions:**
 - Any transition not listed above (e.g., `draft` → `ready-for-dev` skipping refinement)
 - Skipping phases (e.g., running `/scrum-dev-story` on a `draft` story)
+- These invalid transitions are blocked before any file writes occur
 
 ## Current Status Detection
 
@@ -151,6 +172,26 @@ Read the current status from the story file's YAML frontmatter:
 3. **Compare to Required**: Check if current status matches the command's required status
 4. **Return Result**: Indicate whether the guard condition is satisfied
 
+## Manual Edit Detection
+
+When a guard validates a story's status, it also detects whether the `status` field was manually edited outside of a command. This implements FR-10.
+
+**Detection Algorithm:**
+
+1. Read story YAML frontmatter
+2. Extract current status field: `status_field = frontmatter.status`
+3. Extract last history entry: `last_entry = frontmatter.status_history[-1]`
+4. Compare: if `status_field != last_entry.to` → manual edit detected
+5. Emit warning: `⚠️ Manual Edit Detected: status field ('{status_field}') does not match last status_history entry ('{last_entry.to}'). The story's status was manually edited outside of a command. Proceeding with current status field value for guard evaluation.`
+6. Guard evaluation still uses `status_field` — the user's manual edit is intentional and the current status field value takes precedence for guard evaluation
+
+**Edge Cases:**
+
+- If `status_history` is empty → no comparison possible, skip detection (treat as no discrepancy)
+- If `status_history` is present but malformed or invalid → skip detection, log as unable to compare
+- The warning is non-blocking and informational only — it does not block the command from executing
+- A `trigger: manual-edit` entry in `status_history` is optional and informational only; it is visible to all agents and commands that read the story, but the system does not auto-generate it (no write hook exists)
+
 # Output Format
 
 Return a structured validation result:
@@ -160,11 +201,15 @@ valid: true/false
 current_status: "draft"
 required_status: "draft"
 can_proceed: true/false
+manual_edit_detected: false
+warning: null
 ```
 
 **When `valid: true` and `can_proceed: true`**: Current status matches required status. Workflow may proceed.
 
 **When `valid: false` and `can_proceed: false`**: Current status does not match required status. Workflow must halt with an actionable error message explaining the mismatch and which command to run first.
+
+**When `manual_edit_detected: true`**: The `warning` field is populated with the human-readable warning message: `⚠️ Manual Edit Detected: status field ('X') does not match last status_history entry ('Y')`. The guard still evaluates using the current `status` field value.
 
 # Context Rules
 

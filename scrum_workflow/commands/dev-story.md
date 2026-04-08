@@ -40,9 +40,11 @@ Ticket number in the format: `/scrum-dev-story SW-XXX`
 1. **Status Verification**: Before any implementation begins, verify story status is `ready-for-dev` OR `changes-needed`
 2. **Actionable Error on Failure**: If status is not `ready-for-dev` or `changes-needed`, halt with:
    ```
-   Error: Story SW-XXX is in status 'current_status', but '/scrum-dev-story' requires 'ready-for-dev' or 'changes-needed'
-   Fix: Stories must pass validation before implementation. Run '/scrum-refine-ticket SW-XXX' then '/scrum-refine-story SW-XXX' to complete refinement and validation.
-   OR If story was rejected: Run '/scrum-review-story SW-XXX' to complete the review first.
+   ❌ Status Guard Violation: Story SW-XXX requires 'ready-for-dev' or 'changes-needed' but is currently '{current_status}'
+
+   **Details:** The /scrum-dev-story command can only execute on stories in 'ready-for-dev' or 'changes-needed' status. This story is not yet ready for implementation.
+
+   **Next Step:** Run '/scrum-refine-ticket SW-XXX' and '/scrum-refine-story SW-XXX' to complete refinement and validation before starting development. If the story was rejected after review, run '/scrum-review-story SW-XXX' to complete the review first.
    ```
 3. **No Bypass**: There is no flag or option to bypass this guard condition
 4. **State Machine Compliance**: The paths to `in-progress` are:

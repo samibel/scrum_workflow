@@ -66,7 +66,7 @@ development_status:
   # Epic 3: Lifecycle Guards & Write Boundaries
   epic-3: in-progress
   3-1-consolidate-9-state-lifecycle-definition: review
-  3-2-implement-status-guard-validation: ready-for-dev
+  3-2-implement-status-guard-validation: in-progress
   3-3-implement-write-boundary-enforcement: backlog
   epic-3-retrospective: optional
 

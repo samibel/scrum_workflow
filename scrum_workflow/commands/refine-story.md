@@ -76,6 +76,20 @@ refined → refined        (via /scrum-refine-story, any criterion FAIL - status
 4. User runs `/scrum-refine-story SW-XXX` to validate completeness
 5. Status moves from `refined` → `ready-for-dev` (if validation passes)
 
+## Error Handling
+
+### Status Guard Violation
+
+If story is not in `refined` status:
+
+```
+❌ Status Guard Violation: Story SW-XXX requires 'refined' but is currently '{current_status}'
+
+**Details:** The /scrum-refine-story command can only execute on stories in 'refined' status. The story must first complete the refinement phase.
+
+**Next Step:** Run '/scrum-refine-ticket SW-XXX' first to complete refinement, then re-run '/scrum-refine-story SW-XXX' once the story reaches 'refined' status.
+```
+
 ## Write Boundary Rules
 
 This workflow may write:

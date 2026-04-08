@@ -71,27 +71,31 @@ The human approver should consider:
 If story is not in `approved` status:
 
 ```
-Status Guard Violation: Story SW-XXX has status '{current_status}'
+❌ Status Guard Violation: Story SW-XXX requires 'approved' but is currently '{current_status}'
 
-**Details:** The story must be in 'approved' status (post-review) before it can be marked as done.
+**Details:** The /scrum-approve command can only execute on stories in 'approved' status (post-review). The story must first pass code review before human approval.
 
-**Next Step:** Run /scrum-review-story SW-XXX to complete the review process first.
+**Next Step:** Complete code review first by running '/scrum-review-story SW-XXX'. If the review result is APPROVED, the story will move to 'approved' status and human sign-off can proceed.
 ```
 
 ### Missing Story File
 
 ```
-Error: Story file '_scrum-output/sprints/SW-XXX/story.md' not found
+❌ Status Guard Violation: Story file '_scrum-output/sprints/SW-XXX/story.md' not found
 
-Fix: Ensure story exists before triggering approval
+**Details:** The /scrum-approve command requires an existing story file to process.
+
+**Next Step:** Ensure story exists before triggering approval. Run '/scrum-create-ticket SW-XXX' to create the story first.
 ```
 
 ### Missing Review File
 
 ```
-Error: No review file found for SW-XXX
+❌ Status Guard Violation: No review file found for SW-XXX
 
-Fix: Run code review first: '/scrum-review-story SW-XXX'
+**Details:** The /scrum-approve command requires a completed code review before approval can proceed.
+
+**Next Step:** Run code review first: '/scrum-review-story SW-XXX'
 ```
 
 ## Relationship to Other Commands

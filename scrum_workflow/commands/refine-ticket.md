@@ -69,3 +69,17 @@ The following settings can be configured in `config.yaml`:
 - `estimation_variance_threshold`: Variance threshold for re-estimation (default: 2)
 - `early_exit_on_consensus`: Exit early when only non-blockers remain (default: true)
 - `security_auto_blocker`: Force security issues as blockers (default: true)
+
+## Error Handling
+
+### Status Guard Violation
+
+If story is not in `draft` status:
+
+```
+❌ Status Guard Violation: Story SW-XXX requires 'draft' but is currently '{current_status}'
+
+**Details:** The /scrum-refine-ticket command can only execute on stories in 'draft' status. This story has already progressed past the drafting phase.
+
+**Next Step:** Check the current status and run the appropriate next command. If the story needs re-refinement, manually set status back to 'draft' first (use with caution).
+```

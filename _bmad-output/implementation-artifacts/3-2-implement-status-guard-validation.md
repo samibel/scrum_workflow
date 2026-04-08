@@ -1,6 +1,6 @@
 # Story 3.2: Implement Status Guard Validation
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -22,23 +22,23 @@ So that I am protected from mistakes and the state machine integrity is maintain
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Implement Architecture-standard error format in status-guard-validation skill (AC: #1, #3)
-  - [ ] 1.1 Update `scrum_workflow/skills/status-guard-validation/SKILL.md` to use the standard error format: `❌ Status Guard Violation: {description}` with `**Details:**` and `**Next Step:**` sections for ALL guard failure cases
-  - [ ] 1.2 Update the `create-ticket` guard error to use the standard format
-  - [ ] 1.3 Update the `refine-ticket` guard error to use the standard format
-  - [ ] 1.4 Update the `refine-story` guard error to use the standard format
-  - [ ] 1.5 Update the `dev-story` guard error to use the standard format (must include both `ready-for-dev` and `changes-needed` as valid statuses per existing implementation)
-  - [ ] 1.6 Update the `review-story` guard error to use the standard format
-  - [ ] 1.7 Update the `approve` guard error to use the standard format
+- [x] Task 1: Implement Architecture-standard error format in status-guard-validation skill (AC: #1, #3)
+  - [x] 1.1 Update `scrum_workflow/skills/status-guard-validation/SKILL.md` to use the standard error format: `❌ Status Guard Violation: {description}` with `**Details:**` and `**Next Step:**` sections for ALL guard failure cases
+  - [x] 1.2 Update the `create-ticket` guard error to use the standard format
+  - [x] 1.3 Update the `refine-ticket` guard error to use the standard format
+  - [x] 1.4 Update the `refine-story` guard error to use the standard format
+  - [x] 1.5 Update the `dev-story` guard error to use the standard format (must include both `ready-for-dev` and `changes-needed` as valid statuses per existing implementation)
+  - [x] 1.6 Update the `review-story` guard error to use the standard format
+  - [x] 1.7 Update the `approve` guard error to use the standard format
 
-- [ ] Task 2: Implement manual status edit detection (AC: #2, #3)
-  - [ ] 2.1 Add a "Manual Edit Detection" section to `scrum_workflow/skills/status-guard-validation/SKILL.md` that describes the detection algorithm: compare `status` field value against the `to` field of the last `status_history` entry
-  - [ ] 2.2 Define the discrepancy resolution: if `status` field != last `status_history[].to` → emit a warning in the format: `⚠️ Manual Edit Detected: status field ('X') does not match last status_history entry ('Y')`
-  - [ ] 2.3 Document that the guard should surface the warning AND still enforce the current `status` field value (not the history value) for command eligibility — because the user's manual edit is intentional
-  - [ ] 2.4 Document that manual edits do NOT add a `status_history` entry automatically — a `trigger: manual-edit` entry is optional and informational only (the system cannot enforce it without a write hook)
+- [x] Task 2: Implement manual status edit detection (AC: #2, #3)
+  - [x] 2.1 Add a "Manual Edit Detection" section to `scrum_workflow/skills/status-guard-validation/SKILL.md` that describes the detection algorithm: compare `status` field value against the `to` field of the last `status_history` entry
+  - [x] 2.2 Define the discrepancy resolution: if `status` field != last `status_history[].to` → emit a warning in the format: `⚠️ Manual Edit Detected: status field ('X') does not match last status_history entry ('Y')`
+  - [x] 2.3 Document that the guard should surface the warning AND still enforce the current `status` field value (not the history value) for command eligibility — because the user's manual edit is intentional
+  - [x] 2.4 Document that manual edits do NOT add a `status_history` entry automatically — a `trigger: manual-edit` entry is optional and informational only (the system cannot enforce it without a write hook)
 
-- [ ] Task 3: Update Output Format to include manual-edit detection result (AC: #2, #3)
-  - [ ] 3.1 Extend the structured YAML output format of the skill to include a `manual_edit_detected` field and `warning` field:
+- [x] Task 3: Update Output Format to include manual-edit detection result (AC: #2, #3)
+  - [x] 3.1 Extend the structured YAML output format of the skill to include a `manual_edit_detected` field and `warning` field:
     ```yaml
     valid: true/false
     current_status: "draft"
@@ -47,24 +47,24 @@ So that I am protected from mistakes and the state machine integrity is maintain
     manual_edit_detected: false
     warning: null
     ```
-  - [ ] 3.2 When a discrepancy is detected, set `manual_edit_detected: true` and populate `warning` with the human-readable warning message
+  - [x] 3.2 When a discrepancy is detected, set `manual_edit_detected: true` and populate `warning` with the human-readable warning message
 
-- [ ] Task 4: Update all command files to use the Architecture-standard error format (AC: #1)
-  - [ ] 4.1 Update `scrum_workflow/commands/dev-story.md` to use the `❌ Status Guard Violation:` format in its Guard Condition Enforcement section
-  - [ ] 4.2 Update `scrum_workflow/commands/approve.md` to use the `❌ Status Guard Violation:` format in its Error Handling section (it already uses the prefix but verify format)
-  - [ ] 4.3 Update `scrum_workflow/commands/review-story.md` to use the `❌ Status Guard Violation:` format if not already present
-  - [ ] 4.4 Audit remaining command files (`refine-ticket.md`, `refine-story.md`, `create-ticket.md`) and update their error messages to use the standard format
+- [x] Task 4: Update all command files to use the Architecture-standard error format (AC: #1)
+  - [x] 4.1 Update `scrum_workflow/commands/dev-story.md` to use the `❌ Status Guard Violation:` format in its Guard Condition Enforcement section
+  - [x] 4.2 Update `scrum_workflow/commands/approve.md` to use the `❌ Status Guard Violation:` format in its Error Handling section (it already uses the prefix but verify format)
+  - [x] 4.3 Update `scrum_workflow/commands/review-story.md` to use the `❌ Status Guard Violation:` format if not already present
+  - [x] 4.4 Audit remaining command files (`refine-ticket.md`, `refine-story.md`, `create-ticket.md`) and update their error messages to use the standard format
 
-- [ ] Task 5: Write ATDD tests (RED phase) that validate all 4 ACs (AC: #1, #2, #3, #4)
-  - [ ] 5.1 Create `tests/unit/status-guard-validation/ac1-standard-error-format.spec.ts` — verify SKILL.md uses `❌ Status Guard Violation:` format for all 6 command guard failures, and that `**Details:**` and `**Next Step:**` are present
-  - [ ] 5.2 Create `tests/unit/status-guard-validation/ac2-manual-edit-detection.spec.ts` — verify SKILL.md documents the manual edit detection algorithm and the `manual_edit_detected` output field
-  - [ ] 5.3 Create `tests/unit/status-guard-validation/ac3-no-silent-failure.spec.ts` — verify SKILL.md states no silent failures and all errors produce actionable messages
-  - [ ] 5.4 Create `tests/unit/status-guard-validation/ac4-authoritative-transitions.spec.ts` — verify SKILL.md explicitly references `scrum_workflow/context/standards.md` for the authoritative transitions list
+- [x] Task 5: Write ATDD tests (RED phase) that validate all 4 ACs (AC: #1, #2, #3, #4)
+  - [x] 5.1 Create `tests/unit/status-guard-validation/ac1-standard-error-format.spec.ts` — verify SKILL.md uses `❌ Status Guard Violation:` format for all 6 command guard failures, and that `**Details:**` and `**Next Step:**` are present
+  - [x] 5.2 Create `tests/unit/status-guard-validation/ac2-manual-edit-detection.spec.ts` — verify SKILL.md documents the manual edit detection algorithm and the `manual_edit_detected` output field
+  - [x] 5.3 Create `tests/unit/status-guard-validation/ac3-no-silent-failure.spec.ts` — verify SKILL.md states no silent failures and all errors produce actionable messages
+  - [x] 5.4 Create `tests/unit/status-guard-validation/ac4-authoritative-transitions.spec.ts` — verify SKILL.md explicitly references `scrum_workflow/context/standards.md` for the authoritative transitions list
 
-- [ ] Task 6: Activate ATDD tests (GREEN phase) — confirm implementation is complete (AC: #1–#4)
-  - [ ] 6.1 Run all tests in `tests/unit/status-guard-validation/` and confirm they pass
-  - [ ] 6.2 If any test fails, fix the SKILL.md or command file (do NOT modify the test expectations)
-  - [ ] 6.3 Confirm tests pass for all 4 ACs
+- [x] Task 6: Activate ATDD tests (GREEN phase) — confirm implementation is complete (AC: #1–#4)
+  - [x] 6.1 Run all tests in `tests/unit/status-guard-validation/` and confirm they pass
+  - [x] 6.2 If any test fails, fix the SKILL.md or command file (do NOT modify the test expectations)
+  - [x] 6.3 Confirm tests pass for all 4 ACs
 
 ## Dev Notes
 
@@ -253,12 +253,41 @@ claude-sonnet-4-6
 
 ### Debug Log References
 
+None — implementation completed without errors.
+
 ### Completion Notes List
 
+- SKILL.md was already partially updated prior to this session (standard error format and manual edit detection were pre-implemented). Verified all 6 guard conditions use `❌ Status Guard Violation:` format with `**Details:**` and `**Next Step:**` sections.
+- `commands/dev-story.md` already had the standard error format — no changes needed.
+- `commands/approve.md` had old `Status Guard Violation:` prefix (missing `❌`) and plain `Error:` prefixes — updated all three error cases to use `❌ Status Guard Violation:` format with Details + Next Step.
+- `commands/review-story.md` had no Error Handling section — added one with standard format.
+- `commands/refine-ticket.md` had no Error Handling section — added one with standard format.
+- `commands/refine-story.md` had no Error Handling section — added one with standard format.
+- `commands/create-ticket.md` had no Error Handling section — added one with standard format.
+- Synchronized copies in `create-scrum-workflow/` updated to match primary for create-ticket.md and review-story.md (artifact-contract test requirement).
+- All 4 ATDD spec files activated from `test.skip()` to `test()` — 66/66 tests pass.
+- Pre-existing failures in `tests/unit/research-update-mode/` and `tests/unit/review-story/ac4-ac5` are due to syntax errors in test files from a different story — not caused by this story's changes.
+
 ### File List
+
+- `scrum_workflow/skills/status-guard-validation/SKILL.md` (pre-implemented, verified)
+- `scrum_workflow/commands/approve.md` (updated — standard error format for all 3 error cases)
+- `scrum_workflow/commands/review-story.md` (updated — added Error Handling section)
+- `scrum_workflow/commands/refine-ticket.md` (updated — added Error Handling section)
+- `scrum_workflow/commands/refine-story.md` (updated — added Error Handling section)
+- `scrum_workflow/commands/create-ticket.md` (updated — added Error Handling section)
+- `create-scrum-workflow/scrum_workflow/commands/create-ticket.md` (synchronized copy updated)
+- `create-scrum-workflow/scrum_workflow/commands/review-story.md` (synchronized copy updated)
+- `create-scrum-workflow/templates/scrum_workflow/commands/create-ticket.md` (synchronized copy updated)
+- `create-scrum-workflow/templates/scrum_workflow/commands/review-story.md` (synchronized copy updated)
+- `tests/unit/status-guard-validation/ac1-standard-error-format.spec.ts` (activated: test.skip → test)
+- `tests/unit/status-guard-validation/ac2-manual-edit-detection.spec.ts` (activated: test.skip → test)
+- `tests/unit/status-guard-validation/ac3-no-silent-failure.spec.ts` (activated: test.skip → test)
+- `tests/unit/status-guard-validation/ac4-authoritative-transitions.spec.ts` (activated: test.skip → test)
 
 ## Change Log
 
 | Date | Change | Author |
 |------|--------|--------|
 | 2026-04-08 | Story created — ready-for-dev | claude-sonnet-4-6 |
+| 2026-04-08 | Implementation complete — all 6 command files updated to use standard error format, 66 ATDD tests passing, status set to review | claude-sonnet-4-6 |

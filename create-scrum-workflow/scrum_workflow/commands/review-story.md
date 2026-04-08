@@ -61,6 +61,20 @@ review → approved         (via /scrum-review-story, verdict: APPROVED)
 review → changes-needed   (via /scrum-review-story, verdict: CHANGES-NEEDED)
 ```
 
+## Error Handling
+
+### Status Guard Violation
+
+If story is not in `review` status:
+
+```
+❌ Status Guard Violation: Story SW-XXX requires 'review' but is currently '{current_status}'
+
+**Details:** The /scrum-review-story command can only execute on stories in 'review' status. The story must first complete implementation.
+
+**Next Step:** Complete implementation first. Run '/scrum-dev-story SW-XXX' to implement the story and submit it for review. The status will automatically move to 'review' when implementation is complete.
+```
+
 ## Severity Levels
 
 | Severity | Definition | Examples |

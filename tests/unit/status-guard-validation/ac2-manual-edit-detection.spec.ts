@@ -33,18 +33,18 @@ const SKILL_FILE = join(
 
 describe('AC2: SKILL.md — Manual Edit Detection algorithm documented', () => {
   // Test 2.1: SKILL.md exists
-  test.skip('[P0] status-guard-validation/SKILL.md should exist', () => {
+  test('[P0] status-guard-validation/SKILL.md should exist', () => {
     expect(existsSync(SKILL_FILE)).toBe(true);
   });
 
   // Test 2.2: SKILL.md contains a Manual Edit Detection section
-  test.skip('[P0] SKILL.md should contain a "Manual Edit Detection" section', () => {
+  test('[P0] SKILL.md should contain a "Manual Edit Detection" section', () => {
     const content = readFileSync(SKILL_FILE, 'utf8');
     expect(content).toMatch(/Manual Edit Detection/i);
   });
 
   // Test 2.3: SKILL.md documents comparison of status field vs status_history
-  test.skip('[P0] SKILL.md should document comparing status field against last status_history entry', () => {
+  test('[P0] SKILL.md should document comparing status field against last status_history entry', () => {
     const content = readFileSync(SKILL_FILE, 'utf8');
     // Must describe algorithm: compare status field vs status_history last entry
     expect(content).toMatch(/status_history/);
@@ -54,14 +54,14 @@ describe('AC2: SKILL.md — Manual Edit Detection algorithm documented', () => {
   });
 
   // Test 2.4: SKILL.md documents the warning format for manual edits
-  test.skip('[P0] SKILL.md should document ⚠️ Manual Edit Detected: warning format', () => {
+  test('[P0] SKILL.md should document ⚠️ Manual Edit Detected: warning format', () => {
     const content = readFileSync(SKILL_FILE, 'utf8');
     // Must include the exact warning prefix
     expect(content).toMatch(/⚠️ Manual Edit Detected:/);
   });
 
   // Test 2.5: SKILL.md documents that warning surfaces status field mismatch message
-  test.skip('[P0] SKILL.md warning should indicate status field vs last status_history mismatch', () => {
+  test('[P0] SKILL.md warning should indicate status field vs last status_history mismatch', () => {
     const content = readFileSync(SKILL_FILE, 'utf8');
     const manualEditSection = content.match(/Manual Edit Detection[\s\S]*?(?=\n## |\n# |$)/i);
     expect(manualEditSection).not.toBeNull();
@@ -71,7 +71,7 @@ describe('AC2: SKILL.md — Manual Edit Detection algorithm documented', () => {
   });
 
   // Test 2.6: SKILL.md documents that guard still uses status field value (user intent)
-  test.skip('[P0] SKILL.md should state guard evaluates current status field, not history value', () => {
+  test('[P0] SKILL.md should state guard evaluates current status field, not history value', () => {
     const content = readFileSync(SKILL_FILE, 'utf8');
     const manualEditSection = content.match(/Manual Edit Detection[\s\S]*?(?=\n## |\n# |$)/i);
     expect(manualEditSection).not.toBeNull();
@@ -82,19 +82,19 @@ describe('AC2: SKILL.md — Manual Edit Detection algorithm documented', () => {
   });
 
   // Test 2.7: SKILL.md documents edge case: empty status_history → skip detection
-  test.skip('[P1] SKILL.md should document edge case: empty status_history skips detection', () => {
+  test('[P1] SKILL.md should document edge case: empty status_history skips detection', () => {
     const content = readFileSync(SKILL_FILE, 'utf8');
     expect(content).toMatch(/empty|status_history.*empty|no.*history|skip.*detection/i);
   });
 
   // Test 2.8: SKILL.md documents edge case: malformed status_history → skip detection
-  test.skip('[P1] SKILL.md should document edge case: malformed status_history skips detection', () => {
+  test('[P1] SKILL.md should document edge case: malformed status_history skips detection', () => {
     const content = readFileSync(SKILL_FILE, 'utf8');
     expect(content).toMatch(/malform|invalid.*history|unable.*compar|skip.*detection/i);
   });
 
   // Test 2.9: SKILL.md documents that warning is non-blocking (informational only)
-  test.skip('[P0] SKILL.md should state the manual edit warning is non-blocking', () => {
+  test('[P0] SKILL.md should state the manual edit warning is non-blocking', () => {
     const content = readFileSync(SKILL_FILE, 'utf8');
     const manualEditSection = content.match(/Manual Edit Detection[\s\S]*?(?=\n## |\n# |$)/i);
     expect(manualEditSection).not.toBeNull();
@@ -105,7 +105,7 @@ describe('AC2: SKILL.md — Manual Edit Detection algorithm documented', () => {
   });
 
   // Test 2.10: SKILL.md documents trigger: manual-edit visibility
-  test.skip('[P1] SKILL.md should document that trigger: manual-edit entries are visible to all agents', () => {
+  test('[P1] SKILL.md should document that trigger: manual-edit entries are visible to all agents', () => {
     const content = readFileSync(SKILL_FILE, 'utf8');
     // Must mention trigger: manual-edit
     expect(content).toMatch(/trigger.*manual-edit|manual-edit.*trigger/i);
@@ -120,13 +120,13 @@ describe('AC2: SKILL.md — Manual Edit Detection algorithm documented', () => {
 
 describe('AC2: SKILL.md — Output format includes manual_edit_detected and warning fields', () => {
   // Test 2.11: SKILL.md output format includes manual_edit_detected field
-  test.skip('[P0] SKILL.md Output Format should include manual_edit_detected field', () => {
+  test('[P0] SKILL.md Output Format should include manual_edit_detected field', () => {
     const content = readFileSync(SKILL_FILE, 'utf8');
     expect(content).toMatch(/manual_edit_detected/);
   });
 
   // Test 2.12: SKILL.md output format includes warning field
-  test.skip('[P0] SKILL.md Output Format should include warning field', () => {
+  test('[P0] SKILL.md Output Format should include warning field', () => {
     const content = readFileSync(SKILL_FILE, 'utf8');
     // Must have a warning field in the output format
     const outputSection = content.match(/Output Format[\s\S]*?(?=\n## |\n# |$)/i);
@@ -135,19 +135,19 @@ describe('AC2: SKILL.md — Output format includes manual_edit_detected and warn
   });
 
   // Test 2.13: SKILL.md output format shows manual_edit_detected: false default
-  test.skip('[P1] SKILL.md Output Format should show manual_edit_detected: false as default', () => {
+  test('[P1] SKILL.md Output Format should show manual_edit_detected: false as default', () => {
     const content = readFileSync(SKILL_FILE, 'utf8');
     expect(content).toMatch(/manual_edit_detected:\s*false/);
   });
 
   // Test 2.14: SKILL.md output format shows warning: null default
-  test.skip('[P1] SKILL.md Output Format should show warning: null as default', () => {
+  test('[P1] SKILL.md Output Format should show warning: null as default', () => {
     const content = readFileSync(SKILL_FILE, 'utf8');
     expect(content).toMatch(/warning:\s*null/);
   });
 
   // Test 2.15: SKILL.md output format retains all original 4 fields
-  test.skip('[P0] SKILL.md Output Format should retain valid, current_status, required_status, can_proceed', () => {
+  test('[P0] SKILL.md Output Format should retain valid, current_status, required_status, can_proceed', () => {
     const content = readFileSync(SKILL_FILE, 'utf8');
     const outputSection = content.match(/Output Format[\s\S]*?(?=\n## |\n# |$)/i);
     expect(outputSection).not.toBeNull();

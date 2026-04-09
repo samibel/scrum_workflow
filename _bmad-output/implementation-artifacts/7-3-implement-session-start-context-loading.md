@@ -1,6 +1,6 @@
 # Story 7.3: Implement Session Start & Context Loading
 
-Status: ready-for-dev
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -20,39 +20,39 @@ So that I can resume exactly where I left off without context loss.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create `session-start` command specification (AC: #1, #2)
-  - [ ] 1.1 Create `scrum_workflow/commands/session-start.md` defining the `/session-start` command interface, parameters, and expected output format
-  - [ ] 1.2 Define command output structure: sections for Open Work, Recent Decisions, Active Risks, and Next Steps
-  - [ ] 1.3 Specify performance constraint: context load must complete in under 10 seconds (SC-13) and summary presented in under 60 seconds (SC-14)
+- [x] Task 1: Create `session-start` command specification (AC: #1, #2)
+  - [x] 1.1 Create `scrum_workflow/commands/session-start.md` defining the `/session-start` command interface, parameters, and expected output format
+  - [x] 1.2 Define command output structure: sections for Open Work, Recent Decisions, Active Risks, and Next Steps
+  - [x] 1.3 Specify performance constraint: context load must complete in under 10 seconds (SC-13) and summary presented in under 60 seconds (SC-14)
 
-- [ ] Task 2: Create `session-start` workflow (AC: #1, #2, #3)
-  - [ ] 2.1 Create `scrum_workflow/workflows/session-start.md` with step-by-step context loading algorithm
-  - [ ] 2.2 Step 1 — Load Open Stories: scan `_scrum-output/sprints/` for all `SW-XXX/story.md` files with status NOT `done` or `cancelled`; extract: ticket ID, status, title, last action
-  - [ ] 2.3 Step 2 — Load Recent Decisions: scan `_scrum-output/memory/decisions/` for the 5 most recent `DR-XXX.md` files (by DR number, highest first); extract: DR number, decision_summary, ticket, date
-  - [ ] 2.4 Step 3 — Load Active Risk Notes: scan `_scrum-output/memory/risks/` for all `RN-XXX.md` files where `status: active`; extract: RN number, risk_description, severity, affected_area, ticket
-  - [ ] 2.5 Step 4 — Derive Next Steps: generate next-action suggestions based on open story statuses (see next-step derivation logic in Dev Notes)
-  - [ ] 2.6 Step 5 — Present Summary: render the session context in structured output format (see output template in Dev Notes)
+- [x] Task 2: Create `session-start` workflow (AC: #1, #2, #3)
+  - [x] 2.1 Create `scrum_workflow/workflows/session-start.md` with step-by-step context loading algorithm
+  - [x] 2.2 Step 1 — Load Open Stories: scan `_scrum-output/sprints/` for all `SW-XXX/story.md` files with status NOT `done` or `cancelled`; extract: ticket ID, status, title, last action
+  - [x] 2.3 Step 2 — Load Recent Decisions: scan `_scrum-output/memory/decisions/` for the 5 most recent `DR-XXX.md` files (by DR number, highest first); extract: DR number, decision_summary, ticket, date
+  - [x] 2.4 Step 3 — Load Active Risk Notes: scan `_scrum-output/memory/risks/` for all `RN-XXX.md` files where `status: active`; extract: RN number, risk_description, severity, affected_area, ticket
+  - [x] 2.5 Step 4 — Derive Next Steps: generate next-action suggestions based on open story statuses (see next-step derivation logic in Dev Notes)
+  - [x] 2.6 Step 5 — Present Summary: render the session context in structured output format (see output template in Dev Notes)
 
-- [ ] Task 3: Create `session-start` skill (AC: #1, #3)
-  - [ ] 3.1 Create `scrum_workflow/skills/session-start/SKILL.md` defining the context aggregation logic
-  - [ ] 3.2 Implement open work scanning: directory listing of `_scrum-output/sprints/` — NEVER recursive glob of entire output tree (SC-13 performance constraint)
-  - [ ] 3.3 Implement YAML frontmatter parsing for story.md, DR-XXX.md, and RN-XXX.md files — pure string parsing, NO external YAML library (NFR-2)
-  - [ ] 3.4 Implement active-only filtering for risk notes: check `status` field in frontmatter — `active` included, `resolved` excluded
-  - [ ] 3.5 Implement recency sort for decision records: parse DR number from filename, sort descending, take top 5
+- [x] Task 3: Create `session-start` skill (AC: #1, #3)
+  - [x] 3.1 Create `scrum_workflow/skills/session-start/SKILL.md` defining the context aggregation logic
+  - [x] 3.2 Implement open work scanning: directory listing of `_scrum-output/sprints/` — NEVER recursive glob of entire output tree (SC-13 performance constraint)
+  - [x] 3.3 Implement YAML frontmatter parsing for story.md, DR-XXX.md, and RN-XXX.md files — pure string parsing, NO external YAML library (NFR-2)
+  - [x] 3.4 Implement active-only filtering for risk notes: check `status` field in frontmatter — `active` included, `resolved` excluded
+  - [x] 3.5 Implement recency sort for decision records: parse DR number from filename, sort descending, take top 5
 
-- [ ] Task 4: Create `session-context.js` utility (AC: #1, #2, #3)
-  - [ ] 4.1 Create `scrum_workflow/utils/session-context.js` implementing the context aggregation logic following the same ESM module pattern as `decision-extraction.js` and `risk-extraction.js`
-  - [ ] 4.2 Export `scanOpenStories(sprintsDir)` — scans `_scrum-output/sprints/` for non-terminal story files; returns array of `{ ticket, status, title }`
-  - [ ] 4.3 Export `loadRecentDecisions(decisionsDir, limit = 5)` — scans decisions dir, returns most recent N DR records; returns array of `{ drNumber, decisionSummary, ticket, date }`
-  - [ ] 4.4 Export `loadActiveRisks(risksDir)` — reuses pattern from `risk-extraction.js` `filterActiveRiskNotes()`; returns array of `{ rnNumber, riskDescription, severity, affectedArea, ticket }`
-  - [ ] 4.5 Export `deriveNextSteps(openStories)` — maps story status to actionable suggestions (see status-to-action mapping in Dev Notes)
-  - [ ] 4.6 Export `formatSessionSummary(openStories, recentDecisions, activeRisks, nextSteps)` — renders the structured session output
-  - [ ] 4.7 Export `parseFrontmatter(content)` — pure string YAML frontmatter parser (mirrors approach in `risk-extraction.js` `parseRNFrontmatter()`)
+- [x] Task 4: Create `session-context.js` utility (AC: #1, #2, #3)
+  - [x] 4.1 Create `scrum_workflow/utils/session-context.js` implementing the context aggregation logic following the same ESM module pattern as `decision-extraction.js` and `risk-extraction.js`
+  - [x] 4.2 Export `scanOpenStories(sprintsDir)` — scans `_scrum-output/sprints/` for non-terminal story files; returns array of `{ ticket, status, title }`
+  - [x] 4.3 Export `loadRecentDecisions(decisionsDir, limit = 5)` — scans decisions dir, returns most recent N DR records; returns array of `{ drNumber, decisionSummary, ticket, date }`
+  - [x] 4.4 Export `loadActiveRisks(risksDir)` — reuses pattern from `risk-extraction.js` `filterActiveRiskNotes()`; returns array of `{ rnNumber, riskDescription, severity, affectedArea, ticket }`
+  - [x] 4.5 Export `deriveNextSteps(openStories)` — maps story status to actionable suggestions (see status-to-action mapping in Dev Notes)
+  - [x] 4.6 Export `formatSessionSummary(openStories, recentDecisions, activeRisks, nextSteps)` — renders the structured session output
+  - [x] 4.7 Export `parseFrontmatter(content)` — pure string YAML frontmatter parser (mirrors approach in `risk-extraction.js` `parseRNFrontmatter()`)
 
-- [ ] Task 5: Write ATDD tests (AC: #1, #2, #3)
-  - [ ] 5.1 Create `scrum_workflow/__tests__/session-start/ac1-context-loading.test.js` — tests that open stories, decisions, and risks are correctly loaded and aggregated
-  - [ ] 5.2 Create `scrum_workflow/__tests__/session-start/ac2-session-summary-format.test.js` — tests that summary output contains all required sections and developer can identify next action
-  - [ ] 5.3 Create `scrum_workflow/__tests__/session-start/ac3-retrieval-performance.test.js` — tests with 100+ mock artifacts that scan completes within time budget
+- [x] Task 5: Write ATDD tests (AC: #1, #2, #3)
+  - [x] 5.1 Create `scrum_workflow/__tests__/session-start/ac1-context-loading.test.js` — tests that open stories, decisions, and risks are correctly loaded and aggregated
+  - [x] 5.2 Create `scrum_workflow/__tests__/session-start/ac2-session-summary-format.test.js` — tests that summary output contains all required sections and developer can identify next action
+  - [x] 5.3 Create `scrum_workflow/__tests__/session-start/ac3-retrieval-performance.test.js` — tests with 100+ mock artifacts that scan completes within time budget
 
 ## Dev Notes
 
@@ -423,12 +423,27 @@ None
 
 ### Completion Notes List
 
-_To be filled in by dev agent after implementation_
+- All 7 new files created as specified in the story. Story 7.3 is entirely additive — no existing files were modified.
+- `session-context.js` implements 6 exported functions: `parseFrontmatter`, `scanOpenStories`, `loadRecentDecisions`, `loadActiveRisks`, `deriveNextSteps`, `formatSessionSummary`.
+- Pure string YAML frontmatter parser implemented (NFR-2 compliant — no external YAML library).
+- All file scanning uses `readdirSync` (not recursive glob) for SC-13 performance compliance.
+- Graceful degradation: all three load functions return empty arrays when directories don't exist or files are unreadable.
+- `session-context.js` is strictly READ-ONLY: no `writeFileSync` or `mkdirSync` imports (Architecture Pattern 4 compliance).
+- ATDD test suite: 83 tests across 3 files — all passing (AC1: 35 tests, AC2: 30 tests, AC3: 18 tests).
+- Performance tests verified: full scan of 150 sprint dirs + 150 DRs + 150 RNs completes in under 5000ms (well within SC-13 requirement of 10 seconds).
+- Pre-existing test failures in `__tests__/integration/yaml-preservation.test.ts` (2 failures) are NOT caused by Story 7.3 — confirmed by checking git history.
 
 ### File List
 
-_To be filled in by dev agent after implementation_
+- scrum_workflow/commands/session-start.md (NEW)
+- scrum_workflow/workflows/session-start.md (NEW)
+- scrum_workflow/skills/session-start/SKILL.md (NEW)
+- scrum_workflow/utils/session-context.js (NEW)
+- scrum_workflow/__tests__/session-start/ac1-context-loading.test.js (NEW)
+- scrum_workflow/__tests__/session-start/ac2-session-summary-format.test.js (NEW)
+- scrum_workflow/__tests__/session-start/ac3-retrieval-performance.test.js (NEW)
 
 ## Change Log
 
 - 2026-04-09: Story 7.3 created — Implement Session Start & Context Loading (claude-sonnet-4-6)
+- 2026-04-09: Story 7.3 implemented — all 7 files created, 83 ATDD tests passing, status set to review (claude-sonnet-4-6)

@@ -4,16 +4,24 @@
 
 ---
 
+> **Note:** The authoritative definition of all states and transitions lives in [`scrum_workflow/context/standards.md`](../context/standards.md) — Story Status State Machine section. This document provides diagrams and supplementary detail. In case of any conflict, `standards.md` is the single source of truth.
+
+---
+
 ## Status Values
 
 | Status | Description | Next States |
 |--------|-------------|-------------|
 | `draft` | Story created, not yet refined | → refinement |
-| `refinement` | Multi-agent refinement in progress | → ready (on PASS) |
-| `ready` | Readiness check passed, ready for dev | → in-dev |
-| `in-dev` | Development in progress | → in-review |
-| `in-review` | Code review complete, awaiting approval | → done (approve) / in-review (reject) |
+| `refinement` | Multi-agent refinement in progress (implementation-internal sub-state, not in FR-4's 9 states) | → refined (on completion) |
+| `refined` | Refinement complete, awaiting validation | → ready-for-dev |
+| `ready-for-dev` | Validated and ready for implementation | → in-progress |
+| `in-progress` | Development in progress | → review |
+| `review` | Implementation complete, awaiting review | → approved / changes-needed |
+| `approved` | Review passed, awaiting human approval | → done |
+| `changes-needed` | Review found issues requiring fixes | → in-progress (after fixes) |
 | `done` | Story complete with human approval | Terminal state |
+| `cancelled` | Story cancelled by explicit user decision | Terminal state (from any non-terminal state) |
 
 ---
 
@@ -23,36 +31,69 @@
 stateDiagram-v2
     [*] --> draft
     draft --> refinement: /scrum-refine-ticket
-    refinement --> ready: Readiness Check PASS
-    refinement --> draft: Readiness Check FAIL
-    ready --> inDev: /scrum-dev-story
-    inDev --> inReview: /scrum-dev-story review
-    inReview --> done: Human APPROVE
-    inReview --> inReview: Human REJECT + fixes
+    refinement --> refined: Refinement complete
+    refined --> readyForDev: /scrum-refine-story PASS
+    refined --> refined: /scrum-refine-story FAIL
+    readyForDev --> inProgress: /scrum-dev-story
+    inProgress --> review: Implementation complete
+    review --> approved: /scrum-review-story APPROVED
+    review --> changesNeeded: /scrum-review-story CHANGES-NEEDED
+    changesNeeded --> inProgress: /scrum-dev-story (fix findings)
+    approved --> done: /scrum-approve (human sign-off)
     done --> [*]
+    draft --> cancelled: Manual decision
+    refinement --> cancelled: Manual decision
+    refined --> cancelled: Manual decision
+    readyForDev --> cancelled: Manual decision
+    inProgress --> cancelled: Manual decision
+    review --> cancelled: Manual decision
+    approved --> cancelled: Manual decision
+    changesNeeded --> cancelled: Manual decision
+    cancelled --> [*]
 ```
+
+> **Note on `any → cancelled`:** The diagram lists each non-terminal source state explicitly (draft, refinement, refined, ready-for-dev, in-progress, review, approved, changes-needed). `done` is intentionally omitted — it is a terminal state and cannot be cancelled. The authoritative rule is: **any non-terminal state → cancelled** (see `standards.md` Valid Transitions table).
 
 ---
 
 ## Guard Conditions
 
-| Transition | Guard Condition | Error if Violated |
-|------------|-----------------|-------------------|
-| → `ready` | All 4 readiness criteria pass | Status reverted to `draft` |
-| → `in-dev` | Status must be `ready` | Halt with error |
-| → `in-review` | Implementation complete | Halt if tasks incomplete |
-| → `done` | Explicit human approval | Never automatic |
+See [`scrum_workflow/context/standards.md`](../context/standards.md) — Valid Transitions table for the complete, authoritative guard conditions for every transition. That table is the single source of truth; no duplicate summary is maintained here.
 
 ---
 
-## Readiness Criteria (for → `ready` transition)
+## Readiness Criteria (for → `ready-for-dev` transition)
 
-1. ✅ **Description complete and clear**
-2. ✅ **Acceptance criteria comprehensive**
-3. ✅ **Estimation provided**
-4. ✅ **Tasks/subtasks broken down**
+The `/scrum-refine-story` command validates against these criteria:
 
-**If any criteria FAIL**: Status reverts to `draft` with documented reasons
+1. ✅ **Acceptance Criteria** — All acceptance criteria are testable and unambiguous
+2. ✅ **Tasks Defined** — All tasks/subtasks are clearly defined
+3. ✅ **Dev Notes** — Dev Notes section contains necessary context
+4. ✅ **No Placeholders** — No placeholders or TODO markers in story content
+5. ✅ **Dependencies** — Dependencies are identified and documented
+
+**If any criteria FAIL**: Status remains `refined` with documented reasons
+
+---
+
+## Three-Agent Workflow (Epic 11)
+
+The state machine supports the three-agent pattern split from Epic 11:
+
+```
+draft → refinement → refined → ready-for-dev → in-progress → review → approved/changes-needed
+              ↑              ↑               ↑            ↑
+        /refine-ticket  /refine-story   /dev-story  /review-story
+```
+
+### Agent Pattern Mapping
+
+| Command | Pattern | Status Transition |
+|---------|---------|-------------------|
+| `/scrum-refine-ticket` | Sub-Agent Spawning | `draft` → `refinement` → `refined` |
+| `/scrum-refine-story` | Feature List as Immutable Contract | `refined` → `ready-for-dev` |
+| `/scrum-dev-story` | Inversion of Control | `ready-for-dev` → `in-progress` → `review` |
+| `/scrum-review-story` | AI-Assisted Code Review | `review` → `approved` or `changes-needed` |
 
 ---
 
@@ -99,19 +140,24 @@ def update_status(story_path: str, new_status: str) -> None:
 
 ## Common Status Patterns
 
-### New Story Flow
+### New Story Flow (Three-Agent Workflow)
 ```
-draft → refinement → ready → in-dev → in-review → done
-```
-
-### Rejected Story Flow
-```
-... → in-review → (fix issues) → in-review → done
+draft → refinement → refined → ready-for-dev → in-progress → review → approved → done
 ```
 
-### Failed Readiness Flow
+### Validation Failed Flow
 ```
-draft → refinement → (FAIL) → draft → refinement → ready → ...
+draft → refinement → refined → (validation FAIL) → refined → (fix issues) → ready-for-dev → ...
+```
+
+### Review Changes-Needed Flow
+```
+... → review → changes-needed → (fix issues) → review → approved → done
+```
+
+### Rejected Human Approval Flow
+```
+... → approved → (human REJECT) → changes-needed → review → approved → done
 ```
 
 ---
@@ -134,6 +180,7 @@ yq '.status' _scrum-output/sprints/SW-XXX/story.md
 - [Write Boundary Rules](07-write-boundary-rules.md) - File write restrictions
 - [Common Anti-Patterns](11-anti-patterns.md) - What NOT to do
 - [Implementation Patterns](12-implementation-patterns.md) - Pattern 1: Guard Condition Enforcement
+- [Command Reference](04-command-reference.md) - Three-agent commands
 
 ---
 

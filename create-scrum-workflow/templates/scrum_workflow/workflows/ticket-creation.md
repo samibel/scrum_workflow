@@ -1,11 +1,11 @@
 # Ticket Creation Workflow
 
-Step-by-step workflow for the `/scrum-create-ticket` command. Transforms a natural language idea into a structured story file conforming to the story file schema (schema_version: 1). The workflow parses input, evaluates quality, loads project context, generates story content, estimates complexity, and writes the complete story file atomically.
+Step-by-step workflow for the `/scrum-create-ticket` command. Transforms a natural language idea into a structured story file conforming to the story file schema (schema_version: "1.0.0"). The workflow parses input, evaluates quality, loads project context, generates story content, estimates complexity, and writes the complete story file atomically.
 
 ## Prerequisites
 
 - Framework installed with templates in `scrum_workflow/templates/`
-- Project context generated via `/scrum-create-project-context` (context/index.md must exist) - optional but recommended
+- Project context generated via `/scrum-create-project-context` (_scrum-output/context/index.md must exist) - optional but recommended
 - Estimation reference data available at `scrum_workflow/data/estimation-reference.yaml`
 
 ## Step 0: Validation
@@ -16,7 +16,7 @@ Validate prerequisites and guard conditions before any processing begins.
 
 Invoke `scrum_workflow/skills/prerequisite-validation/SKILL.md` to check for project context:
 
-- Check if `context/index.md` exists at project root
+- Check if `_scrum-output/context/index.md` exists at project root
 - If context exists, it will be loaded in Step 3 to improve story quality
 - If context does not exist, issue a warning but proceed (context is optional for `/scrum-create-ticket`)
 
@@ -127,7 +127,7 @@ Load project context to inform story generation with project-specific knowledge.
 
 ### Step 3.1: Check for Project Context
 
-Check if `context/index.md` exists at the project root.
+Check if `_scrum-output/context/index.md` exists at the project root.
 
 **If not found**, return an actionable error:
 
@@ -138,28 +138,28 @@ Fix: Run '/scrum-create-project-context' to generate project context files befor
 
 ### Step 3.2: Load Project Context Index
 
-Read `context/index.md` to understand the project's structure, domains, technology stack, and agent loading map.
+Read `_scrum-output/context/index.md` to understand the project's structure, domains, technology stack, and agent loading map.
 
 ### Step 3.3: Load Relevant Domain Context
 
 Based on keywords in the ticket description, identify and load relevant domain context files:
 
-- API, endpoint, service, database keywords -- load `context/backend.md`
-- UI, component, page, form keywords -- load `context/frontend.md`
-- Test, coverage, assertion keywords -- load `context/testing.md`
-- Deploy, CI, pipeline, Docker keywords -- load `context/devops.md`
-- Architecture, pattern, design keywords -- load `context/architecture.md`
+- API, endpoint, service, database keywords -- load `_scrum-output/context/backend.md`
+- UI, component, page, form keywords -- load `_scrum-output/context/frontend.md`
+- Test, coverage, assertion keywords -- load `_scrum-output/context/testing.md`
+- Deploy, CI, pipeline, Docker keywords -- load `_scrum-output/context/devops.md`
+- Architecture, pattern, design keywords -- load `_scrum-output/context/architecture.md`
 
 **Loading rules:**
 
 - Load all domain files that match keywords in the description
 - If a domain file is referenced but does not exist on disk, log a warning and continue with available context
-- If no specific keywords match, load only `context/index.md`
+- If no specific keywords match, load only `_scrum-output/context/index.md`
 
 **On missing domain file**, warn the user but proceed:
 
 ```
-Warning: Domain context file 'context/{domain}.md' not found. Proceeding with available context.
+Warning: Domain context file '_scrum-output/context/{domain}.md' not found. Proceeding with available context.
 Tip: Ensure all referenced domain files exist or run '/scrum-create-project-context' to regenerate context files.
 ```
 
@@ -256,17 +256,65 @@ Read the story template from `scrum_workflow/templates/story.md`.
 
 Replace template placeholders with generated content:
 
-**YAML frontmatter fields** (in this exact order):
+**YAML frontmatter fields** (in this exact order per Architecture spec):
 
 | Field | Value |
 |---|---|
-| `schema_version` | `1` |
+| `schema_version` | `"1.0.0"` |
 | `ticket` | `"SW-XXX"` (from input) |
 | `title` | `"<generated title>"` (from Step 4.1) |
 | `status` | `draft` |
+| `type` | `"<inferred type>"` (from Step 7.2a) |
+| `risk_level` | `"<assigned risk>"` (from Step 7.2b) |
+| `domain_tags` | `<tags array>` (from Step 7.2c) |
 | `estimation` | `<calculated>` (from Step 5.3) |
-| `created` | `<today>` (ISO 8601 format: YYYY-MM-DD) |
-| `updated` | `<today>` (ISO 8601 format: YYYY-MM-DD) |
+| `created` | `<today>` (ISO 8601 UTC format: YYYY-MM-DDTHH:mm:ssZ) |
+| `updated` | `<today>` (ISO 8601 UTC format: YYYY-MM-DDTHH:mm:ssZ) |
+| `status_history` | `<initial entry>` (from Step 7.2d) |
+
+#### Step 7.2a: Infer Story Type
+
+Infer the `type` field from keywords in the ticket description:
+
+| Keywords | Inferred Type |
+|---|---|
+| "add", "create", "new", "implement", "introduce" | `feature` |
+| "fix", "bug", "broken", "error", "crash", "regression" | `bugfix` |
+| "refactor", "clean up", "restructure", "simplify", "reorganize" | `refactor` |
+| "CI", "deploy", "pipeline", "Docker", "infrastructure", "config" | `infrastructure` |
+
+If no keywords match, default to `feature`.
+
+#### Step 7.2b: Assign Risk Level
+
+Assign the `risk_level` field. For Phase 1, default to `medium` for all stories. Valid values: `low`, `medium`, `high`, `critical`.
+
+#### Step 7.2c: Populate Domain Tags
+
+Populate the `domain_tags` array from the domain context files loaded in Step 3:
+
+- For each domain context file loaded (backend, frontend, testing, devops, architecture), add the domain name as a tag
+- If no domain context was loaded, set `domain_tags` to an empty array `[]`
+- Example: `[backend, testing]` if backend and testing context files were loaded
+
+#### Step 7.2d: Generate Initial Status History Entry
+
+Generate the initial `status_history` entry:
+
+```yaml
+status_history:
+  - from: null
+    to: draft
+    timestamp: <ISO 8601 UTC timestamp, e.g., 2026-04-06T10:00:00Z>
+    trigger: /scrum-create-ticket
+    actor: human
+```
+
+- `from` is always `null` for the initial entry (no previous status)
+- `to` is always `draft` (entry point to lifecycle)
+- `timestamp` is the current UTC time in ISO 8601 format
+- `trigger` is always `/scrum-create-ticket` for this command
+- `actor` is always `human` for user-triggered ticket creation
 
 **Markdown body sections:**
 
@@ -316,12 +364,18 @@ This workflow may NOT write:
 - `review-*.md` -- Managed by `/scrum-dev-story`
 - `approval.md` -- Managed by approval workflow
 - `scrum_workflow/` -- Framework files are read-only during execution
-- `context/` -- Context files are managed by `/scrum-create-project-context`
+- `_scrum-output/context/` -- Context files are managed by `/scrum-create-project-context`
 
 ## Validation Rules
 
 - Generated `story.md` must have valid YAML frontmatter with all required fields
-- YAML frontmatter field order must match: `schema_version`, `ticket`, `title`, `status`, `estimation`, `created`, `updated`
+- YAML frontmatter field order must match: `schema_version`, `ticket`, `title`, `status`, `type`, `risk_level`, `domain_tags`, `estimation`, `created`, `updated`, `status_history`
+- `schema_version` must be `"1.0.0"` (semver string, per Architecture spec)
+- `type` must be one of: `feature`, `bugfix`, `refactor`, `infrastructure`
+- `risk_level` must be one of: `low`, `medium`, `high`, `critical`
+- `domain_tags` must be a YAML array (may be empty `[]`)
+- `status_history` must contain exactly one entry with `from: null`, `to: draft`, valid ISO 8601 UTC `timestamp`, `trigger: /scrum-create-ticket`, `actor: human`
+- All timestamps (`created`, `updated`, `status_history[].timestamp`) must use ISO 8601 UTC format (e.g., `2026-04-06T10:00:00Z`)
 - Status must be set to `draft` (entry point to state machine)
 - All YAML fields must use snake_case
 - All file names and paths must use kebab-case

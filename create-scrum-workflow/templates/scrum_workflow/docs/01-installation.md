@@ -78,9 +78,10 @@ ls .claude/skills/scrum-create-project-context.md
 # Create Scrum Workflow output directory
 mkdir -p _scrum-output/context
 mkdir -p _scrum-output/docs
+mkdir -p _scrum-output/skills
 
 # Create sprints directory
-mkdir -p sprints
+mkdir -p _scrum-output/sprints
 
 # Verify structure
 tree -L 2 . || find . -maxdepth 2 -type d
@@ -96,15 +97,15 @@ your-project/
 │       ├── refine-ticket.md
 │       └── create-project-context.md
 ├── _scrum-output/
-│   ├── context/               # Project context, architecture, planning
-│   ├── docs/                  # Story files, reviews, implementation artifacts
-│   └── skills/                # Generated domain-specific skills
+│   ├── context/               # Project context and domain knowledge
+│   ├── docs/                  # Generated documentation
+│   └── skills/                # Generated skill files
 ├── scrum_workflow/
 │   ├── agents/
 │   ├── commands/
 │   ├── workflows/
 │   └── ...
-└── _scrum-output/sprints/                   # Sprint folders (SW-101, SW-102, etc.)
+└── _scrum-output/sprints/     # Sprint folders (SW-101, SW-102, etc.)
 ```
 
 ### Step 4: Configure Claude Code Settings
@@ -148,8 +149,8 @@ active_agents:
   - qa
 
 # Output locations
-story_location: "{project-root}/_scrum-output/docs"
-sprint_location: "{project-root}/sprints"
+story_location: "{project-root}/_scrum-output/context"
+sprint_location: "{project-root}/_scrum-output/sprints"
 ```
 
 ### Step 6: Verify Installation
@@ -185,7 +186,7 @@ cp scrum_workflow/.claude/skills/*.md .claude/skills/
 
 # Create required directories
 mkdir -p _scrum-output/{context,docs,skills}
-mkdir -p sprints
+mkdir -p _scrum-output/sprints
 ```
 
 **Update workflow** (when upstream changes):
@@ -214,7 +215,8 @@ mkdir -p "$TARGET_DIR/scrum_workflow"
 mkdir -p "$TARGET_DIR/.claude/skills"
 mkdir -p "$TARGET_DIR/_scrum-output/context"
 mkdir -p "$TARGET_DIR/_scrum-output/docs"
-mkdir -p "$TARGET_DIR/sprints"
+mkdir -p "$TARGET_DIR/_scrum-output/skills"
+mkdir -p "$TARGET_DIR/_scrum-output/sprints"
 
 # Copy framework
 echo "Copying framework files..."
@@ -328,7 +330,7 @@ Run this test to verify installation:
 
 **Problem**: Cannot write to sprints directory
 - **Solution**: Check directory permissions: `ls -la _scrum-output/sprints/`
-- **Solution**: Create directory if missing: `mkdir -p sprints`
+- **Solution**: Create directory if missing: `mkdir -p _scrum-output/sprints`
 
 ---
 

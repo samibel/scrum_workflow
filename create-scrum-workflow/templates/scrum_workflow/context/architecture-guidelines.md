@@ -107,3 +107,89 @@ Advantages:
 5. **Convention Over Configuration**: Sensible defaults with minimal required configuration
 6. **Copy-Based Distribution**: Simple file copying for framework updates
 7. **Framework Independence**: No project-specific state in framework layer
+
+## Rejection Flow Architecture
+
+The rejection flow enables multi-round review cycles where stories can be rejected, re-implemented with context, and re-reviewed.
+
+### Key Components
+
+**1. Verdict Field (Required)**
+- Location: Review artifact frontmatter (`review-N.md`)
+- Values: `approved` or `changes-needed`
+- Purpose: Explicit declaration of review outcome
+
+**2. Status Transition: review → changes-needed**
+- Trigger: `/scrum-review-story` with verdict `changes-needed`
+- Status update: Atomic write to story.md
+- History tracking: Appends entry to `status_history` array
+- Actor: `review-agent`
+
+**3. Status Transition: changes-needed → in-progress**
+- Trigger: `/scrum-dev-story` on story with status `changes-needed`
+- Status update: Atomic write to story.md
+- History tracking: Appends entry to `status_history` array
+- Actor: `developer-agent` or `human`
+- Context loading: Previous review findings loaded as implementation context
+
+**4. Review Findings Loading**
+- When story status is `changes-needed`, dev-story workflow:
+  - Scans for most recent review artifact (`review-N.md`)
+  - Loads findings, severity, and suggested fixes
+  - Provides context to implementation agent
+  - Enables targeted fixes based on specific feedback
+
+**5. Previous Review Comparison**
+- When N > 1 (subsequent reviews), review-story workflow:
+  - Loads all previous review artifacts
+  - Cross-references current findings with previous findings
+  - Classifies findings as: Resolved, Unresolved, New, Regression
+  - Includes comparison table in review report
+
+### Rejection Cycle State Machine
+
+```
+[review] → (verdict: changes-needed) → [changes-needed]
+                                            │
+                                            │ /scrum-dev-story
+                                            │ (loads review-N.md)
+                                            ▼
+                                      [in-progress]
+                                            │
+                                            │ (fixes applied)
+                                            ▼
+                                      [review]
+                                            │
+                            ┌───────────────┴───────────────┐
+                            │                               │
+                            ▼                               ▼
+                    (verdict: approved)            (verdict: changes-needed)
+                            │                               │
+                            ▼                               ▼
+                      [approved]                      [changes-needed]
+```
+
+### Write Boundary Enforcement
+
+**Review agent MAY write:**
+- `review-N.md` (new review artifact with verdict field)
+- `story.md` status field (`review → approved` or `review → changes-needed`)
+- `story.md status_history` array (append new entry)
+
+**Dev agent MAY write (when status is changes-needed):**
+- `story.md` status field (`changes-needed → in-progress`)
+- `story.md status_history` array (append new entry)
+- Code files (implementation based on review findings)
+
+**Both agents MAY NOT write:**
+- Previous review artifacts (read-only for context)
+- Other agents' output files
+- Framework files
+
+### Benefits
+
+1. **Quality Gate**: Explicit rejection prevents low-quality code from progressing
+2. **Context Preservation**: Review findings are preserved and loaded for re-implementation
+3. **Progress Tracking**: Multi-round review history shows quality evolution
+4. **Targeted Fixes**: Developers see specific issues that need addressing
+5. **Verification**: Subsequent reviews verify previous findings were addressed

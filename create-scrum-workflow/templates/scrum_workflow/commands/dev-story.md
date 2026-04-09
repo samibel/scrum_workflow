@@ -25,6 +25,7 @@ Ticket number in the format: `/scrum-dev-story SW-XXX`
 - **Ticket number**: `SW-XXX` format where XXX is a zero-padded 3-digit number (e.g., `SW-001`, `SW-042`, `SW-103`)
 - **Prerequisite**: The story file `_scrum-output/sprints/SW-XXX/story.md` must exist with `status: ready-for-dev` OR `status: changes-needed`
 - **Plan**: The execution plan file `_scrum-output/sprints/SW-XXX/plan.md` MUST exist (created by `/scrum-refine-story`) — this is enforced by FR-20 guard condition
+- **For re-implementation**: When status is `changes-needed`, previous review findings will be loaded as context
 
 ## Output
 
@@ -93,6 +94,8 @@ After status check passes, load plan.md content:
 The paths to `in-progress` are:
 - Initial implementation: `refined → ready-for-dev → in-progress`
 - Re-implementation after rejection: `review → changes-needed → in-progress`
+
+**Valid Status Transitions** — see the authoritative list in [`scrum_workflow/context/standards.md`](../context/standards.md) — Story Status State Machine section. All valid states, transitions, and guard conditions are defined there.
 
 ## Error Handling
 

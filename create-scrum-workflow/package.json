@@ -22,7 +22,9 @@
   ],
   "scripts": {
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "sync-templates": "node scripts/sync-templates.js",
+    "check-sync": "node scripts/sync-templates.js --check"
   },
   "dependencies": {
     "commander": "^13.0.0",

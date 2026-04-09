@@ -4,6 +4,20 @@ Schneller Überblick aller Dokumentationen und wo du anfangen solltest.
 
 ---
 
+## 🎨 Visual First — Enhanced Readability
+
+Diese Dokumentation nutzt **Hybrid-Ansatz:**
+- 🎨 **Excalidraw SVGs** für Überblicks-Grafiken (Readme, Benefits, Architecture)
+- 📊 **Mermaid Diagramme** für technische Details (State Machine, Commands)
+
+**Alle Diagramme:**
+- ✅ Nativ in GitHub rendert
+- ✅ Responsive & skalierbar
+- ✅ Englische Labels
+- ✅ Scrum Team Fokus
+
+---
+
 ## 🎯 Start Here (Wähle deine Rolle)
 
 ### 👶 Ich bin komplett neu hier
@@ -26,6 +40,13 @@ Schneller Überblick aller Dokumentationen und wo du anfangen solltest.
 - ✅ Mermaid Diagramme für jeden Command
 - ✅ Cheatsheet & Timeline
 - ✅ Zum Ausdrucken/Bookmarken
+
+### 🎨 Ich will die Visualisierungen bearbeiten
+→ **[EXCALIDRAW-GUIDE.md](./EXCALIDRAW-GUIDE.md)** (10 Minuten)
+- ✅ Wie man SVG-Dateien öffnet & bearbeitet
+- ✅ Style Guide für Konsistenz
+- ✅ Best Practices & Checklisten
+- ✅ Tools & Resources
 
 ### 🏗️ Ich will die Architecture verstehen
 → **[ARCHITECTURE-VISUAL.md](./ARCHITECTURE-VISUAL.md)** (20 Minuten)

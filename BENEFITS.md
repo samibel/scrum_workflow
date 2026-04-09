@@ -25,34 +25,7 @@ Scrum Workflow solves these with **separation of concerns, immutable contracts, 
 
 ### Before vs. After
 
-```mermaid
-graph TD
-    subgraph Before["❌ BEFORE: Traditional AI Dev"]
-        A1["Vague Spec<br/>(AI or PO)"] -->|"high risk"| B1["Implement<br/>(AI)"]
-        B1 -->|"Same AI = blind spots"| C1["Self-Review<br/>(AI)"]
-        C1 -->|"Misses obvious bugs"| D1["🚢 SHIP<br/>(pray it works)"]
-        D1 -->|"Bugs found in PROD"| E1["On-call pain<br/>Rework<br/>Lost trust"]
-    end
-    
-    subgraph After["✅ AFTER: Scrum Workflow"]
-        A2["Multi-Agent<br/>Refinement<br/>Arch+Dev+QA"] -->|"Clear spec"| B2["Implement<br/>(AI follows plan)"]
-        B2 -->|"Separate Reviewer"| C2["Code Review<br/>(different perspective)"]
-        C2 -->|"✓ Approved"| D2["Human Gate<br/>(explicit sign-off)"]
-        D2 -->|"Audit trail"| E2["🎉 SHIP with confidence<br/>Fewer bugs<br/>Happy team"]
-    end
-    
-    style A1 fill:#ffcdd2
-    style B1 fill:#ffcdd2
-    style C1 fill:#ffcdd2
-    style D1 fill:#ffcdd2
-    style E1 fill:#ffcdd2
-    
-    style A2 fill:#c8e6c9
-    style B2 fill:#c8e6c9
-    style C2 fill:#c8e6c9
-    style D2 fill:#c8e6c9
-    style E2 fill:#c8e6c9
-```
+![Scrum Workflow Before/After](./BENEFITS-BEFORE-AFTER.svg)
 
 
 ### Scrum Workflow Phases (Detailed)

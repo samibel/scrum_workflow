@@ -6,30 +6,7 @@ Visuelle Erklärung wie Scrum Workflow intern funktioniert.
 
 ## System Overview
 
-```mermaid
-graph TB
-    User["👤 User<br/>/scrum-* commands"]
-    
-    Platform["🖥️ AI Platform<br/>Claude Code / Cursor<br/>Windsurf / Copilot<br/>Cline / Universal"]
-    
-    CLI["📦 CLI Installer<br/>create-scrum-workflow<br/>install | update | validate"]
-    
-    Framework["⚙️ Framework<br/>scrum_workflow/<br/>Commands + Agents"]
-    
-    Output["📁 Output<br/>_scrum-output/<br/>Artifacts"]
-    
-    User -->|"invokes"| Platform
-    Platform -->|"setup"| CLI
-    CLI -->|"installs"| Framework
-    Framework -->|"generates"| Output
-    Platform -->|"executes"| Framework
-    
-    style User fill:#e3f2fd
-    style Platform fill:#c8e6c9
-    style CLI fill:#fff9c4
-    style Framework fill:#ffe0b2
-    style Output fill:#f8bbd0
-```
+![Scrum Workflow System Architecture](./ARCHITECTURE-SYSTEM.svg)
 
 ---
 

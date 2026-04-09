@@ -54,6 +54,12 @@ create-scrum-workflow install
 
 ---
 
+## 📊 How It Works
+
+![Scrum Workflow Overview](./README-HERO.svg)
+
+---
+
 ## ✨ Why Use Scrum Workflow?
 
 ### Problem It Solves

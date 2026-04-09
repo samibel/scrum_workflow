@@ -1,15 +1,18 @@
-import { existsSync, mkdtempSync, readFileSync, writeFileSync, readdirSync } from 'node:fs'
+import { existsSync, mkdtempSync, readFileSync, writeFileSync, readdirSync, statSync } from 'node:fs'
 import { join, resolve, dirname } from 'node:path'
 import { tmpdir } from 'node:os'
 import { createRequire } from 'node:module'
 import fse from 'fs-extra'
-import { intro, spinner, log, outro } from '@clack/prompts'
+import { intro, outro } from '@clack/prompts'
 import yaml from 'js-yaml'
 import { readLockFile, writeLockFile } from '../integrity/lock-file.js'
 import { hashFile, hashDirectory } from '../integrity/hash-tracker.js'
 import { resolveInstallPaths } from '../core/path-resolver.js'
 import { loadPlatformRegistry } from '../platform/platform-registry.js'
 import { registerSkills } from '../core/skill-registrar.js'
+import * as output from '../core/output.js'
+import * as progress from '../core/progress.js'
+import { getNextStep } from '../core/next-steps.js'
 
 const { copySync, ensureDirSync, removeSync } = fse
 
@@ -66,25 +69,17 @@ function serializeFrontmatter(frontmatter) {
   return yaml.dump(frontmatter, { indent: 2, lineWidth: 120 })
 }
 
-// ── Helper: Migrate status_history in story files ────────────────────
+// ── Helper: Find story directories ───────────────────────────────────
 /**
- * Scan _scrum-output/sprints/ for story.md files missing status_history
- * and add retroactive entry.
+ * Scan _scrum-output/sprints/ for subdirectories containing story.md.
  * @param {string} targetDir - Target project directory
- * @returns {{ migrated: string[], warnings: string[], errors: string[] }}
+ * @returns {string[]} Array of directory names containing story.md
  */
-function migrateStoryStatusHistory(targetDir) {
+function findStoryDirs(targetDir) {
   const sprintsDir = join(targetDir, '_scrum-output', 'sprints')
-  const migrated = []
-  const warnings = []
-  const errors = []
+  if (!existsSync(sprintsDir)) return []
 
-  if (!existsSync(sprintsDir)) {
-    return { migrated, warnings, errors }
-  }
-
-  // Scan all subdirectories for story.md
-  const storyDirs = readdirSync(sprintsDir, { withFileTypes: true })
+  return readdirSync(sprintsDir, { withFileTypes: true })
     .filter((dirent) => dirent.isDirectory())
     .filter((dirent) => {
       return readdirSync(join(sprintsDir, dirent.name), { withFileTypes: true }).some(
@@ -92,6 +87,25 @@ function migrateStoryStatusHistory(targetDir) {
       )
     })
     .map((dirent) => dirent.name)
+}
+
+// ── Helper: Migrate status_history in story files ────────────────────
+/**
+ * Scan _scrum-output/sprints/ for story.md files missing status_history
+ * and add retroactive entry.
+ * @param {string} targetDir - Target project directory
+ * @returns {{ migrated: string[], errors: string[] }}
+ */
+function migrateStoryStatusHistory(targetDir) {
+  const sprintsDir = join(targetDir, '_scrum-output', 'sprints')
+  const migrated = []
+  const errors = []
+
+  if (!existsSync(sprintsDir)) {
+    return { migrated, errors }
+  }
+
+  const storyDirs = findStoryDirs(targetDir)
 
   for (const storyDir of storyDirs) {
     const storyPath = join(sprintsDir, storyDir, 'story.md')
@@ -131,7 +145,7 @@ function migrateStoryStatusHistory(targetDir) {
     }
   }
 
-  return { migrated, warnings, errors }
+  return { migrated, errors }
 }
 
 // ── Helper: Check plan.md for ready-for-dev stories ──────────────────
@@ -149,15 +163,7 @@ function checkPlanMdForReadyStories(targetDir) {
     return { flagged, suggestions }
   }
 
-  // Scan all subdirectories for story.md
-  const storyDirs = readdirSync(sprintsDir, { withFileTypes: true })
-    .filter((dirent) => dirent.isDirectory())
-    .filter((dirent) => {
-      return readdirSync(join(sprintsDir, dirent.name), { withFileTypes: true }).some(
-        (dent) => dent.isFile() && dent.name === 'story.md'
-      )
-    })
-    .map((dirent) => dirent.name)
+  const storyDirs = findStoryDirs(targetDir)
 
   for (const storyDir of storyDirs) {
     const storyPath = join(sprintsDir, storyDir, 'story.md')
@@ -195,15 +201,7 @@ function validateMigration(targetDir) {
     return { valid: true, results: [] }
   }
 
-  // Scan all subdirectories for story.md
-  const storyDirs = readdirSync(sprintsDir, { withFileTypes: true })
-    .filter((dirent) => dirent.isDirectory())
-    .filter((dirent) => {
-      return readdirSync(join(sprintsDir, dirent.name), { withFileTypes: true }).some(
-        (dent) => dent.isFile() && dent.name === 'story.md'
-      )
-    })
-    .map((dirent) => dirent.name)
+  const storyDirs = findStoryDirs(targetDir)
 
   for (const storyDir of storyDirs) {
     const storyPath = join(sprintsDir, storyDir, 'story.md')
@@ -256,61 +254,6 @@ function validateMigration(targetDir) {
   return { valid: allValid, results }
 }
 
-// ── Helper: Generate validation report ──────────────────────────────
-/**
- * Generate a validation report string.
- * @param {{ valid: boolean, results: object[] }} validation - Validation results
- * @param {{ migrated: string[], warnings: string[], errors: string[] }} migration - Migration results
- * @param {{ flagged: string[], suggestions: string[] }} planMd - plan.md check results
- * @returns {string}
- */
-function generateValidationReport(validation, migration, planMd) {
-  const lines = ['## Migration Validation Report', '']
-
-  // Migration summary
-  if (migration.migrated.length > 0) {
-    lines.push(`### status_history Migration`)
-    lines.push(`- Files migrated: ${migration.migrated.length}`)
-    for (const f of migration.migrated) {
-      lines.push(`  - ${f}`)
-    }
-    lines.push('')
-  }
-
-  // plan.md warnings
-  if (planMd.flagged.length > 0) {
-    lines.push(`### plan.md Warnings (${planMd.flagged.length} stories)`)
-    for (let i = 0; i < planMd.flagged.length; i++) {
-      lines.push(`- **Warning:** Story ${planMd.flagged[i]} is at ready-for-dev but missing plan.md`)
-      lines.push(`  - **Suggestion:** ${planMd.suggestions[i]}`)
-    }
-    lines.push('')
-  }
-
-  // Validation results
-  lines.push(`### YAML & status_history Validation`)
-  if (validation.valid) {
-    lines.push('**Status:** All validations passed')
-    lines.push('')
-    lines.push('All YAML frontmatter is parseable and all status_history arrays are consistent.')
-  } else {
-    lines.push('**Status:** Issues found')
-    lines.push('')
-    for (const result of validation.results) {
-      if (result.status === 'fail') {
-        lines.push(`- **${result.path}:**`)
-        for (const issue of result.issues) {
-          lines.push(`  - ${issue}`)
-        }
-      }
-    }
-    lines.push('')
-    lines.push('**Next Step:** Address the issues listed above and re-run validation.')
-  }
-
-  return lines.join('\n')
-}
-
 /**
  * Update an existing scrum_workflow installation while preserving user-modified files.
  *
@@ -334,7 +277,7 @@ export async function update(options) {
   const lockData = readLockFile(targetDir)
 
   if (lockData === null) {
-    log.error('No existing installation found. Run `install` first.')
+    output.error('No existing installation found. Run `install` first.')
     outro('Update aborted')
     return
   }
@@ -355,8 +298,7 @@ export async function update(options) {
   const missing = []
 
   {
-    const s = spinner()
-    s.start('Analyzing installed files...')
+    progress.start('Analyzing installed files...')
     try {
       for (const [relPath, storedHash] of Object.entries(lockData.files)) {
         const absPath = join(targetDir, relPath)
@@ -373,9 +315,9 @@ export async function update(options) {
           userModified.push(relPath)
         }
       }
-      s.stop('File analysis complete')
+      progress.succeed('File analysis complete')
     } catch (err) {
-      s.stop('File analysis failed')
+      progress.fail('File analysis failed')
       throw err
     }
   }
@@ -394,7 +336,6 @@ export async function update(options) {
     }
 
     // Also check for new skill registration templates
-    const { readdirSync, statSync } = await import('node:fs')
     const skillTemplateNames = readdirSync(paths.skillTemplateDir).filter((entry) => {
       return statSync(join(paths.skillTemplateDir, entry)).isDirectory()
     })
@@ -428,39 +369,43 @@ export async function update(options) {
     }
 
     if (isUpToDate) {
-      log.info('Installation is up to date. No changes needed.')
-      outro('Update complete!')
+      output.info('Installation is up to date. No changes needed.')
+      outro(getNextStep('update'))
       return
     }
   }
 
   if (newFiles.length > 0) {
-    log.info(`New files available: ${newFiles.length} (will be added during update)`)
+    output.info(`New files available: ${newFiles.length} (will be added during update)`)
   }
 
   // ── Dry run: show what would happen, then exit ──────────────────────
   if (options.dryRun) {
-    log.info(
-      `Dry run — no changes will be made\n\n` +
-      `  Files to update:   ${unchanged.length + missing.length}\n` +
-      `  Files to preserve: ${userModified.length} (user-modified)\n` +
-      `  Files to restore:  ${missing.length} (currently missing)\n` +
-      `  New files to add:  ${newFiles.length}`
-    )
-    log.info('Breaking changes in this update:')
+    output.info('Dry run — no changes will be made')
+    console.log(`  Files to update:   ${unchanged.length + missing.length}`)
+    console.log(`  Files to preserve: ${userModified.length} (user-modified)`)
+    console.log(`  Files to restore:  ${missing.length} (currently missing)`)
+    console.log(`  New files to add:  ${newFiles.length}`)
+    output.info('Breaking changes in this update:')
     for (const bc of BREAKING_CHANGES) {
-      log.info(`  ${bc.from} → ${bc.to}:`)
+      console.log(`  ${bc.from} → ${bc.to}:`)
       for (const change of bc.changes) {
-        log.info(`    - ${change.field}: ${change.description}`)
+        console.log(`    - ${change.field}: ${change.description}`)
       }
     }
     if (userModified.length > 0) {
-      log.info('Would preserve:\n' + userModified.map((f) => `  ${f}`).join('\n'))
+      output.info('Would preserve:')
+      for (const f of userModified) {
+        console.log(`  ${f}`)
+      }
     }
     if (newFiles.length > 0) {
-      log.info('Would add:\n' + newFiles.map((f) => `  ${f}`).join('\n'))
+      output.info('Would add:')
+      for (const f of newFiles) {
+        console.log(`  ${f}`)
+      }
     }
-    outro('Dry run complete — run without --dry-run to update')
+    outro('Dry run complete — run without dry-run flag to apply changes')
     return
   }
 
@@ -471,8 +416,7 @@ export async function update(options) {
   try {
     // ── Step 3: Back up user-modified files ────────────────────────────
     if (userModified.length > 0) {
-      const s = spinner()
-      s.start('Backing up user-modified files...')
+      progress.start('Backing up user-modified files...')
       try {
         backupDir = mkdtempSync(join(tmpdir(), 'scrum-workflow-backup-'))
 
@@ -482,17 +426,16 @@ export async function update(options) {
           ensureDirSync(dirname(backupPath))
           copySync(srcPath, backupPath)
         }
-        s.stop('Backup complete')
+        progress.succeed('Backup complete')
       } catch (err) {
-        s.stop('Backup failed')
+        progress.fail('Backup failed')
         throw err
       }
     }
 
     // ── Step 4: Overwrite with new installer files ────────────────────
     {
-      const s = spinner()
-      s.start('Updating framework files...')
+      progress.start('Updating framework files...')
       try {
         // Copy framework templates
         copySync(paths.templateSourceDir, paths.frameworkDir)
@@ -500,9 +443,9 @@ export async function update(options) {
         // Re-register skills (substitutes {{framework_path}})
         registerSkills(paths, config)
 
-        s.stop('Framework files updated')
+        progress.succeed('Framework update complete')
       } catch (err) {
-        s.stop('Framework update failed')
+        progress.fail('Framework update failed')
         throw err
       }
     }
@@ -511,8 +454,7 @@ export async function update(options) {
     // User-modified files include custom skills, agents, and workflows
     // (detected by hash mismatch via the lock file mechanism)
     if (userModified.length > 0 && backupDir) {
-      const s = spinner()
-      s.start('Restoring user modifications...')
+      progress.start('Restoring user modifications...')
       try {
         for (const relPath of userModified) {
           const backupPath = join(backupDir, relPath)
@@ -520,61 +462,58 @@ export async function update(options) {
           ensureDirSync(dirname(restorePath))
           copySync(backupPath, restorePath)
         }
-        s.stop('User modifications restored')
+        progress.succeed('User modifications restore complete')
       } catch (err) {
-        s.stop('Restore failed')
+        progress.fail('Restore failed')
         throw err
       }
     }
 
     // ── Step 5.1: Migrate story status_history ─────────────────────────
     {
-      const s = spinner()
-      s.start('Migrating story status_history...')
+      progress.start('Migrating story status_history...')
       const migrationResult = migrateStoryStatusHistory(targetDir)
       if (migrationResult.migrated.length > 0) {
-        log.info(`Migrated status_history in ${migrationResult.migrated.length} story files`)
+        output.info(`Migrated status_history in ${migrationResult.migrated.length} story files`)
       }
       if (migrationResult.errors.length > 0) {
-        log.warn(`${migrationResult.errors.length} stories had errors during migration`)
+        output.warning(`${migrationResult.errors.length} stories had errors during migration`)
       }
-      s.stop('status_history migration complete')
+      progress.succeed('status_history migration complete')
     }
 
     // ── Step 5.2: Check plan.md for ready-for-dev stories ────────────────
     {
-      const s = spinner()
-      s.start('Checking plan.md requirements...')
-      const planMdResult = checkPlanMdForReadyStories(targetDir)
+      progress.start('Checking plan.md requirements...')
+      planMdResult = checkPlanMdForReadyStories(targetDir)
       if (planMdResult.flagged.length > 0) {
-        log.warn(`Warning: ${planMdResult.flagged.length} stories at ready-for-dev missing plan.md:`)
+        output.warning(`Warning: ${planMdResult.flagged.length} stories at ready-for-dev missing plan.md:`)
         for (let i = 0; i < planMdResult.flagged.length; i++) {
-          log.warn(`  - Story ${planMdResult.flagged[i]}: ${planMdResult.suggestions[i]}`)
+          output.warning(`  - Story ${planMdResult.flagged[i]}: ${planMdResult.suggestions[i]}`)
         }
       }
-      s.stop('plan.md check complete')
+      progress.succeed('plan.md check complete')
     }
 
     // ── Step 5.3: Post-migration validation ────────────────────────────
     {
-      const s = spinner()
-      s.start('Running post-migration validation...')
+      progress.start('Running post-migration validation...')
       const validationResult = validateMigration(targetDir)
 
       if (validationResult.valid) {
-        log.success('Post-migration validation passed')
+        output.success('Post-migration validation passed')
       } else {
-        log.error('Post-migration validation found issues:')
+        output.error('Post-migration validation found issues:')
         for (const result of validationResult.results) {
           if (result.status === 'fail') {
             for (const issue of result.issues) {
-              log.warn(`  - ${result.path}: ${issue}`)
+              output.warning(`  - ${result.path}: ${issue}`)
             }
           }
         }
-        log.warn('**Next Step:** Address the issues listed above and re-run update.')
+        output.warning('Next: Address the issues listed above and re-run update.')
       }
-      s.stop('Post-migration validation complete')
+      progress.succeed('Post-migration validation complete')
     }
   } finally {
     // Always clean up the temp backup directory
@@ -589,8 +528,7 @@ export async function update(options) {
 
   // ── Step 6: Regenerate lock file ────────────────────────────────────
   {
-    const s = spinner()
-    s.start('Updating lock file...')
+    progress.start('Updating lock file...')
     try {
       // Hash all framework files
       const frameworkHashes = hashDirectory(paths.frameworkDir, targetDir)
@@ -622,9 +560,9 @@ export async function update(options) {
       }
 
       writeLockFile(targetDir, updatedLockData)
-      s.stop('Lock file updated')
+      progress.succeed('Lock file update complete')
     } catch (err) {
-      s.stop('Lock file update failed')
+      progress.fail('Lock file update failed')
       throw err
     }
   }
@@ -639,29 +577,33 @@ export async function update(options) {
   if (newFiles.length > 0) {
     summaryLines.push(`  Files added:     ${newFiles.length} (new in this version)`)
   }
-  log.success(summaryLines.join('\n'))
+  output.success(summaryLines[0])
+  for (let i = 1; i < summaryLines.length; i++) {
+    console.log(summaryLines[i])
+  }
 
   if (userModified.length > 0) {
-    log.info(
-      'Preserved files:\n' +
-      userModified.map((f) => `  ${f}`).join('\n')
-    )
+    output.info('Preserved files:')
+    for (const f of userModified) {
+      console.log(`  ${f}`)
+    }
   }
 
   if (newFiles.length > 0) {
-    log.info(
-      'New files added:\n' +
-      newFiles.map((f) => `  ${f}`).join('\n')
-    )
+    output.info('New files added:')
+    for (const f of newFiles) {
+      console.log(`  ${f}`)
+    }
   }
 
   // Show any manual actions required (e.g., stories flagged for missing plan.md)
   if (planMdResult && planMdResult.flagged.length > 0) {
-    log.warn('Manual actions required:')
+    output.warning('Manual actions required:')
     for (let i = 0; i < planMdResult.flagged.length; i++) {
-      log.warn(`  - Run ${planMdResult.suggestions[i]}`)
+      output.warning(`  - Run ${planMdResult.suggestions[i]}`)
     }
   }
 
-  outro('Update complete!')
+  const hasFlaggedStories = planMdResult && planMdResult.flagged.length > 0
+  outro(getNextStep('update', { hasFlaggedStories }))
 }

@@ -10,6 +10,13 @@ program
   .description('Install the Scrum Workflow framework into your project')
   .version('1.0.0')
 
+// Default action: bare `npx create-scrum-workflow` triggers install --yes
+// Note: platforms value is a fallback only; auto-detection in buildConfig overrides it
+program
+  .action(() => {
+    return install({ directory: '.', platforms: ['claude-code'], yes: true })
+  })
+
 program
   .command('install')
   .description('Install scrum_workflow into current or specified directory')

@@ -62,6 +62,32 @@ Load project standards for review criteria:
 - If standards file does not exist, log warning and continue
 - Missing standards is not fatal — general review criteria apply
 
+### Step 1.4a: Load Active Risk Notes (Risk Context Enrichment)
+
+After loading project standards, load active risk notes relevant to the story's domain as additional review context (FR-30).
+
+**Domain Matching Algorithm:**
+1. Collect story keywords from the story title and AC text (extract nouns and domain terms)
+2. Scan `_scrum-output/memory/risks/` for all `RN-[0-9][0-9][0-9].md` files
+3. For each RN file:
+   - Parse the YAML frontmatter `status` field — if NOT `active`, **skip** (resolved risks MUST NOT be loaded — AC3 hard requirement)
+   - Check `domain_tags` array — if any tag overlaps with story keywords, include
+   - Check `affected_area` field (normalized to lowercase-hyphenated) — if it appears in story keywords, include
+4. Collect all matched active RN files as additional context
+
+**Context Injection:**
+- Append matched risk notes after the standard context block
+- Format: "Active Risk Notes (for domain context):" followed by each RN-NNN.md content
+- This gives the review agent risk awareness without changing the review workflow structure
+
+**If no matching active risks exist:**
+- Log: `No active risk notes matched story domain — proceeding without risk context`
+- Continue normally — risk loading is optional enrichment, not required
+
+**Write Boundary (CRITICAL):**
+- The review workflow is READ-ONLY for risk notes — it loads them as context but NEVER writes or modifies them
+- NEVER create, modify, or delete any RN-NNN.md file during review
+
 ### Step 1.5: Detect Existing Reviews
 
 Scan the sprint folder for existing review files:

@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-04-07T12:00:49Z
-last_updated: 2026-04-09T14:10:00Z
+last_updated: 2026-04-09T11:15:00Z
 project: scrum_workflow
 project_key: NOKEY
 tracking_system: file-system
@@ -93,10 +93,10 @@ development_status:
   epic-6-retrospective: optional
 
   # Epic 7: Session Memory & Decision Persistence
-  epic-7: backlog
-  7-1-implement-decision-record-extraction: backlog
-  7-2-implement-risk-note-extraction-auto-loading: backlog
-  7-3-implement-session-start-context-loading: backlog
+  epic-7: in-progress
+  7-1-implement-decision-record-extraction: done
+  7-2-implement-risk-note-extraction-auto-loading: done
+  7-3-implement-session-start-context-loading: done
   7-4-implement-session-wrap-up: backlog
   7-5-implement-research-memory-integration: backlog
   epic-7-retrospective: optional

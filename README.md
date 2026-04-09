@@ -292,50 +292,68 @@ The approval workflow presents the review findings and asks for a clear APPROVE 
 
 ```mermaid
 stateDiagram-v2
-    [*] --> draft: scrum-create-ticket
+    [*] --> draft
     
-    draft --> refinement: scrum-refine-ticket
+    draft --> refinement
+    refinement --> refined
     
-    refinement --> refined: Agents complete<br/>Cross-talk done<br/>Estimation ready
+    refined --> refined
+    refined --> ready_for_dev
     
-    refined --> refined: scrum-refine-story<br/>Criteria FAIL<br/>Fix &amp; Retry
+    ready_for_dev --> in_progress
+    in_progress --> in_progress
+    in_progress --> review
     
-    refined --> ready-for-dev: scrum-refine-story<br/>All 5 Criteria PASS
+    review --> approved
+    review --> changes_needed
     
-    ready-for-dev --> in-progress: scrum-dev-story<br/>Start implementation
-    
-    in-progress --> in-progress: Fix code<br/>Run tests
-    
-    in-progress --> review: scrum-dev-story review<br/>Ready for code review
-    
-    review --> approved: scrum-review-story<br/>No critical issues
-    
-    review --> changes-needed: scrum-review-story<br/>Critical/Major issues found
-    
-    changes-needed --> in-progress: scrum-dev-story<br/>Fix findings
-    
-    approved --> done: scrum-approve<br/>Human sign-off
+    changes_needed --> in_progress
+    approved --> done
     
     done --> [*]
     
     note right of draft
-        Story created, not yet refined
+        Status: draft
+        Created by: /scrum-create-ticket
+    end note
+    
+    note right of refinement
+        Status: refinement
+        Multi-agent analysis in progress
     end note
     
     note right of refined
-        Refinement done, awaiting validation
+        Status: refined
+        Refinement complete, awaiting validation
     end note
     
-    note right of ready-for-dev
+    note right of ready_for_dev
+        Status: ready-for-dev
         Spec validated, OK to implement
     end note
     
-    note right of changes-needed
-        Code review found issues
-        Developer fixes and re-submits
+    note right of in_progress
+        Status: in-progress
+        Development or fixes underway
+    end note
+    
+    note right of review
+        Status: review
+        Awaiting code review
+    end note
+    
+    note right of approved
+        Status: approved
+        Review passed, awaiting human sign-off
+    end note
+    
+    note right of changes_needed
+        Status: changes-needed
+        Review found issues, dev fixes and resubmits
     end note
     
     note right of done
+        Status: done
         Human approved, story complete
     end note
 ```

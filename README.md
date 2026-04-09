@@ -292,29 +292,29 @@ The approval workflow presents the review findings and asks for a clear APPROVE 
 
 ```mermaid
 stateDiagram-v2
-    [*] --> draft: /scrum-create-ticket
+    [*] --> draft: scrum-create-ticket
     
-    draft --> refinement: /scrum-refine-ticket
+    draft --> refinement: scrum-refine-ticket
     
     refinement --> refined: Agents complete<br/>Cross-talk done<br/>Estimation ready
     
-    refined --> refined: /scrum-refine-story<br/>Criteria FAIL<br/>Fix & Retry
+    refined --> refined: scrum-refine-story<br/>Criteria FAIL<br/>Fix &amp; Retry
     
-    refined --> ready-for-dev: /scrum-refine-story<br/>All 5 Criteria PASS
+    refined --> ready-for-dev: scrum-refine-story<br/>All 5 Criteria PASS
     
-    ready-for-dev --> in-progress: /scrum-dev-story<br/>Start implementation
+    ready-for-dev --> in-progress: scrum-dev-story<br/>Start implementation
     
     in-progress --> in-progress: Fix code<br/>Run tests
     
-    in-progress --> review: /scrum-dev-story review<br/>Ready for code review
+    in-progress --> review: scrum-dev-story review<br/>Ready for code review
     
-    review --> approved: /scrum-review-story<br/>No critical issues
+    review --> approved: scrum-review-story<br/>No critical issues
     
-    review --> changes-needed: /scrum-review-story<br/>Critical/Major issues found
+    review --> changes-needed: scrum-review-story<br/>Critical/Major issues found
     
-    changes-needed --> in-progress: /scrum-dev-story<br/>Fix findings
+    changes-needed --> in-progress: scrum-dev-story<br/>Fix findings
     
-    approved --> done: /scrum-approve<br/>Human sign-off
+    approved --> done: scrum-approve<br/>Human sign-off
     
     done --> [*]
     

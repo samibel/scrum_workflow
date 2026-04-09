@@ -62,7 +62,6 @@ export function parseFrontmatter(content) {
   const result = {};
 
   const lines = frontmatterText.split('\n');
-  let currentArrayKey = null;
 
   for (const line of lines) {
     const trimmed = line.trim();
@@ -73,9 +72,9 @@ export function parseFrontmatter(content) {
     }
 
     // Array item: starts with "- "
+    // Skip array values — only scalar fields needed for session-context
+    // (status, title, ticket, decision_summary, risk_description, severity, affected_area, date)
     if (trimmed.startsWith('- ')) {
-      // We skip array values — only scalar fields needed for session-context
-      // (status, title, ticket, decision_summary, risk_description, severity, affected_area, date)
       continue;
     }
 
@@ -88,22 +87,15 @@ export function parseFrontmatter(content) {
     const key = line.slice(0, colonIndex).trim();
     const rawValue = line.slice(colonIndex + 1).trim();
 
-    // Check if this is a block array (value is empty after colon)
+    // Skip block array keys (value is empty after colon — next lines are "- items")
     if (rawValue === '') {
-      currentArrayKey = key;
       continue;
     }
 
-    // Scalar value — reset current array context
-    currentArrayKey = null;
-
-    // Strip surrounding double or single quotes
+    // Strip surrounding double or single quotes from scalar values
     const value = rawValue.replace(/^["']|["']$/g, '');
     result[key] = value;
   }
-
-  // Suppress unused variable warning — currentArrayKey tracking is for future use
-  void currentArrayKey;
 
   return result;
 }
@@ -229,7 +221,8 @@ export function loadRecentDecisions(decisionsDir, limit = 5) {
 
     const fm = parseFrontmatter(content);
 
-    if (!fm) {
+    // Skip files with no usable frontmatter (parseFrontmatter returns {} on failure)
+    if (!fm.decision_summary && !fm.ticket) {
       continue;
     }
 
@@ -386,6 +379,12 @@ export function deriveNextSteps(openStories) {
  * @returns {string} Formatted session summary
  */
 export function formatSessionSummary(openStories, recentDecisions, activeRisks, nextSteps) {
+  // Normalize all inputs to arrays — defensive guard against undefined/null callers
+  const stories = Array.isArray(openStories) ? openStories : [];
+  const decisions = Array.isArray(recentDecisions) ? recentDecisions : [];
+  const risks = Array.isArray(activeRisks) ? activeRisks : [];
+  const steps = Array.isArray(nextSteps) ? nextSteps : [];
+
   const isoDate = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
 
   const lines = [];
@@ -395,36 +394,36 @@ export function formatSessionSummary(openStories, recentDecisions, activeRisks, 
   lines.push('');
 
   // Open Work section
-  lines.push(`### Open Work (${openStories.length} stories)`);
+  lines.push(`### Open Work (${stories.length} stories)`);
   lines.push('');
-  if (openStories.length === 0) {
+  if (stories.length === 0) {
     lines.push('_(No open stories)_');
   } else {
-    for (const story of openStories) {
+    for (const story of stories) {
       lines.push(`- **${story.ticket}** [${story.status}] — ${story.title}`);
     }
   }
   lines.push('');
 
   // Recent Decisions section
-  lines.push(`### Recent Decisions (last ${recentDecisions.length})`);
+  lines.push(`### Recent Decisions (last ${decisions.length})`);
   lines.push('');
-  if (recentDecisions.length === 0) {
+  if (decisions.length === 0) {
     lines.push('_(No decision records found)_');
   } else {
-    for (const dr of recentDecisions) {
+    for (const dr of decisions) {
       lines.push(`- **${dr.drNumber}**: ${dr.decisionSummary} (ticket: ${dr.ticket}, date: ${dr.date})`);
     }
   }
   lines.push('');
 
   // Active Risk Notes section
-  lines.push(`### Active Risk Notes (${activeRisks.length} active)`);
+  lines.push(`### Active Risk Notes (${risks.length} active)`);
   lines.push('');
-  if (activeRisks.length === 0) {
+  if (risks.length === 0) {
     lines.push('_(No active risk notes)_');
   } else {
-    for (const risk of activeRisks) {
+    for (const risk of risks) {
       lines.push(`- **${risk.rnNumber}** [${risk.severity}]: ${risk.riskDescription} — Affected: ${risk.affectedArea} (ticket: ${risk.ticket})`);
     }
   }
@@ -433,10 +432,10 @@ export function formatSessionSummary(openStories, recentDecisions, activeRisks, 
   // Suggested Next Steps section
   lines.push('### Suggested Next Steps');
   lines.push('');
-  if (nextSteps.length === 0) {
+  if (steps.length === 0) {
     lines.push('_(No open stories — nothing pending)_');
   } else {
-    nextSteps.forEach((step, index) => {
+    steps.forEach((step, index) => {
       lines.push(`${index + 1}. ${step}`);
     });
   }

@@ -7,10 +7,7 @@
     <list default="true" id="9fbb06fc-50c2-4c7e-bb8a-a087cf161358" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/sprint-status.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/_bmad-output/implementation-artifacts/sprint-status.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/workflows/refine-story.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/scrum_workflow/workflows/refine-story.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/workflows/refine-story.md" beforeDir="false" afterPath="$PROJECT_DIR$/create-scrum-workflow/templates/scrum_workflow/workflows/refine-story.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/skills/readiness-check/SKILL.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/skills/readiness-check/SKILL.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/scrum_workflow/workflows/refine-story.md" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/workflows/refine-story.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/scrum_workflow/vitest.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/scrum_workflow/vitest.config.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,7 +37,7 @@
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
     "RunOnceActivity.git.unshallow": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "story__4",
+    "git-widget-placeholder": "story__8",
     "kotlin-language-version-configured": "true",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
@@ -99,7 +96,7 @@
       <workItem from="1774603127567" duration="3440000" />
       <workItem from="1774853903282" duration="10000" />
       <workItem from="1774855030920" duration="31013000" />
-      <workItem from="1775561426853" duration="1990000" />
+      <workItem from="1775561426853" duration="2605000" />
     </task>
     <servers />
   </component>

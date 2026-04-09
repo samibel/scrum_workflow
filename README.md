@@ -56,7 +56,7 @@ create-scrum-workflow install
 
 ## 📊 How It Works
 
-![Scrum Workflow Overview](./README-HERO.svg)
+<img src="README-HERO.svg" alt="Scrum Workflow Overview" width="100%" style="max-width: 1200px; margin: 20px 0; border-radius: 8px;"/>
 
 ---
 

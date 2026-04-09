@@ -449,24 +449,21 @@ describe('AC3: Active-Only Risk Note Filtering', () => {
   // ── NFR Compliance for Filtering ──────────────────────────────────────────
 
   describe('NFR Compliance for Active-Only Filtering', () => {
-    test('[P0] 7.2-UNIT-100: filterActiveRiskNotes must not write any files (read-only operation)', () => {
+    test('[P0] 7.2-UNIT-100: filterActiveRiskNotes must not write any files (read-only operation)', async () => {
       // Given: risks dir with active RNs
       writeRNFile(risksDir, 'RN-001.md', createRNContent({ status: 'active' }));
       writeRNFile(risksDir, 'RN-002.md', createRNContent({ status: 'resolved' }));
 
-      // Snapshot file list before filtering
-      const { readdirSync } = require('node:fs');
-      // Use dynamic require equivalent for ESM
-      import('node:fs').then(({ readdirSync }) => {
-        const filesBefore = readdirSync(risksDir);
+      // Snapshot file list before filtering — use static import (ESM module)
+      const { readdirSync } = await import('node:fs');
+      const filesBefore = readdirSync(risksDir);
 
-        // When: filtering
-        filterActiveRiskNotes(risksDir);
+      // When: filtering
+      filterActiveRiskNotes(risksDir);
 
-        // Then: no new files written (read-only operation — NFR-3 offline, no side effects)
-        const filesAfter = readdirSync(risksDir);
-        expect(filesAfter.sort()).toEqual(filesBefore.sort());
-      });
+      // Then: no new files written (read-only operation — NFR-3 offline, no side effects)
+      const filesAfter = readdirSync(risksDir);
+      expect(filesAfter.sort()).toEqual(filesBefore.sort());
     });
 
     test('[P0] 7.2-UNIT-101: filterActiveRiskNotes must not modify any files (read-only operation)', async () => {

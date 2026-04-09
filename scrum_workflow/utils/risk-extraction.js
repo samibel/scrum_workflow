@@ -15,7 +15,7 @@
  */
 
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join, resolve } from 'node:path';
+import { basename, dirname, join, resolve } from 'node:path';
 
 // ─── Core Directory Functions ─────────────────────────────────────────────────
 
@@ -715,7 +715,7 @@ export async function loadActiveRiskNotesForStory({ risksDir, storyContext }) {
   for (const filePath of matchedPaths) {
     try {
       const content = readFileSync(filePath, 'utf8');
-      const filename = filePath.split('/').pop() ?? filePath.split('\\').pop();
+      const filename = basename(filePath);
       matchedRNs.push({ filename, content });
     } catch {
       // Skip unreadable files — graceful degradation

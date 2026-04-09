@@ -24,3 +24,7 @@
 ## Deferred from: code review of 6-4-implement-zero-config-installation-flow (2026-04-08)
 
 - `.github` marker directory is too broad for `github-copilot` detection in `platform-detector.js`. Most git repos have `.github/` for CI workflows and issue templates, causing false positives. The platform-registry.yaml specifies `target_dir: .github/skills`, so detection should ideally check for `.github/skills/` or `.github/copilot/` instead. Pre-existing design decision from story spec -- deferred to a future refinement.
+
+## Deferred from: code review of 9-2-implement-adaptive-workflow-depth-selection (2025-07-11)
+
+- `create-scrum-workflow/templates/scrum_workflow/templates/story.md` is missing fields present in `scrum_workflow/templates/story.md`: `type`, `risk_level`, `domain_tags`, `status_history`, and has `schema_version: 1` instead of `"1.0.0"`. Story 9.2 correctly synced its own additions (`depth`, `depth_source`), but the other field gaps are pre-existing from earlier stories (9.1, 2.1, etc.). Full template sync should be addressed in a future story or maintenance task.

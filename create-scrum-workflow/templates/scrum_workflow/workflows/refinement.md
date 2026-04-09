@@ -4,7 +4,7 @@
 
 This workflow orchestrates multi-agent refinement through 6 phases:
 1. **Phase 1: Doc-Discovery** - Load auto-context + prompt user for additional documents
-2. **Phase 2: Initial Perspectives** - Spawn 3 agents in parallel with isolated context
+2. **Phase 2: Agent Dispatch & Initial Perspectives** - Invoke agent-dispatcher skill for dynamic agent selection, then spawn dispatched agents in parallel with isolated context
 3. **Phase 3: Cross-Talk Rounds** - Up to 3 rounds with binary blocker classification and early exit on consensus
 4. **Phase 4: Estimation** - Wideband Delphi with variance handling
 5. **Phase 5: Synthesis** - Merge agreed perspectives into story.md, cleanup temp files
@@ -248,126 +248,98 @@ Store as `{discovered_documents}` array with structure:
 ]
 ```
 
-## Step 5: Spawn Architect Agent
+## Step 4.6: Agent Dispatch
 
-Create an isolated agent context and invoke the Architect agent with architecture-focused inputs.
+Invoke the agent-dispatcher skill to dynamically determine which agents to spawn based on story attributes.
 
-### Step 4.1: Prepare Architect Agent Context
+### Step 4.6.1: Invoke Agent Dispatcher Skill
 
-Create an isolated context bundle containing:
+Invoke `scrum_workflow/skills/agent-dispatcher/SKILL.md` with the story frontmatter values:
 
-1. `_scrum-output/sprints/SW-XXX/story.md` -- The story being refined
-2. `_scrum-output/context/index.md` -- Project context overview
-3. `_scrum-output/context/architecture.md` -- System architecture documentation
-4. `_scrum-output/context/{ticket-domain}.md` -- Domain-specific context (if identified)
-5. `scrum_workflow/agents/architect.md` -- Architect agent role definition
-6. **{discovered_documents}** -- All documents from doc-discovery phase (if any)
+- `type`: Story type from frontmatter (feature, bugfix, refactor, infrastructure)
+- `risk_level`: Story risk level from frontmatter (low, medium, high, critical)
+- `domain_tags`: Story domain tags array from frontmatter
+- `depth`: Story depth from frontmatter (light, standard, heavy)
 
-**Isolation principle:** The Architect agent receives ONLY these files. It does NOT receive:
-- Other agent role definitions (`developer.md`, `qa.md`)
-- Other agents' perspectives or outputs
-- Conversation history from other agents
+The dispatcher reads dispatch rules from `scrum_workflow/data/dispatch-rules.yaml` and checks agent file existence in `scrum_workflow/agents/`.
 
-### Step 4.2: Invoke Architect Agent
+**If `agent_dispatch_enabled` is `false` in config.yaml:** Skip dispatch and use static default set `[architect, developer, qa]`.
 
-Invoke the Architect agent with the prepared context bundle. The agent analyzes the story from an architectural perspective, focusing on:
+### Step 4.6.2: Process Dispatcher Output
 
-- Architectural risks and scalability concerns
-- Design patterns and system integration
-- Security and performance implications
-- Dependencies and maintainability
+Receive the dispatcher's structured output:
 
-### Step 4.3: Collect Architect Perspective
+```yaml
+agents:
+  - architect
+  - developer
+  - qa
+dispatch_rationale: "Type 'feature' uses default set. Risk 'medium' — no additions. No matching domain tags."
+skipped_agents: []
+```
 
-Collect the Architect agent's output in the standard table-based format:
+Store the dispatched agent list as `{dispatched_agents}`.
+Store the dispatch rationale as `{dispatch_rationale}`.
+Store the skipped agents as `{skipped_agents}`.
 
-- Findings table with columns: #, Finding, Severity, Category
-- Recommendations list
-- Proposed Acceptance Criteria
+### Step 4.6.3: Validate Dispatched Agent Set
 
-Store the output as `{architect_perspective}` for presentation in Step 8.
+Verify that `{dispatched_agents}` contains at least one agent. If empty (all agents were skipped), fall back to the default set `[architect, developer, qa]` and add note: "All dispatched agents were unavailable — falling back to default set."
 
-## Step 6: Spawn Developer Agent
+### Step 4.6.4: Log Dispatch Summary
 
-Create an isolated agent context and invoke the Developer agent with technical implementation inputs.
+Display the dispatch summary to the user:
 
-### Step 5.1: Prepare Developer Agent Context
+```
+📋 Agent Dispatch Summary
 
-Create an isolated context bundle containing:
+Dispatched Agents: [{dispatched_agents}]
+Rationale: {dispatch_rationale}
+{{#if skipped_agents}}
+Skipped Agents:
+{{#each skipped_agents}}
+  - {agent}: {reason}
+{{/each}}
+{{/if}}
+```
 
-1. `_scrum-output/sprints/SW-XXX/story.md` -- The story being refined
-2. `_scrum-output/context/index.md` -- Project context overview
-3. `_scrum-output/context/{ticket-domain}.md` -- Domain-specific context (if identified)
-4. `skills/{ticket-domain}/SKILL.md` -- Domain-specific skill patterns (e.g., `skills/backend/SKILL.md`)
-5. `scrum_workflow/agents/developer.md` -- Developer agent role definition
-6. **{discovered_documents}** -- All documents from doc-discovery phase (if any)
+## Step 5: Spawn Dispatched Agents
 
-**Isolation principle:** The Developer agent receives ONLY these files. It does NOT receive:
-- Other agent role definitions (`architect.md`, `qa.md`)
-- Other agents' perspectives or outputs
-- Architecture-specific context unless `{ticket-domain}` is `architecture`
-- Conversation history from other agents
+Dynamically spawn each agent in the dispatched agent set. For each agent in `{dispatched_agents}`, load the agent definition, prepare isolated context, invoke the agent, and collect the perspective.
 
-### Step 5.2: Invoke Developer Agent
+**Critical:** The dynamic agent spawning loop preserves context isolation — each agent ONLY receives its defined context bundle, never other agents' definitions or perspectives (until cross-talk).
 
-Invoke the Developer agent with the prepared context bundle. The agent analyzes the story from a technical implementation perspective, focusing on:
+### Step 5.1: Dynamic Agent Spawning Loop
 
-- Technical feasibility and implementation complexity
-- Library dependencies and external services
-- Code quality and technical debt
-- Testing strategy and documentation needs
+For each `{agent-name}` in `{dispatched_agents}`:
 
-### Step 5.3: Collect Developer Perspective
+1. **Load agent definition** from `scrum_workflow/agents/{agent-name}.md`
+2. **Prepare isolated context bundle** per the agent's Context Rules:
+   - `_scrum-output/sprints/SW-XXX/story.md` — The story being refined
+   - `_scrum-output/context/index.md` — Project context overview
+   - `_scrum-output/context/{ticket-domain}.md` — Domain-specific context (if identified)
+   - `scrum_workflow/agents/{agent-name}.md` — The agent's own role definition
+   - **{discovered_documents}** — All documents from doc-discovery phase (if any)
+   - Additional context per agent type (e.g., architect gets architecture.md, qa gets testing.md)
+3. **Invoke agent** with the prepared context bundle
+4. **Collect perspective** as `{agent-name}_perspective`
 
-Collect the Developer agent's output in the standard table-based format:
+**Isolation principle:** Each agent receives ONLY its own role definition file and relevant context. It does NOT receive other agents' role definitions or perspectives.
 
-- Findings table with columns: #, Finding, Severity, Category
-- Recommendations list
-- Proposed Acceptance Criteria
+### Step 5.2: Store Agent Perspectives
 
-Store the output as `{developer_perspective}` for presentation in Step 8.
+Store all collected perspectives indexed by agent name:
 
-## Step 7: Spawn QA Agent
+```json
+{
+  "perspectives": {
+    "{agent-name}": "{agent-name}_perspective",
+    ...
+  }
+}
+```
 
-Create an isolated agent context and invoke the QA agent with testing and quality inputs.
-
-### Step 6.1: Prepare QA Agent Context
-
-Create an isolated context bundle containing:
-
-1. `_scrum-output/sprints/SW-XXX/story.md` -- The story being refined
-2. `_scrum-output/context/index.md` -- Project context overview
-3. `_scrum-output/context/testing.md` -- Testing standards and practices
-4. `_scrum-output/context/{ticket-domain}.md` -- Domain-specific context (if identified)
-5. `skills/testing/SKILL.md` -- QA-specific skill patterns
-6. `scrum_workflow/agents/qa.md` -- QA agent role definition
-7. **{discovered_documents}** -- All documents from doc-discovery phase (if any)
-
-**Isolation principle:** The QA agent receives ONLY these files. It does NOT receive:
-- Other agent role definitions (`architect.md`, `developer.md`)
-- Other agents' perspectives or outputs
-- Conversation history from other agents
-
-### Step 6.2: Invoke QA Agent
-
-Invoke the QA agent with the prepared context bundle. The agent analyzes the story from a quality assurance perspective, focusing on:
-
-- Acceptance criteria clarity and testability
-- Edge cases and error scenarios
-- Test coverage and testing tools
-- Integration testing and regression risk
-
-### Step 6.3: Collect QA Perspective
-
-Collect the QA agent's output in the standard table-based format:
-
-- Findings table with columns: #, Finding, Severity, Category
-- Recommendations list
-- Proposed Acceptance Criteria
-
-Store the output as `{qa_perspective}` for presentation in Step 8.
-
-### Step 7.1: Create Temp Directory for Round 0
+### Step 5.3: Create Temp Directory and Write Round 0 Analyses
 
 Create the temp directory for storing agent analyses:
 
@@ -380,13 +352,10 @@ sprints/SW-XXX/temp/
 - If not, create using `mkdir -p sprints/SW-XXX/temp/`
 - Store path as `{temp_dir}` for subsequent steps
 
-### Step 7.2: Write Round 0 Analyses to Temp Files
+After all dispatched agents complete their initial analyses, write each to a temp file:
 
-After all three agents complete their initial analyses, write each to a temp file:
-
-- `sprints/SW-XXX/temp/architect-round-0.md` -- Architect's full analysis
-- `sprints/SW-XXX/temp/developer-round-0.md` -- Developer's full analysis
-- `sprints/SW-XXX/temp/qa-round-0.md` -- QA's full analysis
+For each `{agent-name}` in `{dispatched_agents}`:
+- `sprints/SW-XXX/temp/{agent-name}-round-0.md` -- Agent's full analysis
 
 **File Format:**
 Each temp file contains the agent's complete perspective output including:
@@ -395,7 +364,7 @@ Each temp file contains the agent's complete perspective output including:
 - Proposed Acceptance Criteria
 - Any additional analysis notes
 
-### Step 7.3: Initialize Cross-Talk State
+### Step 5.4: Initialize Cross-Talk State
 
 Initialize state tracking for discussion rounds:
 
@@ -415,22 +384,24 @@ Store as `{cross_talk_state}`.
 
 ## Step 7.5: Cross-Talk Discussion Rounds
 
-Execute iterative discussion rounds where agents see and comment on each other's perspectives.
+Execute iterative discussion rounds where dispatched agents see and comment on each other's perspectives.
+
+**Note:** If only 1 agent was dispatched (e.g., light depth → developer only, or extreme override), skip cross-talk entirely and use single-perspective flow. Proceed directly to Step 7.6 for estimation (single agent estimate).
 
 ### Step 7.5.1: Round 1 - Cross-Talk (400 words per agent)
 
 **Progressive Truncation:** Each agent gets 400 words for their response.
 
-**Spawn Architect for Cross-Talk:**
+**For each `{agent-name}` in `{dispatched_agents}`:**
+
 Create context bundle containing:
-1. Architect's own Round 0 analysis (from temp file)
-2. Developer's Round 0 analysis (from temp file)
-3. QA's Round 0 analysis (from temp file)
-4. Cross-talk prompt
+1. This agent's own Round 0 analysis (from temp file)
+2. All other dispatched agents' Round 0 analyses (from temp files)
+3. Cross-talk prompt
 
 **Cross-Talk Prompt:**
 ```
-You are the Architect agent in a cross-talk discussion round.
+You are the {agent-name} agent in a cross-talk discussion round.
 
 Your task is to review the other agents' analyses and provide:
 
@@ -445,12 +416,6 @@ Format your response as:
 **Disagrees with:** [list disagreements with reasoning]
 **Blind spots identified:** [list blind spots you now see]
 ```
-
-**Spawn Developer for Cross-Talk:**
-Same pattern with Developer's perspective.
-
-**Spawn QA for Cross-Talk:**
-Same pattern with QA's perspective.
 
 ### Step 7.5.2: Binary Blocker Classification
 
@@ -581,31 +546,24 @@ After cross-talk completes (either by consensus, deadlock resolution, or max rou
 
 ## Step 7.6: Estimation Phase - Initial Estimates
 
-After cross-talk discussion rounds complete, collect independent story point estimates from each agent using Wideband Delphi methodology.
+After cross-talk discussion rounds complete, collect independent story point estimates from each dispatched agent using Wideband Delphi methodology (for 2+ agents) or single agent estimate (for 1 agent).
 
 ### Step 7.6.1: Initialize Estimation State
 
-Initialize estimation tracking:
+Initialize estimation tracking for all dispatched agents:
 
 ```json
 {
-  "estimates": {
-    "architect": null,
-    "developer": null,
-    "qa": null
-  },
-  "rationales": {
-    "architect": null,
-    "developer": null,
-    "qa": null
-  },
+  "estimates": {},
+  "rationales": {},
   "variance": null,
   "threshold": {{estimation_variance_threshold}},
   "re_estimation_needed": false,
   "re_estimation_count": 0,
   "max_re_estimation_rounds": 2,
   "final_estimate": null,
-  "confidence_level": null
+  "confidence_level": null,
+  "dispatched_agents": {{dispatched_agents}}
 }
 ```
 
@@ -615,7 +573,7 @@ Store as `{estimation_state}`.
 
 **Critical:** Each agent must provide their estimate independently without seeing others' estimates. This prevents anchoring bias.
 
-**For each agent (Architect, Developer, QA):**
+**For each `{agent-name}` in `{dispatched_agents}`:**
 
 Spawn the agent with an estimation prompt:
 
@@ -641,25 +599,24 @@ Rationale: [your reasoning]
 ```
 
 **Collect estimates independently:**
-- Store `{architect_estimate}` and `{architect_rationale}`
-- Store `{developer_estimate}` and `{developer_rationale}`
-- Store `{qa_estimate}` and `{qa_rationale}`
+For each `{agent-name}` in `{dispatched_agents}`:
+- Store `{agent-name}_estimate` and `{agent-name}_rationale`
 
 ### Step 7.6.3: Store Initial Estimates
 
-Update `{estimation_state}` with collected estimates:
+Update `{estimation_state}` with collected estimates from all dispatched agents:
 
 ```json
 {
   "estimates": {
-    "architect": {{architect_estimate}},
-    "developer": {{developer_estimate}},
-    "qa": {{qa_estimate}}
+    "{agent-name-1}": {{agent-name-1_estimate}},
+    "{agent-name-2}": {{agent-name-2_estimate}},
+    ...
   },
   "rationales": {
-    "architect": "{{architect_rationale}}",
-    "developer": "{{developer_rationale}}",
-    "qa": "{{qa_rationale}}"
+    "{agent-name-1}": "{{agent-name-1_rationale}}",
+    "{agent-name-2}": "{{agent-name-2_rationale}}",
+    ...
   }
 }
 ```
@@ -670,10 +627,11 @@ Calculate variance between estimates to determine if re-estimation discussion is
 
 ### Step 7.7.1: Calculate Variance
 
-Calculate the range (max - min) of the estimates:
+Calculate the range (max - min) of the estimates across all dispatched agents:
 
 ```
-variance = max(architect_estimate, developer_estimate, qa_estimate) - min(architect_estimate, developer_estimate, qa_estimate)
+all_estimates = [estimate for each agent in dispatched_agents]
+variance = max(all_estimates) - min(all_estimates)
 ```
 
 Store as `{variance}`.
@@ -696,16 +654,16 @@ estimation_variance_threshold: 2
 
 ### Step 7.7.3: Display Variance Summary
 
-Display the variance check result:
+Display the variance check result (for all dispatched agents):
 
 ```
 📊 Estimation Variance Check
 
 | Agent | Estimate (SP) | Rationale |
 |-------|---------------|-----------|
-| Architect | {{architect_estimate}} | {{architect_rationale}} |
-| Developer | {{developer_estimate}} | {{developer_rationale}} |
-| QA | {{qa_estimate}} | {{qa_rationale}} |
+{{#each dispatched_agents}}
+| {{agent-name}} | {{agent-name_estimate}} | {{agent-name_rationale}} |
+{{/each}}
 
 **Variance:** {{variance}} points
 **Threshold:** {{threshold}} points
@@ -726,15 +684,15 @@ If variance exceeds threshold, facilitate a discussion round to reach consensus.
 
 ### Step 7.8.2: Facilitate Estimation Discussion
 
-Spawn each agent with visibility of all estimates for discussion:
+Spawn each dispatched agent with visibility of all estimates for discussion:
 
 ```
 You are the {{agent_name}} agent in an estimation discussion round.
 
 **All Estimates:**
-- Architect: {{architect_estimate}} SP - "{{architect_rationale}}"
-- Developer: {{developer_estimate}} SP - "{{developer_rationale}}"
-- QA: {{qa_estimate}} SP - "{{qa_rationale}}"
+{{#each dispatched_agents}}
+- {{agent-name}}: {{agent-name_estimate}} SP - "{{agent-name_rationale}}"
+{{/each}}
 
 **Variance:** {{variance}} points (threshold: {{threshold}} points)
 
@@ -750,19 +708,19 @@ Rationale: [your reasoning for keeping or changing]
 
 ### Step 7.8.3: Collect Revised Estimates
 
-Store revised estimates in `{estimation_state}`:
+Store revised estimates from all dispatched agents in `{estimation_state}`:
 
 ```json
 {
   "revised_estimates": {
-    "architect": {{architect_revised}},
-    "developer": {{developer_revised}},
-    "qa": {{qa_revised}}
+    "{agent-name-1}": {{agent-name-1_revised}},
+    "{agent-name-2}": {{agent-name-2_revised}},
+    ...
   },
   "revised_rationales": {
-    "architect": "{{architect_revised_rationale}}",
-    "developer": "{{developer_revised_rationale}}",
-    "qa": "{{qa_revised_rationale}}"
+    "{agent-name-1}": "{{agent-name-1_revised_rationale}}",
+    "{agent-name-2}": "{{agent-name-2_revised_rationale}}",
+    ...
   }
 }
 ```
@@ -791,9 +749,9 @@ Estimates still vary by {{new_variance}} points (threshold: {{threshold}})
 
 | Agent | Final Estimate (SP) | Rationale |
 |-------|---------------------|-----------|
-| Architect | {{architect_revised}} | {{architect_revised_rationale}} |
-| Developer | {{developer_revised}} | {{developer_revised_rationale}} |
-| QA | {{qa_revised}} | {{qa_revised_rationale}} |
+{{#each dispatched_agents}}
+| {{agent-name}} | {{agent-name_revised}} | {{agent-name_revised_rationale}} |
+{{/each}}
 
 **Resolution Options:**
 1. Accept median estimate: {{median}} SP
@@ -814,13 +772,15 @@ Calculate the final estimate using median calculation.
 
 ### Step 7.9.1: Calculate Median
 
-Use the latest estimates (revised if re-estimation occurred, otherwise initial):
+Use the latest estimates (revised if re-estimation occurred, otherwise initial) from all dispatched agents:
 
 ```
-estimates = [architect_estimate, developer_estimate, qa_estimate]
-sorted_estimates = sort(estimates)
-median = sorted_estimates[1]  // Middle value of 3 estimates
+all_estimates = [estimate for each agent in dispatched_agents]
+sorted_estimates = sort(all_estimates)
+median = sorted_estimates[floor(length / 2)]  // Middle value for odd count, upper-middle for even count
 ```
+
+**Special case:** If only 1 agent was dispatched, the single estimate is the final estimate (no Wideband Delphi needed).
 
 Store as `{final_estimate}`.
 
@@ -890,9 +850,9 @@ Prepare estimation data for the refinement.md template:
 
 | Agent | Estimate (SP) | Rationale |
 |-------|---------------|-----------|
-| Architect | {{architect_estimate}} | {{architect_rationale}} |
-| Developer | {{developer_estimate}} | {{developer_rationale}} |
-| QA | {{qa_estimate}} | {{qa_rationale}} |
+{{#each dispatched_agents}}
+| {{agent-name}} | {{agent-name_estimate}} | {{agent-name_rationale}} |
+{{/each}}
 
 **Variance:** {{variance}} points
 **Threshold:** {{threshold}} points
@@ -904,9 +864,9 @@ Prepare estimation data for the refinement.md template:
 
 | Agent | Revised Estimate (SP) | Rationale |
 |-------|----------------------|-----------|
-| Architect | {{architect_revised}} | {{architect_revised_rationale}} |
-| Developer | {{developer_revised}} | {{developer_revised_rationale}} |
-| QA | {{qa_revised}} | {{qa_revised_rationale}} |
+{{#each dispatched_agents}}
+| {{agent-name}} | {{agent-name_revised}} | {{agent-name_revised_rationale}} |
+{{/each}}
 
 **New Variance:** {{new_variance}} points
 {{/if}}
@@ -914,7 +874,7 @@ Prepare estimation data for the refinement.md template:
 ### Final Estimate
 
 **Median:** {{final_estimate}} SP
-**Method:** Wideband Delphi
+**Method:** {{#if single_agent}}Single Agent Estimate{{else}}Wideband Delphi{{/if}}
 **Confidence Level:** {{confidence_level}}
 ```
 
@@ -929,7 +889,7 @@ Append the estimation section to `_scrum-output/sprints/SW-XXX/refinement.md`.
 
 **Final Estimate:** {{final_estimate}} SP
 **Confidence Level:** {{confidence_level}}
-**Method:** Wideband Delphi (median of 3 agent estimates)
+**Method:** {{#if single_agent}}Single Agent Estimate{{else}}Wideband Delphi (median of {{agent_count}} agent estimates){{/if}}
 
 Estimate stored in:
 - story.md (YAML frontmatter)
@@ -942,87 +902,47 @@ After estimation is complete, proceed to Step 8 for synthesis.
 
 ## Step 8: Display Agent Perspectives
 
-Present all three agent perspectives to the user in sequential, clearly labeled sections.
+Present all dispatched agent perspectives to the user in sequential, clearly labeled sections.
 
-### Step 7.1: Present Architect Perspective
+### Step 8.1: Present Each Dispatched Agent's Perspective
 
-Display the Architect agent's perspective with a clear section header:
-
-```
-## Architect Perspective
-
-{architect_perspective}
-```
-
-### Step 7.2: Present Developer Perspective
-
-Display the Developer agent's perspective with a clear section header:
+For each `{agent-name}` in `{dispatched_agents}`, display the agent's perspective with a clear section header:
 
 ```
-## Developer Perspective
+## {Agent-Name} Perspective
 
-{developer_perspective}
-```
-
-### Step 7.3: Present QA Perspective
-
-Display the QA agent's perspective with a clear section header:
-
-```
-## QA Perspective
-
-{qa_perspective}
+{agent-name_perspective}
 ```
 
 **Presentation requirements:**
 - Each perspective is displayed in a separate, clearly labeled section
-- Perspectives are presented sequentially (Architect, then Developer, then QA)
+- Perspectives are presented sequentially in the order they appear in `{dispatched_agents}`
 - Each perspective maintains the table-based format with Findings, Recommendations, and Proposed Acceptance Criteria
 - No perspective is influenced or modified by another agent's output
 
 ## Step 9: Await User Feedback
 
-Prompt the user to review and provide feedback on each agent perspective individually.
+Prompt the user to review and provide feedback on each dispatched agent perspective individually.
 
-### Step 9.1: Prompt for Architect Perspective Feedback
+### Step 9.1: Prompt for Each Agent's Perspective Feedback
 
-Ask the user:
-
-```
-Do you accept the Architect perspective? [accept/reject/suggest-changes]
-```
-
-Wait for user input before proceeding.
-
-### Step 9.2: Prompt for Developer Perspective Feedback
-
-Ask the user:
+For each `{agent-name}` in `{dispatched_agents}`, ask the user:
 
 ```
-Do you accept the Developer perspective? [accept/reject/suggest-changes]
+Do you accept the {Agent-Name} perspective? [accept/reject/suggest-changes]
 ```
 
-Wait for user input before proceeding.
+Wait for user input before proceeding to the next agent.
 
-### Step 9.3: Prompt for QA Perspective Feedback
+### Step 9.2: Handle User Feedback
 
-Ask the user:
-
-```
-Do you accept the QA perspective? [accept/reject/suggest-changes]
-```
-
-Wait for user input before proceeding.
-
-### Step 9.4: Handle User Feedback
-
-Collect the user's responses for each perspective:
+Collect the user's responses for each dispatched agent perspective:
 
 - **accept**: The perspective is approved and will be included in synthesis
 - **reject**: The perspective is discarded and will not be included in synthesis
 - **suggest-changes**: The user provides specific feedback for refinement (handled in Story 3.3 synthesis)
 
-Store the user's acceptance decisions for each perspective as `{architect_accepted}`, `{developer_accepted}`, `{qa_accepted}` for use in the synthesis phase (Story 3.3).
+Store the user's acceptance decisions for each agent as `{agent-name_accepted}` for use in the synthesis phase.
 
 ### Step 9.5: Invoke Feedback Collection Skill
 
@@ -1033,7 +953,7 @@ Store the user's acceptance decisions for each perspective as `{architect_accept
 **Invocation:**
 Invoke `scrum_workflow/skills/feedback-collection/SKILL.md` (direct skill invocation, not sub-agent spawning) to collect structured feedback:
 
-- Present each perspective sequentially (Architect, then Developer, then QA)
+- Present each dispatched agent's perspective sequentially (in order of `{dispatched_agents}`)
 - Collect accept/reject decision for each perspective
 - Collect optional user comment for each decision
 - Record timestamp in ISO 8601 format
@@ -1049,15 +969,16 @@ Store the structured feedback output as `{feedback_data}` for insertion into ref
 
 ## Step 10: Synthesis Phase
 
-After collecting user feedback on all three perspectives, invoke the synthesis skill to merge accepted perspectives into a coherent updated story file.
+After collecting user feedback on all dispatched agent perspectives, invoke the synthesis skill to merge accepted perspectives into a coherent updated story file.
 
 ### Step 10.0: Prepare Synthesis Context
 
 **Include in synthesis:**
-- All agent perspectives (accepted and rejected)
-- Cross-talk discussion rounds summary
+- All dispatched agent perspectives (accepted and rejected)
+- Cross-talk discussion rounds summary (if 2+ agents were dispatched)
 - Blocker/non-blocker resolution status
 - Final consensus points
+- Dispatch Summary with agent selection rationale
 
 ### Step 10.1: Invoke Synthesis Skill
 
@@ -1069,7 +990,7 @@ After collecting user feedback on all three perspectives, invoke the synthesis s
 **Invocation:**
 Invoke `scrum_workflow/skills/synthesis/SKILL.md` (direct skill invocation, not sub-agent spawning) to merge accepted agent perspectives:
 
-- Pass accepted perspectives based on user feedback ({architect_accepted}, {developer_accepted}, {qa_accepted})
+- Pass accepted perspectives based on user feedback ({agent-name_accepted} for each dispatched agent)
 - Pass original story.md for baseline
 - Pass refinement template for audit file creation
 - Filter perspectives: only merge accepted perspectives, preserve rejected for auditability
@@ -1088,6 +1009,7 @@ Invoke `scrum_workflow/skills/synthesis/SKILL.md` (direct skill invocation, not 
 **File Creation:**
 Create `_scrum-output/sprints/SW-XXX/refinement.md` containing:
 
+- **Dispatch Summary** section: dispatched agents, dispatch rationale, skipped agents with reasons (from `{dispatch_rationale}` and `{skipped_agents}`)
 - All agent perspectives (accepted and rejected) for auditability
 - **Feedback Record Section** (NFR16 compliance): User decisions with timestamps, comments, and quality tracking summary (from {feedback_data})
 - Synthesis summary with findings counts and accepted changes
@@ -1108,39 +1030,24 @@ Ensure feedback section is clearly separated from user-editable content using di
 [System-generated feedback data - preserved across story updates]
 
 ### User Decisions
-- Architect Perspective: [accept/reject]
+{{#each dispatched_agents}}
+- {{agent-name}} Perspective: [accept/reject]
   - Comment: [text]
   - Timestamp: [ISO_8601]
   - User: [name]
-[... Developer and QA sections ...]
+{{/each}}
 
 ### Quality Tracking Summary
-- Total Perspectives: 3
+- Total Perspectives: {{dispatched_agents.length}}
 - Accepted: [count]
 - Rejected: [count]
 - Acceptance Rate: [percentage]%
 ```
 
-**NFR16 Compliance:**
-Ensure feedback section is clearly separated from user-editable content using distinct section header:
-```markdown
-## Feedback Record
-
-[This section contains system-generated feedback data and is not user-editable]
-
-### User Decisions
-- Architect Perspective: [accept/reject]
-- Developer Perspective: [accept/reject]
-- QA Perspective: [accept/reject]
-
-### Synthesis Summary
-[...]
-```
-
 ### Step 10.3: Update Story File
 
 **Special Case - All Perspectives Rejected:**
-If all three perspectives were rejected by the user:
+If all dispatched agent perspectives were rejected by the user:
 - Skip story.md content updates
 - Preserve original story.md without modifications
 - Log in refinement.md: "All perspectives rejected - original story preserved"
@@ -1157,9 +1064,11 @@ If all three perspectives were rejected by the user:
 Update `_scrum-output/sprints/SW-XXX/story.md` with synthesized content using atomic write operation:
 
 - Read complete story.md file
-- Merge Architect findings into story description (if accepted)
-- Merge QA proposed acceptance criteria into story acceptance criteria (if accepted)
-- Merge Dev recommendations into subtasks (if accepted)
+- Merge accepted agent perspectives into story content (based on each agent's focus area)
+- For Architect agent: merge architectural findings into story description
+- For QA agent: merge proposed acceptance criteria into story acceptance criteria
+- For Developer agent: merge recommendations into subtasks
+- For extended agents (security-reviewer, ux-reviewer, contract-validator): merge domain-specific findings
 - Update estimation based on complexity revealed by accepted perspectives
 - Update `updated` field with current date in ISO 8601 format (validate format before writing)
 - Write entire file in single atomic operation
@@ -1212,12 +1121,10 @@ After successful synthesis, clean up temp files unless `keep_agent_temp_files` i
    - Log in refinement.md: "Temp files preserved for debugging (keep_agent_temp_files: true)"
 
 **Files to Clean (if cleanup enabled):**
-- `sprints/SW-XXX/temp/architect-round-0.md`
-- `sprints/SW-XXX/temp/developer-round-0.md`
-- `sprints/SW-XXX/temp/qa-round-0.md`
-- `sprints/SW-XXX/temp/round-1-summary.md`
-- `sprints/SW-XXX/temp/round-2-summary.md`
-- `sprints/SW-XXX/temp/round-3-summary.md`
+For each `{agent-name}` in `{dispatched_agents}`:
+- `sprints/SW-XXX/temp/{agent-name}-round-0.md`
+And for each cross-talk round:
+- `sprints/SW-XXX/temp/round-{N}-summary.md`
 
 ## Step 11: Readiness Check Gate
 
@@ -1299,10 +1206,10 @@ This workflow may NOT write:
 
 - Story status must be `draft` before refinement begins
 - Story status must be updated to `refinement` at start, then `refined` on completion, each in a single atomic write
-- All three agents must be spawned with isolated contexts (no cross-contamination)
+- All dispatched agents must be spawned with isolated contexts (no cross-contamination)
 - Each agent receives only its role definition file, not other agents' role files
 - Context file references must use correct paths with `scrum_workflow/` prefix for framework files
-- Agent spawning must follow the Sub-Agent Spawning pattern (isolated contexts, independent output)
+- Agent spawning must follow the dynamic agent spawning loop driven by agent-dispatcher output
 - Domain determination must be based on story content keywords
 - Error messages must follow actionable pattern from Architecture Pattern 5
 - All YAML fields must use snake_case

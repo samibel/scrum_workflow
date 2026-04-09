@@ -5,6 +5,8 @@ title: "{{story_title}}"
 status: draft
 type: "{{story_type}}"
 risk_level: "{{risk_level}}"
+depth: "{{depth}}"
+depth_source: "{{depth_source}}"
 domain_tags: {{domain_tags}}
 estimation: null
 created: "{{created_date}}"

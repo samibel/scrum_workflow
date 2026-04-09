@@ -3,6 +3,8 @@ schema_version: 1
 ticket: "{{ticket_id}}"
 title: "{{story_title}}"
 status: draft
+depth: "{{depth}}"
+depth_source: "{{depth_source}}"
 estimation: null
 created: "{{created_date}}"
 updated: "{{updated_date}}"

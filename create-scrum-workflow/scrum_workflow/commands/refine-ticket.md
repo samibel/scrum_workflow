@@ -3,19 +3,29 @@ name: refine-ticket
 trigger: "/scrum-refine-ticket"
 requires_status: draft
 sets_status: "refinement → refined"
-spawns_agents:
-  - architect
-  - developer
-  - qa
+spawns_agents: dynamic  # Determined at runtime per story type, risk, domain tags, and depth
+  # Default set: [architect, developer, qa] — overridden per data/dispatch-rules.yaml
+  # Light depth: [developer] only (short-circuit)
+  # Infrastructure type: [architect, developer] (skip QA)
+  # High/critical risk: adds security-reviewer
+  # Frontend/UI/UX tags: adds ux-reviewer
+  # API/contract/integration tags: adds contract-validator
 features:
-  doc_discovery: true
-  discussion_rounds: true
-  estimation: true
+  doc_discovery: true   # Always enabled
+  discussion_rounds: true # Disabled if depth: light
+  estimation: true        # Disabled if depth: light (uses single estimate instead)
+depth_conditional: true   # Workflow adapts based on story frontmatter depth field
 ---
 
 ## Purpose
 
-Orchestrate multi-agent refinement for a story by spawning three specialized agent perspectives (Architect, Developer, QA) in parallel. Each agent analyzes the story from their expert viewpoint with isolated context, producing focused findings on architectural risks, technical feasibility, and testability. The command updates the story status from `draft` to `refinement` and presents all three perspectives for user feedback before proceeding to synthesis.
+Orchestrate dynamic multi-perspective refinement for a story. The dispatcher skill selects specialized perspectives based on story type, risk, and domain tags. Default set: Architect, Developer, QA for `depth: standard` or `depth: heavy`; Developer only for `depth: light`. Each perspective analyzes the story from an expert viewpoint with isolated context, producing focused findings on architectural risks, technical feasibility, and testability. The command updates the story status from `draft` to `refinement` and (for standard/heavy depth) presents all perspectives for user feedback before proceeding to synthesis.
+
+**Light Depth**: Single Developer perspective. No cross-talk, no synthesis, single agent estimate. Ready for validation immediately.
+
+**Standard Depth**: Default: three perspectives (Architect, Developer, QA) with cross-talk rounds, synthesis, and Wideband Delphi estimation. Set may vary based on dynamic dispatch rules (see below).
+
+**Heavy Depth**: Default: three perspectives (Architect, Developer, QA) with maximum cross-talk rounds (no early exit on consensus), synthesis, Wideband Delphi estimation, and a mandatory security consideration note in the refinement artifact. Heavy depth ensures all rounds complete for maximum rigor on high-risk stories. Set may vary based on dynamic dispatch rules (see below).
 
 ## Workflow Reference
 
@@ -28,11 +38,43 @@ Ticket number in the format: `/scrum-refine-ticket SW-XXX`
 - **Ticket number**: `SW-XXX` format where XXX is a zero-padded 3-digit number (e.g., `SW-001`, `SW-042`, `SW-103`)
 - **Prerequisite**: The story file `_scrum-output/sprints/SW-XXX/story.md` must exist with `status: draft`
 
+### Workflow Depth Override
+
+The refinement workflow adapts based on `depth` field in story frontmatter:
+
+| Aspect | `depth: light` | `depth: standard` (default) | `depth: heavy` |
+|--------|---------------|---------------------------|----------------|
+| Agents | 1 (Developer only) | Dynamic (default: Architect, Developer, QA; varies by type/risk/domain) | Dynamic (default: Architect, Developer, QA; varies by type/risk/domain) |
+| Cross-talk | Disabled | Enabled (up to N rounds, early exit on consensus) | Enabled (max rounds, NO early exit on consensus — all rounds must complete) |
+| Synthesis | Disabled (single perspective = final) | Enabled | Enabled |
+| Estimation | Single agent estimate | Wideband Delphi | Wideband Delphi |
+| Security note | No | No | Mandatory security consideration note in refinement artifact |
+| Readiness validation | 5 criteria (unchanged) | 5 criteria (unchanged) | 5 criteria (unchanged) |
+
+**Depth Detection**: Read `depth` from story frontmatter at workflow start. If `depth` field is `heavy`, apply heavy workflow. If `depth` field is missing or invalid, treat as `standard`.
+
+### Agent Dispatch
+
+After depth detection, the agent-dispatcher skill (`scrum_workflow/skills/agent-dispatcher/SKILL.md`) dynamically selects the agent set based on story attributes:
+
+1. **Depth check**: If `depth: light`, short-circuit to `[developer]` only (preserves existing light depth behavior)
+2. **Type-based override**: Story `type` may replace the default agent set (e.g., `infrastructure` -> `[architect, developer]`, skip QA)
+3. **Risk-based addition**: Story `risk_level` may add agents (e.g., `high`/`critical` -> add `security-reviewer`)
+4. **Domain-tag addition**: Story `domain_tags` may add agents (e.g., `[frontend]` -> add `ux-reviewer`; `[api]` -> add `contract-validator`)
+5. **Agent validation**: Each dispatched agent's file must exist at `scrum_workflow/agents/{name}.md`; missing agents are skipped gracefully with a logged note
+
+**Dispatch rules** are defined in `scrum_workflow/data/dispatch-rules.yaml` and are fully configurable.
+
+**Fallback**: If `agent_dispatch_enabled: false` in config.yaml, or if story attributes are missing/ambiguous, the default agent set `[architect, developer, qa]` is used.
+
+The dispatched agent set and rationale are passed to the refinement workflow for agent spawning and logged in the refinement artifact's Dispatch Summary section.
+
 ## Output
 
+**Standard Depth (depth: standard):**
 - `_scrum-output/sprints/SW-XXX/story.md` -- Updated with `status: refined` on completion, `updated: <today>` (ISO 8601 format), and synthesized content from accepted perspectives using atomic write operation (NFR1 compliance)
-- `_scrum-output/sprints/SW-XXX/refinement.md` -- Refinement audit file containing all agent perspectives (accepted and rejected), user feedback decisions in NFR16-compliant separated section, discussion rounds documentation, and synthesis summary
-- Three agent perspectives displayed to the user (Architect, Developer, QA), each following the table-based output format defined in Architecture Pattern 3
+- `_scrum-output/sprints/SW-XXX/refinement.md` -- Refinement audit file containing all agent perspectives (accepted and rejected), user feedback decisions in NFR16-compliant separated section, discussion rounds documentation, synthesis summary, and **Dispatch Summary** section showing selected agents, dispatch rationale, and skipped agents with reasons
+- Dispatched perspectives displayed to the user (based on dispatcher selection; default: Architect, Developer, QA), each following the table-based output format defined in Architecture Pattern 3
 - Each agent perspective includes Findings table, Recommendations, and Proposed Acceptance Criteria
 - User prompted to accept or reject each perspective individually
 - Accepted perspectives merged into story via direct synthesis skill invocation (not sub-agent spawning) (see `skills/synthesis/SKILL.md`)
@@ -41,24 +83,54 @@ Ticket number in the format: `/scrum-refine-ticket SW-XXX`
 - Token budget validated preventively before synthesis generation (NFR12 compliance)
 - Status transitions: `draft` → `refinement` (on start) → `refined` (on completion)
 
+**Light Depth (depth: light):**
+- `_scrum-output/sprints/SW-XXX/story.md` -- Updated with `status: refined` on completion, `updated: <today>` (ISO 8601 format), and Developer perspective content using atomic write operation (NFR1 compliance)
+- `_scrum-output/sprints/SW-XXX/refinement.md` -- Refinement audit file containing Developer perspective only, and **Dispatch Summary** section showing dispatched agent (developer only via light depth short-circuit)
+- Single Developer perspective displayed to the user
+- Single agent estimate recorded (no Wideband Delphi)
+- No cross-talk rounds, no synthesis step
+- Story is ready for validation immediately after perspective acceptance
+- Status transitions: `draft` → `refinement` (on start) → `refined` (on completion)
+
+**Heavy Depth (depth: heavy):**
+- `_scrum-output/sprints/SW-XXX/story.md` -- Updated with `status: refined` on completion, `updated: <today>` (ISO 8601 format), and synthesized content from accepted perspectives using atomic write operation (NFR1 compliance)
+- `_scrum-output/sprints/SW-XXX/refinement.md` -- Refinement audit file containing all agent perspectives (accepted and rejected), user feedback decisions, discussion rounds documentation (all rounds, no early exit), synthesis summary, mandatory security consideration note reminding the reviewer that this is a high-risk story, and **Dispatch Summary** section showing selected agents, dispatch rationale, and skipped agents with reasons
+- Dispatched perspectives displayed to the user (based on dispatcher selection; default: Architect, Developer, QA)
+- Cross-talk runs for maximum rounds (`refinement_max_rounds` from config.yaml) with NO early exit on consensus — all rounds must complete to ensure thorough review
+- Wideband Delphi estimation
+- Mandatory security consideration note added to the refinement artifact: "Security Consideration: This is a high-risk story. Ensure security implications are thoroughly reviewed before approval."
+- Status transitions: `draft` → `refinement` (on start) → `refined` (on completion)
+
 ### Doc Discovery (Story 10.1)
 
 Prompt user for additional documents (file paths or URLs) to include in agent context. Auto-detected context from `_scrum-output/context/` is always included.
 
 ### Discussion Rounds (Story 10.2)
 
+**Note: Discussion rounds are only enabled for `depth: standard` and `depth: heavy` stories.**
+
 Multi-round cross-talk between agents where they:
 - See and comment on each other's perspectives
 - Identify agreements, disagreements, and blind spots
 - Classify disagreements as blockers or non-blockers
 - Security issues are automatically marked as blockers
-- Early exit when all blockers resolved
+- Early exit when all blockers resolved (**standard depth only** — heavy depth disables early exit)
 
 Progressive truncation: 400 → 300 → 200 words per round (configurable via `refinement_max_rounds` in config.yaml, default: 3)
 
+**For `depth: light`:** Skip discussion rounds entirely. Single Developer perspective is final.
+
+**For `depth: heavy`:** Run all `refinement_max_rounds` rounds. Do NOT exit early on consensus. All rounds must complete to ensure maximum rigor for high-risk stories.
+
 ### Estimation (Story 10.3)
 
+**Note: Wideband Delphi estimation is enabled for `depth: standard` and `depth: heavy` stories.**
+
 Wideband Delphi estimation with variance threshold checking (default: 2 points).
+
+**For `depth: light`:** Use single Developer agent estimate only. No cross-agent estimation rounds.
+
+**For `depth: heavy`:** Use Wideband Delphi estimation (same as standard).
 
 ## Configuration
 

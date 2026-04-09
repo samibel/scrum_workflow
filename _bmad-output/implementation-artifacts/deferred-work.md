@@ -16,3 +16,11 @@
 
 - `workflows/approval.md` Steps 1.x, 2.x, 4.x, 5.x, and 6.1 reference old `approval.md` artifact filename (not `approval-N.md`) and Steps 1.1-1.3 use old `Error:` prefix format. Only Step 6.3 was updated by Story 3.3 (Task 5.3). Full standardization of all approval.md workflow error messages and artifact references is deferred to a future story.
 - `create-scrum-workflow/scrum_workflow/commands/dev-story.md` and `create-scrum-workflow/templates/scrum_workflow/commands/dev-story.md` have outdated guard condition content (requires_status: `ready-for-dev` only, missing `changes-needed` support added in a prior story). Write Boundary Rules section was added by this review; full guard condition alignment is pre-existing from Story 2.x and deferred.
+
+## Deferred from: code review of 6-3-implement-interactive-prompt-patterns (2026-04-08)
+
+- Singleton spinner instance in `progress.js` line 24 (`const s = spinner()`). Calling `progress.start()` while a spinner is already running could cause visual issues. Pre-existing from Story 6.2 -- not introduced by Story 6.3.
+
+## Deferred from: code review of 6-4-implement-zero-config-installation-flow (2026-04-08)
+
+- `.github` marker directory is too broad for `github-copilot` detection in `platform-detector.js`. Most git repos have `.github/` for CI workflows and issue templates, causing false positives. The platform-registry.yaml specifies `target_dir: .github/skills`, so detection should ideally check for `.github/skills/` or `.github/copilot/` instead. Pre-existing design decision from story spec -- deferred to a future refinement.

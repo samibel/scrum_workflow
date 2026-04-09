@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-04-07T12:00:49Z
-last_updated: 2026-04-08T02:10:00Z
+last_updated: 2025-07-15T14:00:00Z
 project: scrum_workflow
 project_key: NOKEY
 tracking_system: file-system
@@ -111,9 +111,9 @@ development_status:
   epic-8-retrospective: optional
 
   # Epic 9: Adaptive Workflows & Intelligence
-  epic-9: backlog
-  9-1-implement-story-classifier: backlog
-  9-2-implement-adaptive-workflow-depth-selection: backlog
-  9-3-implement-dynamic-agent-dispatcher: backlog
-  9-4-implement-extended-agent-types: backlog
+  epic-9: done
+  9-1-implement-story-classifier: done
+  9-2-implement-adaptive-workflow-depth-selection: done
+  9-3-implement-dynamic-agent-dispatcher: done
+  9-4-implement-extended-agent-types: done
   epic-9-retrospective: optional

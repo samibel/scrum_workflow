@@ -54,6 +54,21 @@ early_exit_on_consensus: true
 # Automatically mark security issues as blockers in cross-talk
 security_auto_blocker: true
 
+# Adaptive workflow depth thresholds (FR-33, FR-36)
+# Maps story risk_level (from story-classifier) to workflow depth
+# Customize these to adjust process rigor per risk level
+# Valid depth values: light, standard, heavy
+workflow_depth_thresholds:
+  low: light          # Low-risk stories get lightweight process
+  medium: standard    # Medium-risk stories get full standard process
+  high: heavy         # High-risk stories get maximum rigor
+  critical: heavy     # Critical-risk stories get maximum rigor
+
+# Dynamic agent dispatch (FR-34)
+# Enable/disable dynamic agent selection during /scrum-refine-ticket
+# When disabled, uses static default set: [architect, developer, qa]
+agent_dispatch_enabled: true
+
 # Framework version (for copy-based updates)
 # Used to track framework version for distribution and migration
 framework_version: 1.0.0

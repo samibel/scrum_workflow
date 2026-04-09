@@ -1,0 +1,136 @@
+# Dispatch Rules Reference Data
+# Used by the agent-dispatcher skill to dynamically select agents for refinement
+# Referenced by: scrum_workflow/skills/agent-dispatcher/SKILL.md
+# Invoked during: /scrum-refine-ticket workflow (after depth detection, before agent spawning)
+#
+# Rule Composition Order:
+#   1. Check depth — if light, short-circuit to [developer] only
+#   2. Start with default agent set
+#   3. Apply type-based overrides (REPLACE default set if type-specific rule exists)
+#   4. Apply risk-based additions (ADD agents based on risk_level)
+#   5. Apply domain-tag-based additions (ADD agents based on matching domain_tags)
+#   6. Deduplicate the agent list
+#   7. Validate each agent file exists — skip missing agents gracefully
+
+# =============================================================================
+# Light Depth Override
+# =============================================================================
+# When depth is "light", the dispatcher short-circuits and returns [developer] only.
+# No other dispatch rules are applied. This preserves existing light depth behavior.
+
+light_depth_override:
+  depth: light
+  agents:
+    - developer
+  description: "Light depth short-circuit — developer only, no other rules applied"
+
+# =============================================================================
+# Default Agent Set
+# =============================================================================
+# The standard agent set used when no type-specific override applies,
+# or when classification is ambiguous / story attributes are missing.
+# This matches the current hardcoded behavior in the refinement workflow.
+
+default_agents:
+  agents:
+    - architect
+    - developer
+    - qa
+  description: "Default agent set — used when no specific dispatch rules match or dispatch is disabled"
+
+# =============================================================================
+# Type-Based Override Rules
+# =============================================================================
+# Type-based rules REPLACE the default agent set entirely.
+# If the story type has a matching rule here, that rule's agent list is used
+# instead of the default set. If no type matches, the default set is kept.
+
+type_based_overrides:
+  # Infrastructure stories skip QA — focus on architecture and implementation
+  infrastructure:
+    agents:
+      - architect
+      - developer
+    description: "Infrastructure stories focus on architecture and implementation — QA skipped"
+
+  # Feature stories use the full default set (no override needed, listed for clarity)
+  # feature: uses default set [architect, developer, qa]
+
+  # Bugfix stories use the full default set (no override needed)
+  # bugfix: uses default set [architect, developer, qa]
+
+  # Refactor stories use the full default set (no override needed)
+  # refactor: uses default set [architect, developer, qa]
+
+# =============================================================================
+# Risk-Based Addition Rules
+# =============================================================================
+# Risk-based rules ADD agents to the current set (they do NOT replace).
+# After type-based overrides determine the base set, risk-based additions
+# append extra agents based on the story's risk_level.
+
+risk_based_additions:
+  # High risk adds security-reviewer for security-focused review
+  high:
+    add_agents:
+      - security-reviewer
+    description: "High-risk stories add security-reviewer for security-focused review"
+
+  # Critical risk also adds security-reviewer (same as high)
+  critical:
+    add_agents:
+      - security-reviewer
+    description: "Critical-risk stories add security-reviewer for security-focused review"
+
+  # Medium risk — no additional agents from risk rules
+  medium:
+    add_agents: []
+    description: "Medium-risk stories — no additional agents from risk rules"
+
+  # Low risk — no additional agents from risk rules
+  low:
+    add_agents: []
+    description: "Low-risk stories — no additional agents from risk rules"
+
+# =============================================================================
+# Domain-Tag-Based Addition Rules
+# =============================================================================
+# Domain-tag rules ADD agents to the current set (they do NOT replace).
+# After type and risk rules, domain-tag additions append extra agents
+# based on matching tags in the story's domain_tags array.
+# Multiple tags can match, each adding their respective agents.
+
+domain_tag_additions:
+  # Frontend/UI/UX tags add ux-reviewer for design and usability review
+  ux_review:
+    tags:
+      - frontend
+      - ui
+      - ux
+    add_agent: ux-reviewer
+    description: "Frontend/UI/UX domain tags add ux-reviewer for design and usability review"
+
+  # API/Contract/Integration tags add contract-validator for API contract review
+  contract_review:
+    tags:
+      - api
+      - contract
+      - integration
+    add_agent: contract-validator
+    description: "API/Contract/Integration domain tags add contract-validator for API contract review"
+
+# =============================================================================
+# Customization Guide
+# =============================================================================
+# To add a new dispatch rule:
+#   1. Type override: Add a new entry under type_based_overrides with the type name and agents list
+#   2. Risk addition: Add a new entry under risk_based_additions with the risk level and add_agents list
+#   3. Domain-tag addition: Add a new entry under domain_tag_additions with tags array and add_agent
+#
+# To disable an existing rule:
+#   - Remove or comment out the entry
+#   - Or set agents/add_agents to an empty array []
+#
+# Agent names must be lowercase with hyphens, matching files in scrum_workflow/agents/{name}.md
+# Extended agents (security-reviewer, ux-reviewer, contract-validator) are created in Story 9.4.
+# Until then, these agent slots are skipped gracefully with a logged note.

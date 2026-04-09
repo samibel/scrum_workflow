@@ -25,7 +25,51 @@ Scrum Workflow solves these with **separation of concerns, immutable contracts, 
 
 ### Before vs. After
 
-<img src="BENEFITS-BEFORE-AFTER.svg" alt="Scrum Workflow Before/After Comparison" width="100%" style="max-width: 1200px; margin: 20px 0; border-radius: 8px;"/>
+```mermaid
+graph LR
+    subgraph Before["❌ BEFORE: Traditional AI Dev (Chaotic)"]
+        A["Vague Spec<br/>(AI or PO)"]
+        B["Implement<br/>(AI)")
+        C["Self-Review<br/>(Same AI)"]
+        D["🚢 SHIP<br/>(hope it works)"]
+        E["Bugs in PROD<br/>4/month<br/>😰"]
+        
+        A --> B
+        B --> C
+        C --> D
+        D --> E
+    end
+    
+    subgraph After["✅ AFTER: Scrum Workflow (Clear)"]
+        A2["Multi-Agent<br/>Refinement<br/>(Arch+Dev+QA)"]
+        B2["Validate<br/>(5 Criteria)"]
+        C2["Implement<br/>(Follow Plan)"]
+        D2["Separate Review<br/>(Different Agent)"]
+        E2["Human Gate<br/>(Sign-off)"]
+        F2["🎉 SHIPPED<br/>2/month<br/>confident ✓"]
+        
+        A2 --> B2
+        B2 --> C2
+        C2 --> D2
+        D2 --> E2
+        E2 --> F2
+    end
+    
+    style A fill:#ffcdd2
+    style B fill:#ffcdd2
+    style C fill:#ff6f6f
+    style D fill:#ff8a80
+    style E fill:#ff8a80
+    
+    style A2 fill:#c8e6c9
+    style B2 fill:#b2dfdb
+    style C2 fill:#bbdefb
+    style D2 fill:#fff9c4
+    style E2 fill:#f0f4c3
+    style F2 fill:#a5d6a7
+```
+
+**Result:** 50% fewer bugs, 3x faster specs, zero bad merges, complete audit trail
 
 
 ### Scrum Workflow Phases (Detailed)

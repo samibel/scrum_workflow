@@ -56,7 +56,43 @@ create-scrum-workflow install
 
 ## 📊 How It Works
 
-<img src="README-HERO.svg" alt="Scrum Workflow Overview" width="100%" style="max-width: 1200px; margin: 20px 0; border-radius: 8px;"/>
+```mermaid
+graph TD
+    PO["👤 Product Owner<br/>Writes Stories<br/>Approves Changes"]
+    Dev["💻 Developer<br/>Implements Code<br/>Runs Tests"]
+    SM["🎯 Scrum Master<br/>Ensures Quality<br/>Removes Blockers"]
+    AI["🤖 AI Assistants<br/>Refine & Develop<br/>Review Code"]
+    
+    PO -->|Story| Phase1["<b>Phase 1: Create & Refine</b><br/>3 AI Agents (Architect+Dev+QA)<br/>Cross-talk rounds<br/>Wideband Delphi estimation"]
+    Dev -.->|Implements| Phase3
+    SM -.->|Oversees| Phase4
+    AI --> Phase1
+    
+    Phase1 -->|Status: refined| Phase2["<b>Phase 2: Validate</b><br/>5 Criteria Check<br/>Execution Plan<br/>Ready for Dev"]
+    
+    Phase2 -->|PASS| Phase3["<b>Phase 3: Develop</b><br/>Follow Plan<br/>Write Code<br/>Run Tests"]
+    Phase2 -->|FAIL| Phase2
+    
+    Phase3 -->|Submit| Phase4["<b>Phase 4: Review</b><br/>Separate Agent<br/>Fresh Perspective<br/>Catch Issues"]
+    
+    Phase4 -->|APPROVED| Phase5["<b>Phase 5: Approval</b><br/>👤 Human Gate<br/>Final Sign-off<br/>Audit Trail"]
+    Phase4 -->|CHANGES| Phase3
+    
+    Phase5 -->|✓ Approved| Ship["🎉 SHIPPED<br/>with confidence"]
+    
+    style PO fill:#bbdefb
+    style Dev fill:#c8e6c9
+    style SM fill:#ffe0b2
+    style AI fill:#f8bbd0
+    style Phase1 fill:#f3e5f5
+    style Phase2 fill:#fce4ec
+    style Phase3 fill:#e8f5e9
+    style Phase4 fill:#fff3e0
+    style Phase5 fill:#fff9c4
+    style Ship fill:#c8e6c9
+```
+
+**In a nutshell:** Spec → Validate → Code → Review → Ship (with human gate at the end)
 
 ---
 
@@ -254,13 +290,54 @@ The approval workflow presents the review findings and asks for a clear APPROVE 
 
 ### All Valid Transitions
 
-```
-draft ──────────→ refinement ──────→ refined ──────→ ready-for-dev
-                                        ↺ FAIL                  │
-                                                                 ↓
-done ←── approved ←── review ←──────────────────── in-progress
-                        │                               ↑
-                        └──→ changes-needed ────────────┘
+```mermaid
+stateDiagram-v2
+    [*] --> draft: /scrum-create-ticket
+    
+    draft --> refinement: /scrum-refine-ticket
+    
+    refinement --> refined: Agents complete<br/>Cross-talk done<br/>Estimation ready
+    
+    refined --> refined: /scrum-refine-story<br/>Criteria FAIL<br/>Fix & Retry
+    
+    refined --> ready-for-dev: /scrum-refine-story<br/>All 5 Criteria PASS
+    
+    ready-for-dev --> in-progress: /scrum-dev-story<br/>Start implementation
+    
+    in-progress --> in-progress: Fix code<br/>Run tests
+    
+    in-progress --> review: /scrum-dev-story review<br/>Ready for code review
+    
+    review --> approved: /scrum-review-story<br/>No critical issues
+    
+    review --> changes-needed: /scrum-review-story<br/>Critical/Major issues found
+    
+    changes-needed --> in-progress: /scrum-dev-story<br/>Fix findings
+    
+    approved --> done: /scrum-approve<br/>Human sign-off
+    
+    done --> [*]
+    
+    note right of draft
+        Story created, not yet refined
+    end note
+    
+    note right of refined
+        Refinement done, awaiting validation
+    end note
+    
+    note right of ready-for-dev
+        Spec validated, OK to implement
+    end note
+    
+    note right of changes-needed
+        Code review found issues
+        Developer fixes and re-submits
+    end note
+    
+    note right of done
+        Human approved, story complete
+    end note
 ```
 
 | From | To | Trigger | Guard |
@@ -282,7 +359,9 @@ done ←── approved ←── review ←────────────
 
 ## Commands Reference
 
-### Story Lifecycle
+**Visual Overview:** See [ALL-COMMANDS.md](./ALL-COMMANDS.md) for all 20 commands as Mermaid diagrams
+
+### Story Lifecycle (6 Commands)
 
 | Command | Phase | Status Transition |
 |---------|-------|-------------------|
@@ -292,7 +371,7 @@ done ←── approved ←── review ←────────────
 | `/scrum-dev-story SW-XXX` | Develop | `ready-for-dev` → `in-progress` |
 | `/scrum-dev-story SW-XXX review` | Submit | `in-progress` → `review` |
 | `/scrum-review-story SW-XXX` | Review | `review` → `approved` / `changes-needed` |
-| Human approval | Approve | `approved` → `done` |
+| `/scrum-approve SW-XXX` | Approve | `approved` → `done` |
 
 ### Documentation & Research
 

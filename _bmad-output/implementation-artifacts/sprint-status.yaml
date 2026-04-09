@@ -94,7 +94,7 @@ development_status:
 
   # Epic 7: Session Memory & Decision Persistence
   epic-7: in-progress
-  7-1-implement-decision-record-extraction: ready-for-dev
+  7-1-implement-decision-record-extraction: in-progress
   7-2-implement-risk-note-extraction-auto-loading: backlog
   7-3-implement-session-start-context-loading: backlog
   7-4-implement-session-wrap-up: backlog

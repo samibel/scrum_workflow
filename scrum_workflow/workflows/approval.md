@@ -275,6 +275,40 @@ review_reference: "review-N.md"
 {If rejected: Manual fixes and re-review instructions}
 ```
 
+## Step 4.5: Decision Extraction Phase
+
+After `approval-N.md` is written, invoke the decision-extraction skill to capture any technology, architecture, or scope decisions embedded in the approval reasoning.
+
+### Step 4.5.1: Invoke Decision Extraction Skill
+
+Invoke `scrum_workflow/skills/decision-extraction/SKILL.md` with:
+
+- `source`: `approval`
+- `source_file`: `_scrum-output/sprints/SW-XXX/approval-N.md` (the file just written)
+- `ticket`: SW-XXX
+
+The skill scans the approval reasoning for decision signal phrases (e.g., "Approved because X chosen over Y", "use X over Y", "selected because") and creates DR-XXX.md artifacts in `_scrum-output/memory/decisions/`.
+
+This extraction applies to both approved and rejected (changes-needed) approvals — decision signals in rejection reasoning are equally important to capture.
+
+### Step 4.5.2: Report Decision Extraction Results
+
+Include extracted decisions in the approval completion summary:
+
+**If decisions were found:**
+```
+Extracted 1 decision record: DR-003.md
+```
+
+**If no decisions found:**
+```
+No decisions detected in approval reasoning
+```
+
+**Write boundary for this step:**
+- The decision-extraction skill may ONLY write to `_scrum-output/memory/decisions/DR-XXX.md`
+- It MUST NOT modify `approval-N.md`, `story.md`, or any sprint artifact
+
 ## Step 5: Handle Approval Decision
 
 ### Step 5.1: If Approved — Update Status to done
@@ -333,6 +367,7 @@ Approval decisions are permanent and create audit trail:
 The approval workflow MAY write:
 - `_scrum-output/sprints/SW-XXX/approval.md` -- Approval record (new file or update)
 - `_scrum-output/sprints/SW-XXX/story.md` -- Status update only (approved → done)
+- `_scrum-output/memory/decisions/DR-XXX.md` -- Decision records extracted by decision-extraction skill (Step 4.5)
 
 ### Step 6.2: Prohibited Write Operations
 

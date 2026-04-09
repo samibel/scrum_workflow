@@ -1126,6 +1126,38 @@ For each `{agent-name}` in `{dispatched_agents}`:
 And for each cross-talk round:
 - `sprints/SW-XXX/temp/round-{N}-summary.md`
 
+## Step 10.6: Decision Extraction (Phase 6a)
+
+After synthesis writes `refinement.md` and cleanup is complete, invoke the decision-extraction skill to capture any technology, architecture, or scope decisions embedded in the refinement feedback.
+
+### Step 10.6.1: Invoke Decision Extraction Skill
+
+Invoke `scrum_workflow/skills/decision-extraction/SKILL.md` with:
+
+- `source`: `refinement`
+- `source_file`: `_scrum-output/sprints/SW-XXX/refinement.md`
+- `ticket`: SW-XXX
+
+The skill scans the refinement.md content for decision signal phrases (e.g., "chose X over Y", "selected because", "using X instead of Y") and creates DR-XXX.md artifacts in `_scrum-output/memory/decisions/`.
+
+### Step 10.6.2: Report Decision Extraction Results
+
+Include extracted decisions in the refinement completion summary:
+
+**If decisions were found:**
+```
+Extracted 2 decision records: DR-001.md, DR-002.md
+```
+
+**If no decisions found:**
+```
+No decisions detected in refinement feedback
+```
+
+**Write boundary for this step:**
+- The decision-extraction skill may ONLY write to `_scrum-output/memory/decisions/DR-XXX.md`
+- It MUST NOT modify `refinement.md`, `story.md`, or any sprint artifact
+
 ## Step 11: Readiness Check Gate
 
 After synthesis is complete and validated, run the readiness check to ensure the story is complete before allowing implementation.

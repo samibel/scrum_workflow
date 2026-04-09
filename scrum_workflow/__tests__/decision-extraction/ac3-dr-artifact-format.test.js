@@ -2,10 +2,6 @@
  * ATDD Tests — AC3: DR Artifact Format Compliance
  * Story 7.1: Implement Decision Record Extraction
  *
- * TDD RED PHASE: These tests are intentionally failing.
- * The DR artifact template and creation logic are NOT yet implemented.
- * Remove test.skip() once Story 7.1 implementation is complete.
- *
  * AC3: Given the decision record artifact
  *      When it is created
  *      Then it contains YAML frontmatter with: ticket reference, decision summary,
@@ -16,10 +12,7 @@
 import { describe, test, expect, beforeEach, afterEach } from 'vitest';
 import { existsSync, mkdirSync, writeFileSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
-
-// TODO: Import from not-yet-implemented modules
-// import { createDRArtifact } from '../../utils/decision-extraction.js';
-// import yaml from 'js-yaml';
+import { createDRArtifact } from '../../utils/decision-extraction.js';
 
 const PROJECT_ROOT = join(process.cwd());
 const TEST_DECISIONS_DIR = join(PROJECT_ROOT, '_test-output', 'memory', 'decisions');
@@ -105,8 +98,7 @@ describe('AC3: DR Artifact Format Compliance', () => {
   });
 
   describe('Required YAML Frontmatter Fields', () => {
-    test.skip('[P0] 7.1-UNIT-030: created DR artifact must contain schema_version field', () => {
-      // THIS TEST WILL FAIL — createDRArtifact not yet implemented
+    test('[P0] 7.1-UNIT-030: created DR artifact must contain schema_version field', () => {
       const request = createDRRequest();
       const drPath = createDRArtifact(request);
       const content = readFileSync(drPath, 'utf8');
@@ -116,8 +108,7 @@ describe('AC3: DR Artifact Format Compliance', () => {
       expect(frontmatter['schema_version']).toBe('1.0.0');
     });
 
-    test.skip('[P0] 7.1-UNIT-031: created DR artifact must contain ticket reference field', () => {
-      // THIS TEST WILL FAIL — createDRArtifact not yet implemented
+    test('[P0] 7.1-UNIT-031: created DR artifact must contain ticket reference field', () => {
       // Given: DR request for ticket SW-001
       const request = createDRRequest({ ticketId: 'SW-001' });
 
@@ -130,8 +121,7 @@ describe('AC3: DR Artifact Format Compliance', () => {
       expect(frontmatter['ticket']).toBe('SW-001');
     });
 
-    test.skip('[P0] 7.1-UNIT-032: created DR artifact must contain decision_summary field', () => {
-      // THIS TEST WILL FAIL — createDRArtifact not yet implemented
+    test('[P0] 7.1-UNIT-032: created DR artifact must contain decision_summary field', () => {
       const summary = 'WebSockets chosen over SSE for bidirectional communication';
       const request = createDRRequest({ decisionSummary: summary });
 
@@ -142,8 +132,7 @@ describe('AC3: DR Artifact Format Compliance', () => {
       expect(frontmatter['decision_summary']).toContain('WebSockets');
     });
 
-    test.skip('[P0] 7.1-UNIT-033: created DR artifact must contain date field in ISO 8601 UTC format', () => {
-      // THIS TEST WILL FAIL — createDRArtifact not yet implemented
+    test('[P0] 7.1-UNIT-033: created DR artifact must contain date field in ISO 8601 UTC format', () => {
       const isoDate = '2026-04-09T10:00:00Z';
       const request = createDRRequest({ date: isoDate });
 
@@ -155,8 +144,7 @@ describe('AC3: DR Artifact Format Compliance', () => {
       expect(frontmatter['date']).toMatch(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/);
     });
 
-    test.skip('[P0] 7.1-UNIT-034: created DR artifact must contain context field', () => {
-      // THIS TEST WILL FAIL — createDRArtifact not yet implemented
+    test('[P0] 7.1-UNIT-034: created DR artifact must contain context field', () => {
       const context = 'The chat feature requires full-duplex communication.';
       const request = createDRRequest({ context });
 
@@ -167,8 +155,7 @@ describe('AC3: DR Artifact Format Compliance', () => {
       expect(content).toContain(context);
     });
 
-    test.skip('[P0] 7.1-UNIT-035: created DR artifact must contain alternatives_considered field', () => {
-      // THIS TEST WILL FAIL — createDRArtifact not yet implemented
+    test('[P0] 7.1-UNIT-035: created DR artifact must contain alternatives_considered field', () => {
       const alternatives = [
         { option: 'SSE', rejectedBecause: 'Unidirectional only' },
       ];
@@ -182,8 +169,7 @@ describe('AC3: DR Artifact Format Compliance', () => {
       expect(content).toContain('Unidirectional only');
     });
 
-    test.skip('[P0] 7.1-UNIT-036: created DR artifact must contain source field (refinement or approval)', () => {
-      // THIS TEST WILL FAIL — createDRArtifact not yet implemented
+    test('[P0] 7.1-UNIT-036: created DR artifact must contain source field (refinement or approval)', () => {
       // Given: DR from refinement source
       const refinementRequest = createDRRequest({ source: 'refinement' });
       const refinementPath = createDRArtifact(refinementRequest);
@@ -192,8 +178,7 @@ describe('AC3: DR Artifact Format Compliance', () => {
       expect(refinementFrontmatter['source']).toBe('refinement');
     });
 
-    test.skip('[P0] 7.1-UNIT-037: created DR artifact must contain source field for approval source', () => {
-      // THIS TEST WILL FAIL — createDRArtifact not yet implemented
+    test('[P0] 7.1-UNIT-037: created DR artifact must contain source field for approval source', () => {
       // Given: DR from approval source
       const approvalRequest = createDRRequest({
         source: 'approval',
@@ -207,8 +192,7 @@ describe('AC3: DR Artifact Format Compliance', () => {
       expect(approvalFrontmatter['source']).toBe('approval');
     });
 
-    test.skip('[P0] 7.1-UNIT-038: created DR artifact must contain source_file field', () => {
-      // THIS TEST WILL FAIL — createDRArtifact not yet implemented
+    test('[P0] 7.1-UNIT-038: created DR artifact must contain source_file field', () => {
       const sourceFile = '_scrum-output/sprints/SW-001/refinement.md';
       const request = createDRRequest({ sourceFile });
 
@@ -221,8 +205,7 @@ describe('AC3: DR Artifact Format Compliance', () => {
   });
 
   describe('DR Artifact File Naming', () => {
-    test.skip('[P0] 7.1-UNIT-039: DR artifact filename must follow DR-NNN.md pattern', () => {
-      // THIS TEST WILL FAIL — createDRArtifact not yet implemented
+    test('[P0] 7.1-UNIT-039: DR artifact filename must follow DR-NNN.md pattern', () => {
       const request = createDRRequest({ drNumber: 1 });
       const drPath = createDRArtifact(request);
 
@@ -230,24 +213,21 @@ describe('AC3: DR Artifact Format Compliance', () => {
       expect(drPath).toMatch(/DR-001\.md$/);
     });
 
-    test.skip('[P0] 7.1-UNIT-040: DR artifact for number 42 must be named DR-042.md', () => {
-      // THIS TEST WILL FAIL — createDRArtifact not yet implemented
+    test('[P0] 7.1-UNIT-040: DR artifact for number 42 must be named DR-042.md', () => {
       const request = createDRRequest({ drNumber: 42 });
       const drPath = createDRArtifact(request);
 
       expect(drPath).toMatch(/DR-042\.md$/);
     });
 
-    test.skip('[P0] 7.1-UNIT-041: DR artifact for number 100 must be named DR-100.md', () => {
-      // THIS TEST WILL FAIL — createDRArtifact not yet implemented
+    test('[P0] 7.1-UNIT-041: DR artifact for number 100 must be named DR-100.md', () => {
       const request = createDRRequest({ drNumber: 100 });
       const drPath = createDRArtifact(request);
 
       expect(drPath).toMatch(/DR-100\.md$/);
     });
 
-    test.skip('[P0] 7.1-UNIT-042: DR artifact must be written to _scrum-output/memory/decisions/ directory', () => {
-      // THIS TEST WILL FAIL — createDRArtifact not yet implemented
+    test('[P0] 7.1-UNIT-042: DR artifact must be written to _scrum-output/memory/decisions/ directory', () => {
       const request = createDRRequest({ outputDir: decisionsDir, drNumber: 1 });
       const drPath = createDRArtifact(request);
 
@@ -258,8 +238,7 @@ describe('AC3: DR Artifact Format Compliance', () => {
   });
 
   describe('Human-Readable and Diffable Format', () => {
-    test.skip('[P0] 7.1-UNIT-043: DR artifact must be valid Markdown (starts with YAML frontmatter)', () => {
-      // THIS TEST WILL FAIL — createDRArtifact not yet implemented
+    test('[P0] 7.1-UNIT-043: DR artifact must be valid Markdown (starts with YAML frontmatter)', () => {
       // Given: a complete DR request
       const request = createDRRequest();
       const drPath = createDRArtifact(request);
@@ -271,8 +250,7 @@ describe('AC3: DR Artifact Format Compliance', () => {
       expect(content).toMatch(/^---\n[\s\S]*?\n---\n/);
     });
 
-    test.skip('[P0] 7.1-UNIT-044: DR artifact must contain human-readable Markdown body', () => {
-      // THIS TEST WILL FAIL — createDRArtifact not yet implemented
+    test('[P0] 7.1-UNIT-044: DR artifact must contain human-readable Markdown body', () => {
       const request = createDRRequest();
       const drPath = createDRArtifact(request);
       const content = readFileSync(drPath, 'utf8');
@@ -282,8 +260,7 @@ describe('AC3: DR Artifact Format Compliance', () => {
       expect(content).toMatch(/^## (Decision|Context|Alternatives)/m);
     });
 
-    test.skip('[P0] 7.1-UNIT-045: DR artifact must be plain text (no binary content)', () => {
-      // THIS TEST WILL FAIL — createDRArtifact not yet implemented
+    test('[P0] 7.1-UNIT-045: DR artifact must be plain text (no binary content)', () => {
       const request = createDRRequest();
       const drPath = createDRArtifact(request);
       const content = readFileSync(drPath, 'utf8');
@@ -294,8 +271,7 @@ describe('AC3: DR Artifact Format Compliance', () => {
       expect(content).not.toContain('\x00');
     });
 
-    test.skip('[P1] 7.1-UNIT-046: DR artifact body must include a table of alternatives considered', () => {
-      // THIS TEST WILL FAIL — createDRArtifact not yet implemented
+    test('[P1] 7.1-UNIT-046: DR artifact body must include a table of alternatives considered', () => {
       const alternatives = [
         { option: 'SSE', rejectedBecause: 'Unidirectional' },
         { option: 'Long polling', rejectedBecause: 'High latency' },
@@ -313,8 +289,7 @@ describe('AC3: DR Artifact Format Compliance', () => {
   });
 
   describe('YAML Frontmatter Validity', () => {
-    test.skip('[P0] 7.1-UNIT-047: DR artifact YAML frontmatter must be parseable by js-yaml', () => {
-      // THIS TEST WILL FAIL — createDRArtifact not yet implemented
+    test('[P0] 7.1-UNIT-047: DR artifact YAML frontmatter must be parseable by js-yaml', () => {
       const request = createDRRequest();
       const drPath = createDRArtifact(request);
       const content = readFileSync(drPath, 'utf8');
@@ -331,8 +306,7 @@ describe('AC3: DR Artifact Format Compliance', () => {
       }).not.toThrow();
     });
 
-    test.skip('[P0] 7.1-UNIT-048: DR artifact frontmatter must have alternatives_considered as YAML array', () => {
-      // THIS TEST WILL FAIL — createDRArtifact not yet implemented
+    test('[P0] 7.1-UNIT-048: DR artifact frontmatter must have alternatives_considered as YAML array', () => {
       const alternatives = [
         { option: 'SSE', rejectedBecause: 'Unidirectional' },
       ];
@@ -346,8 +320,7 @@ describe('AC3: DR Artifact Format Compliance', () => {
   });
 
   describe('NFR Compliance', () => {
-    test.skip('[P0] 7.1-UNIT-050: DR artifact write must be atomic (file must not be partially written)', async () => {
-      // THIS TEST WILL FAIL — createDRArtifact not yet implemented
+    test('[P0] 7.1-UNIT-050: DR artifact write must be atomic (file must not be partially written)', async () => {
       // Given: a valid DR creation request
       const request = createDRRequest();
 
@@ -362,8 +335,7 @@ describe('AC3: DR Artifact Format Compliance', () => {
       expect(content).toMatch(/^# /m); // Has at least one heading
     });
 
-    test.skip('[P1] 7.1-UNIT-051: DR artifact must not exceed reasonable file size (under 100KB)', () => {
-      // THIS TEST WILL FAIL — createDRArtifact not yet implemented
+    test('[P1] 7.1-UNIT-051: DR artifact must not exceed reasonable file size (under 100KB)', () => {
       // NFR-9: Inspectability - artifacts remain human-readable
       const request = createDRRequest();
       const drPath = createDRArtifact(request);
@@ -373,8 +345,7 @@ describe('AC3: DR Artifact Format Compliance', () => {
       expect(content.length).toBeLessThan(100 * 1024); // < 100KB
     });
 
-    test.skip('[P0] 7.1-UNIT-052: two sequential DR artifacts must have different file names', () => {
-      // THIS TEST WILL FAIL — createDRArtifact not yet implemented
+    test('[P0] 7.1-UNIT-052: two sequential DR artifacts must have different file names', () => {
       // Given: creating two DR artifacts sequentially
       const request1 = createDRRequest({ drNumber: 1 });
       const request2 = createDRRequest({

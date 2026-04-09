@@ -97,8 +97,8 @@ development_status:
   7-1-implement-decision-record-extraction: done
   7-2-implement-risk-note-extraction-auto-loading: done
   7-3-implement-session-start-context-loading: done
-  7-4-implement-session-wrap-up: backlog
-  7-5-implement-research-memory-integration: backlog
+  7-4-implement-session-wrap-up: ready-for-dev
+  7-5-implement-research-memory-integration: ready-for-dev
   epic-7-retrospective: optional
 
   # Epic 8: Governance & Sprint Observability

@@ -14,7 +14,7 @@
  */
 
 import { existsSync, mkdirSync, readdirSync, writeFileSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -208,9 +208,8 @@ export function writeDRWithBoundaryCheck(filePath, content) {
     );
   }
 
-  // Ensure parent directory exists
-  const dir = resolvedPath.substring(0, resolvedPath.lastIndexOf('/'));
-  ensureDecisionsDirExists(dir);
+  // Ensure parent directory exists (use dirname for cross-platform safety)
+  ensureDecisionsDirExists(dirname(resolvedPath));
 
   // Atomic write (single writeFileSync — NFR-4)
   writeFileSync(resolvedPath, content, 'utf8');
@@ -258,9 +257,14 @@ export function createDRArtifact(request) {
   const fileName = `DR-${formattedNumber}.md`;
   const filePath = join(outputDir, fileName);
 
+  // Sanitize values for YAML double-quoted scalars: escape backslashes first, then double-quotes.
+  // Also collapse newlines to spaces so multi-line text remains a valid YAML scalar.
+  const escapeYaml = (str) =>
+    String(str ?? '').replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, ' ');
+
   // Build YAML frontmatter alternatives_considered block
   const alternativesYaml = alternativesConsidered.map(alt =>
-    `  - option: "${alt.option}"\n    rejected_because: "${alt.rejectedBecause}"`
+    `  - option: "${escapeYaml(alt.option)}"\n    rejected_because: "${escapeYaml(alt.rejectedBecause)}"`
   ).join('\n');
 
   // Build alternatives table for Markdown body
@@ -272,14 +276,14 @@ export function createDRArtifact(request) {
 
   const content = `---
 schema_version: 1.0.0
-ticket: "${ticketId}"
-decision_summary: "${decisionSummary}"
+ticket: "${escapeYaml(ticketId)}"
+decision_summary: "${escapeYaml(decisionSummary)}"
 date: "${date}"
-context: "${context}"
+context: "${escapeYaml(context)}"
 alternatives_considered:
 ${alternativesYaml || '  - option: ""\n    rejected_because: ""'}
-source: ${source}
-source_file: ${sourceFile}
+source: "${source}"
+source_file: "${escapeYaml(sourceFile)}"
 ---
 
 # Decision Record: ${decisionSummary}
@@ -349,8 +353,7 @@ export async function extractDecisionsFromRefinement({ content, ticketId, source
 
   for (const signal of signals) {
     const drNumber = getNextDRNumber(decisionsDir);
-    const formattedNumber = formatDRNumber(drNumber);
-    const fileName = `DR-${formattedNumber}.md`;
+    const fileName = `DR-${formatDRNumber(drNumber)}.md`;
 
     createDRArtifact({
       ticketId,
@@ -408,8 +411,7 @@ export async function extractDecisionsFromApproval({ content, ticketId, sourceFi
 
   for (const signal of signals) {
     const drNumber = getNextDRNumber(decisionsDir);
-    const formattedNumber = formatDRNumber(drNumber);
-    const fileName = `DR-${formattedNumber}.md`;
+    const fileName = `DR-${formatDRNumber(drNumber)}.md`;
 
     createDRArtifact({
       ticketId,

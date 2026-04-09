@@ -1,6 +1,6 @@
 # Story 7.1: Implement Decision Record Extraction
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -47,6 +47,16 @@ So that key decisions persist across sessions and inform future work.
   - [x] 5.1 Create `scrum_workflow/__tests__/decision-extraction/ac1-refinement-decision-extraction.test.js`
   - [x] 5.2 Create `scrum_workflow/__tests__/decision-extraction/ac2-approval-decision-extraction.test.js`
   - [x] 5.3 Create `scrum_workflow/__tests__/decision-extraction/ac3-dr-artifact-format.test.js`
+
+### Review Findings
+
+- [x] [Review][Patch] YAML injection: double-quoted scalars in frontmatter not escaped — values containing `"` or `\` corrupted YAML output [scrum_workflow/utils/decision-extraction.js:262-282] — fixed: added `escapeYaml()` helper applied to all interpolated YAML string values
+- [x] [Review][Patch] `source` and `source_file` YAML fields unquoted — inconsistent with other fields, fragile against special chars [scrum_workflow/utils/decision-extraction.js:281-282] — fixed: now emitted as double-quoted strings
+- [x] [Review][Patch] `writeDRWithBoundaryCheck` used `lastIndexOf('/')` to derive parent dir — fails on Windows paths [scrum_workflow/utils/decision-extraction.js:212] — fixed: replaced with `path.dirname()`, added `dirname` to imports
+- [x] [Review][Patch] Multi-line `context` values broke YAML single-line scalar — `escapeYaml()` now collapses newlines to spaces [scrum_workflow/utils/decision-extraction.js:263] — fixed with same `escapeYaml()` helper
+- [x] [Review][Patch] Redundant intermediate `formattedNumber` variable in extract functions — fixed: inlined `formatDRNumber()` call directly into fileName template literal [scrum_workflow/utils/decision-extraction.js:356,414]
+- [x] [Review][Defer] Duplicate logic between `extractDecisionsFromRefinement` and `extractDecisionsFromApproval` — identical loop body, only `source` differs; refactor opportunity for Epic 7 follow-up stories — deferred, no functional bug
+- [x] [Review][Defer] Concurrent DR numbering collision possible if called from multiple async contexts simultaneously — deferred, LLM runtime is effectively single-threaded; singleFork vitest config mitigates test isolation
 
 ## Dev Notes
 

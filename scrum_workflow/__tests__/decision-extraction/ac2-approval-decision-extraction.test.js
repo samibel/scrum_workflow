@@ -193,8 +193,8 @@ describe('AC2: Approval Decision Record Extraction', () => {
       // Then: DR artifact has source=approval (not refinement)
       expect(result.created.length).toBeGreaterThan(0);
       const drContent = readFileSync(join(decisionsDir, result.created[0]), 'utf8');
-      expect(drContent).toContain('source: approval');
-      expect(drContent).toContain(`source_file: ${approval.sourceFile}`);
+      expect(drContent).toContain('source: "approval"');
+      expect(drContent).toContain(`source_file: "${approval.sourceFile}"`);
     });
 
     test('[P0] 7.1-INT-012: should sequence DR numbers across refinement and approval extractions', async () => {

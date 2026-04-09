@@ -25,7 +25,7 @@ Scrum Workflow solves these with **separation of concerns, immutable contracts, 
 
 ### Before vs. After
 
-![Scrum Workflow Before/After](./BENEFITS-BEFORE-AFTER.svg)
+<img src="BENEFITS-BEFORE-AFTER.svg" alt="Scrum Workflow Before/After Comparison" width="100%" style="max-width: 1200px; margin: 20px 0; border-radius: 8px;"/>
 
 
 ### Scrum Workflow Phases (Detailed)

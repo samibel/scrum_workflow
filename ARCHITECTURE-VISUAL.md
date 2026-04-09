@@ -6,7 +6,7 @@ Visuelle Erklärung wie Scrum Workflow intern funktioniert.
 
 ## System Overview
 
-![Scrum Workflow System Architecture](./ARCHITECTURE-SYSTEM.svg)
+<img src="ARCHITECTURE-SYSTEM.svg" alt="Scrum Workflow System Architecture" width="100%" style="max-width: 1400px; margin: 20px 0; border-radius: 8px;"/>
 
 ---
 

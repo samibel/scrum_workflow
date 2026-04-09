@@ -75,10 +75,10 @@ export function extractResearchTags(filePath) {
       .split(',')
       .map(tag => tag.trim())
       .map(tag => {
-        // Remove quotes if present
+        // Remove quotes if present (both single and double)
         return tag.replace(/^["']|["']$/g, '');
       })
-      .filter(tag => tag.length > 0);
+      .filter(tag => tag.length > 0 && !tag.includes('[') && !tag.includes(']'));
 
     return tags;
   } catch (error) {
@@ -111,14 +111,23 @@ export function matchReportsByTags(reports, storyTags) {
   }
 
   // Normalize story tags to lowercase for case-insensitive comparison
-  const normalizedStoryTags = storyTags.map(tag => tag.toLowerCase());
+  // Filter out null/undefined values to prevent crashes on .toLowerCase()
+  const normalizedStoryTags = storyTags
+    .filter(tag => tag != null && typeof tag === 'string')
+    .map(tag => tag.toLowerCase());
 
   // Filter and score reports based on tag intersection
   const matches = reports
     .map(report => {
+      // Validate report structure
+      if (!report || typeof report !== 'object') {
+        return null;
+      }
       // Normalize report tags to lowercase
       const normalizedReportTags = Array.isArray(report.tags)
-        ? report.tags.map(tag => tag.toLowerCase())
+        ? report.tags
+            .filter(tag => tag != null && typeof tag === 'string')
+            .map(tag => tag.toLowerCase())
         : [];
 
       // Find intersection of tags
@@ -147,7 +156,12 @@ export function matchReportsByTags(reports, storyTags) {
 
     // Then by date (newest first) if both have dates
     if (a.date && b.date) {
-      return new Date(b.date) - new Date(a.date);
+      const dateA = new Date(a.date);
+      const dateB = new Date(b.date);
+      // Guard against NaN from invalid date strings
+      if (!isNaN(dateB) && !isNaN(dateA)) {
+        return dateB - dateA;
+      }
     }
 
     return 0;
@@ -192,7 +206,7 @@ export function loadMatchingReports(baseDir, storyPath) {
     }
 
     // Step 2: Extract story domain tags
-    if (!fs.existsSync(storyPath)) {
+    if (!storyPath || typeof storyPath !== 'string' || !fs.existsSync(storyPath)) {
       return [];
     }
 
@@ -297,10 +311,10 @@ function extractStoryDomainTags(storyContent) {
       .split(',')
       .map(tag => tag.trim())
       .map(tag => {
-        // Remove quotes if present
+        // Remove quotes if present (both single and double)
         return tag.replace(/^["']|["']$/g, '');
       })
-      .filter(tag => tag.length > 0);
+      .filter(tag => tag.length > 0 && !tag.includes('[') && !tag.includes(']'));
 
     return tags;
   } catch (error) {

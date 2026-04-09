@@ -101,59 +101,22 @@ Alles was neu hinzugefügt wurde, um die Dokumentation lesbarer und visueller zu
 
 ## 📊 Visualisierungen (neu hinzugefügt)
 
-### Excalidraw SVGs (Hauptillustrationen)
-- ✨ **README-HERO.svg** — System overview mit Scrum Team
-  - Zeigt: PO, Developer, Scrum Master, AI Agents
-  - 5-Phase Workflow
-  - Bottom benefits
-  
-- ✨ **BENEFITS-BEFORE-AFTER.svg** — Before/After Vergleich
-  - Links: Chaotische traditionelle Entwicklung
-  - Rechts: Saubere Scrum Workflow Lösung
-  - Visuell stark & einprägsam
-  
-- ✨ **ARCHITECTURE-SYSTEM.svg** — System Design
-  - Scrum Team Layer
-  - Workflow Phases (1-6)
-  - AI Agents
-  - Support Systems
-  - Output Artifacts
-
-**Total: 3 Excalidraw SVGs** 🎨
-- ✅ Hand-drawn Style
-- ✅ Professionelle Farben
-- ✅ Alle Labels auf English
-- ✅ Scrum Team Fokus
-- ✅ In GitHub nativ rendert
-
-### Mermaid Diagramme (Technische Details)
+### Mermaid Diagramme (Überall!)
 - ✅ **8 Installation/Setup Diagramme** (GETTING-STARTED.md)
 - ✅ **5 Workflow Flow Diagramme** (GETTING-STARTED.md, BENEFITS.md)
 - ✅ **8 Architecture Diagramme** (ARCHITECTURE-VISUAL.md)
+- ✅ **3 System/Overview Diagramme** (README.md, BENEFITS.md, ARCHITECTURE-VISUAL.md) — NEU!
 - ✅ **20 Command Diagramme** (WORKFLOW-QUICK-REFERENCE.md)
 - ✅ **3 Charting Diagramme** (BENEFITS.md, INDEX.md)
 - ✅ **1 State Machine** (ARCHITECTURE-VISUAL.md)
 
-**Total: ~45 Mermaid Diagramme** 📊
-- ✅ In GitHub nativ rendert
+**Total: ~48 Mermaid Diagramme** 📊
+- ✅ In GitHub nativ rendert (zuverlässig!)
 - ✅ Responsive & skalierbar
 - ✅ Bearbeitbar im Markdown
-- ✅ Technische Details
 - ✅ Alle Labels auf English
-
-### Hybrid-Ansatz
-```
-Excalidraw (Überblick, Marketing, Einstieger)
-├─ README.md Hero
-├─ BENEFITS.md Before/After
-└─ ARCHITECTURE-VISUAL.md System Design
-
-Mermaid (Technische Details, Reference)
-├─ State Machine
-├─ Phase Flows
-├─ Commands
-└─ Data Flow
-```
+- ✅ Keine externe Dependencies
+- ✅ Konsistente Farbcodierung
 
 ---
 

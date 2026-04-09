@@ -6,7 +6,68 @@ Visuelle Erklärung wie Scrum Workflow intern funktioniert.
 
 ## System Overview
 
-<img src="ARCHITECTURE-SYSTEM.svg" alt="Scrum Workflow System Architecture" width="100%" style="max-width: 1400px; margin: 20px 0; border-radius: 8px;"/>
+```mermaid
+graph TB
+    subgraph Team["🎯 Scrum Team"]
+        PO["Product Owner<br/>Writes Stories"]
+        Dev["Developer<br/>Implements"]
+        SM["Scrum Master<br/>Quality & Blockers"]
+    end
+    
+    subgraph Workflow["⚙️ Workflow Phases"]
+        Ph1["<b>1. Create</b><br/>/scrum-create-ticket<br/>status: draft"]
+        Ph2["<b>2. Refine</b><br/>/scrum-refine-ticket<br/>status: refined"]
+        Ph3["<b>3. Validate</b><br/>/scrum-refine-story<br/>status: ready-dev"]
+        Ph4["<b>4. Develop</b><br/>/scrum-dev-story<br/>status: in-progress"]
+        Ph5["<b>5. Review</b><br/>/scrum-review-story<br/>status: approved"]
+        Ph6["<b>6. Approve</b><br/>/scrum-approve<br/>status: done"]
+    end
+    
+    subgraph AI["🤖 AI Agents"]
+        Arch["Architect Agent<br/>Security, Scalability<br/>Architecture risks"]
+        D["Developer Agent<br/>Feasibility, Libraries<br/>Implementation"]
+        Q["QA Agent<br/>Testability, Edge cases<br/>Acceptance criteria"]
+    end
+    
+    subgraph Output["📁 Generated Artifacts"]
+        Story["story.md<br/>Specifications"]
+        Plan["plan.md<br/>Execution Plan"]
+        Code["💻 Code<br/>Implementation"]
+        Review["review-N.md<br/>Code Review"]
+        Approval["approval.md<br/>Audit Trail"]
+    end
+    
+    Team --> Workflow
+    AI --> Ph2
+    AI --> Ph4
+    AI --> Ph5
+    
+    Ph1 --> Ph2
+    Ph2 --> Ph3
+    Ph3 --> Ph4
+    Ph4 --> Ph5
+    Ph5 --> Ph6
+    
+    Ph1 -.-> Story
+    Ph2 -.-> Story
+    Ph3 -.-> Plan
+    Ph4 -.-> Code
+    Ph5 -.-> Review
+    Ph6 -.-> Approval
+    
+    style Team fill:#e3f2fd
+    style Workflow fill:#fff3e0
+    style AI fill:#f3e5f5
+    style Output fill:#e8f5e9
+    style Ph1 fill:#e3f2fd
+    style Ph2 fill:#f3e5f5
+    style Ph3 fill:#fce4ec
+    style Ph4 fill:#e8f5e9
+    style Ph5 fill:#fff3e0
+    style Ph6 fill:#fff9c4
+```
+
+**Key Features:** Phase isolation • Write boundaries • Human gates • Complete audit trail
 
 ---
 

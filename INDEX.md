@@ -4,17 +4,14 @@ Schneller Überblick aller Dokumentationen und wo du anfangen solltest.
 
 ---
 
-## 🎨 Visual First — Enhanced Readability
+## 📊 Visual First — Enhanced Readability
 
-Diese Dokumentation nutzt **Hybrid-Ansatz:**
-- 🎨 **Excalidraw SVGs** für Überblicks-Grafiken (Readme, Benefits, Architecture)
-- 📊 **Mermaid Diagramme** für technische Details (State Machine, Commands)
-
-**Alle Diagramme:**
-- ✅ Nativ in GitHub rendert
+Diese Dokumentation nutzt **48+ Mermaid Diagramme** für maximale Klarheit:
+- ✅ Nativ in GitHub rendert (zuverlässig)
 - ✅ Responsive & skalierbar
-- ✅ Englische Labels
+- ✅ Englische Labels überall
 - ✅ Scrum Team Fokus
+- ✅ Konsistente Farbcodierung
 
 ---
 
@@ -35,18 +32,21 @@ Diese Dokumentation nutzt **Hybrid-Ansatz:**
 - ✅ Konkrete Story-Beispiele
 
 ### ⚡ Ich brauche schnelle Command-Übersicht
-→ **[WORKFLOW-QUICK-REFERENCE.md](./WORKFLOW-QUICK-REFERENCE.md)** (5 Minuten)
-- ✅ Alle 20 Commands visuell erklärt
-- ✅ Mermaid Diagramme für jeden Command
+
+**Option 1: Visual Overview**  
+→ **[ALL-COMMANDS.md](./ALL-COMMANDS.md)** (5 Minuten) — Alle 20 Commands als Mermaid Diagramme
+- ✅ Story Lifecycle (6 Commands)
+- ✅ Documentation (3)
+- ✅ Research (2)
+- ✅ Status & Validation (3)
+- ✅ Audit & Session (2)
+- ✅ Installation (4)
+
+**Option 2: Detailed Reference**  
+→ **[WORKFLOW-QUICK-REFERENCE.md](./WORKFLOW-QUICK-REFERENCE.md)** (5 Minuten) — Schritt-für-Schritt Guides
+- ✅ Mermaid für jeden Command mit Erklärung
 - ✅ Cheatsheet & Timeline
 - ✅ Zum Ausdrucken/Bookmarken
-
-### 🎨 Ich will die Visualisierungen bearbeiten
-→ **[EXCALIDRAW-GUIDE.md](./EXCALIDRAW-GUIDE.md)** (10 Minuten)
-- ✅ Wie man SVG-Dateien öffnet & bearbeitet
-- ✅ Style Guide für Konsistenz
-- ✅ Best Practices & Checklisten
-- ✅ Tools & Resources
 
 ### 🏗️ Ich will die Architecture verstehen
 → **[ARCHITECTURE-VISUAL.md](./ARCHITECTURE-VISUAL.md)** (20 Minuten)

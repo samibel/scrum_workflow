@@ -155,12 +155,55 @@ Bevor die Entwicklung startet, wird die Story gegen **5 Kriterien validiert**:
 /scrum-refine-story SW-001
 ```
 
-**Prüfung:**
-1. ✓ Acceptance Criteria sind testbar und eindeutig
-2. ✓ Alle Subtasks sind spezifisch
-3. ✓ Technische Notes sind vollständig
-4. ✓ Keine Platzhalter (TODO, TBD, {{placeholder}})
-5. ✓ Alle Dependencies dokumentiert
+```mermaid
+graph TD
+    Input["📄 story.md<br/>status: refined"]
+    
+    Check1["<b>Criterion 1</b><br/>Acceptance Criteria<br/>━━━━━━<br/>Are all criteria<br/>testable & unambiguous?"]
+    
+    Check2["<b>Criterion 2</b><br/>Tasks Defined<br/>━━━━━━<br/>Are all subtasks<br/>specific & actionable?"]
+    
+    Check3["<b>Criterion 3</b><br/>Dev Notes<br/>━━━━━━<br/>Is technical<br/>context sufficient?"]
+    
+    Check4["<b>Criterion 4</b><br/>No Placeholders<br/>━━━━━━<br/>No TODO, TBD,<br/>FIXME, placeholder?"]
+    
+    Check5["<b>Criterion 5</b><br/>Dependencies<br/>━━━━━━<br/>Are all dependencies<br/>documented?"]
+    
+    Input --> Check1
+    Input --> Check2
+    Input --> Check3
+    Input --> Check4
+    Input --> Check5
+    
+    Check1 -->|"PASS"| AllPass["✓ All 5 Pass"]
+    Check2 -->|"PASS"| AllPass
+    Check3 -->|"PASS"| AllPass
+    Check4 -->|"PASS"| AllPass
+    Check5 -->|"PASS"| AllPass
+    
+    Check1 -->|"FAIL"| AnyFail["✗ Any Fail"]
+    Check2 -->|"FAIL"| AnyFail
+    Check3 -->|"FAIL"| AnyFail
+    Check4 -->|"FAIL"| AnyFail
+    Check5 -->|"FAIL"| AnyFail
+    
+    AllPass --> Plan["📋 Generate Plan<br/>Ordered subtasks<br/>Dependencies<br/>Execution order"]
+    
+    Plan --> Ready["✓ Status: ready-for-dev<br/>Output: plan.md"]
+    
+    AnyFail --> Fail["✗ Status: refined<br/>Failure reasons documented<br/>Return to author"]
+    
+    style Check1 fill:#fce4ec
+    style Check2 fill:#fce4ec
+    style Check3 fill:#fce4ec
+    style Check4 fill:#fce4ec
+    style Check5 fill:#fce4ec
+    style AllPass fill:#c8e6c9
+    style AnyFail fill:#ffcdd2
+    style Plan fill:#fff9c4
+    style Ready fill:#c8e6c9
+    style Fail fill:#ffcdd2
+```
 
 **Ergebnis:**
 - ✓ **PASS:** Status → `ready-for-dev`, Execution Plan erstellt

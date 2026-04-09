@@ -7,8 +7,8 @@
  *      Then the developer can identify the next action within the presented summary
  *      And no prior session knowledge is required
  *
- * TDD RED PHASE: All tests use test.skip() — feature (session-context.js) not yet implemented.
- * Remove test.skip() after implementing scrum_workflow/utils/session-context.js.
+ * TDD RED PHASE: All tests use test() — feature (session-context.js) not yet implemented.
+ * Remove test() after implementing scrum_workflow/utils/session-context.js.
  */
 
 import { describe, test, expect, beforeEach, afterEach } from 'vitest';
@@ -67,7 +67,7 @@ describe('AC2: Session Summary Format', () => {
   // ── deriveNextSteps() ──────────────────────────────────────────────────────
 
   describe('deriveNextSteps() — Map Story Status to Actionable Suggestions', () => {
-    test.skip('[P0] 7.3-UNIT-050: should suggest scrum-refine-ticket for draft stories', () => {
+    test('[P0] 7.3-UNIT-050: should suggest scrum-refine-ticket for draft stories', () => {
       // Given: open story with status draft
       const openStories = [createOpenStory({ ticket: 'SW-001', status: 'draft' })];
 
@@ -80,7 +80,7 @@ describe('AC2: Session Summary Format', () => {
       expect(nextSteps[0]).toContain('/scrum-refine-ticket');
     });
 
-    test.skip('[P0] 7.3-UNIT-051: should suggest scrum-refine-story for refined stories', () => {
+    test('[P0] 7.3-UNIT-051: should suggest scrum-refine-story for refined stories', () => {
       // Given: open story with status refined
       const openStories = [createOpenStory({ ticket: 'SW-002', status: 'refined' })];
 
@@ -93,7 +93,7 @@ describe('AC2: Session Summary Format', () => {
       expect(nextSteps[0]).toContain('/scrum-refine-story');
     });
 
-    test.skip('[P0] 7.3-UNIT-052: should suggest scrum-dev-story for ready-for-dev stories', () => {
+    test('[P0] 7.3-UNIT-052: should suggest scrum-dev-story for ready-for-dev stories', () => {
       // Given: open story with status ready-for-dev
       const openStories = [createOpenStory({ ticket: 'SW-003', status: 'ready-for-dev' })];
 
@@ -106,7 +106,7 @@ describe('AC2: Session Summary Format', () => {
       expect(nextSteps[0]).toContain('/scrum-dev-story');
     });
 
-    test.skip('[P0] 7.3-UNIT-053: should suggest scrum-dev-story (continue) for in-progress stories', () => {
+    test('[P0] 7.3-UNIT-053: should suggest scrum-dev-story (continue) for in-progress stories', () => {
       // Given: open story with status in-progress
       const openStories = [createOpenStory({ ticket: 'SW-004', status: 'in-progress' })];
 
@@ -119,7 +119,7 @@ describe('AC2: Session Summary Format', () => {
       expect(nextSteps[0]).toContain('/scrum-dev-story');
     });
 
-    test.skip('[P0] 7.3-UNIT-054: should suggest scrum-review-story for review stories', () => {
+    test('[P0] 7.3-UNIT-054: should suggest scrum-review-story for review stories', () => {
       // Given: open story with status review
       const openStories = [createOpenStory({ ticket: 'SW-005', status: 'review' })];
 
@@ -132,7 +132,7 @@ describe('AC2: Session Summary Format', () => {
       expect(nextSteps[0]).toContain('/scrum-review-story');
     });
 
-    test.skip('[P0] 7.3-UNIT-055: should suggest reviewing review artifact for changes-needed stories', () => {
+    test('[P0] 7.3-UNIT-055: should suggest reviewing review artifact for changes-needed stories', () => {
       // Given: open story with status changes-needed
       const openStories = [createOpenStory({ ticket: 'SW-006', status: 'changes-needed' })];
 
@@ -147,7 +147,7 @@ describe('AC2: Session Summary Format', () => {
       expect(step).toMatch(/review|feedback|changes/);
     });
 
-    test.skip('[P0] 7.3-UNIT-056: should suggest completing implementation for approved stories', () => {
+    test('[P0] 7.3-UNIT-056: should suggest completing implementation for approved stories', () => {
       // Given: open story with status approved
       const openStories = [createOpenStory({ ticket: 'SW-007', status: 'approved' })];
 
@@ -160,7 +160,7 @@ describe('AC2: Session Summary Format', () => {
       expect(nextSteps[0]).toContain('/scrum-dev-story');
     });
 
-    test.skip('[P0] 7.3-UNIT-057: should return one next step per open story', () => {
+    test('[P0] 7.3-UNIT-057: should return one next step per open story', () => {
       // Given: three open stories with different statuses
       const openStories = [
         createOpenStory({ ticket: 'SW-010', status: 'draft' }),
@@ -175,7 +175,7 @@ describe('AC2: Session Summary Format', () => {
       expect(nextSteps).toHaveLength(3);
     });
 
-    test.skip('[P0] 7.3-UNIT-058: should return empty array when no open stories', () => {
+    test('[P0] 7.3-UNIT-058: should return empty array when no open stories', () => {
       // Given: no open stories
       const nextSteps = deriveNextSteps([]);
 
@@ -183,7 +183,7 @@ describe('AC2: Session Summary Format', () => {
       expect(nextSteps).toHaveLength(0);
     });
 
-    test.skip('[P1] 7.3-UNIT-059: each next step suggestion must contain the ticket ID', () => {
+    test('[P1] 7.3-UNIT-059: each next step suggestion must contain the ticket ID', () => {
       // Given: open stories with specific ticket IDs
       const openStories = [
         createOpenStory({ ticket: 'SW-042', status: 'in-progress' }),
@@ -202,7 +202,7 @@ describe('AC2: Session Summary Format', () => {
   // ── formatSessionSummary() ─────────────────────────────────────────────────
 
   describe('formatSessionSummary() — Render Structured Session Output', () => {
-    test.skip('[P0] 7.3-UNIT-060: should produce output with "Open Work" section header', () => {
+    test('[P0] 7.3-UNIT-060: should produce output with "Open Work" section header', () => {
       // Given: one open story
       const openStories = [createOpenStory({ ticket: 'SW-001', status: 'in-progress', title: 'Implement Feature' })];
       const decisions = [];
@@ -216,7 +216,7 @@ describe('AC2: Session Summary Format', () => {
       expect(summary).toContain('Open Work');
     });
 
-    test.skip('[P0] 7.3-UNIT-061: should produce output with "Recent Decisions" section header', () => {
+    test('[P0] 7.3-UNIT-061: should produce output with "Recent Decisions" section header', () => {
       // Given: one decision record
       const openStories = [];
       const decisions = [createDecisionRecord({ drNumber: 'DR-001', decisionSummary: 'Chose ESM', ticket: 'SW-001' })];
@@ -230,7 +230,7 @@ describe('AC2: Session Summary Format', () => {
       expect(summary).toContain('Recent Decisions');
     });
 
-    test.skip('[P0] 7.3-UNIT-062: should produce output with "Active Risk Notes" section header', () => {
+    test('[P0] 7.3-UNIT-062: should produce output with "Active Risk Notes" section header', () => {
       // Given: one active risk
       const openStories = [];
       const decisions = [];
@@ -244,7 +244,7 @@ describe('AC2: Session Summary Format', () => {
       expect(summary).toContain('Active Risk');
     });
 
-    test.skip('[P0] 7.3-UNIT-063: should produce output with "Suggested Next Steps" section header', () => {
+    test('[P0] 7.3-UNIT-063: should produce output with "Suggested Next Steps" section header', () => {
       // Given: next steps available
       const openStories = [createOpenStory({ ticket: 'SW-001', status: 'in-progress' })];
       const nextSteps = ['Continue implementation of SW-001 → run `/scrum-dev-story SW-001`'];
@@ -256,7 +256,7 @@ describe('AC2: Session Summary Format', () => {
       expect(summary).toContain('Next Steps');
     });
 
-    test.skip('[P0] 7.3-UNIT-064: should include each open story ticket and status in output', () => {
+    test('[P0] 7.3-UNIT-064: should include each open story ticket and status in output', () => {
       // Given: two open stories
       const openStories = [
         createOpenStory({ ticket: 'SW-010', status: 'in-progress', title: 'Implement Context Loading' }),
@@ -273,7 +273,7 @@ describe('AC2: Session Summary Format', () => {
       expect(summary).toContain('review');
     });
 
-    test.skip('[P0] 7.3-UNIT-065: should include each decision summary and DR number in output', () => {
+    test('[P0] 7.3-UNIT-065: should include each decision summary and DR number in output', () => {
       // Given: two decisions
       const decisions = [
         createDecisionRecord({ drNumber: 'DR-001', decisionSummary: 'Chose ESM modules', ticket: 'SW-001' }),
@@ -290,7 +290,7 @@ describe('AC2: Session Summary Format', () => {
       expect(summary).toContain('Chose Vitest over Jest');
     });
 
-    test.skip('[P0] 7.3-UNIT-066: should include each active risk RN number, severity, and description in output', () => {
+    test('[P0] 7.3-UNIT-066: should include each active risk RN number, severity, and description in output', () => {
       // Given: one active risk
       const risks = [createActiveRisk({
         rnNumber: 'RN-001',
@@ -310,7 +310,7 @@ describe('AC2: Session Summary Format', () => {
       expect(summary).toContain('Data Integrity');
     });
 
-    test.skip('[P0] 7.3-UNIT-067: should include all next step suggestions in output', () => {
+    test('[P0] 7.3-UNIT-067: should include all next step suggestions in output', () => {
       // Given: next step suggestions
       const nextSteps = [
         'Continue implementation of SW-001 → run `/scrum-dev-story SW-001`',
@@ -325,7 +325,7 @@ describe('AC2: Session Summary Format', () => {
       expect(summary).toContain('/scrum-review-story SW-002');
     });
 
-    test.skip('[P0] 7.3-UNIT-068: should produce human-readable plain text output (NFR-9 Inspectability)', () => {
+    test('[P0] 7.3-UNIT-068: should produce human-readable plain text output (NFR-9 Inspectability)', () => {
       // Given: full session context
       const openStories = [createOpenStory({ ticket: 'SW-001', status: 'in-progress', title: 'Implement Feature' })];
       const decisions = [createDecisionRecord({ drNumber: 'DR-001', decisionSummary: 'Chose ESM' })];
@@ -341,7 +341,7 @@ describe('AC2: Session Summary Format', () => {
       expect(summary).not.toContain('\x00'); // No binary characters
     });
 
-    test.skip('[P1] 7.3-UNIT-069: should show story count in Open Work section header', () => {
+    test('[P1] 7.3-UNIT-069: should show story count in Open Work section header', () => {
       // Given: two open stories
       const openStories = [
         createOpenStory({ ticket: 'SW-001', status: 'in-progress' }),
@@ -356,7 +356,7 @@ describe('AC2: Session Summary Format', () => {
       expect(summary).toMatch(/Open Work.*2/s);
     });
 
-    test.skip('[P1] 7.3-UNIT-070: should show active risk count in Active Risk Notes header', () => {
+    test('[P1] 7.3-UNIT-070: should show active risk count in Active Risk Notes header', () => {
       // Given: 3 active risks
       const risks = [
         createActiveRisk({ rnNumber: 'RN-001' }),
@@ -371,7 +371,7 @@ describe('AC2: Session Summary Format', () => {
       expect(summary).toMatch(/Active Risk.*3/s);
     });
 
-    test.skip('[P1] 7.3-UNIT-071: should include "Context loaded. Developer can resume immediately." in output', () => {
+    test('[P1] 7.3-UNIT-071: should include "Context loaded. Developer can resume immediately." in output', () => {
       // Given: any context (even empty)
       // When: formatting
       const summary = formatSessionSummary([], [], [], []);
@@ -380,7 +380,7 @@ describe('AC2: Session Summary Format', () => {
       expect(summary).toContain('Context loaded');
     });
 
-    test.skip('[P0] 7.3-UNIT-072: should produce valid output even when all context is empty', () => {
+    test('[P0] 7.3-UNIT-072: should produce valid output even when all context is empty', () => {
       // Given: no open stories, no decisions, no risks, no next steps (fresh install)
       // When: formatting
       let summary;
@@ -396,7 +396,7 @@ describe('AC2: Session Summary Format', () => {
       expect(summary).toContain('Active Risk');
     });
 
-    test.skip('[P0] 7.3-UNIT-073: summary output must include a date/timestamp header (Session Context header)', () => {
+    test('[P0] 7.3-UNIT-073: summary output must include a date/timestamp header (Session Context header)', () => {
       // Given: any session context
       const openStories = [createOpenStory({ ticket: 'SW-001', status: 'in-progress' })];
 
@@ -412,7 +412,7 @@ describe('AC2: Session Summary Format', () => {
   // ── End-to-End: AC2 — Developer Identifies Next Action ─────────────────────
 
   describe('End-to-End: Developer Can Identify Next Action from Summary', () => {
-    test.skip('[P0] 7.3-INT-020: developer can identify next action from summary with multiple open stories', () => {
+    test('[P0] 7.3-INT-020: developer can identify next action from summary with multiple open stories', () => {
       // AC2: "the developer can identify the next action within the presented summary"
       // Given: realistic session context
       const openStories = [
@@ -440,7 +440,7 @@ describe('AC2: Session Summary Format', () => {
       expect(summary).toContain('major');                    // Risk severity
     });
 
-    test.skip('[P0] 7.3-INT-021: formatSessionSummary output must be renderable as human-readable terminal text', () => {
+    test('[P0] 7.3-INT-021: formatSessionSummary output must be renderable as human-readable terminal text', () => {
       // AC2: "no prior session knowledge is required" — summary must stand alone
       // Given: full realistic session context
       const openStories = [
@@ -475,7 +475,7 @@ describe('AC2: Session Summary Format', () => {
       expect(summary).not.toContain('\x1b['); // No ANSI escape codes in raw output
     });
 
-    test.skip('[P1] 7.3-INT-022: deriveNextSteps + formatSessionSummary pipeline produces complete actionable output', () => {
+    test('[P1] 7.3-INT-022: deriveNextSteps + formatSessionSummary pipeline produces complete actionable output', () => {
       // Given: developer has 3 stories in various states
       const openStories = [
         createOpenStory({ ticket: 'SW-010', status: 'draft', title: 'New Story to Refine' }),

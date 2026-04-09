@@ -12,8 +12,8 @@
  * timing — assert completion within 5000ms (2x safety margin over 10s requirement
  * since test env may be slower)."
  *
- * TDD RED PHASE: All tests use test.skip() — feature (session-context.js) not yet implemented.
- * Remove test.skip() after implementing scrum_workflow/utils/session-context.js.
+ * TDD RED PHASE: All tests use test() — feature (session-context.js) not yet implemented.
+ * Remove test() after implementing scrum_workflow/utils/session-context.js.
  */
 
 import { describe, test, expect, beforeEach, afterEach } from 'vitest';
@@ -199,7 +199,7 @@ describe('AC3: Retrieval Performance with 100+ Artifacts', () => {
   // ── scanOpenStories() Performance ──────────────────────────────────────────
 
   describe('scanOpenStories() — Performance with 100+ Sprint Directories', () => {
-    test.skip('[P0] 7.3-PERF-001: should scan 100 sprint directories in under 5000ms (SC-13 compliance)', () => {
+    test('[P0] 7.3-PERF-001: should scan 100 sprint directories in under 5000ms (SC-13 compliance)', () => {
       // Given: 100 sprint directories (realistic large project scale)
       createMassStoryFiles(100);
 
@@ -214,7 +214,7 @@ describe('AC3: Retrieval Performance with 100+ Artifacts', () => {
       expect(openStories.length).toBeGreaterThan(0);
     });
 
-    test.skip('[P0] 7.3-PERF-002: should scan 150 sprint directories in under 5000ms', () => {
+    test('[P0] 7.3-PERF-002: should scan 150 sprint directories in under 5000ms', () => {
       // Given: 150 sprint dirs (stress test — beyond minimum requirement)
       createMassStoryFiles(150);
 
@@ -227,7 +227,7 @@ describe('AC3: Retrieval Performance with 100+ Artifacts', () => {
       expect(elapsed).toBeLessThan(PERFORMANCE_BUDGET_MS);
     });
 
-    test.skip('[P1] 7.3-PERF-003: should return correct open story count from 100 mixed-status stories', () => {
+    test('[P1] 7.3-PERF-003: should return correct open story count from 100 mixed-status stories', () => {
       // Given: 100 sprint dirs with realistic mix of open and terminal statuses
       const expectedOpenCount = createMassStoryFiles(100);
 
@@ -238,7 +238,7 @@ describe('AC3: Retrieval Performance with 100+ Artifacts', () => {
       expect(openStories.length).toBe(expectedOpenCount);
     });
 
-    test.skip('[P1] 7.3-PERF-004: each returned story from large scan must have required fields', () => {
+    test('[P1] 7.3-PERF-004: each returned story from large scan must have required fields', () => {
       // Given: 100 sprint dirs
       createMassStoryFiles(100);
 
@@ -262,7 +262,7 @@ describe('AC3: Retrieval Performance with 100+ Artifacts', () => {
   // ── loadRecentDecisions() Performance ─────────────────────────────────────
 
   describe('loadRecentDecisions() — Performance with 100+ DR Files', () => {
-    test.skip('[P0] 7.3-PERF-010: should load recent decisions from 100 DR files in under 5000ms', () => {
+    test('[P0] 7.3-PERF-010: should load recent decisions from 100 DR files in under 5000ms', () => {
       // Given: 100 DR files (large accumulation over time)
       createMassDRFiles(100);
 
@@ -277,7 +277,7 @@ describe('AC3: Retrieval Performance with 100+ Artifacts', () => {
       expect(decisions.length).toBeGreaterThan(0);
     });
 
-    test.skip('[P0] 7.3-PERF-011: should NOT read all 100 DR files — only reads top 5 (efficiency requirement)', () => {
+    test('[P0] 7.3-PERF-011: should NOT read all 100 DR files — only reads top 5 (efficiency requirement)', () => {
       // Given: 100 DR files exist
       createMassDRFiles(100);
 
@@ -289,7 +289,7 @@ describe('AC3: Retrieval Performance with 100+ Artifacts', () => {
       expect(decisions).toHaveLength(5);
     });
 
-    test.skip('[P0] 7.3-PERF-012: should return the 5 most recent DRs from 100 files (highest numbers)', () => {
+    test('[P0] 7.3-PERF-012: should return the 5 most recent DRs from 100 files (highest numbers)', () => {
       // Given: 100 DR files (DR-001 through DR-100)
       createMassDRFiles(100);
 
@@ -304,7 +304,7 @@ describe('AC3: Retrieval Performance with 100+ Artifacts', () => {
       expect(drNumbers).not.toContain('DR-001'); // Old record — not in top 5
     });
 
-    test.skip('[P1] 7.3-PERF-013: should load decisions from 200 DR files within budget', () => {
+    test('[P1] 7.3-PERF-013: should load decisions from 200 DR files within budget', () => {
       // Given: 200 DR files (high accumulation stress test)
       createMassDRFiles(200);
 
@@ -322,7 +322,7 @@ describe('AC3: Retrieval Performance with 100+ Artifacts', () => {
   // ── loadActiveRisks() Performance ─────────────────────────────────────────
 
   describe('loadActiveRisks() — Performance with 100+ RN Files', () => {
-    test.skip('[P0] 7.3-PERF-020: should scan 100 RN files in under 5000ms (SC-13 compliance)', () => {
+    test('[P0] 7.3-PERF-020: should scan 100 RN files in under 5000ms (SC-13 compliance)', () => {
       // Given: 100 RN files (mix of active and resolved)
       createMassRNFiles(100);
 
@@ -337,7 +337,7 @@ describe('AC3: Retrieval Performance with 100+ Artifacts', () => {
       expect(activeRisks.length).toBeGreaterThan(0);
     });
 
-    test.skip('[P0] 7.3-PERF-021: should return correct active-only risks from 100 files', () => {
+    test('[P0] 7.3-PERF-021: should return correct active-only risks from 100 files', () => {
       // Given: 100 RN files (60% resolved, 40% active)
       const expectedActiveCount = createMassRNFiles(100);
 
@@ -348,7 +348,7 @@ describe('AC3: Retrieval Performance with 100+ Artifacts', () => {
       expect(activeRisks.length).toBe(expectedActiveCount);
     });
 
-    test.skip('[P0] 7.3-PERF-022: should scan 150 RN files in under 5000ms', () => {
+    test('[P0] 7.3-PERF-022: should scan 150 RN files in under 5000ms', () => {
       // Given: 150 RN files (stress test)
       createMassRNFiles(150);
 
@@ -361,7 +361,7 @@ describe('AC3: Retrieval Performance with 100+ Artifacts', () => {
       expect(elapsed).toBeLessThan(PERFORMANCE_BUDGET_MS);
     });
 
-    test.skip('[P1] 7.3-PERF-023: each returned risk from large scan must have required fields', () => {
+    test('[P1] 7.3-PERF-023: each returned risk from large scan must have required fields', () => {
       // Given: 100 RN files
       createMassRNFiles(100);
 
@@ -385,7 +385,7 @@ describe('AC3: Retrieval Performance with 100+ Artifacts', () => {
   // ── Full Session Load Performance ──────────────────────────────────────────
 
   describe('Full Session Context Load — Combined Performance Test', () => {
-    test.skip('[P0] 7.3-PERF-030: full session context load (stories + decisions + risks) completes under 5000ms with 100+ artifacts each', () => {
+    test('[P0] 7.3-PERF-030: full session context load (stories + decisions + risks) completes under 5000ms with 100+ artifacts each', () => {
       // Given: the full scale scenario from Dev Notes
       // "Create 100+ mock artifact files in _test-output/ using beforeEach,
       //  run scanOpenStories(), loadRecentDecisions(), and loadActiveRisks()
@@ -410,7 +410,7 @@ describe('AC3: Retrieval Performance with 100+ Artifacts', () => {
       expect(activeRisks.length).toBeGreaterThan(0); // All active ones
     });
 
-    test.skip('[P0] 7.3-PERF-031: full session load with 150 stories, 150 DRs, 150 RNs completes within budget', () => {
+    test('[P0] 7.3-PERF-031: full session load with 150 stories, 150 DRs, 150 RNs completes within budget', () => {
       // Given: above-minimum scale (stress test scenario)
       createMassStoryFiles(150);
       createMassDRFiles(150);
@@ -427,7 +427,7 @@ describe('AC3: Retrieval Performance with 100+ Artifacts', () => {
       expect(elapsed).toBeLessThan(PERFORMANCE_BUDGET_MS);
     });
 
-    test.skip('[P1] 7.3-PERF-032: should NOT use recursive glob for scanning — only flat readdirSync (SC-13 architecture)', () => {
+    test('[P1] 7.3-PERF-032: should NOT use recursive glob for scanning — only flat readdirSync (SC-13 architecture)', () => {
       // SC-13 compliance: "Use readdirSync NOT glob() — no recursive filesystem traversal"
       // This is primarily verified through code review, but this test validates
       // the observable consequence: performance is O(N) not O(N*M) for nested dirs.
@@ -454,7 +454,7 @@ describe('AC3: Retrieval Performance with 100+ Artifacts', () => {
       expect(openStories).toHaveLength(100); // All 100 in-progress stories found
     });
 
-    test.skip('[P1] 7.3-PERF-033: repeated session loads should perform consistently (no state leak between calls)', () => {
+    test('[P1] 7.3-PERF-033: repeated session loads should perform consistently (no state leak between calls)', () => {
       // Given: 50 sprint dirs + 50 DRs + 50 RNs
       createMassStoryFiles(50);
       createMassDRFiles(50);
@@ -479,7 +479,7 @@ describe('AC3: Retrieval Performance with 100+ Artifacts', () => {
   // ── Edge Cases Under Load ──────────────────────────────────────────────────
 
   describe('Edge Cases Under Load', () => {
-    test.skip('[P1] 7.3-PERF-040: should handle empty sprints dir alongside large decisions and risks dirs', () => {
+    test('[P1] 7.3-PERF-040: should handle empty sprints dir alongside large decisions and risks dirs', () => {
       // Given: sprints dir empty, but large decisions and risks dirs
       createMassDRFiles(100);
       createMassRNFiles(100);
@@ -498,7 +498,7 @@ describe('AC3: Retrieval Performance with 100+ Artifacts', () => {
       expect(risks.length).toBeGreaterThan(0);
     });
 
-    test.skip('[P1] 7.3-PERF-041: should complete full load even when some story.md files have invalid frontmatter', () => {
+    test('[P1] 7.3-PERF-041: should complete full load even when some story.md files have invalid frontmatter', () => {
       // Given: 100 sprint dirs — 10 with invalid/empty story.md files (corrupt artifacts)
       for (let i = 1; i <= 100; i++) {
         const num = String(i).padStart(3, '0');

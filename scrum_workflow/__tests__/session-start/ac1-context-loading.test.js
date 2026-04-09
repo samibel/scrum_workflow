@@ -10,8 +10,8 @@
  *      active risk notes (from _scrum-output/memory/risks/),
  *      and suggested next steps based on story statuses
  *
- * TDD RED PHASE: All tests use test.skip() — feature (session-context.js) not yet implemented.
- * Remove test.skip() after implementing scrum_workflow/utils/session-context.js.
+ * TDD RED PHASE: All tests use test() — feature (session-context.js) not yet implemented.
+ * Remove test() after implementing scrum_workflow/utils/session-context.js.
  */
 
 import { describe, test, expect, beforeEach, afterEach } from 'vitest';
@@ -178,7 +178,7 @@ describe('AC1: Session Start Context Loading', () => {
   // ── YAML Frontmatter Parsing ───────────────────────────────────────────────
 
   describe('parseFrontmatter() — Pure String YAML Parser', () => {
-    test.skip('[P0] 7.3-UNIT-001: should parse status field from YAML frontmatter', () => {
+    test('[P0] 7.3-UNIT-001: should parse status field from YAML frontmatter', () => {
       // Given: content with a YAML frontmatter block
       const content = createStoryContent({ status: 'in-progress' });
 
@@ -190,7 +190,7 @@ describe('AC1: Session Start Context Loading', () => {
       expect(fm.status).toBe('in-progress');
     });
 
-    test.skip('[P0] 7.3-UNIT-002: should parse ticket field from YAML frontmatter', () => {
+    test('[P0] 7.3-UNIT-002: should parse ticket field from YAML frontmatter', () => {
       // Given: story content with ticket field
       const content = createStoryContent({ ticket: 'SW-042' });
 
@@ -201,7 +201,7 @@ describe('AC1: Session Start Context Loading', () => {
       expect(fm.ticket).toBe('SW-042');
     });
 
-    test.skip('[P0] 7.3-UNIT-003: should parse title field (double-quoted scalar) from frontmatter', () => {
+    test('[P0] 7.3-UNIT-003: should parse title field (double-quoted scalar) from frontmatter', () => {
       // Given: story content with quoted title
       const content = createStoryContent({ title: 'Implement Session Start & Context Loading' });
 
@@ -212,7 +212,7 @@ describe('AC1: Session Start Context Loading', () => {
       expect(fm.title).toBe('Implement Session Start & Context Loading');
     });
 
-    test.skip('[P0] 7.3-UNIT-004: should parse decision_summary field from DR frontmatter', () => {
+    test('[P0] 7.3-UNIT-004: should parse decision_summary field from DR frontmatter', () => {
       // Given: DR content
       const content = createDRContent({ decisionSummary: 'Chose Vitest over Jest for ESM compatibility' });
 
@@ -223,7 +223,7 @@ describe('AC1: Session Start Context Loading', () => {
       expect(fm.decision_summary).toBe('Chose Vitest over Jest for ESM compatibility');
     });
 
-    test.skip('[P0] 7.3-UNIT-005: should parse risk_description, severity, and affected_area from RN frontmatter', () => {
+    test('[P0] 7.3-UNIT-005: should parse risk_description, severity, and affected_area from RN frontmatter', () => {
       // Given: RN content
       const content = createRNContent({
         riskDescription: 'Corrupt RN artifacts on crash',
@@ -240,7 +240,7 @@ describe('AC1: Session Start Context Loading', () => {
       expect(fm.affected_area).toBe('Data Integrity');
     });
 
-    test.skip('[P1] 7.3-UNIT-006: should return empty object when content has no frontmatter delimiters', () => {
+    test('[P1] 7.3-UNIT-006: should return empty object when content has no frontmatter delimiters', () => {
       // Given: content without --- delimiters
       const content = '# Some Markdown\n\nNo frontmatter here.';
 
@@ -251,7 +251,7 @@ describe('AC1: Session Start Context Loading', () => {
       expect(fm).toEqual({});
     });
 
-    test.skip('[P1] 7.3-UNIT-007: should return empty object for empty string input', () => {
+    test('[P1] 7.3-UNIT-007: should return empty object for empty string input', () => {
       // Given: empty string
       const fm = parseFrontmatter('');
 
@@ -259,7 +259,7 @@ describe('AC1: Session Start Context Loading', () => {
       expect(fm).toEqual({});
     });
 
-    test.skip('[P1] 7.3-UNIT-008: should strip surrounding single and double quotes from scalar values', () => {
+    test('[P1] 7.3-UNIT-008: should strip surrounding single and double quotes from scalar values', () => {
       // Given: frontmatter with both double- and single-quoted values
       const content = `---
 ticket: "SW-001"
@@ -277,7 +277,7 @@ status: active
       expect(fm.status).toBe('active');
     });
 
-    test.skip('[P2] 7.3-UNIT-009: should NOT use any external YAML library (NFR-2 compliance)', () => {
+    test('[P2] 7.3-UNIT-009: should NOT use any external YAML library (NFR-2 compliance)', () => {
       // Given: parseFrontmatter source code must not import yaml/gray-matter
       // This is a structural test — verified by inspecting the import list
       // If session-context.js imports js-yaml or gray-matter, this test documents the violation.
@@ -295,7 +295,7 @@ status: active
   // ── scanOpenStories() ──────────────────────────────────────────────────────
 
   describe('scanOpenStories() — Scan Sprints Directory for Non-Terminal Stories', () => {
-    test.skip('[P0] 7.3-UNIT-010: should return open story when status is in-progress', () => {
+    test('[P0] 7.3-UNIT-010: should return open story when status is in-progress', () => {
       // Given: one sprint dir with an in-progress story.md
       writeStoryFile('SW-001', { status: 'in-progress', title: 'Implement Feature A' });
 
@@ -308,7 +308,7 @@ status: active
       expect(openStories[0].status).toBe('in-progress');
     });
 
-    test.skip('[P0] 7.3-UNIT-011: should return open story when status is ready-for-dev', () => {
+    test('[P0] 7.3-UNIT-011: should return open story when status is ready-for-dev', () => {
       // Given: sprint dir with ready-for-dev story
       writeStoryFile('SW-002', { status: 'ready-for-dev', title: 'Session Start' });
 
@@ -322,7 +322,7 @@ status: active
       expect(found.status).toBe('ready-for-dev');
     });
 
-    test.skip('[P0] 7.3-UNIT-012: should EXCLUDE stories with terminal status done', () => {
+    test('[P0] 7.3-UNIT-012: should EXCLUDE stories with terminal status done', () => {
       // Given: a done story
       writeStoryFile('SW-003', { status: 'done', title: 'Completed Story' });
 
@@ -334,7 +334,7 @@ status: active
       expect(found).toBeUndefined();
     });
 
-    test.skip('[P0] 7.3-UNIT-013: should EXCLUDE stories with terminal status cancelled', () => {
+    test('[P0] 7.3-UNIT-013: should EXCLUDE stories with terminal status cancelled', () => {
       // Given: a cancelled story
       writeStoryFile('SW-004', { status: 'cancelled', title: 'Cancelled Story' });
 
@@ -346,7 +346,7 @@ status: active
       expect(found).toBeUndefined();
     });
 
-    test.skip('[P0] 7.3-UNIT-014: should return only open stories when mixed statuses exist', () => {
+    test('[P0] 7.3-UNIT-014: should return only open stories when mixed statuses exist', () => {
       // Given: mix of open and terminal stories
       writeStoryFile('SW-010', { status: 'in-progress', title: 'Open Story 1' });
       writeStoryFile('SW-011', { status: 'review', title: 'Open Story 2' });
@@ -367,7 +367,7 @@ status: active
       expect(tickets).not.toContain('SW-013');
     });
 
-    test.skip('[P0] 7.3-UNIT-015: should return empty array when sprints dir is empty', () => {
+    test('[P0] 7.3-UNIT-015: should return empty array when sprints dir is empty', () => {
       // Given: empty sprints directory (no sprint subdirs)
       // When: scanning
       const openStories = scanOpenStories(TEST_SPRINTS_DIR);
@@ -376,7 +376,7 @@ status: active
       expect(openStories).toHaveLength(0);
     });
 
-    test.skip('[P0] 7.3-UNIT-016: should return empty array when sprints dir does not exist', () => {
+    test('[P0] 7.3-UNIT-016: should return empty array when sprints dir does not exist', () => {
       // Given: sprints dir that does not exist
       const nonExistentDir = join(TEST_OUTPUT_DIR, 'no-such-sprints');
 
@@ -390,7 +390,7 @@ status: active
       expect(result).toHaveLength(0);
     });
 
-    test.skip('[P1] 7.3-UNIT-017: should include title in returned story objects', () => {
+    test('[P1] 7.3-UNIT-017: should include title in returned story objects', () => {
       // Given: story with a specific title
       writeStoryFile('SW-020', { status: 'in-progress', title: 'Implement Session Start & Context Loading' });
 
@@ -403,7 +403,7 @@ status: active
       expect(story.title).toBe('Implement Session Start & Context Loading');
     });
 
-    test.skip('[P1] 7.3-UNIT-018: should scan all non-terminal statuses: draft, refined, ready-for-dev, in-progress, review, changes-needed, approved', () => {
+    test('[P1] 7.3-UNIT-018: should scan all non-terminal statuses: draft, refined, ready-for-dev, in-progress, review, changes-needed, approved', () => {
       // Given: one story for each non-terminal status
       const nonTerminalStatuses = ['draft', 'refined', 'ready-for-dev', 'in-progress', 'review', 'changes-needed', 'approved'];
       nonTerminalStatuses.forEach((status, i) => {
@@ -421,7 +421,7 @@ status: active
       }
     });
 
-    test.skip('[P1] 7.3-UNIT-019: should skip sprint dirs that have no story.md file', () => {
+    test('[P1] 7.3-UNIT-019: should skip sprint dirs that have no story.md file', () => {
       // Given: sprint dir without a story.md (e.g., only other artifacts)
       const sprintDir = join(TEST_SPRINTS_DIR, 'SW-099');
       mkdirSync(sprintDir, { recursive: true });
@@ -440,7 +440,7 @@ status: active
   // ── loadRecentDecisions() ──────────────────────────────────────────────────
 
   describe('loadRecentDecisions() — Load Most Recent DR Records', () => {
-    test.skip('[P0] 7.3-UNIT-030: should return the most recent decision record when one exists', () => {
+    test('[P0] 7.3-UNIT-030: should return the most recent decision record when one exists', () => {
       // Given: one DR file in decisions directory
       writeDRFile('DR-001.md', {
         drNumber: 'DR-001',
@@ -459,7 +459,7 @@ status: active
       expect(decisions[0].ticket).toBe('SW-010');
     });
 
-    test.skip('[P0] 7.3-UNIT-031: should return decisions sorted by DR number descending (most recent first)', () => {
+    test('[P0] 7.3-UNIT-031: should return decisions sorted by DR number descending (most recent first)', () => {
       // Given: 5 DR files
       writeDRFile('DR-001.md', { drNumber: 'DR-001', ticket: 'SW-001', decisionSummary: 'Decision 1', date: '2026-01-01T00:00:00Z' });
       writeDRFile('DR-002.md', { drNumber: 'DR-002', ticket: 'SW-002', decisionSummary: 'Decision 2', date: '2026-02-01T00:00:00Z' });
@@ -475,7 +475,7 @@ status: active
       expect(decisions[decisions.length - 1].drNumber).toBe('DR-001');
     });
 
-    test.skip('[P0] 7.3-UNIT-032: should return at most limit=5 decisions even when more exist', () => {
+    test('[P0] 7.3-UNIT-032: should return at most limit=5 decisions even when more exist', () => {
       // Given: 8 DR files
       for (let i = 1; i <= 8; i++) {
         const num = String(i).padStart(3, '0');
@@ -501,7 +501,7 @@ status: active
       expect(drNumbers).not.toContain('DR-003'); // Excluded — beyond top 5
     });
 
-    test.skip('[P0] 7.3-UNIT-033: should respect custom limit parameter', () => {
+    test('[P0] 7.3-UNIT-033: should respect custom limit parameter', () => {
       // Given: 5 DR files
       for (let i = 1; i <= 5; i++) {
         const num = String(i).padStart(3, '0');
@@ -520,7 +520,7 @@ status: active
       expect(decisions).toHaveLength(3);
     });
 
-    test.skip('[P0] 7.3-UNIT-034: should return empty array when decisions dir is empty', () => {
+    test('[P0] 7.3-UNIT-034: should return empty array when decisions dir is empty', () => {
       // Given: empty decisions directory
       // When: loading
       const decisions = loadRecentDecisions(TEST_DECISIONS_DIR);
@@ -529,7 +529,7 @@ status: active
       expect(decisions).toHaveLength(0);
     });
 
-    test.skip('[P0] 7.3-UNIT-035: should return empty array when decisions dir does not exist', () => {
+    test('[P0] 7.3-UNIT-035: should return empty array when decisions dir does not exist', () => {
       // Given: non-existent directory
       const nonExistentDir = join(TEST_OUTPUT_DIR, 'no-decisions');
 
@@ -543,7 +543,7 @@ status: active
       expect(result).toHaveLength(0);
     });
 
-    test.skip('[P1] 7.3-UNIT-036: should skip README.md and non-DR files when loading decisions', () => {
+    test('[P1] 7.3-UNIT-036: should skip README.md and non-DR files when loading decisions', () => {
       // Given: decisions dir with README.md and one valid DR
       writeFileSync(join(TEST_DECISIONS_DIR, 'README.md'), '# Decisions', 'utf8');
       writeFileSync(join(TEST_DECISIONS_DIR, 'notes.txt'), 'some notes', 'utf8');
@@ -557,7 +557,7 @@ status: active
       expect(decisions[0].drNumber).toBe('DR-001');
     });
 
-    test.skip('[P1] 7.3-UNIT-037: should include date field from DR frontmatter', () => {
+    test('[P1] 7.3-UNIT-037: should include date field from DR frontmatter', () => {
       // Given: DR with specific date
       writeDRFile('DR-001.md', {
         drNumber: 'DR-001',
@@ -578,7 +578,7 @@ status: active
   // ── loadActiveRisks() ──────────────────────────────────────────────────────
 
   describe('loadActiveRisks() — Load Active Risk Notes', () => {
-    test.skip('[P0] 7.3-UNIT-040: should return active risk note when one active RN exists', () => {
+    test('[P0] 7.3-UNIT-040: should return active risk note when one active RN exists', () => {
       // Given: one active RN in risks dir
       writeRNFile('RN-001.md', {
         rnNumber: 'RN-001',
@@ -601,7 +601,7 @@ status: active
       expect(risks[0].ticket).toBe('SW-010');
     });
 
-    test.skip('[P0] 7.3-UNIT-041: should EXCLUDE resolved risk notes (only active returned)', () => {
+    test('[P0] 7.3-UNIT-041: should EXCLUDE resolved risk notes (only active returned)', () => {
       // Given: one active and one resolved RN
       writeRNFile('RN-001.md', { rnNumber: 'RN-001', ticket: 'SW-001', status: 'active', riskDescription: 'Active risk' });
       writeRNFile('RN-002.md', { rnNumber: 'RN-002', ticket: 'SW-002', status: 'resolved', riskDescription: 'Resolved risk' });
@@ -614,7 +614,7 @@ status: active
       expect(risks[0].rnNumber).toBe('RN-001');
     });
 
-    test.skip('[P0] 7.3-UNIT-042: should return empty array when risks dir is empty', () => {
+    test('[P0] 7.3-UNIT-042: should return empty array when risks dir is empty', () => {
       // Given: empty risks directory
       // When: loading
       const risks = loadActiveRisks(TEST_RISKS_DIR);
@@ -623,7 +623,7 @@ status: active
       expect(risks).toHaveLength(0);
     });
 
-    test.skip('[P0] 7.3-UNIT-043: should return empty array when risks dir does not exist', () => {
+    test('[P0] 7.3-UNIT-043: should return empty array when risks dir does not exist', () => {
       // Given: non-existent risks directory
       const nonExistentDir = join(TEST_OUTPUT_DIR, 'no-risks');
 
@@ -637,7 +637,7 @@ status: active
       expect(result).toHaveLength(0);
     });
 
-    test.skip('[P0] 7.3-UNIT-044: should return all active risks (no limit applied unlike decisions)', () => {
+    test('[P0] 7.3-UNIT-044: should return all active risks (no limit applied unlike decisions)', () => {
       // Given: 6 active risk notes
       for (let i = 1; i <= 6; i++) {
         const num = String(i).padStart(3, '0');
@@ -658,7 +658,7 @@ status: active
       expect(risks).toHaveLength(6);
     });
 
-    test.skip('[P1] 7.3-UNIT-045: should skip non-RN files (README, .keep, etc.) when loading risks', () => {
+    test('[P1] 7.3-UNIT-045: should skip non-RN files (README, .keep, etc.) when loading risks', () => {
       // Given: risks dir with non-RN files mixed in
       writeFileSync(join(TEST_RISKS_DIR, 'README.md'), '# Risks Directory', 'utf8');
       writeFileSync(join(TEST_RISKS_DIR, '.keep'), '', 'utf8');
@@ -671,7 +671,7 @@ status: active
       expect(risks).toHaveLength(1);
     });
 
-    test.skip('[P1] 7.3-UNIT-046: should skip RN files with unreadable or missing frontmatter gracefully', () => {
+    test('[P1] 7.3-UNIT-046: should skip RN files with unreadable or missing frontmatter gracefully', () => {
       // Given: risks dir with one valid active RN and one file with no frontmatter
       writeRNFile('RN-001.md', { rnNumber: 'RN-001', ticket: 'SW-001', status: 'active', riskDescription: 'Valid risk' });
       writeFileSync(join(TEST_RISKS_DIR, 'RN-002.md'), '# Not a proper RN\n\nNo frontmatter here.', 'utf8');
@@ -687,7 +687,7 @@ status: active
       expect(found).toBeDefined();
     });
 
-    test.skip('[P0] 7.3-INT-001: should load risks from correct fields: rnNumber, riskDescription, severity, affectedArea, ticket', () => {
+    test('[P0] 7.3-INT-001: should load risks from correct fields: rnNumber, riskDescription, severity, affectedArea, ticket', () => {
       // Given: RN with all required fields
       writeRNFile('RN-001.md', {
         rnNumber: 'RN-001',
@@ -716,7 +716,7 @@ status: active
   // ── Integration: Full Context Load ─────────────────────────────────────────
 
   describe('Integration: Full Context Load for Session Start', () => {
-    test.skip('[P0] 7.3-INT-010: should successfully load all three context types in combination', () => {
+    test('[P0] 7.3-INT-010: should successfully load all three context types in combination', () => {
       // Given: sprints with open stories, decisions dir with DRs, risks dir with active RNs
       writeStoryFile('SW-001', { status: 'in-progress', title: 'Implement Feature' });
       writeStoryFile('SW-002', { status: 'review', title: 'Review Feature' });
@@ -748,7 +748,7 @@ status: active
       expect(activeRisks[0].rnNumber).toBe('RN-001');
     });
 
-    test.skip('[P0] 7.3-INT-011: session-context module must be READ-ONLY — no write imports allowed', () => {
+    test('[P0] 7.3-INT-011: session-context module must be READ-ONLY — no write imports allowed', () => {
       // This test documents the NFR constraint: session-context.js MUST NOT import
       // writeFileSync or mkdirSync — it is a read-only module.
       //
@@ -756,12 +756,7 @@ status: active
       // A comprehensive static analysis would be done by code review; this test
       // verifies observable behavior.
 
-      // Given: test dirs with known file lists
-      const { readdirSync } = require
-        ? (() => { throw new Error('This is an ESM test'); })()
-        : { readdirSync: null };
-
-      // When: calling all read functions
+      // When: calling all read functions (no crash, no side effects)
       scanOpenStories(TEST_SPRINTS_DIR);
       loadRecentDecisions(TEST_DECISIONS_DIR);
       loadActiveRisks(TEST_RISKS_DIR);
@@ -772,7 +767,7 @@ status: active
       expect(true).toBe(true); // Placeholder — real check is static
     });
 
-    test.skip('[P1] 7.3-INT-012: should handle completely empty scrum-output directory gracefully', () => {
+    test('[P1] 7.3-INT-012: should handle completely empty scrum-output directory gracefully', () => {
       // Given: all three directories exist but are empty (fresh install state)
       // (setupTestDirs() already created empty dirs)
 

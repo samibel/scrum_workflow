@@ -265,10 +265,9 @@ function deriveDomainTags(category) {
  *
  * @param {string} content - The content to write
  * @param {string} filePath - The file path to write
- * @param {string} allowedDir - The allowed directory (must be a memory/risks dir)
  * @throws {Error} If path is outside the allowed boundary
  */
-export function writeRNWithBoundaryCheck(content, filePath, allowedDir) {
+export function writeRNWithBoundaryCheck(content, filePath) {
   const resolvedPath = resolve(filePath);
 
   // Prohibited paths: things the risk-extraction skill must never write to
@@ -367,13 +366,16 @@ export function createRNArtifact(request) {
 
   const timestamp = new Date().toISOString().replace(/\.\d{3}Z$/, 'Z');
 
-  // Build domain_tags YAML block
-  const domainTagsYaml = domainTags.length > 0
-    ? domainTags.map(t => `  - "${escapeYaml(t)}"`).join('\n')
-    : '  - ""';
+  // Build domain_tags YAML block.
+  // Filter out empty/whitespace-only tags before emitting — empty tags cause false-positive
+  // matches in matchRiskNotesToStory because "".includes("") and kw.includes("") are always true.
+  const nonEmptyDomainTags = domainTags.filter(t => t.trim() !== '');
+  const domainTagsYaml = nonEmptyDomainTags.length > 0
+    ? nonEmptyDomainTags.map(t => `  - "${escapeYaml(t)}"`).join('\n')
+    : '';
 
-  // Build domain tags inline for body
-  const domainTagsInline = domainTags.join(', ');
+  // Build domain tags inline for body (use filtered list for consistency)
+  const domainTagsInline = nonEmptyDomainTags.join(', ');
 
   const content = `---
 schema_version: 1.0.0
@@ -413,7 +415,7 @@ ${domainTagsInline}
 `;
 
   // Enforce write boundary and write atomically (NFR-4)
-  writeRNWithBoundaryCheck(content, filePath, outputDir);
+  writeRNWithBoundaryCheck(content, filePath);
 
   return filePath;
 }
@@ -658,9 +660,11 @@ export function matchRiskNotesToStory({ risksDir, storyContext }) {
         continue;
       }
 
-      // Check domain_tags overlap
+      // Check domain_tags overlap.
+      // Filter empty strings — empty tag matches every keyword via kw.includes("") === true,
+      // causing false positives when a risk note has no domain tags.
       const domainTags = Array.isArray(frontmatter.domain_tags)
-        ? frontmatter.domain_tags.map(t => t.toLowerCase().trim())
+        ? frontmatter.domain_tags.map(t => t.toLowerCase().trim()).filter(t => t !== '')
         : [];
 
       const hasTagMatch = domainTags.some(tag =>

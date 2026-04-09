@@ -1,6 +1,6 @@
 # Story 7.2: Implement Risk Note Extraction & Auto-Loading
 
-Status: review
+Status: done
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -48,6 +48,12 @@ So that identified risks are tracked and inform quality checks.
   - [x] 5.1 Create `scrum_workflow/__tests__/risk-extraction/ac1-architect-risk-extraction.test.js`
   - [x] 5.2 Create `scrum_workflow/__tests__/risk-extraction/ac2-review-risk-loading.test.js`
   - [x] 5.3 Create `scrum_workflow/__tests__/risk-extraction/ac3-active-only-filtering.test.js`
+
+### Review Findings
+
+- [x] [Review][Patch] Empty domain tag false-positive match bug [scrum_workflow/utils/risk-extraction.js] — Fixed: `createRNArtifact` now filters empty/whitespace domain tags before YAML emission; `matchRiskNotesToStory` filters empty strings from parsed `domain_tags` before matching. Both changes prevent `kw.includes("")` from matching every story keyword.
+- [x] [Review][Patch] Remove unused `allowedDir` parameter from `writeRNWithBoundaryCheck` [scrum_workflow/utils/risk-extraction.js] — Fixed: parameter removed from signature and JSDoc; call site updated to pass only `content` and `filePath`.
+- [x] [Review][Defer] Table row parser mishandles pipe `|` characters inside cell values [scrum_workflow/utils/risk-extraction.js] — deferred, pre-existing design limitation (mirrors decision-extraction.js); Architect agent output format does not use pipes in cell values in practice.
 
 ## Dev Notes
 

@@ -7,32 +7,19 @@
  *      Then the review agent receives active risk notes relevant to the story's domain as additional context
  *      And relevance is determined by matching domain tags and affected areas
  *
- * TDD RED PHASE: All tests use test.skip() — feature (risk-extraction.js) not yet implemented.
- * Remove test.skip() after implementing scrum_workflow/utils/risk-extraction.js.
+ * TDD RED PHASE: All tests use test() — feature (risk-extraction.js) not yet implemented.
+ * Remove test() after implementing scrum_workflow/utils/risk-extraction.js.
  */
 
 import { describe, test, expect, beforeEach, afterEach } from 'vitest';
 import { existsSync, mkdirSync, writeFileSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 
-// RED PHASE: These imports will fail until risk-extraction.js is implemented.
-// Uncomment after implementation:
-// import {
-//   loadActiveRiskNotesForStory,
-//   matchRiskNotesToStory,
-//   formatRiskNotesAsContext,
-// } from '../../utils/risk-extraction.js';
-
-// Temporary stub imports so the test file is parseable — these will throw on call.
-const missingModule = () => {
-  throw new Error(
-    'risk-extraction.js not yet implemented — TDD RED PHASE. ' +
-    'Implement scrum_workflow/utils/risk-extraction.js to make tests pass.'
-  );
-};
-const loadActiveRiskNotesForStory = missingModule;
-const matchRiskNotesToStory = missingModule;
-const formatRiskNotesAsContext = missingModule;
+import {
+  loadActiveRiskNotesForStory,
+  matchRiskNotesToStory,
+  formatRiskNotesAsContext,
+} from '../../utils/risk-extraction.js';
 
 const PROJECT_ROOT = join(process.cwd());
 const TEST_RISKS_DIR = join(PROJECT_ROOT, '_test-output', 'memory', 'risks');
@@ -147,7 +134,7 @@ describe('AC2: Review Risk Note Auto-Loading', () => {
   // ── Domain Tag Matching ────────────────────────────────────────────────────
 
   describe('Domain Tag Matching Algorithm', () => {
-    test.skip('[P0] 7.2-UNIT-050: should match active RN when its domain_tags overlap with story keywords', () => {
+    test('[P0] 7.2-UNIT-050: should match active RN when its domain_tags overlap with story keywords', () => {
       // Given: an active RN with domain_tags ["storage", "data-integrity"]
       const rnContent = createRNArtifactContent({
         status: 'active',
@@ -172,7 +159,7 @@ describe('AC2: Review Risk Note Auto-Loading', () => {
       expect(matched[0]).toContain('RN-001.md');
     });
 
-    test.skip('[P0] 7.2-UNIT-051: should match active RN when its affected_area appears in story keywords', () => {
+    test('[P0] 7.2-UNIT-051: should match active RN when its affected_area appears in story keywords', () => {
       // Given: an active RN with affected_area "Data Integrity"
       const rnContent = createRNArtifactContent({
         status: 'active',
@@ -194,7 +181,7 @@ describe('AC2: Review Risk Note Auto-Loading', () => {
       expect(matched.length).toBeGreaterThanOrEqual(1);
     });
 
-    test.skip('[P0] 7.2-UNIT-052: should NOT match active RN when no domain_tags or affected_area overlap', () => {
+    test('[P0] 7.2-UNIT-052: should NOT match active RN when no domain_tags or affected_area overlap', () => {
       // Given: an active RN about "authentication" domain
       const rnContent = createRNArtifactContent({
         status: 'active',
@@ -217,7 +204,7 @@ describe('AC2: Review Risk Note Auto-Loading', () => {
       expect(matched).toHaveLength(0);
     });
 
-    test.skip('[P0] 7.2-UNIT-053: should match multiple active RNs when multiple domain tags overlap', () => {
+    test('[P0] 7.2-UNIT-053: should match multiple active RNs when multiple domain tags overlap', () => {
       // Given: two active RNs with overlapping domains
       writeRNFile(risksDir, 'RN-001.md', createRNArtifactContent({
         status: 'active',
@@ -242,7 +229,7 @@ describe('AC2: Review Risk Note Auto-Loading', () => {
       expect(matched).toHaveLength(2);
     });
 
-    test.skip('[P1] 7.2-UNIT-054: should return empty array when no active risk notes exist in risks dir', () => {
+    test('[P1] 7.2-UNIT-054: should return empty array when no active risk notes exist in risks dir', () => {
       // Given: risks directory is empty
       const storyContext = createStoryContext();
 
@@ -253,7 +240,7 @@ describe('AC2: Review Risk Note Auto-Loading', () => {
       expect(matched).toHaveLength(0);
     });
 
-    test.skip('[P1] 7.2-UNIT-055: should return empty array when risks dir does not exist', () => {
+    test('[P1] 7.2-UNIT-055: should return empty array when risks dir does not exist', () => {
       // Given: risks directory does not exist
       const nonExistentDir = join(PROJECT_ROOT, '_test-output', 'memory', 'risks-missing');
       const storyContext = createStoryContext();
@@ -269,7 +256,7 @@ describe('AC2: Review Risk Note Auto-Loading', () => {
   // ── Active-Only Loading ────────────────────────────────────────────────────
 
   describe('Active Risk Notes Loading for Review', () => {
-    test.skip('[P0] 7.2-INT-020: should load active risk notes relevant to the story domain', async () => {
+    test('[P0] 7.2-INT-020: should load active risk notes relevant to the story domain', async () => {
       // Given: one active RN matching the story domain
       writeRNFile(risksDir, 'RN-001.md', createRNArtifactContent({
         status: 'active',
@@ -293,7 +280,7 @@ describe('AC2: Review Risk Note Auto-Loading', () => {
       expect(loaded.matchedRNs[0].content).toBeTruthy();
     });
 
-    test.skip('[P0] 7.2-INT-021: should load only active risk notes (not resolved ones)', async () => {
+    test('[P0] 7.2-INT-021: should load only active risk notes (not resolved ones)', async () => {
       // Given: one active and one resolved RN in the same domain
       writeRNFile(risksDir, 'RN-001.md', createRNArtifactContent({
         status: 'active',
@@ -318,7 +305,7 @@ describe('AC2: Review Risk Note Auto-Loading', () => {
       expect(loaded.matchedRNs[0].filename).toContain('RN-001.md');
     });
 
-    test.skip('[P0] 7.2-INT-022: should return no matched RNs when domain does not match any active RNs', async () => {
+    test('[P0] 7.2-INT-022: should return no matched RNs when domain does not match any active RNs', async () => {
       // Given: active RN in unrelated domain
       writeRNFile(risksDir, 'RN-001.md', createRNArtifactContent({
         status: 'active',
@@ -338,7 +325,7 @@ describe('AC2: Review Risk Note Auto-Loading', () => {
       expect(loaded.noMatchingRisks).toBe(true);
     });
 
-    test.skip('[P1] 7.2-INT-023: should include full content of matched RN for context injection', async () => {
+    test('[P1] 7.2-INT-023: should include full content of matched RN for context injection', async () => {
       // Given: active RN with known content
       const rnContent = createRNArtifactContent({
         status: 'active',
@@ -359,7 +346,7 @@ describe('AC2: Review Risk Note Auto-Loading', () => {
       expect(loaded.matchedRNs[0].content).toContain('Atomic write not guaranteed');
     });
 
-    test.skip('[P1] 7.2-INT-024: should load RNs from multiple tickets when all match domain', async () => {
+    test('[P1] 7.2-INT-024: should load RNs from multiple tickets when all match domain', async () => {
       // Given: active RNs from different tickets, all matching story domain
       writeRNFile(risksDir, 'RN-001.md', createRNArtifactContent({
         status: 'active',
@@ -387,7 +374,7 @@ describe('AC2: Review Risk Note Auto-Loading', () => {
   // ── Context Formatting for Review Agent ───────────────────────────────────
 
   describe('Context Formatting for Review Agent Injection', () => {
-    test.skip('[P0] 7.2-UNIT-060: should format matched RNs as human-readable context block', () => {
+    test('[P0] 7.2-UNIT-060: should format matched RNs as human-readable context block', () => {
       // Given: two matched RN contents
       const matchedRNs = [
         {
@@ -419,7 +406,7 @@ describe('AC2: Review Risk Note Auto-Loading', () => {
       expect(contextBlock).toContain('Atomic write not guaranteed');
     });
 
-    test.skip('[P0] 7.2-UNIT-061: should return "no active risk notes" message when matched list is empty', () => {
+    test('[P0] 7.2-UNIT-061: should return "no active risk notes" message when matched list is empty', () => {
       // Given: no matched RNs
       const matchedRNs = [];
 
@@ -431,7 +418,7 @@ describe('AC2: Review Risk Note Auto-Loading', () => {
       expect(contextBlock.toLowerCase()).toMatch(/no active risk notes|no matching/);
     });
 
-    test.skip('[P1] 7.2-UNIT-062: should separate multiple RNs clearly in the context block', () => {
+    test('[P1] 7.2-UNIT-062: should separate multiple RNs clearly in the context block', () => {
       // Given: two matched RNs
       const matchedRNs = [
         {
@@ -456,7 +443,7 @@ describe('AC2: Review Risk Note Auto-Loading', () => {
   // ── Review Workflow Read-Only Compliance ──────────────────────────────────
 
   describe('Review Workflow Read-Only Compliance', () => {
-    test.skip('[P0] 7.2-UNIT-070: loadActiveRiskNotesForStory must not write or modify any RN files', async () => {
+    test('[P0] 7.2-UNIT-070: loadActiveRiskNotesForStory must not write or modify any RN files', async () => {
       // Given: one active RN
       const rnContent = createRNArtifactContent({
         status: 'active',
@@ -480,7 +467,7 @@ describe('AC2: Review Risk Note Auto-Loading', () => {
       expect(afterContent).toBe(originalContent);
     });
 
-    test.skip('[P1] 7.2-UNIT-071: should scan only RN-NNN.md files in risks dir (ignore README.md)', async () => {
+    test('[P1] 7.2-UNIT-071: should scan only RN-NNN.md files in risks dir (ignore README.md)', async () => {
       // Given: risks dir with README.md and one active RN
       writeFileSync(join(risksDir, 'README.md'), '# Risk Notes Directory', 'utf8');
       writeRNFile(risksDir, 'RN-001.md', createRNArtifactContent({

@@ -7,34 +7,20 @@
  *      Then only active (unresolved) risk notes are included
  *      And resolved risks are not loaded as context
  *
- * TDD RED PHASE: All tests use test.skip() — feature (risk-extraction.js) not yet implemented.
- * Remove test.skip() after implementing scrum_workflow/utils/risk-extraction.js.
+ * TDD RED PHASE: All tests use test() — feature (risk-extraction.js) not yet implemented.
+ * Remove test() after implementing scrum_workflow/utils/risk-extraction.js.
  */
 
 import { describe, test, expect, beforeEach, afterEach } from 'vitest';
 import { existsSync, mkdirSync, writeFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 
-// RED PHASE: These imports will fail until risk-extraction.js is implemented.
-// Uncomment after implementation:
-// import {
-//   loadActiveRiskNotesForStory,
-//   matchRiskNotesToStory,
-//   filterActiveRiskNotes,
-//   parseRNFrontmatter,
-// } from '../../utils/risk-extraction.js';
-
-// Temporary stub imports so the test file is parseable — these will throw on call.
-const missingModule = () => {
-  throw new Error(
-    'risk-extraction.js not yet implemented — TDD RED PHASE. ' +
-    'Implement scrum_workflow/utils/risk-extraction.js to make tests pass.'
-  );
-};
-const loadActiveRiskNotesForStory = missingModule;
-const matchRiskNotesToStory = missingModule;
-const filterActiveRiskNotes = missingModule;
-const parseRNFrontmatter = missingModule;
+import {
+  loadActiveRiskNotesForStory,
+  matchRiskNotesToStory,
+  filterActiveRiskNotes,
+  parseRNFrontmatter,
+} from '../../utils/risk-extraction.js';
 
 const PROJECT_ROOT = join(process.cwd());
 const TEST_RISKS_DIR = join(PROJECT_ROOT, '_test-output', 'memory', 'risks');
@@ -147,7 +133,7 @@ describe('AC3: Active-Only Risk Note Filtering', () => {
   // ── YAML Frontmatter Parsing ────────────────────────────────────────────────
 
   describe('RN Frontmatter Parsing', () => {
-    test.skip('[P0] 7.2-UNIT-080: should parse status field from RN YAML frontmatter', () => {
+    test('[P0] 7.2-UNIT-080: should parse status field from RN YAML frontmatter', () => {
       // Given: RN content with status: active
       const content = createRNContent({ status: 'active' });
 
@@ -158,7 +144,7 @@ describe('AC3: Active-Only Risk Note Filtering', () => {
       expect(frontmatter.status).toBe('active');
     });
 
-    test.skip('[P0] 7.2-UNIT-081: should parse status: resolved from RN YAML frontmatter', () => {
+    test('[P0] 7.2-UNIT-081: should parse status: resolved from RN YAML frontmatter', () => {
       // Given: RN content with status: resolved
       const content = createRNContent({ status: 'resolved' });
 
@@ -169,7 +155,7 @@ describe('AC3: Active-Only Risk Note Filtering', () => {
       expect(frontmatter.status).toBe('resolved');
     });
 
-    test.skip('[P0] 7.2-UNIT-082: should parse domain_tags array from YAML frontmatter', () => {
+    test('[P0] 7.2-UNIT-082: should parse domain_tags array from YAML frontmatter', () => {
       // Given: RN content with domain_tags
       const content = createRNContent({
         domain_tags: ['storage', 'data-integrity'],
@@ -184,7 +170,7 @@ describe('AC3: Active-Only Risk Note Filtering', () => {
       expect(frontmatter.domain_tags).toContain('data-integrity');
     });
 
-    test.skip('[P0] 7.2-UNIT-083: should parse affected_area from YAML frontmatter', () => {
+    test('[P0] 7.2-UNIT-083: should parse affected_area from YAML frontmatter', () => {
       // Given: RN with affected_area
       const content = createRNContent({ affected_area: 'Search Accuracy' });
 
@@ -195,7 +181,7 @@ describe('AC3: Active-Only Risk Note Filtering', () => {
       expect(frontmatter.affected_area).toBe('Search Accuracy');
     });
 
-    test.skip('[P0] 7.2-UNIT-084: should parse ticket field from YAML frontmatter', () => {
+    test('[P0] 7.2-UNIT-084: should parse ticket field from YAML frontmatter', () => {
       // Given: RN with ticket SW-010
       const content = createRNContent({ ticket: 'SW-010' });
 
@@ -206,7 +192,7 @@ describe('AC3: Active-Only Risk Note Filtering', () => {
       expect(frontmatter.ticket).toBe('SW-010');
     });
 
-    test.skip('[P1] 7.2-UNIT-085: should return null or throw for content without YAML frontmatter', () => {
+    test('[P1] 7.2-UNIT-085: should return null or throw for content without YAML frontmatter', () => {
       // Given: content without frontmatter delimiters
       const content = '# Risk Note\n\nSome content without frontmatter.';
 
@@ -228,7 +214,7 @@ describe('AC3: Active-Only Risk Note Filtering', () => {
   // ── Status Filtering ───────────────────────────────────────────────────────
 
   describe('Active-Only Status Filtering', () => {
-    test.skip('[P0] 7.2-UNIT-090: should include RN with status active when filtering', () => {
+    test('[P0] 7.2-UNIT-090: should include RN with status active when filtering', () => {
       // Given: risks dir with one active RN
       writeRNFile(risksDir, 'RN-001.md', createRNContent({ status: 'active' }));
 
@@ -240,7 +226,7 @@ describe('AC3: Active-Only Risk Note Filtering', () => {
       expect(activeRNs[0]).toContain('RN-001.md');
     });
 
-    test.skip('[P0] 7.2-UNIT-091: should EXCLUDE RN with status resolved when filtering', () => {
+    test('[P0] 7.2-UNIT-091: should EXCLUDE RN with status resolved when filtering', () => {
       // Given: risks dir with one resolved RN
       writeRNFile(risksDir, 'RN-001.md', createRNContent({ status: 'resolved' }));
 
@@ -251,7 +237,7 @@ describe('AC3: Active-Only Risk Note Filtering', () => {
       expect(activeRNs).toHaveLength(0);
     });
 
-    test.skip('[P0] 7.2-UNIT-092: should include only active RNs when mixed active and resolved exist', () => {
+    test('[P0] 7.2-UNIT-092: should include only active RNs when mixed active and resolved exist', () => {
       // Given: risks dir with 2 active and 2 resolved RNs
       writeRNFile(risksDir, 'RN-001.md', createRNContent({ status: 'active', ticket: 'SW-001' }));
       writeRNFile(risksDir, 'RN-002.md', createRNContent({ status: 'resolved', ticket: 'SW-002' }));
@@ -270,7 +256,7 @@ describe('AC3: Active-Only Risk Note Filtering', () => {
       expect(filenames).not.toContain('RN-004.md');
     });
 
-    test.skip('[P0] 7.2-UNIT-093: should return empty array when all RNs are resolved', () => {
+    test('[P0] 7.2-UNIT-093: should return empty array when all RNs are resolved', () => {
       // Given: risks dir with only resolved RNs
       writeRNFile(risksDir, 'RN-001.md', createRNContent({ status: 'resolved' }));
       writeRNFile(risksDir, 'RN-002.md', createRNContent({ status: 'resolved' }));
@@ -283,7 +269,7 @@ describe('AC3: Active-Only Risk Note Filtering', () => {
       expect(activeRNs).toHaveLength(0);
     });
 
-    test.skip('[P0] 7.2-UNIT-094: should return empty array when risks dir is empty', () => {
+    test('[P0] 7.2-UNIT-094: should return empty array when risks dir is empty', () => {
       // Given: empty risks directory
       // When: filtering
       const activeRNs = filterActiveRiskNotes(risksDir);
@@ -292,7 +278,7 @@ describe('AC3: Active-Only Risk Note Filtering', () => {
       expect(activeRNs).toHaveLength(0);
     });
 
-    test.skip('[P1] 7.2-UNIT-095: should handle risks dir that does not exist gracefully', () => {
+    test('[P1] 7.2-UNIT-095: should handle risks dir that does not exist gracefully', () => {
       // Given: non-existent risks directory
       const nonExistentDir = join(PROJECT_ROOT, '_test-output', 'memory', 'risks-absent');
 
@@ -308,7 +294,7 @@ describe('AC3: Active-Only Risk Note Filtering', () => {
       expect(activeRNs).toHaveLength(0);
     });
 
-    test.skip('[P1] 7.2-UNIT-096: should skip README.md and non-RN files when filtering', () => {
+    test('[P1] 7.2-UNIT-096: should skip README.md and non-RN files when filtering', () => {
       // Given: risks dir with README.md, a .tmp file, and one active RN
       writeFileSync(join(risksDir, 'README.md'), '# Risks Directory', 'utf8');
       writeFileSync(join(risksDir, '.keep'), '', 'utf8');
@@ -325,7 +311,7 @@ describe('AC3: Active-Only Risk Note Filtering', () => {
   // ── End-to-End: Active-Only Filtering in Review Context ───────────────────
 
   describe('End-to-End: Active-Only Filtering During Review', () => {
-    test.skip('[P0] 7.2-INT-030: resolved risks must never be loaded as review context', async () => {
+    test('[P0] 7.2-INT-030: resolved risks must never be loaded as review context', async () => {
       // Given: accumulation of risk notes over time
       // 3 from an old sprint — now resolved
       writeRNFile(risksDir, 'RN-001.md', createRNContent({
@@ -372,7 +358,7 @@ describe('AC3: Active-Only Risk Note Filtering', () => {
       expect(loadedFilenames).not.toContain('RN-003.md');
     });
 
-    test.skip('[P0] 7.2-INT-031: should load zero RNs when all matching domain RNs are resolved', async () => {
+    test('[P0] 7.2-INT-031: should load zero RNs when all matching domain RNs are resolved', async () => {
       // Given: all domain-matching RNs are resolved
       writeRNFile(risksDir, 'RN-001.md', createRNContent({
         status: 'resolved',
@@ -397,7 +383,7 @@ describe('AC3: Active-Only Risk Note Filtering', () => {
       expect(loaded.noMatchingRisks).toBe(true);
     });
 
-    test.skip('[P1] 7.2-INT-032: should work correctly as risk notes accumulate over multiple sprints', async () => {
+    test('[P1] 7.2-INT-032: should work correctly as risk notes accumulate over multiple sprints', async () => {
       // Given: risk notes from 5 different sprints, accumulating over time
       // 2 resolved (old sprints), 3 active (recent sprints)
       writeRNFile(risksDir, 'RN-001.md', createRNContent({
@@ -431,7 +417,7 @@ describe('AC3: Active-Only Risk Note Filtering', () => {
       expect(loaded.matchedRNs.length).toBeGreaterThanOrEqual(2); // at least RN-002 and RN-004
     });
 
-    test.skip('[P0] 7.2-INT-033: status field is the ONLY filtering mechanism — no date or number filtering', async () => {
+    test('[P0] 7.2-INT-033: status field is the ONLY filtering mechanism — no date or number filtering', async () => {
       // Given: an old active RN (created months ago) and a new resolved RN (created today)
       writeRNFile(risksDir, 'RN-001.md', createRNContent({
         status: 'active',
@@ -463,7 +449,7 @@ describe('AC3: Active-Only Risk Note Filtering', () => {
   // ── NFR Compliance for Filtering ──────────────────────────────────────────
 
   describe('NFR Compliance for Active-Only Filtering', () => {
-    test.skip('[P0] 7.2-UNIT-100: filterActiveRiskNotes must not write any files (read-only operation)', () => {
+    test('[P0] 7.2-UNIT-100: filterActiveRiskNotes must not write any files (read-only operation)', () => {
       // Given: risks dir with active RNs
       writeRNFile(risksDir, 'RN-001.md', createRNContent({ status: 'active' }));
       writeRNFile(risksDir, 'RN-002.md', createRNContent({ status: 'resolved' }));
@@ -483,7 +469,7 @@ describe('AC3: Active-Only Risk Note Filtering', () => {
       });
     });
 
-    test.skip('[P0] 7.2-UNIT-101: filterActiveRiskNotes must not modify any files (read-only operation)', async () => {
+    test('[P0] 7.2-UNIT-101: filterActiveRiskNotes must not modify any files (read-only operation)', async () => {
       // Given: active RN with known content
       const originalContent = createRNContent({ status: 'active', domain_tags: ['storage'] });
       writeRNFile(risksDir, 'RN-001.md', originalContent);
@@ -497,7 +483,7 @@ describe('AC3: Active-Only Risk Note Filtering', () => {
       expect(afterContent).toBe(originalContent);
     });
 
-    test.skip('[P1] 7.2-UNIT-102: filtering must complete without errors even with 100+ RN files', () => {
+    test('[P1] 7.2-UNIT-102: filtering must complete without errors even with 100+ RN files', () => {
       // Given: risks dir with 100 RN files (50 active, 50 resolved) — scalability test
       for (let i = 1; i <= 50; i++) {
         const num = String(i).padStart(3, '0');

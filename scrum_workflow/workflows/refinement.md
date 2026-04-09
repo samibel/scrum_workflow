@@ -1158,6 +1158,50 @@ No decisions detected in refinement feedback
 - The decision-extraction skill may ONLY write to `_scrum-output/memory/decisions/DR-XXX.md`
 - It MUST NOT modify `refinement.md`, `story.md`, or any sprint artifact
 
+## Step 10.7: Risk Note Extraction (Phase 6b)
+
+After decision extraction completes (Step 10.6), invoke the risk-extraction skill to capture Architect agent findings as persistent risk note artifacts.
+
+### Step 10.7.1: Invoke Risk Extraction Skill
+
+Invoke `scrum_workflow/skills/risk-extraction/SKILL.md` with:
+- `source_file`: `_scrum-output/sprints/SW-XXX/refinement.md`
+- `ticket`: SW-XXX
+
+The skill locates the `## Architect Perspective` section in `refinement.md`, parses the `### Findings` table rows, and creates `RN-XXX.md` artifacts in `_scrum-output/memory/risks/`.
+
+Each row in the Findings table becomes one `RN-NNN.md` artifact with:
+- `risk_description` — the Finding text
+- `severity` — normalized to lowercase (`critical`, `major`, `minor`)
+- `affected_area` — the Category column value
+- `mitigation_suggestion` — the corresponding numbered Recommendation
+- `domain_tags` — derived from the Category value (normalized, lowercase-hyphenated)
+- `status: active` — all newly created risk notes start as active
+- `ticket` — links back to source story (NFR-7 traceability)
+
+### Step 10.7.2: Report Risk Extraction Results
+
+Include extracted risks in the refinement completion summary:
+
+**If risks were found:**
+```
+Extracted 3 risk notes: RN-001.md, RN-002.md, RN-003.md
+```
+
+**If no risks found (Findings table empty):**
+```
+No risks detected in Architect perspective
+```
+
+**If Architect Perspective section absent:**
+```
+Architect Perspective section not found in refinement.md — skipping risk extraction
+```
+
+**Write boundary for this step:**
+- The risk-extraction skill may ONLY write to `_scrum-output/memory/risks/RN-XXX.md`
+- It MUST NOT modify `refinement.md`, `story.md`, or any sprint artifact
+
 ## Step 11: Readiness Check Gate
 
 After synthesis is complete and validated, run the readiness check to ensure the story is complete before allowing implementation.

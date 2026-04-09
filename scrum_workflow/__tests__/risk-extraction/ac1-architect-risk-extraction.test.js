@@ -7,40 +7,23 @@
  *      Then identified risks are extracted as standalone RN-XXX.md artifacts in _scrum-output/memory/risks/
  *      And each risk note contains: risk description, severity, affected area, mitigation suggestion, source ticket
  *
- * TDD RED PHASE: All tests use test.skip() — feature (risk-extraction.js) not yet implemented.
- * Remove test.skip() after implementing scrum_workflow/utils/risk-extraction.js.
+ * TDD RED PHASE: All tests use test() — feature (risk-extraction.js) not yet implemented.
+ * Remove test() after implementing scrum_workflow/utils/risk-extraction.js.
  */
 
 import { describe, test, expect, beforeEach, afterEach } from 'vitest';
 import { existsSync, mkdirSync, writeFileSync, readFileSync, rmSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 
-// RED PHASE: These imports will fail until risk-extraction.js is implemented.
-// Uncomment after implementation:
-// import {
-//   getNextRNNumber,
-//   formatRNNumber,
-//   ensureRisksDirExists,
-//   detectRiskSignals,
-//   extractRisksFromRefinement,
-//   writeRNWithBoundaryCheck,
-//   createRNArtifact,
-// } from '../../utils/risk-extraction.js';
-
-// Temporary stub imports so the test file is parseable — these will throw on call.
-const missingModule = () => {
-  throw new Error(
-    'risk-extraction.js not yet implemented — TDD RED PHASE. ' +
-    'Implement scrum_workflow/utils/risk-extraction.js to make tests pass.'
-  );
-};
-const getNextRNNumber = missingModule;
-const formatRNNumber = missingModule;
-const ensureRisksDirExists = missingModule;
-const detectRiskSignals = missingModule;
-const extractRisksFromRefinement = missingModule;
-const writeRNWithBoundaryCheck = missingModule;
-const createRNArtifact = missingModule;
+import {
+  getNextRNNumber,
+  formatRNNumber,
+  ensureRisksDirExists,
+  detectRiskSignals,
+  extractRisksFromRefinement,
+  writeRNWithBoundaryCheck,
+  createRNArtifact,
+} from '../../utils/risk-extraction.js';
 
 const PROJECT_ROOT = join(process.cwd());
 const RISKS_DIR = join(PROJECT_ROOT, '_scrum-output', 'memory', 'risks');
@@ -175,7 +158,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
   // ── Sequential RN Numbering ────────────────────────────────────────────────
 
   describe('Sequential RN Numbering', () => {
-    test.skip('[P0] 7.2-UNIT-001: should return RN-001 as first number when risks dir is empty', () => {
+    test('[P0] 7.2-UNIT-001: should return RN-001 as first number when risks dir is empty', () => {
       // Given: empty risks directory
       // When: getting next RN number
       const nextNumber = getNextRNNumber(risksDir);
@@ -184,7 +167,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(nextNumber).toBe(1);
     });
 
-    test.skip('[P0] 7.2-UNIT-002: should increment RN number when one RN already exists', () => {
+    test('[P0] 7.2-UNIT-002: should increment RN number when one RN already exists', () => {
       // Given: RN-001.md exists in risks directory
       writeFileSync(join(risksDir, 'RN-001.md'), '# Risk Note 1', 'utf8');
 
@@ -195,7 +178,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(nextNumber).toBe(2);
     });
 
-    test.skip('[P0] 7.2-UNIT-003: should derive next number from highest existing RN (skip gaps)', () => {
+    test('[P0] 7.2-UNIT-003: should derive next number from highest existing RN (skip gaps)', () => {
       // Given: RN-001.md and RN-005.md exist (gap in numbering)
       writeFileSync(join(risksDir, 'RN-001.md'), '# RN 1', 'utf8');
       writeFileSync(join(risksDir, 'RN-005.md'), '# RN 5', 'utf8');
@@ -207,7 +190,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(nextNumber).toBe(6);
     });
 
-    test.skip('[P0] 7.2-UNIT-004: should format RN number as zero-padded 3-digit string', () => {
+    test('[P0] 7.2-UNIT-004: should format RN number as zero-padded 3-digit string', () => {
       // Given: RN numbers of various sizes
       // When: formatting
       // Then: always 3-digit zero-padded (RN-001, RN-042, RN-100)
@@ -216,7 +199,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(formatRNNumber(100)).toBe('100');
     });
 
-    test.skip('[P0] 7.2-UNIT-005: should create risks directory if it does not exist', () => {
+    test('[P0] 7.2-UNIT-005: should create risks directory if it does not exist', () => {
       // Given: risks directory does not exist
       const nonExistentDir = join(PROJECT_ROOT, '_test-output', 'memory', 'risks-new');
 
@@ -230,7 +213,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       rmSync(nonExistentDir, { recursive: true, force: true });
     });
 
-    test.skip('[P1] 7.2-UNIT-006: should only count RN-NNN.md files (not other files) when numbering', () => {
+    test('[P1] 7.2-UNIT-006: should only count RN-NNN.md files (not other files) when numbering', () => {
       // Given: risks directory with a README.md and RN-003.md
       writeFileSync(join(risksDir, 'README.md'), '# Risks', 'utf8');
       writeFileSync(join(risksDir, 'RN-003.md'), '# RN 3', 'utf8');
@@ -246,7 +229,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
   // ── Risk Signal Detection from Architect Findings Table ───────────────────
 
   describe('Risk Signal Detection from Architect Findings Table', () => {
-    test.skip('[P0] 7.2-UNIT-010: should detect risks in well-formed Findings table', () => {
+    test('[P0] 7.2-UNIT-010: should detect risks in well-formed Findings table', () => {
       // Given: refinement with Architect Findings table with 3 rows
       const { content } = createRefinementWithArchitectPerspective();
 
@@ -257,7 +240,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(signals.length).toBe(3);
     });
 
-    test.skip('[P0] 7.2-UNIT-011: should extract severity from Findings table row', () => {
+    test('[P0] 7.2-UNIT-011: should extract severity from Findings table row', () => {
       // Given: refinement content with a Critical severity finding
       const { content } = createRefinementWithArchitectPerspective();
 
@@ -268,7 +251,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(signals[0].severity).toBe('critical');
     });
 
-    test.skip('[P0] 7.2-UNIT-012: should extract affected area (category) from Findings table row', () => {
+    test('[P0] 7.2-UNIT-012: should extract affected area (category) from Findings table row', () => {
       // Given: refinement with Category column in findings table
       const { content } = createRefinementWithArchitectPerspective();
 
@@ -279,7 +262,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(signals[0].affected_area).toBe('Data Integrity');
     });
 
-    test.skip('[P0] 7.2-UNIT-013: should extract risk description from Finding column', () => {
+    test('[P0] 7.2-UNIT-013: should extract risk description from Finding column', () => {
       // Given: refinement with Finding text
       const { content } = createRefinementWithArchitectPerspective();
 
@@ -290,7 +273,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(signals[0].risk_description).toContain('atomic');
     });
 
-    test.skip('[P1] 7.2-UNIT-014: should map severity values to lowercase canonical form', () => {
+    test('[P1] 7.2-UNIT-014: should map severity values to lowercase canonical form', () => {
       // Given: findings with Critical, Major, Minor severities
       const { content } = createRefinementWithArchitectPerspective();
 
@@ -304,7 +287,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(severities).toContain('minor');
     });
 
-    test.skip('[P1] 7.2-UNIT-015: should return empty array when no Architect Perspective section present', () => {
+    test('[P1] 7.2-UNIT-015: should return empty array when no Architect Perspective section present', () => {
       // Given: refinement without Architect Perspective
       const { content } = createRefinementWithoutArchitectPerspective();
 
@@ -315,7 +298,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(signals).toHaveLength(0);
     });
 
-    test.skip('[P1] 7.2-UNIT-016: should return empty array when Findings table has no data rows', () => {
+    test('[P1] 7.2-UNIT-016: should return empty array when Findings table has no data rows', () => {
       // Given: refinement with empty Findings table
       const { content } = createRefinementWithEmptyFindingsTable();
 
@@ -326,7 +309,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(signals).toHaveLength(0);
     });
 
-    test.skip('[P2] 7.2-UNIT-017: should match Recommendations to findings as mitigation suggestions', () => {
+    test('[P2] 7.2-UNIT-017: should match Recommendations to findings as mitigation suggestions', () => {
       // Given: refinement with both Findings table and Recommendations section
       const { content } = createRefinementWithArchitectPerspective();
 
@@ -343,7 +326,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
   // ── RN Artifact Creation from Refinement ──────────────────────────────────
 
   describe('RN Artifact Creation from Refinement', () => {
-    test.skip('[P0] 7.2-INT-001: should create RN-001.md when refinement has Architect findings and risks dir is empty', async () => {
+    test('[P0] 7.2-INT-001: should create RN-001.md when refinement has Architect findings and risks dir is empty', async () => {
       // Given: refinement with Architect Perspective (3 findings), empty risks directory
       const refinement = createRefinementWithArchitectPerspective({ ticketId: 'SW-010' });
 
@@ -361,7 +344,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(existsSync(join(risksDir, 'RN-001.md'))).toBe(true);
     });
 
-    test.skip('[P0] 7.2-INT-002: should create multiple RN artifacts sequentially for multiple findings', async () => {
+    test('[P0] 7.2-INT-002: should create multiple RN artifacts sequentially for multiple findings', async () => {
       // Given: refinement with 3 findings
       const refinement = createRefinementWithArchitectPerspective({ ticketId: 'SW-010' });
 
@@ -380,7 +363,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(result.created).toContain('RN-003.md');
     });
 
-    test.skip('[P0] 7.2-INT-003: should continue sequential numbering when RN-001.md already exists', async () => {
+    test('[P0] 7.2-INT-003: should continue sequential numbering when RN-001.md already exists', async () => {
       // Given: RN-001.md already exists (from a prior run)
       writeFileSync(join(risksDir, 'RN-001.md'), '# RN-001 from prior run', 'utf8');
 
@@ -399,7 +382,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(existsSync(join(risksDir, 'RN-002.md'))).toBe(true);
     });
 
-    test.skip('[P0] 7.2-INT-004: should return empty created array when no Architect Perspective found', async () => {
+    test('[P0] 7.2-INT-004: should return empty created array when no Architect Perspective found', async () => {
       // Given: refinement without Architect Perspective
       const refinement = createRefinementWithoutArchitectPerspective();
 
@@ -416,7 +399,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(result.noRisksDetected).toBe(true);
     });
 
-    test.skip('[P0] 7.2-INT-005: should return empty created array when Findings table has no rows', async () => {
+    test('[P0] 7.2-INT-005: should return empty created array when Findings table has no rows', async () => {
       // Given: refinement with empty Findings table
       const refinement = createRefinementWithEmptyFindingsTable();
 
@@ -433,7 +416,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(result.noRisksDetected).toBe(true);
     });
 
-    test.skip('[P1] 7.2-INT-006: should auto-create risks directory if it does not exist', async () => {
+    test('[P1] 7.2-INT-006: should auto-create risks directory if it does not exist', async () => {
       // Given: risks directory does not exist
       const newRisksDir = join(PROJECT_ROOT, '_test-output', 'memory', 'risks-autoCreate');
       expect(existsSync(newRisksDir)).toBe(false);
@@ -454,7 +437,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       rmSync(newRisksDir, { recursive: true, force: true });
     });
 
-    test.skip('[P1] 7.2-INT-007: should include ticket reference in each RN artifact', async () => {
+    test('[P1] 7.2-INT-007: should include ticket reference in each RN artifact', async () => {
       // Given: refinement for ticket SW-015
       const ticketId = 'SW-015';
       const refinement = createRefinementWithArchitectPerspective({ ticketId });
@@ -473,7 +456,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(rnContent).toContain(`ticket: "${ticketId}"`);
     });
 
-    test.skip('[P1] 7.2-INT-008: should set status to active on creation', async () => {
+    test('[P1] 7.2-INT-008: should set status to active on creation', async () => {
       // Given: refinement with findings
       const refinement = createRefinementWithArchitectPerspective({ ticketId: 'SW-016' });
 
@@ -491,7 +474,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(rnContent).toMatch(/status:\s*active/);
     });
 
-    test.skip('[P1] 7.2-INT-009: should include source_file in each RN artifact', async () => {
+    test('[P1] 7.2-INT-009: should include source_file in each RN artifact', async () => {
       // Given: refinement with known source file path
       const sourceFile = '_scrum-output/sprints/SW-017/refinement.md';
       const refinement = createRefinementWithArchitectPerspective({
@@ -517,7 +500,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
   // ── Write Boundary Enforcement ────────────────────────────────────────────
 
   describe('Write Boundary Enforcement', () => {
-    test.skip('[P0] 7.2-UNIT-020: should reject writes to sprint artifacts (story.md)', () => {
+    test('[P0] 7.2-UNIT-020: should reject writes to sprint artifacts (story.md)', () => {
       // Given: an attempt to write to a sprint story file
       const invalidPath = join(PROJECT_ROOT, '_scrum-output', 'sprints', 'SW-001', 'story.md');
 
@@ -527,7 +510,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       }).toThrow(/Write Boundary Violation/);
     });
 
-    test.skip('[P0] 7.2-UNIT-021: should reject writes to sprint refinement.md', () => {
+    test('[P0] 7.2-UNIT-021: should reject writes to sprint refinement.md', () => {
       // Given: attempt to write to a refinement artifact
       const invalidPath = join(PROJECT_ROOT, '_scrum-output', 'sprints', 'SW-001', 'refinement.md');
 
@@ -536,7 +519,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       }).toThrow(/Write Boundary Violation/);
     });
 
-    test.skip('[P0] 7.2-UNIT-022: should reject writes to framework workflow files', () => {
+    test('[P0] 7.2-UNIT-022: should reject writes to framework workflow files', () => {
       // Given: attempt to write to a workflow file
       const invalidPath = join(PROJECT_ROOT, 'scrum_workflow', 'workflows', 'refinement.md');
 
@@ -545,7 +528,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       }).toThrow(/Write Boundary Violation/);
     });
 
-    test.skip('[P0] 7.2-UNIT-023: should allow writes to _scrum-output/memory/risks/ directory', () => {
+    test('[P0] 7.2-UNIT-023: should allow writes to _scrum-output/memory/risks/ directory', () => {
       // Given: a valid path within the risks directory
       const validPath = join(risksDir, 'RN-001.md');
 
@@ -557,7 +540,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(existsSync(validPath)).toBe(true);
     });
 
-    test.skip('[P0] 7.2-UNIT-024: should allow writes to test-output/memory/risks/ for test isolation', () => {
+    test('[P0] 7.2-UNIT-024: should allow writes to test-output/memory/risks/ for test isolation', () => {
       // Given: test isolation path in _test-output/memory/risks/
       const testPath = join(risksDir, 'RN-TEST.md');
 
@@ -567,7 +550,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       }).not.toThrow();
     });
 
-    test.skip('[P1] 7.2-UNIT-025: should reject writes to create-scrum-workflow/ CLI source files', () => {
+    test('[P1] 7.2-UNIT-025: should reject writes to create-scrum-workflow/ CLI source files', () => {
       // Given: attempt to write to CLI source code
       const invalidPath = join(PROJECT_ROOT, 'create-scrum-workflow', 'src', 'index.js');
 
@@ -580,7 +563,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
   // ── RN Artifact Format ────────────────────────────────────────────────────
 
   describe('RN Artifact YAML Frontmatter Fields (AC1 — required fields)', () => {
-    test.skip('[P0] 7.2-UNIT-030: created RN artifact must contain schema_version field', async () => {
+    test('[P0] 7.2-UNIT-030: created RN artifact must contain schema_version field', async () => {
       // Given: refinement with findings
       const refinement = createRefinementWithArchitectPerspective({ ticketId: 'SW-020' });
 
@@ -599,7 +582,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(rnContent).toContain('schema_version: 1.0.0');
     });
 
-    test.skip('[P0] 7.2-UNIT-031: created RN artifact must contain risk_description field', async () => {
+    test('[P0] 7.2-UNIT-031: created RN artifact must contain risk_description field', async () => {
       const refinement = createRefinementWithArchitectPerspective({ ticketId: 'SW-021' });
       const result = await extractRisksFromRefinement({
         content: refinement.content,
@@ -615,7 +598,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(rnContent).toMatch(/risk_description:/);
     });
 
-    test.skip('[P0] 7.2-UNIT-032: created RN artifact must contain severity field with valid value', async () => {
+    test('[P0] 7.2-UNIT-032: created RN artifact must contain severity field with valid value', async () => {
       const refinement = createRefinementWithArchitectPerspective({ ticketId: 'SW-022' });
       const result = await extractRisksFromRefinement({
         content: refinement.content,
@@ -631,7 +614,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(rnContent).toMatch(/severity:\s*"?(critical|major|minor)"?/);
     });
 
-    test.skip('[P0] 7.2-UNIT-033: created RN artifact must contain affected_area field', async () => {
+    test('[P0] 7.2-UNIT-033: created RN artifact must contain affected_area field', async () => {
       const refinement = createRefinementWithArchitectPerspective({ ticketId: 'SW-023' });
       const result = await extractRisksFromRefinement({
         content: refinement.content,
@@ -648,7 +631,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(rnContent).toContain('Data Integrity');
     });
 
-    test.skip('[P0] 7.2-UNIT-034: created RN artifact must contain mitigation_suggestion field', async () => {
+    test('[P0] 7.2-UNIT-034: created RN artifact must contain mitigation_suggestion field', async () => {
       const refinement = createRefinementWithArchitectPerspective({ ticketId: 'SW-024' });
       const result = await extractRisksFromRefinement({
         content: refinement.content,
@@ -664,7 +647,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(rnContent).toMatch(/mitigation_suggestion:/);
     });
 
-    test.skip('[P0] 7.2-UNIT-035: created RN artifact must contain status: active on creation', async () => {
+    test('[P0] 7.2-UNIT-035: created RN artifact must contain status: active on creation', async () => {
       const refinement = createRefinementWithArchitectPerspective({ ticketId: 'SW-025' });
       const result = await extractRisksFromRefinement({
         content: refinement.content,
@@ -680,7 +663,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(rnContent).toMatch(/status:\s*active/);
     });
 
-    test.skip('[P0] 7.2-UNIT-036: created RN artifact must contain domain_tags array', async () => {
+    test('[P0] 7.2-UNIT-036: created RN artifact must contain domain_tags array', async () => {
       const refinement = createRefinementWithArchitectPerspective({ ticketId: 'SW-026' });
       const result = await extractRisksFromRefinement({
         content: refinement.content,
@@ -696,7 +679,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(rnContent).toMatch(/domain_tags:\n(\s+-\s+\S+)/);
     });
 
-    test.skip('[P0] 7.2-UNIT-037: created RN artifact must contain created and updated timestamps in ISO 8601 UTC', async () => {
+    test('[P0] 7.2-UNIT-037: created RN artifact must contain created and updated timestamps in ISO 8601 UTC', async () => {
       const refinement = createRefinementWithArchitectPerspective({ ticketId: 'SW-027' });
       const result = await extractRisksFromRefinement({
         content: refinement.content,
@@ -713,7 +696,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(rnContent).toMatch(/updated:\s*"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z"/);
     });
 
-    test.skip('[P0] 7.2-UNIT-038: created RN artifact must start with YAML frontmatter delimiters', async () => {
+    test('[P0] 7.2-UNIT-038: created RN artifact must start with YAML frontmatter delimiters', async () => {
       const refinement = createRefinementWithArchitectPerspective({ ticketId: 'SW-028' });
       const result = await extractRisksFromRefinement({
         content: refinement.content,
@@ -730,7 +713,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(rnContent).toMatch(/^---\n[\s\S]*?\n---\n/);
     });
 
-    test.skip('[P0] 7.2-UNIT-039: RN artifact filename must follow RN-NNN.md pattern', async () => {
+    test('[P0] 7.2-UNIT-039: RN artifact filename must follow RN-NNN.md pattern', async () => {
       const refinement = createRefinementWithArchitectPerspective({ ticketId: 'SW-029' });
       const result = await extractRisksFromRefinement({
         content: refinement.content,
@@ -749,7 +732,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
   // ── NFR Compliance ────────────────────────────────────────────────────────
 
   describe('NFR Compliance', () => {
-    test.skip('[P0] 7.2-UNIT-040: RN artifact write must be atomic (file must not be partially written)', async () => {
+    test('[P0] 7.2-UNIT-040: RN artifact write must be atomic (file must not be partially written)', async () => {
       // Given: valid extraction input
       const refinement = createRefinementWithArchitectPerspective({ ticketId: 'SW-030' });
 
@@ -771,7 +754,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(content).toMatch(/^# /m);             // Has at least one heading
     });
 
-    test.skip('[P1] 7.2-UNIT-041: two sequential RN artifacts must have different filenames (no overwrites)', async () => {
+    test('[P1] 7.2-UNIT-041: two sequential RN artifacts must have different filenames (no overwrites)', async () => {
       // Given: two separate extractions
       const refinement = createRefinementWithArchitectPerspective({ ticketId: 'SW-031' });
 
@@ -797,7 +780,7 @@ describe('AC1: Architect Risk Note Extraction', () => {
       expect(uniqueNames.size).toBe(allCreated.length);
     });
 
-    test.skip('[P1] 7.2-UNIT-042: RN artifact must be plain text with no binary content (NFR-9)', async () => {
+    test('[P1] 7.2-UNIT-042: RN artifact must be plain text with no binary content (NFR-9)', async () => {
       const refinement = createRefinementWithArchitectPerspective({ ticketId: 'SW-032' });
       const result = await extractRisksFromRefinement({
         content: refinement.content,

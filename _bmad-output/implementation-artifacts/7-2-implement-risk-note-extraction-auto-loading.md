@@ -1,6 +1,6 @@
 # Story 7.2: Implement Risk Note Extraction & Auto-Loading
 
-Status: in-progress
+Status: review
 
 <!-- Note: Validation is optional. Run validate-create-story for quality check before dev-story. -->
 
@@ -20,34 +20,34 @@ So that identified risks are tracked and inform quality checks.
 
 ## Tasks / Subtasks
 
-- [ ] Task 1: Create `_scrum-output/memory/risks/` directory structure (AC: #1)
-  - [ ] 1.1 Create the memory directory `_scrum-output/memory/risks/` (Story 7.1 created `_scrum-output/memory/`, this story adds the `risks/` subdirectory)
-  - [ ] 1.2 Add `README.md` to `_scrum-output/memory/risks/` documenting the RN artifact format, numbering convention, and status lifecycle
-  - [ ] 1.3 Create `scrum_workflow/templates/risk-note.md` as the canonical template for `RN-XXX.md` artifacts
+- [x] Task 1: Create `_scrum-output/memory/risks/` directory structure (AC: #1)
+  - [x] 1.1 Create the memory directory `_scrum-output/memory/risks/` (Story 7.1 created `_scrum-output/memory/`, this story adds the `risks/` subdirectory)
+  - [x] 1.2 Add `README.md` to `_scrum-output/memory/risks/` documenting the RN artifact format, numbering convention, and status lifecycle
+  - [x] 1.3 Create `scrum_workflow/templates/risk-note.md` as the canonical template for `RN-XXX.md` artifacts
 
-- [ ] Task 2: Implement risk extraction skill (AC: #1)
-  - [ ] 2.1 Create `scrum_workflow/skills/risk-extraction/SKILL.md` defining the risk extraction logic
-  - [ ] 2.2 Implement risk detection: identify risk signals from Architect agent perspective content in `refinement.md`
-  - [ ] 2.3 Implement sequential RN numbering: scan `_scrum-output/memory/risks/` for existing RN-XXX.md files, derive next number (zero-padded 3-digit)
-  - [ ] 2.4 Implement `RN-XXX.md` artifact creation with required YAML frontmatter fields: `schema_version`, `ticket`, `risk_description`, `severity`, `affected_area`, `mitigation_suggestion`, `status`, `source_file`, `domain_tags`, `created`, `updated`
-  - [ ] 2.5 Create `scrum_workflow/utils/risk-extraction.js` implementing extraction logic following same module pattern as `decision-extraction.js`
+- [x] Task 2: Implement risk extraction skill (AC: #1)
+  - [x] 2.1 Create `scrum_workflow/skills/risk-extraction/SKILL.md` defining the risk extraction logic
+  - [x] 2.2 Implement risk detection: identify risk signals from Architect agent perspective content in `refinement.md`
+  - [x] 2.3 Implement sequential RN numbering: scan `_scrum-output/memory/risks/` for existing RN-XXX.md files, derive next number (zero-padded 3-digit)
+  - [x] 2.4 Implement `RN-XXX.md` artifact creation with required YAML frontmatter fields: `schema_version`, `ticket`, `risk_description`, `severity`, `affected_area`, `mitigation_suggestion`, `status`, `source_file`, `domain_tags`, `created`, `updated`
+  - [x] 2.5 Create `scrum_workflow/utils/risk-extraction.js` implementing extraction logic following same module pattern as `decision-extraction.js`
 
-- [ ] Task 3: Integrate risk extraction into refinement workflow (AC: #1)
-  - [ ] 3.1 Update `scrum_workflow/workflows/refinement.md` to invoke `risk-extraction` skill after synthesis (Step 10.6, alongside or after decision extraction)
-  - [ ] 3.2 Risk extraction reads the Architect agent perspective from `refinement.md` and identifies any risks (look for risk tables, severity-classified findings, and recommendation sections from the Architect agent)
-  - [ ] 3.3 For each detected risk, write a `RN-XXX.md` artifact to `_scrum-output/memory/risks/`
-  - [ ] 3.4 Report extracted risk notes in the refinement completion summary
+- [x] Task 3: Integrate risk extraction into refinement workflow (AC: #1)
+  - [x] 3.1 Update `scrum_workflow/workflows/refinement.md` to invoke `risk-extraction` skill after synthesis (Step 10.6, alongside or after decision extraction)
+  - [x] 3.2 Risk extraction reads the Architect agent perspective from `refinement.md` and identifies any risks (look for risk tables, severity-classified findings, and recommendation sections from the Architect agent)
+  - [x] 3.3 For each detected risk, write a `RN-XXX.md` artifact to `_scrum-output/memory/risks/`
+  - [x] 3.4 Report extracted risk notes in the refinement completion summary
 
-- [ ] Task 4: Implement auto-loading of active risk notes during review (AC: #2, #3)
-  - [ ] 4.1 Update `scrum_workflow/workflows/review-story.md` Step 1.4 (Load Project Standards) to also load active risk notes
-  - [ ] 4.2 Implement domain matching: scan `_scrum-output/memory/risks/` for RN files where `status: active` and `domain_tags` or `affected_area` matches the story domain
-  - [ ] 4.3 Pass matched active risk notes as additional context to the review agent (append to context block after story.md and plan.md load)
-  - [ ] 4.4 Filter out resolved risk notes (`status: resolved`) — NEVER load them as context
+- [x] Task 4: Implement auto-loading of active risk notes during review (AC: #2, #3)
+  - [x] 4.1 Update `scrum_workflow/workflows/review-story.md` Step 1.4 (Load Project Standards) to also load active risk notes
+  - [x] 4.2 Implement domain matching: scan `_scrum-output/memory/risks/` for RN files where `status: active` and `domain_tags` or `affected_area` matches the story domain
+  - [x] 4.3 Pass matched active risk notes as additional context to the review agent (append to context block after story.md and plan.md load)
+  - [x] 4.4 Filter out resolved risk notes (`status: resolved`) — NEVER load them as context
 
-- [ ] Task 5: Write ATDD tests (AC: #1, #2, #3)
-  - [ ] 5.1 Create `scrum_workflow/__tests__/risk-extraction/ac1-architect-risk-extraction.test.js`
-  - [ ] 5.2 Create `scrum_workflow/__tests__/risk-extraction/ac2-review-risk-loading.test.js`
-  - [ ] 5.3 Create `scrum_workflow/__tests__/risk-extraction/ac3-active-only-filtering.test.js`
+- [x] Task 5: Write ATDD tests (AC: #1, #2, #3)
+  - [x] 5.1 Create `scrum_workflow/__tests__/risk-extraction/ac1-architect-risk-extraction.test.js`
+  - [x] 5.2 Create `scrum_workflow/__tests__/risk-extraction/ac2-review-risk-loading.test.js`
+  - [x] 5.3 Create `scrum_workflow/__tests__/risk-extraction/ac3-active-only-filtering.test.js`
 
 ## Dev Notes
 
@@ -446,6 +446,38 @@ claude-sonnet-4-6
 
 ### Debug Log References
 
+None — implementation completed without errors requiring debug escalation.
+
 ### Completion Notes List
 
+- All 85 ATDD tests pass (0 failures in risk-extraction suite)
+- Pre-existing 2 yaml-preservation failures unrelated to this story confirmed pre-existing
+- `detectRiskSignals()` parses the Architect Findings table from `## Architect Perspective` sections with column order: #, Finding, Severity, Category
+- `parseRNFrontmatter()` is a pure string parser (no external YAML library) — maintains NFR-2 compliance
+- `writeRNWithBoundaryCheck()` uses prohibited pattern matching (same pattern as decision-extraction.js after Story 7.1 code review fix)
+- `filterActiveRiskNotes()` and `loadActiveRiskNotesForStory()` are read-only — never write files
+- `matchRiskNotesToStory()` uses string-based overlap matching for domain_tags and affected_area (no external libraries)
+- Domain tags derived by normalizing category to lowercase-hyphenated: "Data Integrity" → "data-integrity"
+- Step 10.7 added to refinement.md after Step 10.6 (decision extraction) — preserves existing step unchanged
+- Step 1.4a added to review-story.md after Step 1.4 (Load Project Standards) — read-only risk context enrichment
+
 ### File List
+
+- `scrum_workflow/skills/risk-extraction/SKILL.md` (NEW)
+- `scrum_workflow/utils/risk-extraction.js` (NEW)
+- `scrum_workflow/templates/risk-note.md` (pre-existing from prior step, verified correct)
+- `scrum_workflow/_scrum-output/memory/risks/README.md` (pre-existing from prior step, verified correct)
+- `scrum_workflow/workflows/refinement.md` (MODIFIED — added Step 10.7 after Step 10.6)
+- `scrum_workflow/workflows/review-story.md` (MODIFIED — added Step 1.4a after Step 1.4)
+- `scrum_workflow/__tests__/risk-extraction/ac1-architect-risk-extraction.test.js` (MODIFIED — updated from RED phase stub imports to real implementation imports, removed test.skip)
+- `scrum_workflow/__tests__/risk-extraction/ac2-review-risk-loading.test.js` (MODIFIED — updated from RED phase stub imports to real implementation imports, removed test.skip)
+- `scrum_workflow/__tests__/risk-extraction/ac3-active-only-filtering.test.js` (MODIFIED — updated from RED phase stub imports to real implementation imports, removed test.skip)
+
+## Change Log
+
+- 2026-04-09: Story 7.2 implementation complete — Risk Note Extraction & Auto-Loading (claude-sonnet-4-6)
+  - Created `risk-extraction.js` utility with full RN lifecycle: extraction, numbering, artifact creation, boundary enforcement, active-only loading, domain matching, context formatting
+  - Created `SKILL.md` for risk-extraction skill with complete extraction algorithm specification
+  - Extended `refinement.md` with Step 10.7 (Risk Note Extraction Phase 6b) after Step 10.6
+  - Extended `review-story.md` with Step 1.4a (Active Risk Notes loading with domain matching)
+  - ATDD tests migrated from RED phase (78 skipped) to GREEN phase (85 passing)

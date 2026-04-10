@@ -1,0 +1,172 @@
+# Classification Rules Reference Data
+# Used by the story-classifier skill to classify stories by type and risk level
+# Referenced by: scrum_workflow/skills/story-classifier/SKILL.md
+# Invoked during: /scrum-create-ticket workflow
+
+# =============================================================================
+# Type Classification: Keyword-to-Type Mappings
+# =============================================================================
+# The classifier scans the story description for these keywords to determine type.
+# If multiple types match, the one with the most keyword hits wins.
+# Default type is "feature" when no keywords match (safe default).
+
+type_keywords:
+  bugfix:
+    keywords:
+      - "fix"
+      - "bug"
+      - "defect"
+      - "broken"
+      - "regression"
+      - "patch"
+      - "hotfix"
+      - "error"
+      - "crash"
+      - "issue"
+    description: "Story addresses a bug, defect, or broken behavior"
+
+  refactor:
+    keywords:
+      - "refactor"
+      - "clean up"
+      - "restructure"
+      - "simplify"
+      - "migrate"
+      - "extract"
+      - "consolidate"
+      - "reorganize"
+      - "decouple"
+      - "modernize"
+    description: "Story improves code structure without changing external behavior"
+
+  infrastructure:
+    keywords:
+      - "CI/CD"
+      - "deploy"
+      - "deployment"
+      - "pipeline"
+      - "docker"
+      - "build"
+      - "infrastructure"
+      - "monitoring"
+      - "environment"
+      - "devops"
+      - "terraform"
+      - "kubernetes"
+      - "helm"
+    description: "Story relates to build, deploy, or infrastructure tooling"
+
+  feature:
+    keywords:
+      - "implement"
+      - "add"
+      - "create"
+      - "new"
+      - "enable"
+      - "support"
+      - "introduce"
+    description: "Story delivers new user-facing or system-facing functionality (default type)"
+    is_default: true
+
+# Default type when classification is ambiguous or no keywords match
+defaults:
+  type: feature
+  risk_level: medium
+  description: "Default applied — no clear classification signals detected"
+  classification_note: "Classification auto-assigned with low confidence. Please review type and risk_level."
+
+# =============================================================================
+# Risk Level Classification: Domain-Tag-to-Risk Mappings
+# =============================================================================
+# The classifier reads domain_tags from the story frontmatter and maps them to risk levels.
+# Default risk_level is "medium" when no domain tags provide a clear signal (safe default).
+
+risk_domain_tags:
+  critical:
+    tags:
+      - "payment-processing"
+      - "financial-data"
+      - "compliance"
+    description: "Stories touching regulated or financial systems"
+
+  high:
+    tags:
+      - "security"
+      - "authentication"
+      - "payment"
+      - "data-migration"
+      - "breaking-change"
+      - "authorization"
+      - "encryption"
+      - "pii"
+    description: "Stories touching security, auth, or data-sensitive areas"
+
+  low:
+    tags:
+      - "documentation"
+      - "ui-cosmetic"
+      - "typo"
+      - "config"
+      - "logging"
+      - "readme"
+      - "comment"
+    description: "Stories with minimal risk to system behavior"
+
+  medium:
+    tags: []
+    description: "Default risk level for unrecognized domain tags (safe default)"
+    is_default: true
+
+# =============================================================================
+# Risk Level Keywords (Content-Based)
+# =============================================================================
+# Additional keyword signals in the story description that influence risk level.
+
+risk_keywords:
+  high:
+    keywords:
+      - "security"
+      - "authentication"
+      - "authorization"
+      - "encrypt"
+      - "password"
+      - "token"
+      - "credential"
+      - "vulnerability"
+    description: "Description mentions security-sensitive concepts"
+
+  critical:
+    keywords:
+      - "production data"
+      - "financial"
+      - "compliance"
+      - "GDPR"
+      - "PCI"
+    description: "Description mentions regulated or production-critical concepts"
+
+  low:
+    keywords:
+      - "typo"
+      - "cosmetic"
+      - "readme"
+      - "comment"
+      - "documentation only"
+    description: "Description indicates low-impact changes"
+
+# =============================================================================
+# Confidence Scoring Rules
+# =============================================================================
+
+confidence_rules:
+  high:
+    condition: "Clear keyword match AND domain tag alignment"
+    description: "Both keyword and domain tag signals agree on classification"
+
+  medium:
+    condition: "Keyword match only OR domain tag only"
+    description: "Only one signal source provides classification information"
+
+  low:
+    condition: "No clear signals detected"
+    description: "Neither keywords nor domain tags provide classification information — safe defaults applied"
+    action: "Apply safe defaults (type: feature, risk_level: medium) and add review note"

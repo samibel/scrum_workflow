@@ -31,15 +31,19 @@ Fix: Run '/scrum-create-ticket SW-XXX' first to create type story file
 ### Step 1.2: Status Guard Validation
 Verify story status:
 - Read current status from story file YAML frontmatter
-- Verify status is `ready-for-dev` (required for `/scrum-dev-story`)
-- Guard condition: Story must be in `ready-for-dev` status
+- Verify status is `ready-for-dev` OR `changes-needed` (required for `/scrum-dev-story`)
+- Guard condition: Story must be in `ready-for-dev` OR `changes-needed` status
 
 **On guard condition failure** (wrong status), halt with error:
 
 ```
-Error: Story SW-XXX is in status 'current_status', but '/scrum-dev-story' requires 'ready'
-Fix: Run '/scrum-refine-story SW-XXX' to validate the story before development
+Error: Story SW-XXX is in status 'current_status', but '/scrum-dev-story' requires 'ready-for-dev' or 'changes-needed'
+Fix: Run '/scrum-refine-story SW-XXX' to validate the story before development OR if story was rejected, ensure review is complete first.
 ```
+
+**Special handling for changes-needed status:**
+- If status is `changes-needed`, this is a re-implementation cycle
+- Previous review findings MUST be loaded as context (see Step 1.6)
 
 ### Step 1.3: Load Story Content
 Read the complete story file:
@@ -66,11 +70,50 @@ Fix: Run '/scrum-refine-story SW-XXX' first to validate the story and create the
 Before execution begins, update the story status.
 
 - Read the complete story.md file
+- Validate actor format using `validateActorFormat()` from status-history.js
 - Update `status` field to `in-progress`
-- Update `updated` field to current date (ISO 8601 format: YYYY-MM-DD)
+- Update `updated` field to current date (ISO 8601 UTC format: YYYY-MM-DDTHH:MM:SSZ)
+- Append `status_history` entry with:
+  ```yaml
+  - from: <original_status>  # ready-for-dev or changes-needed
+    to: in-progress
+    timestamp: <current_time_iso8601>  # ISO 8601 UTC format
+    trigger: /scrum-dev-story
+    actor: developer-agent  # or 'human' if manually triggered
+  ```
 - Write the entire file in single atomic operation (NFR1 compliance)
 
 - Store the original status as `{original_status}` for rollback capability
+
+### Step 1.6: Load Previous Review Findings (if re-implementation)
+
+**Only execute this step if `{original_status}` was `changes-needed`:**
+
+1. **Identify most recent review artifact:**
+   - Scan `_scrum-output/sprints/SW-XXX/` directory for `review-*.md` files
+   - Find the most recent review file (highest review number)
+   - Store as `{latest_review_file}`
+
+2. **Load review findings:**
+   - Read the complete content of `{latest_review_file}`
+   - Extract the verdict field (must be `changes-needed`)
+   - Extract all findings from the findings table
+   - Extract severity levels and suggested fixes
+
+3. **Store review context for implementation:**
+   - Store findings as `{review_findings}` for reference during implementation
+   - Map findings to specific files and code sections that need changes
+   - Store the review number to enable comparison in future reviews
+
+**If no review files exist:**
+- CRITICAL: Halt with error - review files are REQUIRED for changes-needed status
+- Error message: "No review files found for story with changes-needed status. Review artifacts must exist to guide re-implementation."
+- Next step guidance: "Run /scrum-review-story SW-XXX to create initial review, or restore missing review-N.md files"
+
+**Error handling:**
+- If review file is corrupted or unreadable: halt with error specifying file and issue
+- If verdict field is missing or invalid: halt with error requiring valid verdict (approved/changes-needed)
+- If review file format is invalid: halt with error specifying expected format
 
 ---
 
@@ -137,11 +180,23 @@ Display completion summary:
 
 ```
 ✅ Story SW-XXX implementation complete
-Status: ready-for-dev → in-progress
+Status: {original_status} → in-progress
 Files modified: [count] files
 Tests run: [yes/no]
 
 Next step: Run '/scrum-review-story SW-XXX' for code review
+```
+
+**Special notification for re-implementation:**
+If `{original_status}` was `changes-needed`:
+```
+🔄 Story SW-XXX re-implementation complete
+Previous review findings loaded: {latest_review_file}
+Status: changes-needed → in-progress
+Files modified: [count] files
+Tests run: [yes/no]
+
+Next step: Run '/scrum-review-story SW-XXX' for new review to verify issues were addressed
 ```
 
 ---

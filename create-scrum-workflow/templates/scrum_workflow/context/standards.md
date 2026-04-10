@@ -39,7 +39,7 @@ This document defines the coding standards, naming conventions, and file structu
 
 - **Epic Status**: `backlog`, `in-progress`, `done`
 - **Sprint Tracking Status** (sprint-status.yaml): `backlog`, `ready-for-dev`, `in-progress`, `review`, `done`
-- **Story File Status** (story.md frontmatter): `draft`, `refinement`, `refined`, `ready-for-dev`, `in-progress`, `review`, `approved`, `changes-needed`, `done` (see [Story Status State Machine](#story-status-state-machine))
+- **Story File Status** (story.md frontmatter): `draft`, `refinement`, `refined`, `ready-for-dev`, `in-progress`, `review`, `approved`, `changes-needed`, `done`, `cancelled` (see [Story Status State Machine](#story-status-state-machine))
 - **Retrospective Status**: `optional`, `done`
 
 **Rationale**: Consistent with file naming conventions and YAML field naming.
@@ -222,7 +222,7 @@ project-root/
 **Example:**
 
 ```yaml
-story_status: in-progress  # valid values: draft, refinement, refined, ready-for-dev, in-progress, review, approved, changes-needed, done
+story_status: in-progress  # valid values: draft, refinement, refined, ready-for-dev, in-progress, review, approved, changes-needed, done, cancelled
 last_task: "create-configuration"
 error_detected: true
 error_message: "Invalid YAML syntax"
@@ -292,25 +292,30 @@ Prevention: Use YAML block scalar (|) for multi-line strings
 
 ## Story Status State Machine
 
+> **AUTHORITATIVE SOURCE OF TRUTH**: This section is the single, canonical definition of the story status lifecycle for the scrum_workflow framework. All commands, workflows, and skills MUST reference this section for valid states and transitions. No command or skill may independently re-enumerate the full lifecycle. Any deviation from this definition is a policy violation.
+
 ### Status Values
 
-The story status state machine defines the lifecycle of a story from creation to completion. There are exactly **9 valid status values**:
+The story status state machine defines the lifecycle of a story from creation to completion. There are exactly **9 valid status values** per FR-4, plus one implementation-internal sub-state:
 
 | Status | Set By | Guard | Meaning |
 |---|---|---|---|
 | `draft` | /scrum-create-ticket | -- | Story created, not yet refined |
-| `refinement` | /scrum-refine-ticket | status == draft | Multi-agent refinement in progress |
-| `refined` | /scrum-refine-ticket | refinement complete | Refinement complete, awaiting validation |
+| `refinement` | /scrum-refine-ticket | entered via: prior status was `draft` | **Implementation-internal sub-state** (not in FR-4's 9 states): ephemeral sub-phase during multi-agent refinement execution. Included here to prevent validation errors for stories currently in this state. |
+| `refined` | /scrum-refine-ticket | refinement agents complete | Refinement complete, awaiting validation |
 | `ready-for-dev` | /scrum-refine-story | all 5 validation criteria PASS | Validated and ready for implementation |
-| `in-progress` | /scrum-dev-story | status == ready-for-dev (FR17) | Implementation in progress |
+| `in-progress` | /scrum-dev-story | status == ready-for-dev OR status == changes-needed (FR17) | Implementation in progress (initial or re-implementation) |
 | `review` | /scrum-dev-story review | status == in-progress | Code review requested |
 | `approved` | /scrum-review-story | verdict == APPROVED | Review passed, awaiting human sign-off |
 | `changes-needed` | /scrum-review-story | verdict == CHANGES-NEEDED | Review found issues, changes required |
-| `done` | User approval | explicit sign-off (FR28) | Human approval complete |
+| `done` | /scrum-approve | explicit sign-off (FR28) | Human approval complete (terminal state) |
+| `cancelled` | Manual decision | explicit user cancellation from any non-terminal state | Story cancelled (terminal state) |
+
+**Note on `refinement`:** This implementation-internal sub-state was introduced in Epic 1 for tracking the multi-agent refinement process. It is NOT one of FR-4's 9 official states. It represents an ephemeral sub-phase within the `draft → refined` transition. It is listed here solely to prevent status-guard validation errors for stories that may currently be in this state.
 
 ### Valid Transitions
 
-All transitions are explicit and guarded. No implicit status changes are permitted.
+All transitions are explicit and guarded. No implicit status changes are permitted. **Anything not listed here is an invalid transition.**
 
 | From | To | Trigger | Guard Condition |
 |---|---|---|---|
@@ -318,12 +323,13 @@ All transitions are explicit and guarded. No implicit status changes are permitt
 | `refinement` | `refined` | /scrum-refine-ticket | refinement agents complete |
 | `refined` | `ready-for-dev` | /scrum-refine-story | all 5 validation criteria PASS |
 | `refined` | `refined` | /scrum-refine-story | any validation criterion FAIL (status unchanged) |
-| `ready-for-dev` | `in-progress` | /scrum-dev-story | status == ready-for-dev (FR17) |
+| `ready-for-dev` | `in-progress` | /scrum-dev-story | status == ready-for-dev (FR17) - initial implementation |
 | `in-progress` | `review` | /scrum-dev-story review | status == in-progress |
 | `review` | `approved` | /scrum-review-story | verdict == APPROVED |
 | `review` | `changes-needed` | /scrum-review-story | verdict == CHANGES-NEEDED |
-| `changes-needed` | `in-progress` | /scrum-dev-story | developer addresses findings |
-| `approved` | `done` | User approval | Explicit user sign-off (FR28) |
+| `changes-needed` | `in-progress` | /scrum-dev-story | status == changes-needed - re-implementation with findings loaded |
+| `approved` | `done` | /scrum-approve | Explicit user sign-off (FR28) |
+| `any` | `cancelled` | Manual decision | Explicit user cancellation from any non-terminal state |
 
 ### State Transition Diagram
 
@@ -383,6 +389,9 @@ Commands **MUST** use actionable error messages following these templates when g
 Error: Story SW-042 is in status 'draft', but '/scrum-dev-story' requires 'ready-for-dev'
 Fix: Run '/scrum-refine-ticket SW-042' to refine the story, then '/scrum-refine-story SW-042' to validate and pass readiness check
 
+Error: Story SW-089 is in status 'changes-needed', but '/scrum-review-story' requires 'review'
+Fix: Run '/scrum-dev-story SW-089' to address the review findings first, then mark as ready for review
+
 Error: File '_scrum-output/sprints/SW-101/story.md' not found. Run '/scrum-create-ticket SW-101' first
 Fix: Create the story file before attempting refinement
 
@@ -437,6 +446,7 @@ Each command has strict write boundaries. A command may only create or modify fi
 | /scrum-dev-story | Code files, `story.md` (status update) | `refinement.md`, `plan.md`, `review-*.md`, `approval.md` |
 | /scrum-review-story | `review-N.md`, `story.md` (status update) | `refinement.md`, `plan.md`, `approval.md` |
 | Approval | `approval.md`, `story.md` (status -> done) | `refinement.md`, `plan.md`, `review-*.md` |
+| Human (manual) | `story.md` (status -> cancelled) | All other files — no other changes permitted during cancellation |
 
 ### Markdown-Only Constraint
 

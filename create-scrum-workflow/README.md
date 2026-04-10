@@ -71,20 +71,6 @@ create-scrum-workflow install -d /path/to/project -p claude-code cursor -y
 
 # Install for all platforms
 create-scrum-workflow install -p claude-code cursor windsurf github-copilot cline agents-universal -y
-
-
-
-  cd /Users/SBELAKH/Desktop/dev/mars/scrum_workflow/create-scrum-workflow
-  npm link
-  Then you can run:
-  create-scrum-workflow install -d /Users/SBELAKH/Desktop/dev/mars/MARS -p claude-code cursor copilot -y
-
-  Option 2: Run directly with node
-  node /Users/SBELAKH/Desktop/dev/mars/scrum_workflow/create-scrum-workflow/bin/create-scrum-workflow.js install -d /Users/SBELAKH/Desktop/dev/mars/MARS -p claude-code cursor copilot -y
-
-  Option 3: Use npx from the project directory
-  cd /Users/SBELAKH/Desktop/dev/mars/scrum_workflow/create-scrum-workflow
-  npx . install -d /Users/SBELAKH/Desktop/dev/mars/MARS -p claude-code cursor copilot -y
 ```
 
 If the framework directory already exists, the installer prompts for confirmation before overwriting (or overwrites automatically with `-y`).
@@ -220,12 +206,53 @@ The installer generates `.scrum-workflow-lock.json` at the project root. It reco
 
 The lock file enables the `update` command to detect which files you have modified (so it can preserve them) and which files are unchanged or missing. It also lets `status` report file integrity without needing the original templates.
 
+## Template Sync
+
+The `templates/scrum_workflow/` directory is a mirror of the source `scrum_workflow/` directory at the project root. When you add, update, or delete skills, utils, workflows, or any other framework files in the source, you must sync them into the template.
+
+### Sync templates
+
+```bash
+npm run sync-templates
+```
+
+Copies new and changed files from `scrum_workflow/` into `templates/scrum_workflow/`, and deletes template files that no longer exist in the source.
+
+### Check sync status
+
+```bash
+npm run check-sync
+```
+
+Dry-run that reports differences without modifying anything. Exits with code 1 if out of sync. Useful for CI pipelines.
+
+### What gets synced
+
+The following directories and files are mirrored:
+
+| Source | Target |
+|--------|--------|
+| `scrum_workflow/agents/` | `templates/scrum_workflow/agents/` |
+| `scrum_workflow/commands/` | `templates/scrum_workflow/commands/` |
+| `scrum_workflow/context/` | `templates/scrum_workflow/context/` |
+| `scrum_workflow/data/` | `templates/scrum_workflow/data/` |
+| `scrum_workflow/docs/` | `templates/scrum_workflow/docs/` |
+| `scrum_workflow/skills/` | `templates/scrum_workflow/skills/` |
+| `scrum_workflow/templates/` | `templates/scrum_workflow/templates/` |
+| `scrum_workflow/utils/` | `templates/scrum_workflow/utils/` |
+| `scrum_workflow/workflows/` | `templates/scrum_workflow/workflows/` |
+| `scrum_workflow/config.yaml` | `templates/scrum_workflow/config.yaml` |
+
+Directories not synced (test-only, runtime output): `__tests__/`, `_scrum-output/`, `tests/`, `package.json`, `vitest.config.js`.
+
 ## Project Structure
 
 ```
 create-scrum-workflow/
   bin/
     create-scrum-workflow.js        # CLI entry point (Commander)
+  scripts/
+    sync-templates.js               # Template sync script (--check for dry-run)
   src/
     commands/
       install.js                    # install command handler
@@ -250,9 +277,10 @@ create-scrum-workflow/
       context/                      # Architecture guidelines and standards
       data/                         # Estimation reference data
       docs/                         # Framework documentation (18 files)
-      skills/                       # Internal framework skills (7 skills)
+      skills/                       # Internal framework skills (15 skills)
       templates/                    # Story, plan, and review templates
-      workflows/                    # Workflow definitions (7 workflows)
+      utils/                        # Runtime utility modules (13 files)
+      workflows/                    # Workflow definitions (20 workflows)
     skill-registrations/            # Skill shim templates ({{framework_path}} substitution)
       scrum-create-project-context/
       scrum-create-ticket/

@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs'
 import { join, resolve } from 'node:path'
-import { outro } from '@clack/prompts'
+import { outro, note } from '@clack/prompts'
+import pc from 'picocolors'
 import { readLockFile } from '../integrity/lock-file.js'
 import { hashFile } from '../integrity/hash-tracker.js'
 import * as output from '../core/output.js'
@@ -16,21 +17,8 @@ export async function status(options) {
     return
   }
 
-  // Installation info header
-  console.log('')
-  output.header('scrum_workflow Installation Status')
-  output.header('==================================')
-  console.log('')
-  output.info(`Version:      ${lockData.version}`)
-  output.info(`Installed:    ${lockData.installed}`)
-  output.info(`Last Updated: ${lockData.updated}`)
-  output.info(`Platforms:    ${lockData.platforms.join(', ')}`)
-  output.info(`Framework:    ${lockData.framework_path}`)
-
+  // ── File integrity analysis ─────────────────────────────────────────
   const trackedFiles = Object.keys(lockData.files)
-  output.info(`Files:        ${trackedFiles.length} tracked`)
-
-  // File integrity analysis
   const unchanged = []
   const modified = []
   const missing = []
@@ -53,33 +41,54 @@ export async function status(options) {
     }
   }
 
-  // File integrity summary
-  console.log('')
-  output.header('File Integrity')
-  output.header('==============')
-  console.log('')
-  output.success(`Unchanged:    ${String(unchanged.length)}`)
-  output.warning(`Modified:     ${String(modified.length)}`)
-  output.error(`Missing:      ${String(missing.length)}`)
+  // ── Build note box content ──────────────────────────────────────────
+  const lines = []
 
+  // Version + platforms row
+  const platforms = lockData.platforms.map(output.badge).join('  ')
+  lines.push(`${pc.dim('Version')}    ${pc.bold(lockData.version)}  ·  ${platforms}`)
+
+  // Timestamps
+  lines.push(`${pc.dim('Installed')}  ${output.formatDate(lockData.installed)}`)
+  lines.push(`${pc.dim('Updated')}    ${output.formatDate(lockData.updated)}`)
+
+  // Framework path
+  lines.push(`${pc.dim('Location')}   ${output.filepath(lockData.framework_path)}`)
+  lines.push('')
+
+  // Integrity summary
+  const integrityParts = [
+    pc.green(`${unchanged.length} unchanged`),
+    modified.length > 0
+      ? pc.magenta(`${modified.length} modified`)
+      : pc.dim(`${modified.length} modified`),
+    missing.length > 0
+      ? pc.red(`${missing.length} missing`)
+      : pc.dim(`${missing.length} missing`)
+  ]
+  lines.push(integrityParts.join('  ·  '))
+
+  // Modified file list
   if (modified.length > 0) {
-    console.log('')
-    output.warning('Modified files:')
+    lines.push('')
+    lines.push(pc.magenta('Modified:'))
     for (const relPath of modified) {
-      output.warning(`  ${relPath}`)
+      lines.push(`  ${output.filepath(relPath)}`)
     }
   }
 
+  // Missing file list
   if (missing.length > 0) {
-    console.log('')
-    output.error('Missing files:')
+    lines.push('')
+    lines.push(pc.red('Missing:'))
     for (const relPath of missing) {
-      output.error(`  ${relPath}`)
+      lines.push(`  ${output.filepath(relPath)}`)
     }
   }
-
-  console.log('')
 
   const hasIssues = modified.length > 0 || missing.length > 0
+  const titleColor = hasIssues ? pc.bold(pc.magenta('scrum_workflow')) : pc.bold(pc.green('scrum_workflow'))
+  note(lines.join('\n'), titleColor)
+
   outro(getNextStep('status', { hasIssues }))
 }

@@ -1,7 +1,8 @@
 import fse from 'fs-extra'
 import { existsSync, readFileSync, readdirSync, statSync } from 'node:fs'
 import { join } from 'node:path'
-import { cancel } from '@clack/prompts'
+import { cancel, note } from '@clack/prompts'
+import pc from 'picocolors'
 import { resolveInstallPaths } from './path-resolver.js'
 import { loadPlatformRegistry } from '../platform/platform-registry.js'
 import { registerSkills } from './skill-registrar.js'
@@ -79,7 +80,7 @@ export class Installer {
     progress.start('Copying framework files...')
     try {
       copySync(this.paths.templateSourceDir, this.paths.frameworkDir)
-      progress.succeed('Framework files copied complete')
+      progress.succeed('Framework copied')
     } catch (err) {
       progress.fail('Framework copy failed')
       throw err
@@ -90,10 +91,10 @@ export class Installer {
    * Register skill shims for each selected platform.
    */
   registerSkills() {
-    progress.start('Registering skill shims...')
+    progress.start('Registering skills...')
     try {
       this.skillResult = registerSkills(this.paths, this.config)
-      progress.succeed('Skill shims registered complete')
+      progress.succeed('Skills registered')
     } catch (err) {
       progress.fail('Skill registration failed')
       throw err
@@ -119,6 +120,7 @@ export class Installer {
   generateLockFile() {
     progress.start('Generating lock file...')
     try {
+
       // Hash all framework files
       const frameworkHashes = hashDirectory(this.paths.frameworkDir, this.config.directory)
 
@@ -143,7 +145,7 @@ export class Installer {
       writeLockFile(this.config.directory, lockData)
       this.lockData = lockData
 
-      progress.succeed('Lock file generated complete')
+      progress.succeed('Lock file ready')
     } catch (err) {
       progress.fail('Lock file generation failed')
       throw err
@@ -190,20 +192,29 @@ export class Installer {
   }
 
   /**
-   * Print a summary of the installation.
+   * Print a summary of the installation using a note box.
    */
   printSummary() {
     const fileCount = countFiles(this.paths.frameworkDir)
-    const skillInfo = this.skillResult
-      ? `\n  Skills registered: ${this.skillResult.skillCount} skills x ${this.skillResult.platformCount} platform(s)`
-      : ''
-    const lockInfo = this.lockData
-      ? `\n  Files tracked:    ${Object.keys(this.lockData.files).length}\n  Lock file:        ${join(this.config.directory, LOCK_FILE_NAME)}`
-      : ''
-    output.success('Installation summary:')
-    output.step(`Framework path:   ${this.paths.frameworkDir}`)
-    output.step(`Files copied:     ${fileCount}${skillInfo}${lockInfo}`)
-    output.step(`Output dirs:      ${this.paths.outputDirs.join('\n                    ')}`)
+    const trackedCount = this.lockData ? Object.keys(this.lockData.files).length : 0
+    const platforms = this.config.platforms.map(output.badge).join('  ')
+
+    const lines = []
+
+    lines.push(
+      `${pc.dim('Location')}   ${output.filepath(this.paths.frameworkDir)}  ${pc.dim(`(${fileCount} files, ${trackedCount} tracked)`)}`
+    )
+    lines.push(`${pc.dim('Platforms')}  ${platforms}`)
+    lines.push('')
+
+    if (this.skillResult?.skillNames?.length) {
+      lines.push(pc.bold('Commands available:'))
+      for (const skillName of this.skillResult.skillNames) {
+        lines.push(`  ${output.highlight(skillName)}`)
+      }
+    }
+
+    note(lines.join('\n'), pc.bold(pc.green('scrum_workflow installed')))
   }
 }
 

@@ -3,7 +3,8 @@ import { join, resolve, dirname } from 'node:path'
 import { tmpdir } from 'node:os'
 import { createRequire } from 'node:module'
 import fse from 'fs-extra'
-import { intro, outro } from '@clack/prompts'
+import { intro, outro, note } from '@clack/prompts'
+import pc from 'picocolors'
 import yaml from 'js-yaml'
 import { readLockFile, writeLockFile } from '../integrity/lock-file.js'
 import { hashFile, hashDirectory } from '../integrity/hash-tracker.js'
@@ -411,6 +412,7 @@ export async function update(options) {
 
   // ── Step 3-5: Backup, overwrite, restore ────────────────────────────
   let backupDir = null
+  let skillResult = null
   let planMdResult = { flagged: [], suggestions: [] }
 
   try {
@@ -426,7 +428,7 @@ export async function update(options) {
           ensureDirSync(dirname(backupPath))
           copySync(srcPath, backupPath)
         }
-        progress.succeed('Backup complete')
+        progress.succeed('User files backed up')
       } catch (err) {
         progress.fail('Backup failed')
         throw err
@@ -441,9 +443,9 @@ export async function update(options) {
         copySync(paths.templateSourceDir, paths.frameworkDir)
 
         // Re-register skills (substitutes {{framework_path}})
-        registerSkills(paths, config)
+        skillResult = registerSkills(paths, config)
 
-        progress.succeed('Framework update complete')
+        progress.succeed('Framework updated')
       } catch (err) {
         progress.fail('Framework update failed')
         throw err
@@ -462,7 +464,7 @@ export async function update(options) {
           ensureDirSync(dirname(restorePath))
           copySync(backupPath, restorePath)
         }
-        progress.succeed('User modifications restore complete')
+        progress.succeed('User modifications restored')
       } catch (err) {
         progress.fail('Restore failed')
         throw err
@@ -560,7 +562,7 @@ export async function update(options) {
       }
 
       writeLockFile(targetDir, updatedLockData)
-      progress.succeed('Lock file update complete')
+      progress.succeed('Lock file updated')
     } catch (err) {
       progress.fail('Lock file update failed')
       throw err
@@ -568,41 +570,56 @@ export async function update(options) {
   }
 
   // ── Step 7: Print summary ───────────────────────────────────────────
-  const summaryLines = [
-    `Update summary:`,
-    `  Files updated:   ${unchanged.length + missing.length}`,
-    `  Files preserved: ${userModified.length} (user-modified)`,
-    `  Files restored:  ${missing.length} (were missing, re-created)`
+  const noteLines = []
+
+  // File counts row
+  const countParts = [
+    `${pc.green(String(unchanged.length + missing.length))} updated`,
+    `${pc.cyan(String(userModified.length))} preserved`,
+    `${pc.cyan(String(missing.length))} restored`
   ]
   if (newFiles.length > 0) {
-    summaryLines.push(`  Files added:     ${newFiles.length} (new in this version)`)
+    countParts.push(`${pc.bold(pc.cyan(String(newFiles.length)))} new`)
   }
-  output.success(summaryLines[0])
-  for (let i = 1; i < summaryLines.length; i++) {
-    console.log(summaryLines[i])
-  }
+  noteLines.push(countParts.join('  ·  '))
 
+  // Preserved files (user modifications kept)
   if (userModified.length > 0) {
-    output.info('Preserved files:')
+    noteLines.push('')
+    noteLines.push(pc.dim('Your modifications kept:'))
     for (const f of userModified) {
-      console.log(`  ${f}`)
+      noteLines.push(`  ${output.filepath(f)}`)
     }
   }
 
+  // New files added
   if (newFiles.length > 0) {
-    output.info('New files added:')
+    noteLines.push('')
+    noteLines.push(pc.dim('New files added:'))
     for (const f of newFiles) {
-      console.log(`  ${f}`)
+      noteLines.push(`  ${output.filepath(f)}`)
     }
   }
 
-  // Show any manual actions required (e.g., stories flagged for missing plan.md)
-  if (planMdResult && planMdResult.flagged.length > 0) {
-    output.warning('Manual actions required:')
-    for (let i = 0; i < planMdResult.flagged.length; i++) {
-      output.warning(`  - Run ${planMdResult.suggestions[i]}`)
+  // Available commands
+  if (skillResult?.skillNames?.length) {
+    noteLines.push('')
+    noteLines.push(pc.bold('Commands available:'))
+    for (const skillName of skillResult.skillNames) {
+      noteLines.push(`  ${output.highlight(skillName)}`)
     }
   }
+
+  // Manual actions required
+  if (planMdResult?.flagged?.length > 0) {
+    noteLines.push('')
+    noteLines.push(pc.magenta('Manual actions required:'))
+    for (let i = 0; i < planMdResult.flagged.length; i++) {
+      noteLines.push(`  ⚠ ${planMdResult.suggestions[i]}`)
+    }
+  }
+
+  note(noteLines.join('\n'), pc.bold(pc.green(`Updated to v${pkg.version}`)))
 
   const hasFlaggedStories = planMdResult && planMdResult.flagged.length > 0
   outro(getNextStep('update', { hasFlaggedStories }))

@@ -48,5 +48,5 @@ export function registerSkills(paths, config) {
     platformCount += 1
   }
 
-  return { skillCount: skillNames.length, platformCount }
+  return { skillCount: skillNames.length, skillNames, platformCount }
 }

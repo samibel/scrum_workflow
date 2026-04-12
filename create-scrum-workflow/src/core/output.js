@@ -73,7 +73,55 @@ export function header(msg) {
 }
 
 /**
+ * Format a platform name as a colored inline badge.
+ * @param {string} name - Platform code (e.g. 'claude-code')
+ * @returns {string} Colored badge string
+ */
+export function badge(name) {
+  return pc.bold(pc.cyan(name))
+}
+
+/**
+ * Format a skill command name with bold cyan highlighting.
+ * @param {string} name - Skill name (e.g. 'scrum-create-ticket')
+ * @returns {string} Highlighted string
+ */
+export function highlight(name) {
+  return pc.bold(pc.cyan(`/${name}`))
+}
+
+/**
+ * Format a file path in blue.
+ * @param {string} p - Path string
+ * @returns {string} Colored path string
+ */
+export function filepath(p) {
+  return pc.blue(p)
+}
+
+/**
+ * Format an ISO date string as a human-readable date with a relative "N days ago" suffix.
+ * Examples: "2026-03-29  (12 days ago)", "2026-04-10  (today)"
+ *
+ * @param {string} isoString - ISO 8601 date string
+ * @returns {string} Formatted date string
+ */
+export function formatDate(isoString) {
+  const date = new Date(isoString)
+  const dateStr = date.toISOString().slice(0, 10)
+  const diffMs = Date.now() - date.getTime()
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+
+  let relative
+  if (diffDays === 0) relative = 'today'
+  else if (diffDays === 1) relative = '1 day ago'
+  else relative = `${diffDays} days ago`
+
+  return `${dateStr}  ${pc.dim(`(${relative})`)}`
+}
+
+/**
  * Named export object for convenient destructuring.
  * Usage: import { output } from './output.js'
  */
-export const output = { success, warning, error, info, step, header }
+export const output = { success, warning, error, info, step, header, badge, highlight, filepath, formatDate }

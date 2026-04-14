@@ -73,14 +73,14 @@ describe('Story 8-3: Integration Tests for Epic 6/7 Skills', () => {
    *
    * Given Story 8.2 is complete (installer pipeline updated)
    * When the integration test suite is created
-   * Then `cli/test/integration/installer.test.js` (or equivalent test file) exists
+   * Then `src/cli/test/integration/installer.test.js` (or equivalent test file) exists
    * And the test file includes test cases for both new skills (scrum-create-project-docs, scrum-create-architecture-docs)
    * And the test file follows the same structure as existing integration tests (if any)
    */
   describe('AC1: Integration Test File Exists', () => {
     test.skip('[P1] should create test file at correct path', () => {
       // META-TEST: Skipped - test file obviously exists since we're running it
-      const testFilePath = '/mock/cli/test/integration/installer.test.js';
+      const testFilePath = '/mock/src/cli/test/integration/installer.test.js';
       expect(existsSync(testFilePath)).toBe(true);
     });
 

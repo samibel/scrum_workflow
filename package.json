@@ -4,8 +4,8 @@
   "description": "Scrum Workflow framework with core engine and CLI scaffolder",
   "private": true,
   "workspaces": [
-    "core",
-    "cli"
+    "src/core",
+    "src/cli"
   ],
   "dependencies": {
     "typescript": "^6.0.2",

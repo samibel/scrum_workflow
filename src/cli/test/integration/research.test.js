@@ -113,14 +113,14 @@ The command file contains the full workflow orchestration including:
    *
    * Given Story 9.9 is complete (installer integration for research skills)
    * When the integration test suite is created
-   * Then `cli/test/integration/research.test.js` exists
+   * Then `src/cli/test/integration/research.test.js` exists
    * And the test file includes test cases for both research skills
    * And the test file follows the same structure as existing integration tests
    */
   describe('AC1: Integration Test File Exists', () => {
     test.skip('[P1] should create test file at correct path', () => {
       // META-TEST: Skipped - test file obviously exists since we're running it
-      const testFilePath = '/mock/cli/test/integration/research.test.js';
+      const testFilePath = '/mock/src/cli/test/integration/research.test.js';
       expect(existsSync(testFilePath)).toBe(true);
     });
 

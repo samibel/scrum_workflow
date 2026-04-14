@@ -183,7 +183,7 @@ draft → refinement → refined → ready-for-dev → in-progress → review �
                                                            in-progress (fix & re-review)
 ```
 
-**Want the full walkthrough?** See [GETTING-STARTED.md](./GETTING-STARTED.md) for step-by-step with examples.
+**Want the full walkthrough?** See [GETTING-STARTED.md](./src/docs/GETTING-STARTED.md) for step-by-step with examples.
 
 ### Phase-by-Phase Explanation
 
@@ -425,7 +425,7 @@ stateDiagram-v2
 
 ## Commands Reference
 
-**Visual Overview:** See [ALL-COMMANDS.md](./ALL-COMMANDS.md) for all 20 commands as Mermaid diagrams
+**Visual Overview:** See [ALL-COMMANDS.md](./src/docs/ALL-COMMANDS.md) for all 20 commands as Mermaid diagrams
 
 ### Story Lifecycle (6 Commands)
 
@@ -583,29 +583,29 @@ keep_agent_temp_files: false       # Keep agent temp files for debugging
 
 | Document | Time | Audience |
 |----------|------|----------|
-| **[GETTING-STARTED.md](./GETTING-STARTED.md)** | 15 min | Product Owner, Developer, Tech Lead |
-| **[DOCUMENTATION-GUIDE.md](./DOCUMENTATION-GUIDE.md)** | 10 min | Anyone looking for specific docs |
+| **[GETTING-STARTED.md](./src/docs/GETTING-STARTED.md)** | 15 min | Product Owner, Developer, Tech Lead |
+| **[DOCUMENTATION-GUIDE.md](./src/docs/DOCUMENTATION-GUIDE.md)** | 10 min | Anyone looking for specific docs |
 
 ### Technical Reference
 
 | Document | Type | Audience |
 |----------|------|----------|
-| [core/commands/README.md](./core/commands/README.md) | Command Reference | Developer |
-| [docs/index.md](./docs/index.md) | Master Index | All |
-| [docs/source-tree-analysis.md](./docs/source-tree-analysis.md) | File-by-File Guide | Developer, Architect |
-| [docs/development-guide.md](./docs/development-guide.md) | Dev Setup & Testing | Developer |
-| [docs/architecture-framework.md](./docs/architecture-framework.md) | Framework Design | Architect, Senior Dev |
-| [docs/architecture-cli-installer.md](./docs/architecture-cli-installer.md) | Installer Design | Developer |
-| [docs/integration-architecture.md](./docs/integration-architecture.md) | CLI ↔ Framework | Architect |
+| [core/commands/README.md](./src/core/commands/README.md) | Command Reference | Developer |
+| [docs/index.md](./src/docs/index.md) | Master Index | All |
+| [docs/source-tree-analysis.md](./src/docs/source-tree-analysis.md) | File-by-File Guide | Developer, Architect |
+| [docs/development-guide.md](./src/docs/development-guide.md) | Dev Setup & Testing | Developer |
+| [docs/architecture-framework.md](./src/docs/architecture-framework.md) | Framework Design | Architect, Senior Dev |
+| [docs/architecture-cli-installer.md](./src/docs/architecture-cli-installer.md) | Installer Design | Developer |
+| [docs/integration-architecture.md](./src/docs/integration-architecture.md) | CLI ↔ Framework | Architect |
 
 ### Framework Reference
 
 | Document | Audience |
 |----------|----------|
-| [core/agents/README.md](./core/agents/README.md) | How agents work |
-| [core/context/index.md](./core/context/index.md) | Domain context discovery |
-| [core/templates/README.md](./core/templates/README.md) | Output templates |
-| [core/skills/README.md](./core/skills/README.md) | Internal skills |
+| [core/agents/README.md](./src/core/agents/README.md) | How agents work |
+| [core/context/index.md](./src/core/context/index.md) | Domain context discovery |
+| [core/templates/README.md](./src/core/templates/README.md) | Output templates |
+| [core/skills/README.md](./src/core/skills/README.md) | Internal skills |
 
 ---
 
@@ -708,14 +708,14 @@ npm -w src/cli run sync-templates
 
 ## Next Steps
 
-1. **New to Scrum Workflow?** → [GETTING-STARTED.md](./GETTING-STARTED.md) (15 min walkthrough)
-2. **Need to find docs?** → [DOCUMENTATION-GUIDE.md](./DOCUMENTATION-GUIDE.md) (doc map)
+1. **New to Scrum Workflow?** → [GETTING-STARTED.md](./src/docs/GETTING-STARTED.md) (15 min walkthrough)
+2. **Need to find docs?** → [DOCUMENTATION-GUIDE.md](./src/docs/DOCUMENTATION-GUIDE.md) (doc map)
 3. **Install now** → Use Quick Start above or see Installation section
-4. **Want to contribute?** → [docs/development-guide.md](./docs/development-guide.md)
+4. **Want to contribute?** → [docs/development-guide.md](./src/docs/development-guide.md)
 
 ---
 
 **Last Updated:** 2026-04-09  
 **Version:** 1.2.0 (Production-Ready)  
-**Master Documentation:** [docs/index.md](./docs/index.md)  
-**Quick Navigation:** [DOCUMENTATION-GUIDE.md](./DOCUMENTATION-GUIDE.md)
+**Master Documentation:** [docs/index.md](./src/docs/index.md)  
+**Quick Navigation:** [DOCUMENTATION-GUIDE.md](./src/docs/DOCUMENTATION-GUIDE.md)

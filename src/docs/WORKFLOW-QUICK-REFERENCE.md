@@ -571,7 +571,7 @@ gantt
 
 1. **Quick Reference:** Save this page (Cmd+D)
 2. **Deep Dive:** [GETTING-STARTED.md](./GETTING-STARTED.md) for step-by-step walkthrough
-3. **Full Details:** [README.md](./README.md) for complete reference
+3. **Full Details:** [README.md](../../README.md) for complete reference
 4. **Architecture:** [ARCHITECTURE-VISUAL.md](./ARCHITECTURE-VISUAL.md) for system design
 
 ---

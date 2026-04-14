@@ -534,8 +534,8 @@ graph TD
 
 - 📖 Read [GETTING-STARTED.md](./GETTING-STARTED.md) for practical walkthrough
 - 🎯 Read [BENEFITS.md](./BENEFITS.md) for why this works
-- 📚 Read [README.md](./README.md) for complete reference
-- 🏗️ Read [docs/architecture-framework.md](./docs/architecture-framework.md) for deep dive
+- 📚 Read [README.md](../../README.md) for complete reference
+- 🏗️ Read [docs/architecture-framework.md](./architecture-framework.md) for deep dive
 
 ---
 

@@ -12,7 +12,7 @@
  * - UX-DR5: Current working directory as default
  *
  * AC1: Given UX-DR1 specifies zero-config default: no flags = complete installation
- *      When a developer runs `npx create-scrum-workflow` without any flags
+ *      When a developer runs `npx cli` without any flags
  *      Then the installation completes without any prompts or decisions required
  *
  * AC3: Given UX-DR5 specifies current working directory as default
@@ -27,7 +27,7 @@ import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const TEST_DIR = dirname(fileURLToPath(import.meta.url))
-const BIN_PATH = join(TEST_DIR, '../../../bin/create-scrum-workflow.js')
+const BIN_PATH = join(TEST_DIR, '../../../bin/cli.js')
 
 // Helper to read CLI source for structural assertions
 function readCliSource() {
@@ -35,7 +35,7 @@ function readCliSource() {
 }
 
 // ============================================================================
-// AC1: Default Command -- Bare `npx create-scrum-workflow` triggers install --yes
+// AC1: Default Command -- Bare `npx cli` triggers install --yes
 // ============================================================================
 
 describe('AC1: Default Command Routing', () => {
@@ -184,7 +184,7 @@ describe('AC3: Current Working Directory Default', () => {
 // ============================================================================
 
 describe('AC1: CLI Entry Point Structure', () => {
-  test('[P0] bin/create-scrum-workflow.js should import install command', () => {
+  test('[P0] bin/cli.js should import install command', () => {
     const src = readCliSource()
     expect(src).toMatch(/import.*install.*from.*commands\/install/)
   })

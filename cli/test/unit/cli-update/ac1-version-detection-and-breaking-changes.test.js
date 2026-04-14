@@ -10,7 +10,7 @@
  * - FR-43: CLI update/migration with version detection, breaking change listing, YAML migration, post-validation
  *
  * AC1: Given FR-43 specifies CLI update with version detection, breaking change listing,
- *      YAML migration, and post-validation When a developer runs `npx create-scrum-workflow@latest update`
+ *      YAML migration, and post-validation When a developer runs `npx cli@latest update`
  *      Then the CLI detects the current installed version
  *      And lists all breaking changes between the installed version and the target version
  */
@@ -22,7 +22,7 @@ import { fileURLToPath } from 'url';
 // Resolve paths relative to this test file's location
 const TEST_DIR = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = join(TEST_DIR, '../../../..');
-const CREATE_SCRUM_WORKFLOW_ROOT = join(PROJECT_ROOT, 'create-scrum-workflow');
+const CREATE_SCRUM_WORKFLOW_ROOT = join(PROJECT_ROOT, 'cli');
 const UPDATE_CMD_PATH = join(CREATE_SCRUM_WORKFLOW_ROOT, 'src', 'commands', 'update.js');
 const STORY_FILE = join(PROJECT_ROOT, '_bmad-output', 'implementation-artifacts', '5-2-implement-cli-update-migration-command.md');
 const BREAKING_CHANGES_DOC = join(CREATE_SCRUM_WORKFLOW_ROOT, 'breaking-changes.md');

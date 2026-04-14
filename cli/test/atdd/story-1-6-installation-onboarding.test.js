@@ -59,7 +59,7 @@ describe('Story 1.6: Installation & Onboarding ATDD Tests', () => {
    * AC2: FR-41 - Installation Timing (under 5 minutes)
    *
    * Given FR-41 specifies installation via npx in under 5 minutes
-   * When a developer runs `npx create-scrum-workflow@latest` in a fresh project
+   * When a developer runs `npx cli@latest` in a fresh project
    * Then installation completes successfully in under 5 minutes
    */
   describe('AC2: FR-41 Installation Timing', () => {

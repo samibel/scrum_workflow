@@ -38,17 +38,15 @@ scrum-workflow/                 # Root — clean, minimal
 │       ├── architecture-*.md
 │       └── ...
 │
-├── _bmad/                      # BMAD dependency (optional, read-only)
 ├── package.json                # Monorepo root (workspaces: src/core, src/cli)
 ├── README.md                   # You are here
 └── story.md                    # Current story/task tracking
 ```
 
 **Key Points:**
-- **`src/core/`** = The workflow engine (@scrum-workflow/core, reusable, BMAD-independent)
+- **`src/core/`** = The workflow engine (@scrum-workflow/core, reusable, independent)
 - **`src/cli/`** = The scaffolding CLI tool (creates projects with src/core installed as `scrum_workflow/`)
 - **`src/docs/`** = All documentation and guides (organized, out of root)
-- **`_bmad/`** = Optional external dependency (BMAD framework)
 - **Monorepo**: Single `npm install`, shared root dependencies, separate packages
 
 **Backward Compatibility:**
@@ -633,10 +631,7 @@ cli/                        # CLI Scaffolder (create-scrum-workflow)
   ├── scripts/              # Utility scripts (template sync, validation)
   └── package.json          # CLI package metadata
 
-_bmad/                      # (Optional) BMAD framework dependency
-  └── [read-only during development]
-
-package.json                # Monorepo root (npm workspaces: ["core", "cli"])
+package.json                # Monorepo root (npm workspaces: [src/core, src/cli])
 ```
 
 ### Setup for Development
@@ -663,7 +658,7 @@ npm -w src/cli run sync-templates
 1. **Core** (`src/core/` → `@scrum-workflow/core`)
    - Workflow engine — commands, agents, skills
    - Published to npm for external use (from `src/core/`)
-   - Zero BMAD dependencies (truly independent)
+   - Fully independent (no external framework lock-in)
    - Templates in `src/core/templates/`
    - Tests in `src/core/__tests__/`
 

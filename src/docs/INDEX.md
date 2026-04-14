@@ -62,7 +62,7 @@ Diese Dokumentation nutzt **48+ Mermaid Diagramme** für maximale Klarheit:
 - ✅ Wo findet man was?
 
 ### 📖 Ich brauche alle Infos in einer Datei
-→ **[README.md](./README.md)** (30 Minuten)
+→ **[README.md](../../README.md)** (30 Minuten)
 - ✅ Vollständige Referenz
 - ✅ Alle Commands
 - ✅ State Machine
@@ -207,16 +207,16 @@ scrum_workflow/
 - [Quick Start](./GETTING-STARTED.md)
 
 **Commands & Usage:**
-- [All 20 Commands](./scrum_workflow/commands/README.md)
+- [All 20 Commands](../../src/core/commands/README.md)
 - [Command Reference](./README.md#commands-reference)
 
 **Technical Reference:**
-- [Architecture Framework](./docs/architecture-framework.md)
-- [Source Code Guide](./docs/source-tree-analysis.md)
+- [Architecture Framework](./architecture-framework.md)
+- [Source Code Guide](./source-tree-analysis.md)
 
 **Development:**
-- [Dev Setup](./docs/development-guide.md)
-- [Contributing Guide](./docs/development-guide.md#pull-request-process)
+- [Dev Setup](./development-guide.md)
+- [Contributing Guide](./development-guide.md#pull-request-process)
 
 ---
 
@@ -229,7 +229,7 @@ A: `_scrum-output/sprints/SW-XXX/story.md`
 A: [README.md → The Workflow Section](./README.md#-the-workflow)
 
 **F: Welche Commands gibt es?**
-A: [scrum_workflow/commands/README.md](./scrum_workflow/commands/README.md)
+A: [scrum_workflow/commands/README.md](../../src/core/commands/README.md)
 
 **F: Wie installiere ich?**
 A: [GETTING-STARTED.md → Phase 1](./GETTING-STARTED.md#phase-1-installation-5-minuten)
@@ -294,10 +294,10 @@ graph LR
 → Siehe [DOCUMENTATION-GUIDE.md](./DOCUMENTATION-GUIDE.md)
 
 **Technische Probleme?**
-→ Siehe [docs/development-guide.md](./docs/development-guide.md#troubleshooting)
+→ Siehe [docs/development-guide.md](./development-guide.md#troubleshooting)
 
 **Feature Request?**
-→ [Contributing Guide](./docs/development-guide.md#pull-request-process)
+→ [Contributing Guide](./development-guide.md#pull-request-process)
 
 ---
 

@@ -475,7 +475,7 @@ Additional benefit: Improved team morale (less on-call, less rework)
 
 **Start shipping better code in minutes.**
 
-[Get Started](./GETTING-STARTED.md) | [Full Documentation](./README.md) | [Doc Map](./DOCUMENTATION-GUIDE.md)
+[Get Started](./GETTING-STARTED.md) | [Full Documentation](../../README.md) | [Doc Map](./DOCUMENTATION-GUIDE.md)
 
 ---
 

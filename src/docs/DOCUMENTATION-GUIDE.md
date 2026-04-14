@@ -12,9 +12,9 @@
 | **Vorteile verstehen** | [BENEFITS.md](./BENEFITS.md) | 10 min |
 | **Commands schnell lernen** | [WORKFLOW-QUICK-REFERENCE.md](./WORKFLOW-QUICK-REFERENCE.md) | 5 min |
 | **Architecture verstehen** | [ARCHITECTURE-VISUAL.md](./ARCHITECTURE-VISUAL.md) | 20 min |
-| **Vollständige Referenz** | [README.md](./README.md) | 30 min |
+| **Vollständige Referenz** | [README.md](../../README.md) | 30 min |
 | **Alle Dokumente finden** | [DOCUMENTATION-GUIDE.md](./DOCUMENTATION-GUIDE.md) | 10 min |
-| **Entwickler/Contributer** | [docs/development-guide.md](./docs/development-guide.md) | 45 min |
+| **Entwickler/Contributer** | [docs/development-guide.md](./development-guide.md) | 45 min |
 
 ---
 
@@ -80,7 +80,7 @@ approve.md               — /scrum-approve
 ...15 weitere Commands
 ```
 
-[Alle Commands ansehen](./scrum_workflow/commands/README.md)
+[Alle Commands ansehen](../../src/core/commands/README.md)
 
 #### Templates (`/templates`)
 
@@ -310,9 +310,9 @@ scrum_workflow/commands/create-ticket.md  ← Command Example
 ## 💡 Tips für beste Dokumenten-Nutzung
 
 1. **Bookmarks setzen:**
-   - [README.md](./README.md) — Overall Reference
+   - [README.md](../../README.md) — Overall Reference
    - [GETTING-STARTED.md](./GETTING-STARTED.md) — New Onboarding
-   - [docs/index.md](./docs/index.md) — Master Index
+   - [docs/index.md](./index.md) — Master Index
 
 2. **Search-Shortcuts:**
    - `Ctrl+F` (oder `Cmd+F`) in Markdown Viewer
@@ -356,11 +356,11 @@ scrum_workflow/commands/create-ticket.md  ← Command Example
 
 1. ✓ Dieses Guide durchlesen (5 min)
 2. ✓ [GETTING-STARTED.md](./GETTING-STARTED.md) für Erste Schritte (15 min)
-3. ✓ [README.md](./README.md) für Vollständige Referenz (10 min)
+3. ✓ [README.md](../../README.md) für Vollständige Referenz (10 min)
 4. ✓ Projekt initialisieren: `/scrum-create-project-context`
 
 ---
 
 **Version:** 1.2.0  
 **Last Updated:** 2026-04-09  
-**Master Index:** [docs/index.md](./docs/index.md)
+**Master Index:** [docs/index.md](./index.md)

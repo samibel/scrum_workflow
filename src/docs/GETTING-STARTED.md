@@ -474,7 +474,7 @@ Nur Blockers stoppen Stories.
 
 ---
 
-**Fragen?** Siehe [README.md](./README.md) für vollständige Referenz oder [DOCUMENTATION-GUIDE.md](./DOCUMENTATION-GUIDE.md) für alle Dokumente.
+**Fragen?** Siehe [README.md](../../README.md) für vollständige Referenz oder [DOCUMENTATION-GUIDE.md](./DOCUMENTATION-GUIDE.md) für alle Dokumente.
 
 **Version:** 1.2.0  
 **Last Updated:** 2026-04-09

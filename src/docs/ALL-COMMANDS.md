@@ -285,9 +285,9 @@ Maintenance:
 ## See Also
 
 - [WORKFLOW-QUICK-REFERENCE.md](./WORKFLOW-QUICK-REFERENCE.md) — Detailed command examples
-- [README.md](./README.md) — Complete command reference
+- [README.md](../../README.md) — Complete command reference
 - [GETTING-STARTED.md](./GETTING-STARTED.md) — Workflow walkthrough
-- [scrum_workflow/commands/README.md](./scrum_workflow/commands/README.md) — All command definitions
+- [scrum_workflow/commands/README.md](../../src/core/commands/README.md) — All command definitions
 
 ---
 

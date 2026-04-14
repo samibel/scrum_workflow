@@ -1,4 +1,12 @@
 {
+  "name": "scrum-workflow-monorepo",
+  "version": "1.0.0",
+  "description": "Scrum Workflow framework with core engine and CLI scaffolder",
+  "private": true,
+  "workspaces": [
+    "src/core",
+    "src/cli"
+  ],
   "dependencies": {
     "typescript": "^6.0.2",
     "vitest": "^4.1.3"

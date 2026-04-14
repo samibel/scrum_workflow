@@ -8,6 +8,54 @@ A spec-first, AI-assisted development workflow with human oversight at critical 
 
 ---
 
+## 📁 Project Structure (v1.2.0+)
+
+The repository is organized as an npm monorepo with clear separation of concerns:
+
+```
+scrum-workflow/                 # Root — clean, minimal
+├── src/                        # Application source code
+│   ├── core/                   # @scrum-workflow/core (workflow engine)
+│   │   ├── skills/             # 20+ workflow skills
+│   │   ├── commands/           # CLI commands
+│   │   ├── templates/          # Installation templates
+│   │   ├── context/            # Framework context & standards
+│   │   ├── agents/             # AI agent definitions
+│   │   ├── __tests__/          # Core tests
+│   │   └── package.json        # Core library metadata
+│   │
+│   ├── cli/                    # create-scrum-workflow (scaffolder & CLI)
+│   │   ├── bin/                # CLI entry point
+│   │   ├── src/                # CLI implementation
+│   │   ├── templates/          # Installation templates  
+│   │   ├── test/               # CLI tests
+│   │   ├── scripts/            # Utility scripts
+│   │   └── package.json        # CLI package metadata
+│   │
+│   └── docs/                   # Documentation
+│       ├── index.md            # Master docs index
+│       ├── development-guide.md
+│       ├── architecture-*.md
+│       └── ...
+│
+├── package.json                # Monorepo root (workspaces: src/core, src/cli)
+├── README.md                   # You are here
+└── story.md                    # Current story/task tracking
+```
+
+**Key Points:**
+- **`src/core/`** = The workflow engine (@scrum-workflow/core, reusable, independent)
+- **`src/cli/`** = The scaffolding CLI tool (creates projects with src/core installed as `scrum_workflow/`)
+- **`src/docs/`** = All documentation and guides (organized, out of root)
+- **Monorepo**: Single `npm install`, shared root dependencies, separate packages
+
+**Backward Compatibility:**
+- User projects install with `frameworkPath: "scrum_workflow"` (unchanged, still works)
+- Only **repository** structure changed; user **installations** completely unaffected
+- Existing projects continue to work without any migration
+
+---
+
 ## 🚀 Quick Start
 
 ### 1. Installation (3 minutes)
@@ -15,13 +63,13 @@ A spec-first, AI-assisted development workflow with human oversight at critical 
 ```bash
 # Clone this repository
 git clone <repo-url>
-cd scrum_workflow
+cd scrum-workflow
 
-# Install CLI dependencies
-cd create-scrum-workflow && npm install && cd ..
+# Install root + workspace dependencies (src/core and src/cli)
+npm install
 
 # Link CLI globally (for development)
-cd create-scrum-workflow && npm link
+npm -w src/cli link
 
 # Install into your project
 cd /path/to/your-project
@@ -542,7 +590,7 @@ keep_agent_temp_files: false       # Keep agent temp files for debugging
 
 | Document | Type | Audience |
 |----------|------|----------|
-| [scrum_workflow/commands/README.md](./scrum_workflow/commands/README.md) | Command Reference | Developer |
+| [core/commands/README.md](./core/commands/README.md) | Command Reference | Developer |
 | [docs/index.md](./docs/index.md) | Master Index | All |
 | [docs/source-tree-analysis.md](./docs/source-tree-analysis.md) | File-by-File Guide | Developer, Architect |
 | [docs/development-guide.md](./docs/development-guide.md) | Dev Setup & Testing | Developer |
@@ -554,10 +602,96 @@ keep_agent_temp_files: false       # Keep agent temp files for debugging
 
 | Document | Audience |
 |----------|----------|
-| [scrum_workflow/agents/README.md](./scrum_workflow/agents/README.md) | How agents work |
-| [scrum_workflow/context/index.md](./scrum_workflow/context/index.md) | Domain context discovery |
-| [scrum_workflow/templates/README.md](./scrum_workflow/templates/README.md) | Output templates |
-| [scrum_workflow/skills/README.md](./scrum_workflow/skills/README.md) | Internal skills |
+| [core/agents/README.md](./core/agents/README.md) | How agents work |
+| [core/context/index.md](./core/context/index.md) | Domain context discovery |
+| [core/templates/README.md](./core/templates/README.md) | Output templates |
+| [core/skills/README.md](./core/skills/README.md) | Internal skills |
+
+---
+
+## 🛠️ Development Guide (Contributing to Scrum Workflow)
+
+### Repository Structure for Developers
+
+```
+core/                       # Workflow Engine (@scrum-workflow/core package)
+  ├── commands/             # /scrum-* commands (20+ workflow commands)
+  ├── agents/               # AI agent definitions (Architect, Developer, QA, etc.)
+  ├── skills/               # Command implementations
+  ├── templates/            # Installation templates (for user projects)
+  ├── context/              # Framework context & standards
+  ├── __tests__/            # Core tests
+  └── package.json          # @scrum-workflow/core metadata
+
+cli/                        # CLI Scaffolder (create-scrum-workflow)
+  ├── bin/                  # CLI entry point
+  ├── src/                  # Install logic, path resolution, validation
+  ├── templates/            # CLI-side templates (mirrors core/)
+  ├── test/                 # Unit & integration tests for installer
+  ├── scripts/              # Utility scripts (template sync, validation)
+  └── package.json          # CLI package metadata
+
+package.json                # Monorepo root (npm workspaces: [src/core, src/cli])
+```
+
+### Setup for Development
+
+```bash
+# Install root + all workspaces
+npm install
+
+# Run tests for a workspace
+npm -w src/core test          # Test core engine
+npm -w src/cli test           # Test CLI installer
+npm test --workspaces         # All tests
+
+# Link CLI globally (for testing locally)
+npm -w src/cli link
+create-scrum-workflow install /tmp/test-project
+
+# Build/sync templates (if modifying)
+npm -w src/cli run sync-templates
+```
+
+### Key Development Points
+
+1. **Core** (`src/core/` → `@scrum-workflow/core`)
+   - Workflow engine — commands, agents, skills
+   - Published to npm for external use (from `src/core/`)
+   - Fully independent (no external framework lock-in)
+   - Templates in `src/core/templates/`
+   - Tests in `src/core/__tests__/`
+
+2. **CLI** (`src/cli/` → `create-scrum-workflow`)
+   - Scaffolding tool — installs core into user projects
+   - Dependency: `@scrum-workflow/core` (workspace: file:../core)
+   - Templates mirrored from `src/core/templates/` for installer bundle
+   - Path resolution: uses relative paths (`../../../templates/scrum_workflow` from test location)
+   - Binary entry: `src/cli/bin/create-scrum-workflow.js`
+
+3. **User Projects** (after installation)
+   - Generated structure: `scrum_workflow/` (framework path — unchanged)
+   - Config: `scrum_workflow/config.yaml` (installed by CLI)
+   - Skills/templates: all in `scrum_workflow/` subdirectory
+   - Completely backward compatible — no migration needed
+
+4. **Changes Impact**
+   - Modify **src/core/** → Rebuild templates → CLI installs new version
+   - Modify **src/cli/** → Test installer with `npm -w src/cli test` before merging
+   - Modify both → Run full test suite (`npm test --workspaces`)
+
+5. **Documentation** (`src/docs/`)
+   - All guides, references, and architectural docs
+   - Linked from README and main docs index
+   - Organized by topic (development, architecture, etc.)
+
+### Branch & PR Workflow
+
+1. Branch from `main` for any feature/fix
+2. Update story and test files during development
+3. Run `npm test --workspaces` before opening PR
+4. PR must pass all AC (acceptance criteria) from story.md
+5. Approved via `/scrum-review-story` and human sign-off
 
 ---
 

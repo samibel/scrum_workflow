@@ -11,7 +11,7 @@ vi.mock('fs-extra');
  *
  * TDD RED PHASE: All tests use test() and will FAIL until implementation is complete.
  *
- * These tests validate that the create-scrum-workflow installer correctly creates
+ * These tests validate that the cli installer correctly creates
  * skill shims for all 6 platforms and all 10 skills (4 original + 2 new from Epic 6/7).
  *
  * Platforms: claude-code, cursor, windsurf, github-copilot, cline, agents-universal
@@ -367,7 +367,7 @@ Business logic documentation generation skill.
       // THIS TEST WILL FAIL - Quirks documentation not implemented yet
       const mockReadmePath = '/mock/README.md';
       const mockReadmeContent = `
-# create-scrum-workflow
+# cli
 
 ## Platform-Specific Quirks
 

@@ -1,8 +1,12 @@
 {
-  "name": "scrum-workflow-core",
+  "name": "@scrum-workflow/core",
   "version": "1.0.0",
   "type": "module",
-  "description": "Scrum Workflow core utilities and framework",
+  "description": "Scrum Workflow core engine and framework",
+  "main": "index.js",
+  "exports": {
+    ".": "./index.js"
+  },
   "scripts": {
     "test": "vitest run",
     "test:watch": "vitest"

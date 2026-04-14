@@ -8,6 +8,41 @@ A spec-first, AI-assisted development workflow with human oversight at critical 
 
 ---
 
+## 📁 Project Structure (v1.2.0+)
+
+The repository is organized as an npm monorepo with clear separation of concerns:
+
+```
+scrum_workflow/
+├── core/                    # @scrum-workflow/core (workflow engine)
+│   ├── skills/              # 20+ workflow skills
+│   ├── commands/            # CLI commands
+│   ├── templates/           # Installation templates
+│   ├── context/             # Framework context & standards
+│   └── package.json         # Core library metadata
+├── cli/                     # create-scrum-workflow (scaffolder & CLI)
+│   ├── bin/                 # CLI entry point
+│   ├── src/                 # CLI implementation
+│   ├── templates/           # Installation templates
+│   ├── test/                # CLI tests
+│   └── package.json         # CLI package metadata
+├── _bmad/                   # BMAD dependency (optional, read-only)
+└── package.json             # Monorepo root with workspaces
+```
+
+**Key Points:**
+- **`core/`** = The workflow engine (reusable, BMAD-independent)
+- **`cli/`** = The scaffolding CLI tool (installs core into user projects)
+- **`_bmad/`** = External dependency (BMAD framework, optional enhancement)
+- **Monorepo**: Unified development, separate publish boundaries
+
+**Backward Compatibility:**
+- User projects install with `frameworkPath: "scrum_workflow"` (unchanged)
+- Only repository structure changed; user installations unaffected
+- Existing projects continue to work without migration
+
+---
+
 ## 🚀 Quick Start
 
 ### 1. Installation (3 minutes)
@@ -17,11 +52,11 @@ A spec-first, AI-assisted development workflow with human oversight at critical 
 git clone <repo-url>
 cd scrum_workflow
 
-# Install CLI dependencies
-cd create-scrum-workflow && npm install && cd ..
+# Install root + workspace dependencies (core/ and cli/)
+npm install
 
 # Link CLI globally (for development)
-cd create-scrum-workflow && npm link
+npm -w cli link
 
 # Install into your project
 cd /path/to/your-project
@@ -542,7 +577,7 @@ keep_agent_temp_files: false       # Keep agent temp files for debugging
 
 | Document | Type | Audience |
 |----------|------|----------|
-| [scrum_workflow/commands/README.md](./scrum_workflow/commands/README.md) | Command Reference | Developer |
+| [core/commands/README.md](./core/commands/README.md) | Command Reference | Developer |
 | [docs/index.md](./docs/index.md) | Master Index | All |
 | [docs/source-tree-analysis.md](./docs/source-tree-analysis.md) | File-by-File Guide | Developer, Architect |
 | [docs/development-guide.md](./docs/development-guide.md) | Dev Setup & Testing | Developer |
@@ -554,10 +589,92 @@ keep_agent_temp_files: false       # Keep agent temp files for debugging
 
 | Document | Audience |
 |----------|----------|
-| [scrum_workflow/agents/README.md](./scrum_workflow/agents/README.md) | How agents work |
-| [scrum_workflow/context/index.md](./scrum_workflow/context/index.md) | Domain context discovery |
-| [scrum_workflow/templates/README.md](./scrum_workflow/templates/README.md) | Output templates |
-| [scrum_workflow/skills/README.md](./scrum_workflow/skills/README.md) | Internal skills |
+| [core/agents/README.md](./core/agents/README.md) | How agents work |
+| [core/context/index.md](./core/context/index.md) | Domain context discovery |
+| [core/templates/README.md](./core/templates/README.md) | Output templates |
+| [core/skills/README.md](./core/skills/README.md) | Internal skills |
+
+---
+
+## 🛠️ Development Guide (Contributing to Scrum Workflow)
+
+### Repository Structure for Developers
+
+```
+core/                       # Workflow Engine (@scrum-workflow/core package)
+  ├── commands/             # /scrum-* commands (20+ workflow commands)
+  ├── agents/               # AI agent definitions (Architect, Developer, QA, etc.)
+  ├── skills/               # Command implementations
+  ├── templates/            # Installation templates (for user projects)
+  ├── context/              # Framework context & standards
+  ├── __tests__/            # Core tests
+  └── package.json          # @scrum-workflow/core metadata
+
+cli/                        # CLI Scaffolder (create-scrum-workflow)
+  ├── bin/                  # CLI entry point
+  ├── src/                  # Install logic, path resolution, validation
+  ├── templates/            # CLI-side templates (mirrors core/)
+  ├── test/                 # Unit & integration tests for installer
+  ├── scripts/              # Utility scripts (template sync, validation)
+  └── package.json          # CLI package metadata
+
+_bmad/                      # (Optional) BMAD framework dependency
+  └── [read-only during development]
+
+package.json                # Monorepo root (npm workspaces: ["core", "cli"])
+```
+
+### Setup for Development
+
+```bash
+# Install root + all workspaces
+npm install
+
+# Run tests for a workspace
+npm -w core test              # Test core engine
+npm -w cli test               # Test CLI installer
+npm test --workspaces         # All tests
+
+# Link CLI globally (for testing locally)
+npm -w cli link
+create-scrum-workflow install /tmp/test-project
+
+# Build/sync templates (if modifying)
+npm -w cli run sync-templates
+```
+
+### Key Development Points
+
+1. **Core** (`@scrum-workflow/core`)
+   - Workflow engine — commands, agents, skills
+   - Published to npm for external use
+   - Zero BMAD dependencies
+   - Templates go in `core/templates/`
+
+2. **CLI** (`create-scrum-workflow`)
+   - Scaffolding tool — installs core into user projects
+   - Dependency: `@scrum-workflow/core` (workspace: file:../core)
+   - Templates mirrored from `core/templates/` for installer bundle
+   - Path resolution: uses relative paths (`../../templates/scrum_workflow`)
+
+3. **User Projects**
+   - Generated structure: `scrum_workflow/` (framework path)
+   - Config: `scrum_workflow/config.yaml` (installed by CLI)
+   - Skills/templates: all in `scrum_workflow/` subdirectory
+   - Backward compatible — unchanged since v1.0
+
+4. **Changes Impact**
+   - Modify **core/** → Rebuild templates → CLI installs new version
+   - Modify **cli/** → Test installer with `npm -w cli test` before merging
+   - Modify both → Run full test suite (`npm test --workspaces`)
+
+### Branch & PR Workflow
+
+1. Branch from `main` for any feature/fix
+2. Update story and test files during development
+3. Run `npm test --workspaces` before opening PR
+4. PR must pass all AC (acceptance criteria) from story.md
+5. Approved via `/scrum-review-story` and human sign-off
 
 ---
 

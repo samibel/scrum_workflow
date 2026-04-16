@@ -188,6 +188,14 @@ Produce acceptance criteria in **Given/When/Then** format:
 - Cover key edge cases and error scenarios
 - Reference project-specific components and patterns where applicable
 
+**Mandatory Final AC (always append last, never omit):**
+
+After generating all other acceptance criteria, always append the following as the **last** acceptance criterion, regardless of story type or content:
+
+```
+- [ ] **[DOC]** Document changes: describe the state **before** and **after** this story, explain the reasoning why these changes were made. Mermaid diagrams may be used for visual clarity.
+```
+
 ### Step 4.4: Generate Subtasks
 
 Break the story into implementation subtasks:

@@ -73,6 +73,7 @@ Produce the following updated story sections from accepted and synthesized persp
    - Add new criteria from accepted agent proposals
    - Deduplicate criteria that test the same behavior
    - Ensure every criterion is testable (has a clear pass/fail condition)
+   - **Preserve [DOC] AC**: The `[DOC]` documentation criterion must always be the **last** acceptance criterion. If the original story contains it, preserve it in last position after all merging. If it is missing after merging, re-add it as the final item: `- [ ] **[DOC]** Document changes: describe the state **before** and **after** this story, explain the reasoning why these changes were made. Mermaid diagrams may be used for visual clarity.`
 3. **Revised Estimation**: Update the estimation based on the Developer's feasibility assessment:
    - Include justification for any estimation change
    - Reference specific findings that impact effort (e.g., "additional auth layer adds complexity")

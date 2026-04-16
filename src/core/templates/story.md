@@ -33,6 +33,7 @@ status_history:
 
 - [ ] {{acceptance_criterion_1}}
 - [ ] {{acceptance_criterion_2}}
+- [ ] **[DOC]** Document changes: describe the state **before** and **after** this story, explain the reasoning why these changes were made. Mermaid diagrams may be used for visual clarity.
 
 ## Subtasks
 

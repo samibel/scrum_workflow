@@ -412,6 +412,12 @@ For each finding, create row with:
 - File:Line (file path and line number if applicable)
 - Suggested Fix (actionable fix description)
 
+**Mandatory [DOC] Finding (when verdict is CHANGES-NEEDED):**
+
+If the verdict is CHANGES-NEEDED, always append the following as the **last row** in the Findings table, after all other findings:
+
+| (last #) | `[DOC]` AC must be re-updated after addressing all findings above — re-document the state before/after and the reasoning for each change; Mermaid diagrams are allowed | Minor | `[DOC]` AC | story.md | Update the `[DOC]` acceptance criterion to reflect the final state after all fixes are applied |
+
 ### Step 5.5: Write Verdict Rationale
 
 Provide clear explanation of verdict:
@@ -451,6 +457,7 @@ Update `_scrum-output/sprints/SW-XXX/story.md`:
     trigger: /scrum-review-story
     actor: review-agent
   ```
+- **Reset `[DOC]` AC to unchecked:** Scan the `## Acceptance Criteria` section of story.md for the line containing `**[DOC]**`. If found and currently checked (`- [x]`), reset it to unchecked (`- [ ]`). This ensures the developer knows the documentation must be re-done after applying all fixes.
 
 ### Step 6.2: Handle Legacy Stories Without status_history
 

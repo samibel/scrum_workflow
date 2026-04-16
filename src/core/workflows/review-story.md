@@ -416,7 +416,7 @@ For each finding, create row with:
 
 If the verdict is CHANGES-NEEDED, always append the following as the **last row** in the Findings table, after all other findings:
 
-| (last #) | `[DOC]` AC must be re-updated after addressing all findings above — re-document the state before/after and the reasoning for each change; Mermaid diagrams are allowed | Minor | `[DOC]` AC | story.md | Update the `[DOC]` acceptance criterion to reflect the final state after all fixes are applied |
+| [Next #] | `**[DOC]**` AC must be re-updated after addressing all findings above — describe the state **before** and **after** this story, explain the reasoning why these changes were made. Mermaid diagrams may be used for visual clarity. | Minor | `**[DOC]**` AC | story.md | Update the `**[DOC]**` acceptance criterion to reflect the final state after all fixes are applied |
 
 ### Step 5.5: Write Verdict Rationale
 

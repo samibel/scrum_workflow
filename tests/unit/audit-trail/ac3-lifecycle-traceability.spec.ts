@@ -21,9 +21,9 @@ const __dirname = dirname(__filename);
 
 // Test paths
 const PROJECT_ROOT = join(__dirname, '..', '..', '..');
-const AUDIT_WORKFLOW = join(PROJECT_ROOT, 'scrum_workflow', 'workflows', 'audit.md');
-const AUDIT_UTILS = join(PROJECT_ROOT, 'scrum_workflow', 'utils', 'audit.js');
-const AUDIT_OUTPUT_DIR = join(PROJECT_ROOT, 'scrum_workflow', '_scrum-output', 'audit');
+const AUDIT_WORKFLOW = join(PROJECT_ROOT, 'src', 'core', 'workflows', 'audit.md');
+const AUDIT_UTILS = join(PROJECT_ROOT, 'src', 'core', 'utils', 'audit.js');
+const AUDIT_OUTPUT_DIR = join(PROJECT_ROOT, '_scrum-output', 'audit');
 
 // ============================================================================
 // AC3: Complete Lifecycle Traceability

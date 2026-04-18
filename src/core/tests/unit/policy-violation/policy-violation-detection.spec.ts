@@ -33,8 +33,8 @@ import { join } from 'path';
 
 // Test paths - using process.cwd() which will be the project root during test execution
 const PROJECT_ROOT = process.cwd();
-// _bmad-output and _scrum-output are at project root, one level up from scrum_workflow/
-const PROJECT_ROOT_PARENT = join(PROJECT_ROOT, '..');
+// _bmad-output and _scrum-output live at the repo root (two levels up from src/core).
+const PROJECT_ROOT_PARENT = join(PROJECT_ROOT, '..', '..');
 const POLICY_CHECK_CMD = join(PROJECT_ROOT, 'commands', 'policy-check.md');
 const POLICY_VIOLATION_WORKFLOW = join(PROJECT_ROOT, 'workflows', 'policy-violation.md');
 const AUDIT_OUTPUT_DIR = join(PROJECT_ROOT_PARENT, '_scrum-output', 'audit');

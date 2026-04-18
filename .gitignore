@@ -1,1 +1,17 @@
 node_modules/
+
+# Test fixtures (sprint.fixture.ts). Tests create and tear down these dirs
+# on every run; never commit their transient output.
+_test-output/
+src/**/_test-output/
+
+# The yaml-preservation integration test writes approval-N.md / review-N.md
+# into this sprint. Keep the directory placeholder out of git noise.
+_scrum-output/sprints/SW-TEST-YAML/
+src/**/_scrum-output/sprints/SW-TEST-YAML/
+
+# Build & coverage
+coverage/
+coverageReport/
+coverage_report/
+*.log

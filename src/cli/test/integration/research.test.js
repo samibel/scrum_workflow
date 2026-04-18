@@ -189,8 +189,8 @@ The command file contains the full workflow orchestration including:
       registerSkills(multiPlatformPaths, multiPlatformConfig);
 
       // Verify that writeFileSync was called for each skill-platform combination
-      // 10 skills x 2 platforms = 20 calls
-      expect(fse.writeFileSync).toHaveBeenCalledTimes(16);
+      // 10 skills × 2 platforms = 20 calls
+      expect(fse.writeFileSync).toHaveBeenCalledTimes(20);
     });
 
     test('[P0] should verify SKILL.md exists in each skill directory', () => {
@@ -1008,8 +1008,8 @@ Old information that should be preserved
 
       const result = registerSkills(multiPlatformPaths, multiPlatformConfig);
 
-      // Should copy 10 skills to 2 platforms = 16 writes
-      expect(fse.writeFileSync).toHaveBeenCalledTimes(16);
+      // Should copy 10 skills × 2 platforms = 20 writes
+      expect(fse.writeFileSync).toHaveBeenCalledTimes(20);
       expect(result.platformCount).toBe(2);
       expect(result.skillCount).toBe(10);
     });

@@ -56,15 +56,17 @@ status_history:
     expect(result.success).toBe(true);
 
     const updatedStory = readFileSync(storyPath, 'utf8');
-    
-    // Check if both the original and the new history entries exist
-    expect(updatedStory).toContain('from: "in-progress"');
-    expect(updatedStory).toContain('to: "review"');
-    expect(updatedStory).toContain('trigger: "/scrum-dev-story"');
-    
-    expect(updatedStory).toContain('from: "review"');
-    expect(updatedStory).toContain('to: "approved"');
-    expect(updatedStory).toContain('trigger: "/scrum-review-story"');
+
+    // Check if both the original and the new history entries exist. Match
+    // both quoted and bare YAML scalars since js-yaml.dump omits quotes
+    // around simple strings.
+    expect(updatedStory).toMatch(/from:\s*["']?in-progress["']?/);
+    expect(updatedStory).toMatch(/to:\s*["']?review["']?/);
+    expect(updatedStory).toMatch(/trigger:\s*["']?\/scrum-dev-story["']?/);
+
+    expect(updatedStory).toMatch(/from:\s*["']?review["']?/);
+    expect(updatedStory).toMatch(/to:\s*["']?approved["']?/);
+    expect(updatedStory).toMatch(/trigger:\s*["']?\/scrum-review-story["']?/);
   });
 
   test('executeScrumApprove should preserve existing status_history', () => {
@@ -104,13 +106,14 @@ status_history:
     expect(result.success).toBe(true);
 
     const updatedStory = readFileSync(storyPath, 'utf8');
-    
-    // Check if the whole history chain is preserved
-    expect(updatedStory).toContain('from: "in-progress"');
-    expect(updatedStory).toContain('to: "review"');
-    expect(updatedStory).toContain('from: "review"');
-    expect(updatedStory).toContain('to: "approved"');
-    expect(updatedStory).toContain('from: "approved"');
-    expect(updatedStory).toContain('to: "done"');
+
+    // Check if the whole history chain is preserved. Match quoted and bare
+    // YAML scalars since js-yaml.dump omits quotes around simple strings.
+    expect(updatedStory).toMatch(/from:\s*["']?in-progress["']?/);
+    expect(updatedStory).toMatch(/to:\s*["']?review["']?/);
+    expect(updatedStory).toMatch(/from:\s*["']?review["']?/);
+    expect(updatedStory).toMatch(/to:\s*["']?approved["']?/);
+    expect(updatedStory).toMatch(/from:\s*["']?approved["']?/);
+    expect(updatedStory).toMatch(/to:\s*["']?done["']?/);
   });
 });

@@ -69,6 +69,32 @@ workflow_depth_thresholds:
 # When disabled, uses static default set: [architect, developer, qa]
 agent_dispatch_enabled: true
 
+# Greenfield workflow settings (idea → brief → epics → tickets)
+# Controls the pre-ticket pipeline: /scrum-create-brief, /scrum-decompose-epics,
+# /scrum-draft-stories. Tunable per project.
+greenfield:
+  # Maximum Reflection-Loop interview rounds before halting with a warning.
+  # The loop normally runs until no open questions remain; this is a safety net
+  # for pathological cases. Raise with care — excessive interviewing wastes tokens.
+  brief_max_interview_rounds: 5
+
+  # Target story count per epic used by the epic-decomposer agent.
+  # See data/epic-decomposition-rules.yaml for the full size policy.
+  epic_target_story_count: 5
+
+  # Max parallel subagents spawned by /scrum-draft-stories.
+  # Cap protects token budget; 5 is a healthy default for most projects.
+  max_parallel_story_drafters: 5
+
+  # Agents invoked in parallel during /scrum-create-brief brainstorming phase.
+  # Must match files in agents/. `developer` is intentionally omitted —
+  # implementation perspective biases product-level decisions. Customize to
+  # add domain experts (e.g. security-reviewer, ux-reviewer).
+  brief_brainstorm_agents:
+    - product-strategist
+    - architect
+    - qa
+
 # Framework version (for copy-based updates)
 # Used to track framework version for distribution and migration
-framework_version: 1.0.0
+framework_version: 1.3.0

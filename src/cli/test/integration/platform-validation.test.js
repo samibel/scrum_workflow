@@ -434,7 +434,7 @@ Cline may require restart after skill installation for skills to be discovered.
       });
 
       // Verify all 10 skills are validated
-      expect(validatedSkills).toHaveLength(6);
+      expect(validatedSkills).toHaveLength(10);
       expect(validatedSkills).toEqual(expect.arrayContaining(allSkills));
     });
 

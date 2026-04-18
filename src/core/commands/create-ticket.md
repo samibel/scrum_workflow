@@ -16,15 +16,31 @@ workflows/ticket-creation.md
 
 ## Input
 
-Ticket number and natural language description in the format: `/scrum-create-ticket SW-XXX "description of the feature or change" [--depth light|standard|heavy]`
+Two invocation modes:
+
+**Mode A — Freeform (existing):** `/scrum-create-ticket SW-XXX "description of the feature or change" [--depth light|standard|heavy]`
+
+**Mode B — From Draft (greenfield):** `/scrum-create-ticket SW-XXX --from-epic EP-XXX --from-draft <N> [--depth light|standard|heavy]`
 
 - **Ticket number**: `SW-XXX` format where XXX is a zero-padded 3-digit number (e.g., `SW-001`, `SW-042`, `SW-103`)
-- **Description**: Natural language string describing the feature, change, or requirement
-- **--depth flag** (optional): Workflow depth override — takes precedence over automatic depth auto-assignment
+- **Description** (Mode A only): Natural language string describing the feature, change, or requirement
+- **--from-epic EP-XXX** (Mode B): Parent epic ID. Epic must exist at `_scrum-output/epics/EP-XXX/epic.md` with `status: drafted` or later
+- **--from-draft <N>** (Mode B, requires --from-epic): 1-based index into `_scrum-output/epics/EP-XXX/draft-stories.md` → `drafts[]`. The draft's title, description, type, risk_level, domain_tags, and candidate acceptance criteria are copied into the new story
+- **--depth flag** (optional, both modes): Workflow depth override — takes precedence over automatic depth auto-assignment
   - `--depth light`: Lightweight process (1 agent, no cross-talk, no synthesis, single estimate)
   - `--depth standard`: Full process (3 agents, cross-talk, synthesis, Wideband Delphi)
   - `--depth heavy`: Maximum rigor process (3 agents, max cross-talk rounds with no early exit, synthesis, Wideband Delphi, mandatory security note)
   - If no `--depth` flag is provided, depth is auto-selected by the adaptive-depth-selector based on risk classification (default fallback: `standard`)
+
+**Mode B Behavior:**
+
+1. Load `_scrum-output/epics/EP-XXX/draft-stories.md` frontmatter `drafts` array
+2. Select `drafts[N-1]` (1-based index)
+3. Copy title, description, type, risk_level, domain_tags, candidate AC into the new story
+4. Set `parent_epic: EP-XXX`, `epic_index` from epic frontmatter
+5. Skip vagueness check (draft is pre-enriched)
+6. Proceed to classification confirmation and depth selection as usual
+7. On success, update `_scrum-output/epics/EP-XXX/epic.md` `status` to `in-progress` (if currently `drafted`)
 
 ## Story Classification
 
@@ -69,7 +85,10 @@ After story classification populates the `risk_level` field, invoke the **adapti
 
 ## Output
 
-- `_scrum-output/sprints/SW-XXX/story.md` -- Structured story file with valid YAML frontmatter (`schema_version: "1.0.0"`, `ticket: SW-XXX`, `title: "<generated title>"`, `status: draft`, `depth: <light|standard|heavy>`, `depth_source: <classifier|adaptive-workflow-override|default>`, `type: <inferred and classified by story-classifier>`, `risk_level: <assigned and classified by story-classifier>`, `classification_confidence: <high|medium|low from classifier>`, `domain_tags: <array>`, `estimation: <calculated>`, `created: <ISO 8601 UTC>`, `updated: <ISO 8601 UTC>`, `status_history: [{from: null, to: draft, timestamp: <ISO 8601 UTC>, trigger: /scrum-create-ticket, actor: human}]`) and a Markdown body containing a generated description, acceptance criteria in Given/When/Then format, and subtasks. The `type` field is inferred by the story-classifier from description keywords. The `risk_level` field is assigned by the story-classifier from domain tags and content analysis. The `classification_confidence` field indicates the classifier's certainty level. The `depth` field is set by the adaptive-depth-selector or the `--depth` flag. The `depth_source` field records whether depth was auto-selected (`classifier`), manually overridden (`adaptive-workflow-override`), or a legacy fallback (`default`).
+- `_scrum-output/sprints/SW-XXX/story.md` -- Structured story file with valid YAML frontmatter (`schema_version: "1.0.0"`, `ticket: SW-XXX`, `title: "<generated title>"`, `status: draft`, `depth: <light|standard|heavy>`, `depth_source: <classifier|adaptive-workflow-override|default>`, `type: <inferred and classified by story-classifier>`, `risk_level: <assigned and classified by story-classifier>`, `classification_confidence: <high|medium|low from classifier>`, `domain_tags: <array>`, `parent_epic: <EP-XXX or null>`, `epic_index: <"N/total" or null>`, `estimation: <calculated>`, `created: <ISO 8601 UTC>`, `updated: <ISO 8601 UTC>`, `status_history: [{from: null, to: draft, timestamp: <ISO 8601 UTC>, trigger: /scrum-create-ticket, actor: human}]`) and a Markdown body containing a generated description, acceptance criteria in Given/When/Then format, and subtasks. The `type` field is inferred by the story-classifier from description keywords. The `risk_level` field is assigned by the story-classifier from domain tags and content analysis. The `classification_confidence` field indicates the classifier's certainty level. The `depth` field is set by the adaptive-depth-selector or the `--depth` flag. The `depth_source` field records whether depth was auto-selected (`classifier`), manually overridden (`adaptive-workflow-override`), or a legacy fallback (`default`). The `parent_epic` and `epic_index` fields are populated only in Mode B (via `--from-epic --from-draft`), otherwise `null`.
+
+In Mode B, additionally:
+- `_scrum-output/epics/EP-XXX/epic.md` — Status field only: `drafted` → `in-progress` on first story promotion from this epic
 
 ## Error Handling
 
@@ -111,6 +130,7 @@ If story file already exists for the ticket number:
 
 This workflow may write:
 - `_scrum-output/sprints/SW-XXX/story.md` - New file only (`status: draft`); MUST NOT overwrite an existing story.md — halt with Status Guard Violation if the story file already exists
+- `_scrum-output/epics/EP-XXX/epic.md` - **Status field only**, in Mode B only, transitioning `drafted` → `in-progress` on first story promotion from the epic
 
 This workflow may NOT write:
 - `_scrum-output/sprints/SW-XXX/refinement.md` - Managed by `/scrum-refine-ticket`

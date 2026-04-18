@@ -104,9 +104,57 @@ Dies ist ein **einmaliger Schritt** — der AI Assistem analysiert dein Code-Rep
 
 ---
 
+## Phase 2.5: Starting from Zero (optional, für neue Projekte)
+
+Wenn du ein brandneues Projekt bei **null** startest und nur eine Idee hast (noch keine klar umrissenen Features), nutze den Greenfield-Flow **bevor** du das erste Ticket erstellst:
+
+### Schritt A: Idee einfangen (Multi-Agent-Brainstorming)
+
+```bash
+/scrum-create-brief "A habit tracker that gamifies daily routines for ADHD users"
+```
+
+Drei Agents (product-strategist, architect, qa) analysieren die Idee parallel. Dann startet ein Interview-Loop, der so lange Fragen stellt, bis alle offenen Punkte geklärt sind.
+
+**Output:** `_scrum-output/briefs/PB-001.md` mit Status `complete`.
+
+### Schritt B: Brief in Epics zerlegen (Plan-Then-Execute)
+
+```bash
+/scrum-decompose-epics PB-001
+```
+
+Ein einzelner Agent committet sich auf den kompletten Epic-Graph — keine Drift mitten in der Zerlegung.
+
+**Output:** `_scrum-output/epics/index.md` + `EP-001/epic.md`, `EP-002/epic.md`, ...
+
+### Schritt C: Story-Drafts pro Epic generieren (Orchestrator-Worker)
+
+```bash
+/scrum-draft-stories EP-001
+```
+
+N Subagents draften parallel je einen Kandidaten — aggregiert in `draft-stories.md`.
+
+### Schritt D: Einzelne Drafts als Tickets promoten
+
+```bash
+/scrum-create-ticket SW-001 --from-epic EP-001 --from-draft 1
+```
+
+Ab hier geht es weiter mit dem bestehenden Lifecycle (refine → dev → review → approve). Jeder Draft ist ein Human-Gate — du entscheidest, was gebaut wird.
+
+**Unterbrechung?** Jeder Schritt ist resume-fähig: nach Ctrl-C einfach `/scrum-create-brief PB-001 --resume` oder `/scrum-draft-stories EP-001 --resume`.
+
+Details: [greenfield-workflow.md](./greenfield-workflow.md)
+
+---
+
 ## Phase 3: Deine erste Story (5 Minuten)
 
 ### Schritt 1: Story erstellen
+
+Wenn du **nicht** den Greenfield-Flow genutzt hast und eine konkrete Feature-Idee hast:
 
 ```bash
 /scrum-create-ticket SW-001 "Beschreibung deiner Feature"
@@ -115,6 +163,12 @@ Dies ist ein **einmaliger Schritt** — der AI Assistem analysiert dein Code-Rep
 **Beispiel:**
 ```bash
 /scrum-create-ticket SW-001 "Add user authentication with OAuth2"
+```
+
+Wenn du den Greenfield-Flow genutzt hast, nutze stattdessen die Promote-Variante:
+
+```bash
+/scrum-create-ticket SW-001 --from-epic EP-001 --from-draft 1
 ```
 
 **Output:**

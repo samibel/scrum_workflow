@@ -24,7 +24,7 @@ import { fileURLToPath } from 'node:url';
 // Resolve paths
 const TEST_DIR = dirname(fileURLToPath(import.meta.url));
 const SRC_DIR = join(TEST_DIR, '../../../src');
-const OUTPUT_MODULE = join(SRC_DIR, 'src/core/output.js');
+const OUTPUT_MODULE = join(SRC_DIR, 'core/output.js');
 
 // Capture console.log output
 let captured = [];

@@ -21,13 +21,13 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Tests run from scrum_workflow/ so paths need to go up one level then into scrum_workflow/
-const ROOT_DIR = join(__dirname, '..', '..');
-const SCRUM_DIR = join(ROOT_DIR, 'scrum_workflow');
-const COMMANDS_DIR = join(SCRUM_DIR, 'commands');
-const WORKFLOWS_DIR = join(SCRUM_DIR, 'workflows');
-const TEMPLATES_DIR = join(SCRUM_DIR, 'templates');
-const UTILS_DIR = join(SCRUM_DIR, 'utils');
+// __dirname = src/core/__tests__; core lives at src/core/, repo root is three levels up.
+const CORE_DIR = join(__dirname, '..');
+const REPO_ROOT = join(__dirname, '..', '..', '..');
+const COMMANDS_DIR = join(CORE_DIR, 'commands');
+const WORKFLOWS_DIR = join(CORE_DIR, 'workflows');
+const TEMPLATES_DIR = join(CORE_DIR, 'templates');
+const UTILS_DIR = join(CORE_DIR, 'utils');
 
 // ============================================================================
 // AC1: /scrum-verify Command Definition and Workflow
@@ -114,13 +114,13 @@ describe('AC3: FAIL Flow - Actionable Guidance and Status Persistence', () => {
 
 describe('AC4: Write Boundary Enforcement', () => {
   test('[P0] Architecture.md must define /scrum-verify write boundaries', () => {
-    const archContent = readFileSync(join(ROOT_DIR, '_bmad-output', 'planning-artifacts', 'architecture.md'), 'utf8');
+    const archContent = readFileSync(join(REPO_ROOT, '_bmad-output', 'planning-artifacts', 'architecture.md'), 'utf8');
     const verifyBoundary = archContent.match(/\/scrum-verify[\s\S]*?verification-report\.md/);
     expect(verifyBoundary).not.toBeNull();
   });
 
   test('[P0] /scrum-verify must NOT be allowed to write source code', () => {
-     const archContent = readFileSync(join(ROOT_DIR, '_bmad-output', 'planning-artifacts', 'architecture.md'), 'utf8');
+     const archContent = readFileSync(join(REPO_ROOT, '_bmad-output', 'planning-artifacts', 'architecture.md'), 'utf8');
      const verifyBoundarySection = archContent.match(/\/scrum-verify[\s\S]*?(?=^\||\n## )/m);
      expect(verifyBoundarySection).not.toBeNull();
      // Should explicitly say it may NOT write source code

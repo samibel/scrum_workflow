@@ -8,6 +8,8 @@ risk_level: "{{risk_level}}"
 depth: "{{depth}}"
 depth_source: "{{depth_source}}"
 domain_tags: {{domain_tags}}
+parent_epic: {{parent_epic}}
+epic_index: {{epic_index}}
 estimation: null
 created: "{{created_date}}"
 updated: "{{updated_date}}"

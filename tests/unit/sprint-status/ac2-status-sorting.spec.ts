@@ -21,7 +21,7 @@ const __dirname = dirname(__filename);
 
 // Test paths
 const PROJECT_ROOT = join(__dirname, '..', '..', '..');
-const SPRINT_STATUS_WORKFLOW = join(PROJECT_ROOT, 'scrum_workflow', 'workflows', 'sprint-status.md');
+const SPRINT_STATUS_WORKFLOW = join(PROJECT_ROOT, 'src', 'core', 'workflows', 'sprint-status.md');
 const SPRINTS_OUTPUT_DIR = join(PROJECT_ROOT, '_scrum-output', 'sprints');
 
 // Status priority order (highest to lowest)

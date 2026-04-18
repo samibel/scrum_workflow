@@ -316,7 +316,7 @@ Replace template placeholders with generated content:
 | `risk_level` | `"<assigned risk>"` (from Step 7.2b) |
 | `domain_tags` | `<tags array>` (from Step 7.2c) |
 | `parent_epic` | `"EP-XXX"` in Mode B (from `--from-epic`), `null` in Mode A |
-| `epic_index` | `"N/total"` in Mode B (copied from `_scrum-output/epics/EP-XXX/epic.md` frontmatter), `null` in Mode A |
+| `epic_index` | `"N/total"` in Mode B — the **story's position within its parent epic**. Compute from `--from-draft N` (numerator) and the length of `drafts` in `_scrum-output/epics/EP-XXX/draft-stories.md` (denominator). Do **not** copy `epic_index` from the epic's frontmatter — that value represents the epic's position within the brief, not the story's position within the epic. `null` in Mode A. |
 | `estimation` | `<calculated>` (from Step 5.3) |
 | `created` | `<today>` (ISO 8601 UTC format: YYYY-MM-DDTHH:mm:ssZ) |
 | `updated` | `<today>` (ISO 8601 UTC format: YYYY-MM-DDTHH:mm:ssZ) |

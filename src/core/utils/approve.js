@@ -226,11 +226,12 @@ export function canTransitionToDone(fromStatus, trigger) {
  * @returns {Object} { compliant: boolean, violations: string[] }
  */
 export function verifyWriteBoundaryCompliance(ticketId, modifiedFiles) {
-  // Match any sprint output root (e.g. _scrum-output or _test-output) so
-  // integration tests can operate on an isolated fixture directory.
+  // Anchor to known output roots (_scrum-output for real sprints,
+  // _test-output for integration fixtures) so arbitrary directories named
+  // "sprints" elsewhere in the tree cannot be written to.
   const allowedPatterns = [
-    new RegExp(`[/\\\\]sprints[/\\\\]${ticketId}[/\\\\]approval-\\d+\\.md$`),
-    new RegExp(`[/\\\\]sprints[/\\\\]${ticketId}[/\\\\]story\\.md$`)
+    new RegExp(`(?:^|[/\\\\])(_scrum-output|_test-output)[/\\\\]sprints[/\\\\]${ticketId}[/\\\\]approval-\\d+\\.md$`),
+    new RegExp(`(?:^|[/\\\\])(_scrum-output|_test-output)[/\\\\]sprints[/\\\\]${ticketId}[/\\\\]story\\.md$`)
   ];
 
   const prohibitedPatterns = [

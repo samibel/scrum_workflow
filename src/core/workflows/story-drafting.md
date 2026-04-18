@@ -61,11 +61,13 @@ Read `_scrum-output/briefs/<parent_brief>.md` for personas and goals context. Do
 
 ### Step 2.1: Determine N
 
-Let N = min(epic.story_count_estimate, max_parallel_story_drafters). Each subagent drafts one story covering one capability.
+Let N = `epic.story_count_estimate`. Every capability in the epic gets its own draft — N is **not** capped by the parallelism budget.
+
+`greenfield.max_parallel_story_drafters` governs **concurrency only**: the orchestrator processes the N subagents in batches of size `max_parallel_story_drafters` (e.g. N=12 with budget 5 runs as 5 + 5 + 2). Completed batches update `.draft-state.json` before the next batch spawns, so interruption resume still works.
 
 ### Step 2.2: Assign Capabilities
 
-Split the epic's capability breakdown into N slices (one per subagent). Each slice has an index 1..N.
+Split the epic's capability breakdown into N slices (one per subagent). Each slice has an index 1..N. Slices map 1:1 to capabilities; do not merge or drop capabilities to hit the concurrency budget.
 
 ### Step 2.3: Initialize State File
 
@@ -86,9 +88,11 @@ Write `_scrum-output/epics/EP-XXX/.draft-state.json`:
 
 Update `_scrum-output/epics/EP-XXX/epic.md` frontmatter: `status: drafting`, append `status_history`. Atomic write.
 
-### Step 2.5: Spawn Subagents in Parallel
+### Step 2.5: Spawn Subagents in Parallel (Batched)
 
-For each pending index (or only `subagents_pending` on resume):
+Iterate `subagents_pending` in chunks of `max_parallel_story_drafters`. For each chunk, spawn all its subagents in parallel and wait for the chunk to complete before starting the next one. On resume, only unfinished indices are chunked.
+
+For each spawned subagent:
 
 - Select agent role (rotate through `architect`, `developer`, `qa` to diversify perspective)
 - Invoke agent with: epic content + assigned capability slice + brief context

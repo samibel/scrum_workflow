@@ -27,7 +27,7 @@ import { join, dirname } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
 const TEST_DIR = dirname(fileURLToPath(import.meta.url))
-const BIN_PATH = join(TEST_DIR, '../../../bin/cli.js')
+const BIN_PATH = join(TEST_DIR, '../../../bin/create-scrum-workflow.js')
 
 // Helper to read CLI source for structural assertions
 function readCliSource() {

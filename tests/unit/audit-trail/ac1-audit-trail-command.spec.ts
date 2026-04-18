@@ -20,10 +20,10 @@ const __dirname = dirname(__filename);
 
 // Test paths - use fileURLToPath for reliable location tracking
 const PROJECT_ROOT = join(__dirname, '..', '..', '..');
-const AUDIT_TRAIL_CMD = join(PROJECT_ROOT, 'scrum_workflow', 'commands', 'audit-trail.md');
-const AUDIT_UTILS = join(PROJECT_ROOT, 'scrum_workflow', 'utils', 'audit.js');
-const AUDIT_WORKFLOW = join(PROJECT_ROOT, 'scrum_workflow', 'workflows', 'audit.md');
-const AUDIT_OUTPUT_DIR = join(PROJECT_ROOT, 'scrum_workflow', '_scrum-output', 'audit');
+const AUDIT_TRAIL_CMD = join(PROJECT_ROOT, 'src', 'core', 'commands', 'audit-trail.md');
+const AUDIT_UTILS = join(PROJECT_ROOT, 'src', 'core', 'utils', 'audit.js');
+const AUDIT_WORKFLOW = join(PROJECT_ROOT, 'src', 'core', 'workflows', 'audit.md');
+const AUDIT_OUTPUT_DIR = join(PROJECT_ROOT, '_scrum-output', 'audit');
 
 // Helper to create a mock story structure for testing
 function createMockStoryDir(ticketId: string): string {

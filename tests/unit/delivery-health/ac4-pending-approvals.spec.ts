@@ -24,9 +24,9 @@ const __dirname = dirname(__filename);
 
 // Test paths
 const PROJECT_ROOT = join(__dirname, '..', '..', '..');
-const DELIVERY_HEALTH_CMD = join(PROJECT_ROOT, 'scrum_workflow', 'commands', 'delivery-health.md');
-const DELIVERY_HEALTH_UTILS = join(PROJECT_ROOT, 'scrum_workflow', 'utils', 'delivery-health.js');
-const DELIVERY_HEALTH_WORKFLOW = join(PROJECT_ROOT, 'scrum_workflow', 'workflows', 'delivery-health.md');
+const DELIVERY_HEALTH_CMD = join(PROJECT_ROOT, 'src', 'core', 'commands', 'delivery-health.md');
+const DELIVERY_HEALTH_UTILS = join(PROJECT_ROOT, 'src', 'core', 'utils', 'delivery-health.js');
+const DELIVERY_HEALTH_WORKFLOW = join(PROJECT_ROOT, 'src', 'core', 'workflows', 'delivery-health.md');
 const SPRINTS_OUTPUT_DIR = join(PROJECT_ROOT, '_scrum-output', 'sprints');
 
 // Helper to create a mock story with given status

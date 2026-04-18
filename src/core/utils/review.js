@@ -359,9 +359,11 @@ export function updateApprovalTemplateWithReviewRound(templatePath, reviewRefere
  * @returns {Object} { compliant: boolean, violations: string[] }
  */
 export function verifyReviewWriteBoundaryCompliance(ticketId, modifiedFiles) {
+  // Match any sprint output root (e.g. _scrum-output or _test-output) so
+  // integration tests can operate on an isolated fixture directory.
   const allowedPatterns = [
-    new RegExp(`_scrum-output/sprints/${ticketId}/review-\\d+\\.md$`),
-    new RegExp(`_scrum-output/sprints/${ticketId}/story\\.md$`)
+    new RegExp(`[/\\\\]sprints[/\\\\]${ticketId}[/\\\\]review-\\d+\\.md$`),
+    new RegExp(`[/\\\\]sprints[/\\\\]${ticketId}[/\\\\]story\\.md$`)
   ];
 
   const prohibitedPatterns = [

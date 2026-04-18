@@ -22,9 +22,9 @@ const __dirname = dirname(__filename);
 
 // Test paths
 const PROJECT_ROOT = join(__dirname, '..', '..', '..');
-const AUDIT_UTILS = join(PROJECT_ROOT, 'scrum_workflow', 'utils', 'audit.js');
-const AUDIT_WORKFLOW = join(PROJECT_ROOT, 'scrum_workflow', 'workflows', 'audit.md');
-const AUDIT_OUTPUT_DIR = join(PROJECT_ROOT, 'scrum_workflow', '_scrum-output', 'audit');
+const AUDIT_UTILS = join(PROJECT_ROOT, 'src', 'core', 'utils', 'audit.js');
+const AUDIT_WORKFLOW = join(PROJECT_ROOT, 'src', 'core', 'workflows', 'audit.md');
+const AUDIT_OUTPUT_DIR = join(PROJECT_ROOT, '_scrum-output', 'audit');
 
 // ISO 8601 UTC timestamp regex
 const ISO_8601_UTC_REGEX = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(\.\d{3})?Z$/;

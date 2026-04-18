@@ -23,7 +23,7 @@ import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 
 const PROJECT_ROOT = process.cwd();
-const AGENTS_DIR = join(PROJECT_ROOT, 'scrum_workflow', 'agents');
+const AGENTS_DIR = join(PROJECT_ROOT, 'src', 'core', 'agents');
 const DIST_AGENTS_DIR = join(PROJECT_ROOT, 'create-scrum-workflow', 'scrum_workflow', 'agents');
 const TEMPLATE_AGENTS_DIR = join(PROJECT_ROOT, 'create-scrum-workflow', 'templates', 'scrum_workflow', 'agents');
 

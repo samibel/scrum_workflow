@@ -20,8 +20,8 @@ const __dirname = dirname(__filename);
 
 // Test paths
 const PROJECT_ROOT = join(__dirname, '..', '..', '..');
-const DELIVERY_HEALTH_UTILS = join(PROJECT_ROOT, 'scrum_workflow', 'utils', 'delivery-health.js');
-const DELIVERY_HEALTH_WORKFLOW = join(PROJECT_ROOT, 'scrum_workflow', 'workflows', 'delivery-health.md');
+const DELIVERY_HEALTH_UTILS = join(PROJECT_ROOT, 'src', 'core', 'utils', 'delivery-health.js');
+const DELIVERY_HEALTH_WORKFLOW = join(PROJECT_ROOT, 'src', 'core', 'workflows', 'delivery-health.md');
 const AUDIT_OUTPUT_DIR = join(PROJECT_ROOT, '_scrum-output', 'audit');
 
 // Helper to create mock audit entries for policy violations

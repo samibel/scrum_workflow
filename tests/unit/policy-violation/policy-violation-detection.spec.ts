@@ -33,8 +33,8 @@ import { join } from 'path';
 
 // Test paths - using process.cwd() which will be the project root during test execution
 const PROJECT_ROOT = process.cwd();
-const POLICY_CHECK_CMD = join(PROJECT_ROOT, 'scrum_workflow', 'commands', 'policy-check.md');
-const POLICY_VIOLATION_WORKFLOW = join(PROJECT_ROOT, 'scrum_workflow', 'workflows', 'policy-violation.md');
+const POLICY_CHECK_CMD = join(PROJECT_ROOT, 'src', 'core', 'commands', 'policy-check.md');
+const POLICY_VIOLATION_WORKFLOW = join(PROJECT_ROOT, 'src', 'core', 'workflows', 'policy-violation.md');
 const AUDIT_OUTPUT_DIR = join(PROJECT_ROOT, '_scrum-output', 'audit');
 const STORY_FILE = join(PROJECT_ROOT, '_bmad-output', 'implementation-artifacts', '8-2-implement-policy-violation-detection.md');
 

@@ -39,11 +39,17 @@ templates/
 - `skill-project-architect.md`: Architecture skill
 
 ### Workflow Templates
-- `story.md`: Story file with YAML frontmatter
+- `story.md`: Story file with YAML frontmatter (includes optional `parent_epic` and `epic_index` for greenfield-origin stories)
 - `refinement.md`: Agent refinement output
 - `plan.md`: Implementation plan
 - `review.md`: Code review findings
 - `approval.md`: Human approval record
+
+### Greenfield Templates
+- `brief.md`: Product brief (frontmatter: `brief_id`, `status: captured|interview|complete|decomposed`, `personas`, `goals`, `non_goals`, `open_questions`, `interview_rounds`)
+- `epic.md`: Individual epic (frontmatter: `epic_id`, `parent_brief`, `status: planned|drafting|drafted|in-progress`, `epic_index`, `story_count_estimate`, `domain_tags`)
+- `epic-index.md`: Epic index with Mermaid dependency graph (frontmatter: `parent_brief`, `epic_count`, `epics[]`)
+- `draft-stories.md`: Aggregated draft candidates for one epic (frontmatter: `parent_epic`, `drafts[]` with index/title/sw_id_suggestion/type/risk_level/domain_tags)
 
 ## Usage
 

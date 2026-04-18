@@ -18,10 +18,18 @@ workflow-name.md
 └── Error handling
 ```
 
-## Planned Workflows
+## Workflows
+
+### Greenfield (pre-ticket)
+
+- **brief-creation.md**: Raw-idea capture + parallel brainstorming + aggressive Reflection Loop until no open questions remain (`/scrum-create-brief`)
+- **epic-decomposition.md**: Plan-Then-Execute decomposition of a brief into a bounded epic graph (`/scrum-decompose-epics`)
+- **story-drafting.md**: Orchestrator-Worker parallel story drafting for one epic (`/scrum-draft-stories`)
+
+### Story Lifecycle
 
 - **project-context.md**: Two-phase codebase analysis and context generation
-- **ticket-creation.md**: Story generation from user requirements
+- **ticket-creation.md**: Story generation from user requirements (supports `--from-epic --from-draft` to promote a greenfield draft)
 - **refinement.md**: Multi-agent perspective gathering and synthesis
 - **readiness-check.md**: Story completeness validation before implementation
 - **development.md**: Implementation from story specification

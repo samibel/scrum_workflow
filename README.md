@@ -1,7 +1,7 @@
 # Scrum Workflow
 
-**Version:** 1.2.0  
-**Status:** Production-Ready with 20 Commands  
+**Version:** 1.3.0  
+**Status:** Production-Ready with 23 Commands  
 **Platform Support:** Claude Code, Cursor, Windsurf, GitHub Copilot, Cline, Universal
 
 A spec-first, AI-assisted development workflow with human oversight at critical gates. Built for Claude Code and compatible AI coding assistants.
@@ -53,6 +53,43 @@ scrum-workflow/                 # Root — clean, minimal
 - User projects install with `frameworkPath: "scrum_workflow"` (unchanged, still works)
 - Only **repository** structure changed; user **installations** completely unaffected
 - Existing projects continue to work without any migration
+
+---
+
+## 🌱 Greenfield: Von der Idee zum Ticket
+
+**Neu in v1.3:** Wenn du ein Projekt bei null startest und nur eine Idee hast, musst du nicht sofort Tickets schreiben. Der Greenfield-Flow führt dich von einer rohen Idee über einen strukturierten Product Brief zu Epics und schließlich zu Ticket-Drafts — alles mit Multi-Agent-Patterns von [agentic-patterns.com](https://www.agentic-patterns.com/patterns?tag=multi-agent).
+
+```bash
+# 1. Idee einfangen → Product Brief (3 Agents parallel + aggressive Interview-Loop)
+/scrum-create-brief "A habit tracker that gamifies daily routines for ADHD users"
+# → _scrum-output/briefs/PB-001.md (status: complete, keine offenen Fragen)
+
+# 2. Brief → Epics (Plan-Then-Execute: ein Agent, eine deterministische Entscheidung)
+/scrum-decompose-epics PB-001
+# → _scrum-output/epics/index.md + EP-001..EP-00N/epic.md
+
+# 3. Pro Epic → Story-Drafts (Orchestrator-Worker: N Subagents parallel)
+/scrum-draft-stories EP-001
+# → _scrum-output/epics/EP-001/draft-stories.md (N Kandidaten)
+
+# 4. Einzelne Drafts als Tickets promoten (Human-Gate pro Ticket)
+/scrum-create-ticket SW-001 --from-epic EP-001 --from-draft 1
+# → bestehender Lifecycle: refine → dev → review → approve
+```
+
+**Multi-Agent-Patterns im Einsatz:**
+
+| Phase | Pattern | Wirkung |
+|-------|---------|---------|
+| Brief-Brainstorming | *Iterative Multi-Agent Brainstorming* | Product + Architect + QA liefern parallel Perspektiven — keine Engineering-Tunnelvision |
+| Brief-Interview | *Reflection Loop* (aggressive) | Läuft bis keine offenen Fragen mehr bleiben — kein halbgarer Brief |
+| Epic-Decomposition | *Plan-Then-Execute* | Ein Agent committet sich auf den gesamten Epic-Graph — keine Drift |
+| Story-Drafting | *Orchestrator-Worker* | N Subagents drafts in parallel, map-reduce zum Aggregate — Speed-up bei großen Epics |
+
+**Resume-fähig:** Jeder Greenfield-Command speichert einen State-File und kann nach Ctrl-C oder Crash per `--resume` fortgesetzt werden.
+
+Details: [src/docs/greenfield-workflow.md](./src/docs/greenfield-workflow.md)
 
 ---
 
@@ -111,7 +148,9 @@ graph TD
     SM["🎯 Scrum Master<br/>Ensures Quality<br/>Removes Blockers"]
     AI["🤖 AI Assistants<br/>Refine & Develop<br/>Review Code"]
     
-    PO -->|Story| Phase1["<b>Phase 1: Create & Refine</b><br/>3 AI Agents (Architect+Dev+QA)<br/>Cross-talk rounds<br/>Wideband Delphi estimation"]
+    PO -->|Idee| Phase0["<b>Phase 0: Greenfield (optional)</b><br/>Idee → Brief → Epics → Drafts<br/>3 Multi-Agent-Patterns<br/>Resume-fähig"]
+    Phase0 -->|Draft promoted| Phase1
+    PO -->|Story direkt| Phase1["<b>Phase 1: Create & Refine</b><br/>3 AI Agents (Architect+Dev+QA)<br/>Cross-talk rounds<br/>Wideband Delphi estimation"]
     Dev -.->|Implements| Phase3
     SM -.->|Oversees| Phase4
     AI --> Phase1
@@ -132,6 +171,7 @@ graph TD
     style Dev fill:#c8e6c9
     style SM fill:#ffe0b2
     style AI fill:#f8bbd0
+    style Phase0 fill:#e0f7e9
     style Phase1 fill:#f3e5f5
     style Phase2 fill:#fce4ec
     style Phase3 fill:#e8f5e9
@@ -427,11 +467,20 @@ stateDiagram-v2
 
 **Visual Overview:** See [ALL-COMMANDS.md](./src/docs/ALL-COMMANDS.md) for all 20 commands as Mermaid diagrams
 
+### Greenfield (3 Commands, optional Phase 0)
+
+| Command | Phase | Artifact Transition |
+|---------|-------|---------------------|
+| `/scrum-create-brief "raw idea"` | Capture Idea | → `PB-XXX.md` (`status: complete`) |
+| `/scrum-decompose-epics PB-XXX` | Decompose | → `EP-001.md` ... (`status: planned`) + brief → `decomposed` |
+| `/scrum-draft-stories EP-XXX` | Draft Candidates | → `draft-stories.md` + epic → `drafted` |
+
 ### Story Lifecycle (6 Commands)
 
 | Command | Phase | Status Transition |
 |---------|-------|-------------------|
-| `/scrum-create-ticket SW-XXX "description"` | Create | → `draft` |
+| `/scrum-create-ticket SW-XXX "description"` | Create (freeform) | → `draft` |
+| `/scrum-create-ticket SW-XXX --from-epic EP-XXX --from-draft N` | Create (from draft) | → `draft` + epic → `in-progress` |
 | `/scrum-refine-ticket SW-XXX` | Refine | `draft` → `refinement` → `refined` |
 | `/scrum-refine-story SW-XXX` | Validate | `refined` → `ready-for-dev` |
 | `/scrum-dev-story SW-XXX` | Develop | `ready-for-dev` → `in-progress` |
@@ -453,6 +502,9 @@ stateDiagram-v2
 
 | Command | Pattern | Why |
 |---------|---------|-----|
+| `/scrum-create-brief` | [Iterative Multi-Agent Brainstorming](https://www.agentic-patterns.com/patterns/iterative-multi-agent-brainstorming) + [Reflection Loop](https://www.agentic-patterns.com/patterns/reflection) | Parallel perspectives + aggressive open-question resolution |
+| `/scrum-decompose-epics` | [Plan-Then-Execute](https://www.agentic-patterns.com/patterns/plan-then-execute-pattern) | Single agent commits to the full epic graph upfront — no drift |
+| `/scrum-draft-stories` | [Orchestrator-Worker](https://www.agentic-patterns.com/patterns) | N parallel subagents draft one story each; map-reduce aggregation |
 | `/scrum-refine-ticket` | [Sub-Agent Spawning](https://www.agentic-patterns.com) | 3 isolated agents prevent groupthink |
 | `/scrum-refine-story` | [Feature List as Immutable Contract](https://www.agentic-patterns.com/patterns/feature-list-as-immutable-contract) | Agent validates but cannot modify requirements |
 | `/scrum-dev-story` | [Inversion of Control](https://www.agentic-patterns.com/patterns/inversion-of-control) | Agent executes plan without self-review |
@@ -715,7 +767,7 @@ npm -w src/cli run sync-templates
 
 ---
 
-**Last Updated:** 2026-04-09  
-**Version:** 1.2.0 (Production-Ready)  
+**Last Updated:** 2026-04-18  
+**Version:** 1.3.0 (Production-Ready)  
 **Master Documentation:** [docs/index.md](./src/docs/index.md)  
 **Quick Navigation:** [DOCUMENTATION-GUIDE.md](./src/docs/DOCUMENTATION-GUIDE.md)

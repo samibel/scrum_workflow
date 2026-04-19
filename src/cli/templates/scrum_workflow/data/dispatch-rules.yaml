@@ -101,14 +101,16 @@ risk_based_additions:
 # Multiple tags can match, each adding their respective agents.
 
 domain_tag_additions:
-  # Frontend/UI/UX tags add ux-reviewer for design and usability review
+  # Frontend/UI/UX/OX tags add ux-reviewer for design and usability review
+  # OX is optional: if no OX/UX-related tag is present, ux-reviewer is not dispatched
   ux_review:
     tags:
       - frontend
       - ui
       - ux
+      - ox
     add_agent: ux-reviewer
-    description: "Frontend/UI/UX domain tags add ux-reviewer for design and usability review"
+    description: "Frontend/UI/UX/OX domain tags add ux-reviewer for design and usability review (optional)"
 
   # API/Contract/Integration tags add contract-validator for API contract review
   contract_review:

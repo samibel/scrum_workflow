@@ -8,7 +8,7 @@ spawns_agents: dynamic  # Determined at runtime per story type, risk, domain tag
   # Light depth: [developer] only (short-circuit)
   # Infrastructure type: [architect, developer] (skip QA)
   # High/critical risk: adds security-reviewer
-  # Frontend/UI/UX tags: adds ux-reviewer
+  # Frontend/UI/UX/OX tags: adds ux-reviewer (optional)
   # API/contract/integration tags: adds contract-validator
 features:
   doc_discovery: true   # Always enabled
@@ -60,7 +60,7 @@ After depth detection, the agent-dispatcher skill (`scrum_workflow/skills/agent-
 1. **Depth check**: If `depth: light`, short-circuit to `[developer]` only (preserves existing light depth behavior)
 2. **Type-based override**: Story `type` may replace the default agent set (e.g., `infrastructure` -> `[architect, developer]`, skip QA)
 3. **Risk-based addition**: Story `risk_level` may add agents (e.g., `high`/`critical` -> add `security-reviewer`)
-4. **Domain-tag addition**: Story `domain_tags` may add agents (e.g., `[frontend]` -> add `ux-reviewer`; `[api]` -> add `contract-validator`)
+4. **Domain-tag addition**: Story `domain_tags` may add agents (e.g., `[frontend]`, `[ui]`, `[ux]`, or `[ox]` -> add `ux-reviewer`; `[api]` -> add `contract-validator`)
 5. **Agent validation**: Each dispatched agent's file must exist at `scrum_workflow/agents/{name}.md`; missing agents are skipped gracefully with a logged note
 
 **Dispatch rules** are defined in `scrum_workflow/data/dispatch-rules.yaml` and are fully configurable.
@@ -68,6 +68,8 @@ After depth detection, the agent-dispatcher skill (`scrum_workflow/skills/agent-
 **Fallback**: If `agent_dispatch_enabled: false` in config.yaml, or if story attributes are missing/ambiguous, the default agent set `[architect, developer, qa]` is used.
 
 The dispatched agent set and rationale are passed to the refinement workflow for agent spawning and logged in the refinement artifact's Dispatch Summary section.
+
+**Optional OX/UX review policy:** UX/OX review is opt-in via `domain_tags`. If no UI/UX/OX-related tag is present (or no OX board exists), `ux-reviewer` is not dispatched and refinement proceeds with the remaining selected agents.
 
 ## Output
 
@@ -104,6 +106,18 @@ The dispatched agent set and rationale are passed to the refinement workflow for
 ### Doc Discovery (Story 10.1)
 
 Prompt user for additional documents (file paths or URLs) to include in agent context. Auto-detected context from `_scrum-output/context/` is always included.
+
+**Optional Excalidraw draft support:** If the team wants a visual draft for OX/UX flows, an Excalidraw link can be provided (for example created with `excalidraw-diagram-skill`). This is optional and must not block refinement when no diagram is available.
+
+#### Using MCP + `excalidraw-diagram-skill` (User Guidance)
+
+If a user wants to provide an Excalidraw draft during refinement, instruct them to:
+1. Ensure the Excalidraw MCP/server integration is installed and available in their Codex environment.
+2. Run the `excalidraw-diagram-skill` to generate or update the diagram draft for the story.
+3. Save/share the resulting Excalidraw URL (or exported artifact link).
+4. Paste that link into doc-discovery as an additional URL under the optional Excalidraw draft entry.
+
+If MCP is not configured, continue refinement without the diagram and record `"None provided"` for the optional Excalidraw field.
 
 ### Discussion Rounds (Story 10.2)
 

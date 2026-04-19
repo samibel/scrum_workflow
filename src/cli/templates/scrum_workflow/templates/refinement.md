@@ -31,6 +31,12 @@ agents:
 **URLs:**
 - {{url_or_"None provided"}}
 
+**OX/UX Board (Optional):**
+- {{ox_board_url_or_"None provided"}}
+
+**Excalidraw Draft (Optional):**
+- {{excalidraw_draft_url_or_"None provided"}}
+
 ## Round 0: Initial Perspectives
 
 <!-- Agent analyses from isolated spawns, stored in temp files -->

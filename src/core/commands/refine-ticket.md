@@ -69,7 +69,7 @@ After depth detection, the agent-dispatcher skill (`scrum_workflow/skills/agent-
 
 The dispatched agent set and rationale are passed to the refinement workflow for agent spawning and logged in the refinement artifact's Dispatch Summary section.
 
-**Optional OX/UX review policy:** UX/OX review is opt-in via `domain_tags`. If no UI/UX/OX-related tag is present (or no OX board exists), `ux-reviewer` is not dispatched and refinement proceeds with the remaining selected agents.
+**Optional OX/UX review policy:** UX/OX review is opt-in via `domain_tags`. If no UI/UX/OX-related tag is present, `ux-reviewer` is not dispatched and refinement proceeds with the remaining selected agents.
 
 ## Output
 

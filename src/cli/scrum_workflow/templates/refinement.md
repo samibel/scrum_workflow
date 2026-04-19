@@ -11,12 +11,10 @@ agents:
 
 # Refinement: {{story_title}}
 
-## Optional OX/UX Board
-
+**OX/UX Board (Optional):**
 - {{ox_board_url_or_"None provided"}}
 
-## Optional Excalidraw Draft
-
+**Excalidraw Draft (Optional):**
 - {{excalidraw_draft_url_or_"None provided"}}
 
 ## Architect Perspective

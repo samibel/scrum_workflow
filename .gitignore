@@ -15,3 +15,7 @@ coverage/
 coverageReport/
 coverage_report/
 *.log
+
+# Scrum workflow directory
+scrum_workflow/
+.scrum-workflow-lock.json

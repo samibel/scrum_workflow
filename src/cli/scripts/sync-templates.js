@@ -16,9 +16,9 @@ import { join, relative, resolve, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const ROOT = resolve(__dirname, '..', '..');
-const SOURCE = join(ROOT, 'scrum_workflow');
-const TARGET = join(ROOT, 'create-scrum-workflow', 'templates', 'scrum_workflow');
+const ROOT = resolve(__dirname, '..', '..', '..');
+const SOURCE = join(ROOT, 'src', 'core');
+const TARGET = join(ROOT, 'src', 'cli', 'templates', 'scrum_workflow');
 
 const CHECK_MODE = process.argv.includes('--check');
 

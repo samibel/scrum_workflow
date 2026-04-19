@@ -18,6 +18,7 @@ coverage_report/
 
 # Scrum workflow directory
 scrum_workflow/
+!src/cli/templates/scrum_workflow/
 .scrum-workflow-lock.json
 
 # Claude skills - scrum workflow

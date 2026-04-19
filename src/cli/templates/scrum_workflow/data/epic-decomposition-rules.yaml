@@ -1,0 +1,79 @@
+# Epic Decomposition Rules Reference Data
+# Used by the epic-decomposer agent to produce a deterministic epic graph from a brief.
+# Referenced by: scrum_workflow/agents/epic-decomposer.md
+# Invoked during: /scrum-decompose-epics workflow
+
+# =============================================================================
+# Size Heuristics
+# =============================================================================
+# Target story count per epic. Used to decide when to split or merge clusters.
+
+size:
+  target_story_count: 5       # Default target stories per epic
+  min_story_count: 3          # Below this, consider merging with adjacent epic
+  max_story_count: 7          # Above this, split the cluster
+  max_epics_per_brief: 8      # Hard ceiling to keep the plan tractable
+
+# =============================================================================
+# Clustering Strategies
+# =============================================================================
+# Rules for grouping brief capabilities into epics.
+# Rules are evaluated in order; first match wins.
+
+clustering_rules:
+  - name: by_user_journey
+    description: "Group capabilities that a single persona uses in a coherent flow"
+    weight: 1.0
+    preferred: true
+
+  - name: by_domain_boundary
+    description: "Group by domain (auth, billing, reporting) when capabilities share a data model"
+    weight: 0.8
+
+  - name: by_outcome
+    description: "Group by the business outcome they contribute to"
+    weight: 0.7
+
+  # Anti-pattern: never cluster by technical layer. Listed to allow explicit rejection.
+  - name: by_technical_layer
+    description: "AVOID: clustering by backend/frontend/database splits user value across epics"
+    weight: 0.0
+    forbidden: true
+
+# =============================================================================
+# Epic Ordering Rules
+# =============================================================================
+# Determine dependency order when multiple epics depend on others.
+
+ordering:
+  priority_categories:
+    # Epics in these categories typically come first
+    - foundational            # Auth, base data model, core infrastructure
+    - enablers                # Capabilities other epics depend on
+  deprioritized_categories:
+    # These typically come last
+    - analytics
+    - reporting
+    - admin-tooling
+
+# =============================================================================
+# Domain Tag Inference
+# =============================================================================
+# Shared with classification-rules.yaml. Epics inherit the union of their stories' domains.
+
+domain_tags:
+  auth: ["login", "signup", "oauth", "session", "password", "2fa", "token"]
+  billing: ["payment", "subscription", "invoice", "checkout", "stripe"]
+  ui: ["page", "form", "component", "layout", "dashboard"]
+  api: ["endpoint", "rest", "graphql", "webhook"]
+  data: ["database", "schema", "migration", "model"]
+  ops: ["deploy", "monitor", "log", "pipeline"]
+
+# =============================================================================
+# Output Constraints
+# =============================================================================
+
+output:
+  require_epic_acceptance_criteria: true   # Each epic must have >=2 epic-level AC
+  require_dependency_graph: true           # Always emit Mermaid graph even if no dependencies
+  require_non_goals: true                  # Each epic must list explicit out-of-scope items

@@ -282,7 +282,7 @@ export function formatEmptyState() {
  * @returns {{ done: number, total: number }} Subtask counts
  */
 export function parseSubtasks(content) {
-  const subtasksMatch = content.match(/## Subtasks\n([\s\S]*?)(?=\n## |\n---|\s*$)/);
+  const subtasksMatch = content.match(/## Subtasks\r?\n([\s\S]*?)(?=\r?\n## |\r?\n---|\s*$)/);
   if (!subtasksMatch) return { done: 0, total: 0 };
 
   const section = subtasksMatch[1];
@@ -346,7 +346,7 @@ export function formatDashboard(stories, dateStr = new Date().toISOString().spli
 
   // Header row
   const title = `SPRINT BOARD`;
-  const headerInner = cell(title + ' '.repeat(Math.max(0, totalWidth - 4 - title.length - dateStr.length)) + dateStr, totalWidth - 2);
+  const headerInner = cell(title + ' '.repeat(Math.max(0, totalWidth - 4 - title.length - dateStr.length)) + dateStr, totalWidth - 4);
   const lines = [];
 
   // Top border
@@ -357,9 +357,9 @@ export function formatDashboard(stories, dateStr = new Date().toISOString().spli
   lines.push('├' + DASHBOARD_COLUMNS.map(() => '─'.repeat(COL_WIDTH)).join('┬') + '┤');
 
   // Column label row
-  lines.push('│' + DASHBOARD_COLUMNS.map(c => cell(` ${c.label}`, COL_WIDTH + 1)).join('│').slice(0, -1 * (DASHBOARD_COLUMNS.length - 1)) + '│');
+  lines.push('│' + DASHBOARD_COLUMNS.map(c => cell(` ${c.label}`, COL_WIDTH)).join('│') + '│');
   // Sub-label row
-  lines.push('│' + DASHBOARD_COLUMNS.map(c => cell(`  ${c.sub}`, COL_WIDTH + 1)).join('│').slice(0, -1 * (DASHBOARD_COLUMNS.length - 1)) + '│');
+  lines.push('│' + DASHBOARD_COLUMNS.map(c => cell(`  ${c.sub}`, COL_WIDTH)).join('│') + '│');
 
   // Body separator
   lines.push('├' + DASHBOARD_COLUMNS.map(() => '─'.repeat(COL_WIDTH)).join('┼') + '┤');
@@ -403,7 +403,7 @@ export function formatDashboard(stories, dateStr = new Date().toISOString().spli
   // Footer stats
   const total = stories.length;
   const actionNeeded = stories.filter(s => requiresAction(s.status)).length;
-  const blocked = stories.filter(s => ['blocked', 'changes-needed'].includes(s.status)).length;
+  const blocked = stories.filter(s => s.status === 'blocked').length;
   const done = stories.filter(s => s.status === 'done').length;
   lines.push(` Total: ${total}  |  ⚠️ Action Needed: ${actionNeeded}  |  🔴 Blocked: ${blocked}  |  ✅ Done: ${done}`);
 

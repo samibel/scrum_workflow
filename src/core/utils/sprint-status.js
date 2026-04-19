@@ -276,5 +276,139 @@ export function formatEmptyState() {
   return 'No stories found. Start with /scrum-create-ticket';
 }
 
+/**
+ * Parses subtask completion from story.md content
+ * @param {string} content - Full story.md file content
+ * @returns {{ done: number, total: number }} Subtask counts
+ */
+export function parseSubtasks(content) {
+  const subtasksMatch = content.match(/## Subtasks\n([\s\S]*?)(?=\n## |\n---|\s*$)/);
+  if (!subtasksMatch) return { done: 0, total: 0 };
+
+  const section = subtasksMatch[1];
+  const done = (section.match(/- \[x\]/gi) || []).length;
+  const open = (section.match(/- \[ \]/g) || []).length;
+  return { done, total: done + open };
+}
+
+/**
+ * Renders a compact 4-char progress bar for task completion
+ * @param {number} done - Completed tasks
+ * @param {number} total - Total tasks
+ * @returns {string} Formatted progress string
+ */
+export function formatTaskProgress(done, total) {
+  if (total === 0) return 'no tasks';
+  if (done === total) return '✓ done';
+
+  const filled = Math.round((done / total) * 4);
+  const bar = '█'.repeat(filled) + '░'.repeat(4 - filled);
+  return `[${bar}] ${done}/${total}`;
+}
+
+// Column groupings for the Kanban dashboard
+const DASHBOARD_COLUMNS = [
+  { label: '📝 BACKLOG', sub: 'draft/refined/ready', statuses: ['draft', 'refined', 'ready-for-dev'] },
+  { label: '🔧 IN PROGRESS', sub: 'in-prog/blocked', statuses: ['in-progress', 'changes-needed', 'blocked'] },
+  { label: '👀 REVIEW', sub: 'review/approved', statuses: ['review', 'approved'] },
+  { label: '✅ DONE', sub: 'done/cancelled', statuses: ['done', 'cancelled'] },
+];
+
+const COL_WIDTH = 20;
+const CARD_LINES = 4; // lines per story card: header, title, tasks, action
+
+/**
+ * Pads or truncates a string to an exact width
+ * @param {string} str
+ * @param {number} width
+ * @returns {string}
+ */
+function cell(str, width) {
+  const s = String(str ?? '');
+  return s.length >= width ? s.substring(0, width) : s + ' '.repeat(width - s.length);
+}
+
+/**
+ * Renders the ASCII Kanban dashboard
+ * @param {Array} stories - Story objects (with subtasks: {done, total} attached)
+ * @returns {string} Full dashboard string
+ */
+export function formatDashboard(stories, dateStr = new Date().toISOString().split('T')[0]) {
+  const colCount = DASHBOARD_COLUMNS.length;
+  const totalWidth = 1 + colCount * (COL_WIDTH + 1); // borders included
+
+  // Group stories by column
+  const grouped = DASHBOARD_COLUMNS.map(col =>
+    stories.filter(s => col.statuses.includes(s.status))
+  );
+
+  const maxRows = Math.max(...grouped.map(g => g.length), 0);
+
+  // Header row
+  const title = `SPRINT BOARD`;
+  const headerInner = cell(title + ' '.repeat(Math.max(0, totalWidth - 4 - title.length - dateStr.length)) + dateStr, totalWidth - 2);
+  const lines = [];
+
+  // Top border
+  lines.push('┌' + '─'.repeat(totalWidth - 2) + '┐');
+  lines.push(`│ ${headerInner} │`);
+
+  // Column headers separator
+  lines.push('├' + DASHBOARD_COLUMNS.map(() => '─'.repeat(COL_WIDTH)).join('┬') + '┤');
+
+  // Column label row
+  lines.push('│' + DASHBOARD_COLUMNS.map(c => cell(` ${c.label}`, COL_WIDTH + 1)).join('│').slice(0, -1 * (DASHBOARD_COLUMNS.length - 1)) + '│');
+  // Sub-label row
+  lines.push('│' + DASHBOARD_COLUMNS.map(c => cell(`  ${c.sub}`, COL_WIDTH + 1)).join('│').slice(0, -1 * (DASHBOARD_COLUMNS.length - 1)) + '│');
+
+  // Body separator
+  lines.push('├' + DASHBOARD_COLUMNS.map(() => '─'.repeat(COL_WIDTH)).join('┼') + '┤');
+
+  // Story cards
+  for (let row = 0; row < Math.max(maxRows, 1); row++) {
+    // 4 lines per card slot
+    for (let line = 0; line < CARD_LINES; line++) {
+      const rowCells = DASHBOARD_COLUMNS.map((_, ci) => {
+        const story = grouped[ci][row];
+        if (!story) return ' '.repeat(COL_WIDTH);
+
+        if (line === 0) {
+          const badge = story.status === 'changes-needed' ? '⚠️ ' : story.status === 'blocked' ? '🔴 ' : '';
+          const age = story.age !== null ? ` ${story.age}d` : '';
+          return cell(` ${badge}${story.ticket}${age}`, COL_WIDTH);
+        }
+        if (line === 1) {
+          const title = (story.title || 'Untitled').substring(0, COL_WIDTH - 2);
+          return cell(` ${title}`, COL_WIDTH);
+        }
+        if (line === 2) {
+          const sub = story.subtasks ?? { done: 0, total: 0 };
+          return cell(` Tasks: ${formatTaskProgress(sub.done, sub.total)}`, COL_WIDTH);
+        }
+        // line === 3: pending action
+        return cell(` ${story.pendingAction || 'N/A'}`, COL_WIDTH);
+      });
+      lines.push('│' + rowCells.join('│') + '│');
+    }
+
+    // Blank separator between cards (except last row)
+    if (row < maxRows - 1) {
+      lines.push('│' + DASHBOARD_COLUMNS.map(() => ' '.repeat(COL_WIDTH)).join('│') + '│');
+    }
+  }
+
+  // Bottom border
+  lines.push('└' + DASHBOARD_COLUMNS.map(() => '─'.repeat(COL_WIDTH)).join('┴') + '┘');
+
+  // Footer stats
+  const total = stories.length;
+  const actionNeeded = stories.filter(s => requiresAction(s.status)).length;
+  const blocked = stories.filter(s => ['blocked', 'changes-needed'].includes(s.status)).length;
+  const done = stories.filter(s => s.status === 'done').length;
+  lines.push(` Total: ${total}  |  ⚠️ Action Needed: ${actionNeeded}  |  🔴 Blocked: ${blocked}  |  ✅ Done: ${done}`);
+
+  return lines.join('\n');
+}
+
 // Re-export constants for external use
-export { STATUS_PRIORITY, PENDING_ACTION_MAP, STATUS_COLORS };
+export { STATUS_PRIORITY, PENDING_ACTION_MAP, STATUS_COLORS, DASHBOARD_COLUMNS };

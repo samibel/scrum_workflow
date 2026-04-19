@@ -69,6 +69,10 @@ workflow_depth_thresholds:
 # When disabled, uses static default set: [architect, developer, qa]
 agent_dispatch_enabled: true
 
+# Sprint status display settings
+sprint_status:
+  display_mode: table    # 'table' (default) | 'dashboard' (ASCII Kanban board with task progress)
+
 # Framework version (for copy-based updates)
 # Used to track framework version for distribution and migration
 framework_version: 1.0.0

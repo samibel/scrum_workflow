@@ -27,7 +27,7 @@ const TEST_DIR = dirname(fileURLToPath(import.meta.url));
 const PROJECT_ROOT = join(TEST_DIR, '../../../../..');
 const CREATE_SCRUM_WORKFLOW_ROOT = join(PROJECT_ROOT, 'src', 'cli');
 const UPDATE_CMD_PATH = join(CREATE_SCRUM_WORKFLOW_ROOT, 'src', 'commands', 'update.js');
-const STORY_FILE = join(PROJECT_ROOT, '_bmad-output', 'implementation-artifacts', '5-2-implement-cli-update-migration-command.md');
+const STORY_FILE = join(PROJECT_ROOT, '_scrum-output', 'implementation-artifacts', '5-2-implement-cli-update-migration-command.md');
 
 // ============================================================================
 // AC2: status_history Field Migration

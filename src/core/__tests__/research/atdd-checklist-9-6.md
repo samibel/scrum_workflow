@@ -8,7 +8,7 @@ lastStep: 'step-04-generate-tests'
 lastSaved: '2026-03-30'
 storyId: '9-6'
 inputDocuments:
-  - '_bmad-output/planning-artifacts/epics.md (Story 9.6)'
+  - '_scrum-output/planning-artifacts/epics.md (Story 9.6)'
   - 'scrum_workflow/workflows/research-technical.md'
   - 'scrum_workflow/agents/researcher.md'
   - 'scrum_workflow/__tests__/research/swarm-migration.test.md'

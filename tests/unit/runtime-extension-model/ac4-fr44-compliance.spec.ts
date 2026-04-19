@@ -23,8 +23,8 @@ import { join } from 'path';
 
 describe('AC4: Runtime Extension Model Matches PRD and Architecture Specifications', () => {
   const frameworkRoot = join(process.cwd(), 'scrum_workflow');
-  const storyFile = join(process.cwd(), '_bmad-output', 'implementation-artifacts', '1-7-verify-align-runtime-extension-model.md');
-  const architectureFile = join(process.cwd(), '_bmad-output', 'planning-artifacts', 'architecture.md');
+  const storyFile = join(process.cwd(), '_scrum-output', 'implementation-artifacts', '1-7-verify-align-runtime-extension-model.md');
+  const architectureFile = join(process.cwd(), '_scrum-output', 'planning-artifacts', 'architecture.md');
 
   // Test 4.1: All four extension types support file-based discovery
   test.skip('[P0] All four extension types (skills, workflows, agents, commands) should use file-based specifications', () => {

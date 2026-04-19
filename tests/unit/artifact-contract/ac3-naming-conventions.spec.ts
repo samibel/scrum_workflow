@@ -29,7 +29,7 @@ describe('AC3: Story ID Format — SW-XXX naming convention', () => {
   const workflowFile = join(process.cwd(), 'scrum_workflow', 'workflows', 'ticket-creation.md');
   const storyFile = join(
     process.cwd(),
-    '_bmad-output',
+    '_scrum-output',
     'implementation-artifacts',
     '1-9-verify-align-artifact-contract.md',
   );
@@ -88,7 +88,7 @@ describe('AC3: Review Artifact Naming — review-{N}.md convention', () => {
 describe('AC3: Approval Artifact Naming — approval-{N}.md convention (deferred)', () => {
   const storyFile = join(
     process.cwd(),
-    '_bmad-output',
+    '_scrum-output',
     'implementation-artifacts',
     '1-9-verify-align-artifact-contract.md',
   );
@@ -152,7 +152,7 @@ describe('AC3: Research Report Naming — RR-XXX.md convention', () => {
 describe('AC3: Decision Record Naming — DR-XXX.md convention (deferred, Epic 7)', () => {
   const storyFile = join(
     process.cwd(),
-    '_bmad-output',
+    '_scrum-output',
     'implementation-artifacts',
     '1-9-verify-align-artifact-contract.md',
   );
@@ -172,7 +172,7 @@ describe('AC3: Decision Record Naming — DR-XXX.md convention (deferred, Epic 7
 describe('AC3: Risk Note Naming — RN-XXX.md convention (deferred, Epic 7)', () => {
   const storyFile = join(
     process.cwd(),
-    '_bmad-output',
+    '_scrum-output',
     'implementation-artifacts',
     '1-9-verify-align-artifact-contract.md',
   );
@@ -191,7 +191,7 @@ describe('AC3: Risk Note Naming — RN-XXX.md convention (deferred, Epic 7)', ()
 describe('AC3: Session Summary Naming — session-{YYYY-MM-DD}.md convention (deferred, Epic 7)', () => {
   const storyFile = join(
     process.cwd(),
-    '_bmad-output',
+    '_scrum-output',
     'implementation-artifacts',
     '1-9-verify-align-artifact-contract.md',
   );
@@ -209,7 +209,7 @@ describe('AC3: Session Summary Naming — session-{YYYY-MM-DD}.md convention (de
 // ============================================================================
 
 describe('AC3: Architecture Specification — Naming Patterns Reference', () => {
-  const architectureFile = join(process.cwd(), '_bmad-output', 'planning-artifacts', 'architecture.md');
+  const architectureFile = join(process.cwd(), '_scrum-output', 'planning-artifacts', 'architecture.md');
 
   // Test 3.14: Architecture file exists
   test('[P0] Architecture file should exist', () => {

@@ -34,7 +34,7 @@ generated: "2026-04-03"
 ## Constraints
 
 - **Platform-agnostic**: Framework must work across multiple AI coding assistant platforms (Claude Code, Copilot, Windsurf, etc.)
-- **No BMAD dependency**: The scrum_workflow framework must be fully independent from BMAD tooling
+- **No external dependency**: The scrum_workflow framework must be fully independent from external tooling
 - **Write boundaries**: Each workflow has explicit write boundaries defining what it may and may not modify
 - **Token budgets**: Agent interactions are budgeted (coordination: 4000 tokens, sub_agent: 2000 tokens for claude-code)
 - **Idempotent generation**: Context and skill files can be regenerated cleanly without leaving stale artifacts

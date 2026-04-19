@@ -27,7 +27,7 @@ const PROJECT_ROOT = join(TEST_DIR, '../../../../..');
 const CREATE_SCRUM_WORKFLOW_ROOT = join(PROJECT_ROOT, 'src', 'cli');
 const UPDATE_CMD_PATH = join(CREATE_SCRUM_WORKFLOW_ROOT, 'src', 'commands', 'update.js');
 const LOCK_FILE_MODULE = join(CREATE_SCRUM_WORKFLOW_ROOT, 'src', 'integrity', 'lock-file.js');
-const STORY_FILE = join(PROJECT_ROOT, '_bmad-output', 'implementation-artifacts', '5-2-implement-cli-update-migration-command.md');
+const STORY_FILE = join(PROJECT_ROOT, '_scrum-output', 'implementation-artifacts', '5-2-implement-cli-update-migration-command.md');
 
 // ============================================================================
 // AC3: Lock File Mechanism

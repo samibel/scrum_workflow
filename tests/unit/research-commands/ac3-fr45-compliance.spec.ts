@@ -75,7 +75,7 @@ describe('AC3: FR-45 Phase 1 Compliance — All Components', () => {
   test.skip('[P0] Story 1.8 implementation record should document FR-45 compliance', () => {
     const storyFile = join(
       projectRoot,
-      '_bmad-output',
+      '_scrum-output',
       'implementation-artifacts',
       '1-8-verify-align-research-commands.md',
     );
@@ -91,7 +91,7 @@ describe('AC3: FR-45 Phase 1 Compliance — All Components', () => {
   test.skip('[P0] Story should document all 6 FR-45 Phase 1 requirements', () => {
     const storyFile = join(
       projectRoot,
-      '_bmad-output',
+      '_scrum-output',
       'implementation-artifacts',
       '1-8-verify-align-research-commands.md',
     );
@@ -119,7 +119,7 @@ describe('AC3: FR-45 Phase 2 Features Correctly Deferred', () => {
   test.skip('[P0] Story should explicitly defer Phase 2 features to Epic 7', () => {
     const storyFile = join(
       projectRoot,
-      '_bmad-output',
+      '_scrum-output',
       'implementation-artifacts',
       '1-8-verify-align-research-commands.md',
     );
@@ -168,7 +168,7 @@ describe('AC3: FR-46 Artifact Contract Compliance', () => {
 
   // Test 3.12: FR-46 artifact contract is documented in story or PRD
   test.skip('[P0] FR-46 artifact contract should be documented', () => {
-    const prdFile = join(projectRoot, '_bmad-output', 'planning-artifacts', 'prd.md');
+    const prdFile = join(projectRoot, '_scrum-output', 'planning-artifacts', 'prd.md');
     expect(existsSync(prdFile)).toBe(true);
     const content = readFileSync(prdFile, 'utf8');
     // FR-46 artifact contract must be present
@@ -181,7 +181,7 @@ describe('AC3: FR-46 Artifact Contract Compliance', () => {
   test.skip('[P0] Story 1.8 should reference FR-46 artifact contract', () => {
     const storyFile = join(
       projectRoot,
-      '_bmad-output',
+      '_scrum-output',
       'implementation-artifacts',
       '1-8-verify-align-research-commands.md',
     );
@@ -193,7 +193,7 @@ describe('AC3: FR-46 Artifact Contract Compliance', () => {
   test.skip('[P0] Story 1.8 should have implementation completion notes', () => {
     const storyFile = join(
       projectRoot,
-      '_bmad-output',
+      '_scrum-output',
       'implementation-artifacts',
       '1-8-verify-align-research-commands.md',
     );

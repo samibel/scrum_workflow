@@ -1,0 +1,95 @@
+---
+stepsCompleted:
+  - step-01-preflight-and-context
+  - step-02-generation-mode
+  - step-03-test-strategy
+  - step-04-generate-tests (TDD red phase)
+  - step-04c-aggregate
+  - step-05-validate-and-complete
+
+---
+
+endStepFile: ./step-04c-aggregate.md'
+nextStepFile: ./step-05-validate-and-complete.md
+---
+
+inputDocuments:
+  - _scrum-output/planning-artifacts/prd.md
+  - _scrum-output/planning-artifacts/architecture.md
+  - _scrum-output/context/architecture.md
+  - _scrum-output/context/testing.md
+  - Knowledge fragments:
+              - data-factories.md
+              - component-tdd.md
+              - test-quality.md
+              - test-healing-pattern.md
+          - Core: fixture-architecture.md
+          - network-first.md
+          - selector-resilience.md
+          - timing-debugging.md
+          - visual-debugging.md
+          - nfr-criteria.md
+          - adr-quality-readiness-checklist.md
+          - api-testing-pattern.md
+          - auth-session.md
+          - log.md
+          - file-utils.md
+          - burn-in.md
+          - ci-burn-in.md
+          - fixtures-composition.md
+          - playwright-config.md
+          - playwright-cli.md
+          - probability-impact.md
+          - risk-governance.md
+          - test-level-framework.md
+          - test-priorities-matrix.md
+          - selective-testing.md
+          - selector-resilience.md
+          - timing-debugging.md
+          - visual-debugging.md
+          - nfr-criteria.md
+          - adr-quality-readiness-checklist.md
+          - api-request.md
+          - auth-session.md
+          - intercept-network-call.md
+          - recurse.md
+          - log.md
+          - file-utils.md
+          - network-error-monitor.md
+          - network-first.md
+          - network-recorder.md
+          - fixtures-composition.md
+          - playwright-cli.md
+          - probability-impact.md
+          - risk-governance.md
+          - adr-quality-readiness-checklist.md
+          - api-testing-pattern.md
+          - auth-session.md
+          - log.md
+          - file-utils.md
+          - burn-in.md
+          - ci-burn-in.md
+          - selective-testing.md
+          - selector-resilience.md
+          - timing-debugging.md
+          - visual-debugging.md
+          - nfr-criteria.md
+          - adr-quality-readiness-checklist.md
+          - api-request.md
+          - auth-session.md
+          - log.md
+          - file-utils.md
+          - burn-in.md
+          - ci-burn-in.md
+          - selective-testing.md
+          - selector-resilience.md
+          - timing-debugging.md
+          - visual-debugging.md
+          - nfr-criteria.md
+          - adr-quality-readiness-checklist.md
+          - test-levels-framework.md
+          - test-priorities-matrix.md
+          - test-quality.md
+          - test-healing-pattern.md
+          - atdd-checklist.md
+          - atdd-checklist-1.5.md

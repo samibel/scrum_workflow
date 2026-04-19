@@ -19,7 +19,7 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 
 const CREATE_TICKET_CMD = join(process.cwd(), 'scrum_workflow', 'commands', 'create-ticket.md');
-const STORY_FILE = join(process.cwd(), '_bmad-output', 'implementation-artifacts', '5-1-implement-manual-workflow-depth-override.md');
+const STORY_FILE = join(process.cwd(), '_scrum-output', 'implementation-artifacts', '5-1-implement-manual-workflow-depth-override.md');
 
 // ============================================================================
 // AC1: --depth flag parsing in create-ticket command

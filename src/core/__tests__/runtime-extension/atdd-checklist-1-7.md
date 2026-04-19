@@ -10,9 +10,9 @@ lastStep: 'step-05-validate-and-complete'
 lastSaved: '2026-04-07'
 storyId: '1-7'
 inputDocuments:
-  - '_bmad-output/planning-artifacts/prd.md (FR-44)'
-  - '_bmad-output/planning-artifacts/architecture.md (Section 2: Structure Patterns)'
-  - '_bmad-output/implementation-artifacts/1-7-verify-align-runtime-extension-model.md'
+  - '_scrum-output/planning-artifacts/prd.md (FR-44)'
+  - '_scrum-output/planning-artifacts/architecture.md (Section 2: Structure Patterns)'
+  - '_scrum-output/implementation-artifacts/1-7-verify-align-runtime-extension-model.md'
   - 'scrum_workflow/context/architecture-guidelines.md'
 ---
 
@@ -230,7 +230,7 @@ When evaluating whether a delta requires resolution:
 - **Assumption**: No centralized registry exists (needs verification)
 
 ### Next Recommended Workflow
-Proceed to **GREEN Phase** via `/bmad-dev-story 1.7` to:
+Proceed to **GREEN Phase** via `/scrum-dev-story 1.7` to:
 1. Complete delta analysis
 2. Resolve or document variances
 3. Verify FR-44 compliance

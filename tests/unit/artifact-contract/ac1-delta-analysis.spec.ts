@@ -27,11 +27,11 @@ import { join } from 'path';
 describe('AC1: Delta Analysis — Story implementation documents required analysis', () => {
   const storyFile = join(
     process.cwd(),
-    '_bmad-output',
+    '_scrum-output',
     'implementation-artifacts',
     '1-9-verify-align-artifact-contract.md',
   );
-  const prdFile = join(process.cwd(), '_bmad-output', 'planning-artifacts', 'prd.md');
+  const prdFile = join(process.cwd(), '_scrum-output', 'planning-artifacts', 'prd.md');
 
   // Test 1.1: Story implementation file exists
   test('[P0] Story 1.9 implementation file should exist', () => {
@@ -104,11 +104,11 @@ describe('AC1: Delta Analysis — Story implementation documents required analys
   });
 
   // Test 1.9: Story documents the critical directory structure delta
-  test('[P0] Story should document the critical _scrum-output vs _bmad-output directory delta', () => {
+  test('[P0] Story should document the critical _scrum-output vs _scrum-output directory delta', () => {
     const storyContent = readFileSync(storyFile, 'utf8');
     // Must document the directory naming difference
     expect(storyContent).toMatch(/_scrum-output/);
-    expect(storyContent).toMatch(/_bmad-output/);
+    expect(storyContent).toMatch(/_scrum-output/);
   });
 
   // Test 1.10: All tasks in story are completed (all checkboxes checked)
@@ -125,7 +125,7 @@ describe('AC1: Delta Analysis — Story implementation documents required analys
 // ============================================================================
 
 describe('AC1: PRD FR-46 Specification Content', () => {
-  const prdFile = join(process.cwd(), '_bmad-output', 'planning-artifacts', 'prd.md');
+  const prdFile = join(process.cwd(), '_scrum-output', 'planning-artifacts', 'prd.md');
 
   // Test 1.11: FR-46 specifies predictable artifact locations
   test('[P0] FR-46 should specify predictable artifact locations for commands', () => {

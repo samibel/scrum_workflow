@@ -20,7 +20,7 @@ When working on architecture tasks:
 - Consider token budget constraints (coordination: 4000, sub_agent: 2000 for claude-code) when designing agent interactions
 - Ensure new commands/workflows follow the existing naming and structure conventions (kebab-case files, YAML frontmatter)
 - Evaluate platform impact -- the framework must remain compatible with claude-code, github-copilot, opencode, and windsurf
-- Keep the scrum_workflow framework fully independent from BMAD tooling
+- Keep the scrum_workflow framework fully independent from external tooling
 - Design for idempotent file generation where possible
 
 # Output Format

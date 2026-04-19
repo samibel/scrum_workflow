@@ -29,10 +29,20 @@ This command has no required arguments.
 | Option | Description |
 |--------|-------------|
 | `--epic N` | Filter to show only stories from epic N |
+| `--dashboard` | Force ASCII Kanban board output (overrides config) |
+| `--table` | Force markdown table output (overrides config) |
+
+## Display Mode
+
+Determine display mode in this priority order:
+1. `--dashboard` flag → dashboard mode
+2. `--table` flag → table mode
+3. `sprint_status.display_mode` in `scrum_workflow/config.yaml` → use that value
+4. Default → `table`
 
 ## Output
 
-### On Success (Stories Found):
+### Table Mode (Stories Found):
 
 ```
 # Sprint Status
@@ -46,6 +56,45 @@ This command has no required arguments.
 
 **Total Stories:** 12
 **Action Required:** 2
+```
+
+### Dashboard Mode (Stories Found):
+
+Call `formatDashboard(stories)` from `scrum_workflow/utils/sprint-status.js`.
+
+Before calling, attach subtask counts to each story object:
+- For each story, call `parseSubtasks(story.content)` to get `{ done, total }`
+- Attach as `story.subtasks = { done, total }`
+
+The dashboard groups stories into 4 Kanban columns:
+
+| Column | Statuses |
+|--------|---------|
+| 📝 BACKLOG | `draft`, `refined`, `ready-for-dev` |
+| 🔧 IN PROGRESS | `in-progress`, `changes-needed` ⚠️, `blocked` 🔴 |
+| 👀 REVIEW | `review`, `approved` |
+| ✅ DONE | `done`, `cancelled` |
+
+Each story card shows (4 lines):
+1. Ticket ID + age + status badge (`⚠️` for changes-needed, `🔴` for blocked)
+2. Title (truncated to column width)
+3. Task progress: `Tasks: [██░░] 2/4` via `formatTaskProgress(done, total)`
+4. Pending action command
+
+Example output:
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│ SPRINT BOARD                                                         2026-04-19 │
+├────────────────────┬────────────────────┬────────────────────┬──────────────────┤
+│ 📝 BACKLOG         │ 🔧 IN PROGRESS     │ 👀 REVIEW          │ ✅ DONE          │
+│   draft/refined... │   in-prog/blocked  │   review/approved  │   done/cancelled │
+├────────────────────┼────────────────────┼────────────────────┼──────────────────┤
+│ SW-006  2d         │ ⚠️ SW-001  5d      │ SW-003  3d         │ SW-005           │
+│ New feature        │ Auth login flow    │ Dashboard UI       │ Initial setup    │
+│ Tasks: no tasks    │ Tasks: [██░░] 2/4  │ Tasks: [████] 4/4  │ Tasks: ✓ done    │
+│ /scrum-refine-tick │ /scrum-verify      │ /scrum-approve     │                  │
+└────────────────────┴────────────────────┴────────────────────┴──────────────────┘
+ Total: 4  |  ⚠️ Action Needed: 2  |  🔴 Blocked: 0  |  ✅ Done: 1
 ```
 
 ### On Success (No Stories Found):

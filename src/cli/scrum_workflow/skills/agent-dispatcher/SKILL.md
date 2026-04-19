@@ -1,12 +1,17 @@
 ---
 name: agent-dispatcher
 role: "dynamic-agent-selector"
-description: "Reads story frontmatter (type, risk_level, domain_tags, depth) and dispatch rules from data/dispatch-rules.yaml to dynamically select the appropriate set of agents for refinement during /scrum-refine-ticket"
+description: "Reads story frontmatter (type, risk_level, domain_tags, depth) and dispatch rules from data/dispatch-rules.yaml to dynamically select the appropriate set of agents. Invoked by /scrum-refine-ticket (primary) and /scrum-review-story (supplementary UX perspectives)."
 ---
 
 # Identity
 
-The agent-dispatcher skill is a read-only skill that reads the story's `type`, `risk_level`, `domain_tags`, and `depth` from the story YAML frontmatter and dispatch rules from `scrum_workflow/data/dispatch-rules.yaml`, then returns the selected agent set with dispatch rationale. It is invoked internally by the `/scrum-refine-ticket` command after depth detection but before agent spawning. The dispatcher never writes files directly. The calling workflow (refinement.md) is responsible for using the dispatcher results to decide which agents to spawn.
+The agent-dispatcher skill is a read-only skill that reads the story's `type`, `risk_level`, `domain_tags`, and `depth` from the story YAML frontmatter and dispatch rules from `scrum_workflow/data/dispatch-rules.yaml`, then returns the selected agent set with dispatch rationale. It is invoked internally by:
+
+- `/scrum-refine-ticket` after depth detection but before agent spawning (primary use).
+- `/scrum-review-story` to select **supplementary** UX/UI/OX perspectives (`ux-reviewer` and, if `needs_draft: true`, `ux-draft-agent`). Review-story only consumes dispatcher output for agents whose `active_in` frontmatter includes `review-story`; other agents returned by the dispatcher are ignored in that context.
+
+The dispatcher never writes files directly. The calling workflow is responsible for using the dispatcher results to decide which agents to spawn.
 
 This skill implements FR-34: dynamic agent dispatch based on story type, risk, and domain tags during `/scrum-refine-ticket`.
 
@@ -63,6 +68,22 @@ Read the story `domain_tags` array from frontmatter. For each domain tag, check 
 - Example: `[frontend, api]` tags -> add both `ux-reviewer` and `contract-validator`
 
 Domain-tag-based rules ADD to the current set based on matching domain_tags. They do not replace.
+
+#### Step 5a: Optional `requires_flag` (Extension)
+
+A rule MAY declare `requires_flag: <flag_name>`. When present:
+
+- The rule only fires if the story frontmatter contains `<flag_name>: true` **in addition to** a matching tag.
+- If the flag is absent or falsy, the rule is skipped silently — no addition, no warning.
+- Example: `ux_draft` rule has `tags: [ui, ux, ox]` and `requires_flag: needs_draft`. A story with `domain_tags: [ux]` and `needs_draft: true` dispatches `ux-draft-agent`; the same story without `needs_draft` does not.
+
+#### Step 5b: Optional `run_before` (Extension)
+
+A rule MAY declare `run_before: <other_agent>`. When present:
+
+- The added agent is inserted into the dispatch list **immediately before** the named agent, preserving Reflection-Loop-style ordering (e.g., `ux-draft-agent` must run before `ux-reviewer`).
+- If the named agent is not in the current set (for any reason), the added agent is appended to the end.
+- This affects only ordering for the refinement workflow's Round 0 spawning; later steps (deduplication, validation) still apply.
 
 ### Step 6: Deduplicate Agent List
 

@@ -9,6 +9,7 @@ spawns_agents: dynamic  # Determined at runtime per story type, risk, domain tag
   # Infrastructure type: [architect, developer] (skip QA)
   # High/critical risk: adds security-reviewer
   # Frontend/UI/UX/OX tags: adds ux-reviewer (optional)
+  # UI/UX/OX tags + needs_draft:true: adds ux-draft-agent before ux-reviewer (Reflection Loop)
   # API/contract/integration tags: adds contract-validator
 features:
   doc_discovery: true   # Always enabled
@@ -61,7 +62,8 @@ After depth detection, the agent-dispatcher skill (`scrum_workflow/skills/agent-
 2. **Type-based override**: Story `type` may replace the default agent set (e.g., `infrastructure` -> `[architect, developer]`, skip QA)
 3. **Risk-based addition**: Story `risk_level` may add agents (e.g., `high`/`critical` -> add `security-reviewer`)
 4. **Domain-tag addition**: Story `domain_tags` may add agents (e.g., `[frontend]`, `[ui]`, `[ux]`, or `[ox]` -> add `ux-reviewer`; `[api]` -> add `contract-validator`)
-5. **Agent validation**: Each dispatched agent's file must exist at `scrum_workflow/agents/{name}.md`; missing agents are skipped gracefully with a logged note
+5. **Draft-flag addition** (Reflection Loop): If `domain_tags` contains `[ui]`, `[ux]`, or `[ox]` **and** the story frontmatter sets `needs_draft: true`, the dispatcher also adds `ux-draft-agent` and orders it **before** `ux-reviewer`. The draft agent generates a low-fidelity Mermaid (default) or Excalidraw (`draft_format: excalidraw`) draft that `ux-reviewer` then critiques. Without `needs_draft`, `ux-draft-agent` is not dispatched.
+6. **Agent validation**: Each dispatched agent's file must exist at `scrum_workflow/agents/{name}.md`; missing agents are skipped gracefully with a logged note
 
 **Dispatch rules** are defined in `scrum_workflow/data/dispatch-rules.yaml` and are fully configurable.
 
@@ -69,7 +71,7 @@ After depth detection, the agent-dispatcher skill (`scrum_workflow/skills/agent-
 
 The dispatched agent set and rationale are passed to the refinement workflow for agent spawning and logged in the refinement artifact's Dispatch Summary section.
 
-**Optional OX/UX review policy:** UX/OX review is opt-in via `domain_tags`. If no UI/UX/OX-related tag is present (or no OX board exists), `ux-reviewer` is not dispatched and refinement proceeds with the remaining selected agents.
+**Optional OX/UX review policy:** UX/OX review is opt-in via `domain_tags`. If no UI/UX/OX-related tag is present, `ux-reviewer` is not dispatched and refinement proceeds with the remaining selected agents.
 
 ## Output
 
@@ -107,17 +109,29 @@ The dispatched agent set and rationale are passed to the refinement workflow for
 
 Prompt user for additional documents (file paths or URLs) to include in agent context. Auto-detected context from `_scrum-output/context/` is always included.
 
-**Optional Excalidraw draft support:** If the team wants a visual draft for OX/UX flows, an Excalidraw link can be provided (for example created with `excalidraw-diagram-skill`). This is optional and must not block refinement when no diagram is available.
+#### Base Prompts (Always)
 
-#### Using MCP + `excalidraw-diagram-skill` (User Guidance)
+1. **Additional context files**: Ask for any file paths or URLs to include beyond the auto-detected `_scrum-output/context/` set. Answer may be empty.
 
-If a user wants to provide an Excalidraw draft during refinement, instruct them to:
-1. Ensure the Excalidraw MCP/server integration is installed and available in their Codex environment.
-2. Run the `excalidraw-diagram-skill` to generate or update the diagram draft for the story.
-3. Save/share the resulting Excalidraw URL (or exported artifact link).
-4. Paste that link into doc-discovery as an additional URL under the optional Excalidraw draft entry.
+#### Conditional UX Prompts (Only When UX Is Dispatched)
 
-If MCP is not configured, continue refinement without the diagram and record `"None provided"` for the optional Excalidraw field.
+The following prompts are shown **only** when the agent dispatcher has added `ux-reviewer` to the dispatched set (i.e., `domain_tags` contain `ui`, `ux`, or `ox`). If no UX agent is dispatched, skip these prompts entirely and do not render the optional fields in `refinement.md`.
+
+2. **Optional OX/UX board URL**: Prompt text: "Optional: paste a link to the OX/UX board for this story (e.g., Figma, Miro, design-system page). Press Enter to skip." Empty answer records `"None provided"` in the `ox_board_url` field of `refinement.md`.
+3. **Optional Excalidraw draft URL**: Only shown when the story frontmatter sets `draft_format: excalidraw` **and** `needs_draft: true` (i.e., the Reflection Loop is active and the team opted into Excalidraw over the Mermaid default). Prompt text: "Optional: paste an Excalidraw URL with your low-fidelity draft. Press Enter to skip — the `ux-draft-agent` will produce a Mermaid block instead." Empty answer records `"None provided"` in the `excalidraw_draft_url` field of `refinement.md`.
+
+The two optional prompts are the **only** sources that populate the `{{ox_board_url_or_"None provided"}}` and `{{excalidraw_draft_url_or_"None provided"}}` placeholders in `src/core/templates/refinement.md`. No other step writes those fields.
+
+#### Using MCP + `excalidraw-diagram-skill` (Optional)
+
+If the user wants the Excalidraw draft generated for them rather than pasting an existing URL, invoke the `excalidraw-diagram-skill` (see `scrum_workflow/skills/excalidraw-diagram-skill/SKILL.md`). The skill:
+
+1. Checks that an Excalidraw MCP/server integration is available.
+2. Either generates a new diagram (if MCP supports generation) or records the URL the user provides.
+3. Returns a structured result containing the URL, title, and related story ID.
+4. Falls back silently to Mermaid-only if MCP is unavailable — refinement must not block.
+
+If MCP is not configured, continue refinement without the diagram and record `"None provided"` for the `excalidraw_draft_url` field. The `ux-draft-agent` will still produce its default Mermaid flow.
 
 ### Discussion Rounds (Story 10.2)
 

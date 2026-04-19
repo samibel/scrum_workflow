@@ -100,6 +100,25 @@ risk_based_additions:
 # based on matching tags in the story's domain_tags array.
 # Multiple tags can match, each adding their respective agents.
 
+# Domain Tag Glossary
+# ------------------------------------------------------------------------------
+# The tags below are matched case-sensitively against story.domain_tags[].
+#
+#   frontend    — user-facing web/mobile UI code and flows
+#   ui          — shared component library, design tokens, styling primitives
+#   ux          — user experience flows, interaction, information architecture
+#   ox          — Operator Experience: internal/operator-facing UIs and tooling
+#   api         — public or service-to-service HTTP/RPC APIs
+#   contract    — consumer-driven contracts, OpenAPI/JSON-schema artifacts
+#   integration — cross-service or third-party integration points
+#
+# Opt-in flags (read from story frontmatter, NOT from tags):
+#   needs_draft:    boolean — when true + UI/UX/OX tag present, dispatches ux-draft-agent
+#                   before ux-reviewer (Reflection-Loop: generator → critic)
+#   draft_format:   "mermaid" (default) | "excalidraw" — read by ux-draft-agent
+#                   to select output mode. Excalidraw requires the
+#                   excalidraw-diagram-skill and is graceful-fallback to Mermaid.
+
 domain_tag_additions:
   # Frontend/UI/UX/OX tags add ux-reviewer for design and usability review
   # OX is optional: if no OX/UX-related tag is present, ux-reviewer is not dispatched
@@ -111,6 +130,20 @@ domain_tag_additions:
       - ox
     add_agent: ux-reviewer
     description: "Frontend/UI/UX/OX domain tags add ux-reviewer for design and usability review (optional)"
+
+  # UI/UX/OX tag + needs_draft: true adds ux-draft-agent as the generator half of a
+  # Reflection Loop (Generator–Critic). The draft agent runs before ux-reviewer so
+  # the reviewer has a concrete low-fidelity draft to critique. Without needs_draft,
+  # ux-draft-agent is not dispatched.
+  ux_draft:
+    tags:
+      - ui
+      - ux
+      - ox
+    requires_flag: needs_draft
+    add_agent: ux-draft-agent
+    run_before: ux-reviewer
+    description: "UI/UX/OX tag + needs_draft:true adds ux-draft-agent as draft generator; runs before ux-reviewer (Reflection Loop)"
 
   # API/Contract/Integration tags add contract-validator for API contract review
   contract_review:

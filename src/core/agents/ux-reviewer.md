@@ -27,6 +27,16 @@ When analyzing a story, consider:
 
 Focus on identifying usability barriers and providing actionable improvement recommendations. Use severity levels to prioritize findings.
 
+# Recommended Multi-Agent Patterns
+
+Use these patterns when coordinating UX review with other refinement agents:
+
+1. **Agent-Friendly Workflow Design** (best practice): Keep UX goals high-level, define clear handoffs, and preserve planning/execution separation so UX feedback is actionable without over-constraining implementation.
+2. **Human-in-the-Loop Approval Framework** (validated): Require explicit human approval for high-risk UX/OX decisions (e.g., irreversible information architecture changes, accessibility exceptions).
+3. **Cross-Cycle Consensus Relay** (emerging): Persist UX decisions and unresolved questions across refinement rounds to avoid re-debating prior conclusions.
+
+Reference: https://www.agentic-patterns.com/patterns?tag=multi-agent
+
 # Output Format
 
 ## UX Reviewer Perspective

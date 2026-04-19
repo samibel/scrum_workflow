@@ -1,0 +1,119 @@
+# generated: 2026-04-07T12:15:00Z
+# last_updated: 2026-04-09T01:15:00Z
+# project: scrum_workflow
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: _scrum-output/implementation-artifacts
+#
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog -> in-progress: Automatically when first story is created (via create-story)
+#   - in-progress -> done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - SM typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+
+generated: 2026-04-07T12:00:49Z
+last_updated: 2026-04-09T11:15:00Z
+project: scrum_workflow
+project_key: NOKEY
+tracking_system: file-system
+story_location: _scrum-output/implementation-artifacts
+
+development_status:
+  # Epic 1: Establish Reliable Foundation
+  epic-1: in-progress
+  1-1-verify-align-ticket-creation: done
+  1-2-verify-align-agent-spawning-perspectives: done
+  1-3-verify-align-cross-talk-synthesis: done
+  1-4-verify-align-wideband-delphi-estimation: done
+  1-5-verify-align-code-review: done
+  1-6-verify-align-installation-onboarding: done
+  1-7-verify-align-runtime-extension-model: done
+  1-8-verify-align-research-commands: done
+  1-9-verify-align-artifact-contract: done
+  epic-1-retrospective: optional
+
+  # Epic 2: Story Approval & Lifecycle Completion
+  epic-2: in-progress
+  2-1-implement-status-history-tracking: done
+  2-2-implement-scrum-approve-command: done
+  2-3-implement-rejection-flow: done
+  2-4-implement-multi-round-review-tracking: done
+  epic-2-retrospective: optional
+
+  # Epic 3: Lifecycle Guards & Write Boundaries
+  epic-3: in-progress
+  3-1-consolidate-9-state-lifecycle-definition: done
+  3-2-implement-status-guard-validation: done
+  3-3-implement-write-boundary-enforcement: done
+  epic-3-retrospective: optional
+
+  # Epic 4: Plan Enforcement & Readiness Validation
+  epic-4: done
+  4-1-implement-story-readiness-validation-plan-generation: done
+  4-2-implement-plan-existence-check-before-dev: done
+  epic-4-retrospective: optional
+
+  # Epic 5: Workflow Depth & CLI Migration
+  epic-5: in-progress
+  5-1-implement-manual-workflow-depth-override: done
+  5-2-implement-cli-update-migration-command: done
+  epic-5-retrospective: optional
+
+  # Epic 6: CLI UX & Installation Experience
+  epic-6: in-progress
+  6-1-implement-cli-output-color-emoji-system: done
+  6-2-implement-progress-indicators: done
+  6-3-implement-interactive-prompt-patterns: done
+  6-4-implement-zero-config-installation-flow: done
+  6-5-implement-success-messages-next-step-guidance: done
+  6-6-implement-accessibility-layout-standards: done
+  epic-6-retrospective: optional
+
+  # Epic 7: Session Memory & Decision Persistence
+  epic-7: in-progress
+  7-1-implement-decision-record-extraction: done
+  7-2-implement-risk-note-extraction-auto-loading: done
+  7-3-implement-session-start-context-loading: done
+  7-4-implement-session-wrap-up: ready-for-dev
+  7-5-implement-research-memory-integration: ready-for-dev
+  epic-7-retrospective: optional
+
+  # Epic 8: Governance & Sprint Observability
+  epic-8: done
+  8-1-implement-post-implementation-verification: done
+  8-2-implement-policy-violation-detection: done
+  8-3-implement-central-audit-trail: done
+  8-4-implement-sprint-status-command: done
+  8-5-implement-delivery-health-command: done
+  epic-8-retrospective: optional
+
+  # Epic 9: Adaptive Workflows & Intelligence
+  epic-9: done
+  9-1-implement-story-classifier: done
+  9-2-implement-adaptive-workflow-depth-selection: done
+  9-3-implement-dynamic-agent-dispatcher: done
+  9-4-implement-extended-agent-types: done
+  epic-9-retrospective: optional

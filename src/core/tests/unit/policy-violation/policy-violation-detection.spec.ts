@@ -33,12 +33,12 @@ import { join } from 'path';
 
 // Test paths - using process.cwd() which will be the project root during test execution
 const PROJECT_ROOT = process.cwd();
-// _bmad-output and _scrum-output live at the repo root (two levels up from src/core).
+// _scrum-output lives at the repo root (two levels up from src/core).
 const PROJECT_ROOT_PARENT = join(PROJECT_ROOT, '..', '..');
 const POLICY_CHECK_CMD = join(PROJECT_ROOT, 'commands', 'policy-check.md');
 const POLICY_VIOLATION_WORKFLOW = join(PROJECT_ROOT, 'workflows', 'policy-violation.md');
 const AUDIT_OUTPUT_DIR = join(PROJECT_ROOT_PARENT, '_scrum-output', 'audit');
-const STORY_FILE = join(PROJECT_ROOT_PARENT, '_bmad-output', 'implementation-artifacts', '8-2-implement-policy-violation-detection.md');
+const STORY_FILE = join(PROJECT_ROOT_PARENT, '_scrum-output', 'implementation-artifacts', '8-2-implement-policy-violation-detection.md');
 
 // Helper to create a mock story structure for testing
 function createMockStoryDir(ticketId: string): string {

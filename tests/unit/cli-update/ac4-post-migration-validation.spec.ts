@@ -21,7 +21,7 @@ import { join } from 'path';
 
 const CREATE_SCRUM_WORKFLOW_ROOT = join(process.cwd(), 'create-scrum-workflow');
 const UPDATE_CMD_PATH = join(CREATE_SCRUM_WORKFLOW_ROOT, 'src', 'commands', 'update.js');
-const STORY_FILE = join(process.cwd(), '_bmad-output', 'implementation-artifacts', '5-2-implement-cli-update-migration-command.md');
+const STORY_FILE = join(process.cwd(), '_scrum-output', 'implementation-artifacts', '5-2-implement-cli-update-migration-command.md');
 
 // ============================================================================
 // AC4: YAML Frontmatter Validation

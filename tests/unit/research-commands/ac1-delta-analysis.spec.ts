@@ -27,11 +27,11 @@ import { join } from 'path';
 describe('AC1: Delta Analysis against PRD FR-45', () => {
   const storyFile = join(
     process.cwd(),
-    '_bmad-output',
+    '_scrum-output',
     'implementation-artifacts',
     '1-8-verify-align-research-commands.md',
   );
-  const prdFile = join(process.cwd(), '_bmad-output', 'planning-artifacts', 'prd.md');
+  const prdFile = join(process.cwd(), '_scrum-output', 'planning-artifacts', 'prd.md');
   const technicalCommandFile = join(process.cwd(), 'scrum_workflow', 'commands', 'research-technical.md');
   const generalCommandFile = join(process.cwd(), 'scrum_workflow', 'commands', 'research-general.md');
 

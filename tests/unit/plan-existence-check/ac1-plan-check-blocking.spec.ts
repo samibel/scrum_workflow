@@ -19,7 +19,7 @@ import { join } from 'path';
 
 const DEV_STORY_CMD = join(process.cwd(), 'scrum_workflow', 'commands', 'dev-story.md');
 const DEV_STORY_WORKFLOW = join(process.cwd(), 'scrum_workflow', 'workflows', 'dev-story.md');
-const STORY_FILE = join(process.cwd(), '_bmad-output', 'implementation-artifacts', '4-2-implement-plan-existence-check-before-dev.md');
+const STORY_FILE = join(process.cwd(), '_scrum-output', 'implementation-artifacts', '4-2-implement-plan-existence-check-before-dev.md');
 
 // ============================================================================
 // AC1: plan.md existence check in dev-story command

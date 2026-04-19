@@ -22,7 +22,7 @@ import { join } from 'path';
 
 const STORY_FILE = join(
   process.cwd(),
-  '_bmad-output',
+  '_scrum-output',
   'implementation-artifacts',
   '3-1-consolidate-9-state-lifecycle-definition.md',
 );
@@ -36,7 +36,7 @@ const STATUS_GUARD_SKILL = join(
   'status-guard-validation',
   'SKILL.md',
 );
-const PRD_FILE = join(process.cwd(), '_bmad-output', 'planning-artifacts', 'prd.md');
+const PRD_FILE = join(process.cwd(), '_scrum-output', 'planning-artifacts', 'prd.md');
 
 // ============================================================================
 // AC1: Delta Analysis — Story documents current vs PRD-specified lifecycle

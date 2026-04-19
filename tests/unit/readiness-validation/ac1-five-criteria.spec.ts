@@ -19,7 +19,7 @@
 import { readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 
-const STORY_FILE = join(process.cwd(), '_bmad-output', 'implementation-artifacts', '4-1-implement-story-readiness-validation-plan-generation.md');
+const STORY_FILE = join(process.cwd(), '_scrum-output', 'implementation-artifacts', '4-1-implement-story-readiness-validation-plan-generation.md');
 const REFINE_STORY_WORKFLOW = join(process.cwd(), 'scrum_workflow', 'workflows', 'refine-story.md');
 const REFINE_STORY_CMD = join(process.cwd(), 'scrum_workflow', 'commands', 'refine-story.md');
 const READINESS_CHECK_SKILL_DIR = join(process.cwd(), 'scrum_workflow', 'skills', 'readiness-check');

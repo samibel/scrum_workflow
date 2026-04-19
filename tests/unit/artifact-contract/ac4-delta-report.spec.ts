@@ -26,7 +26,7 @@ import { join } from 'path';
 describe('AC4: Delta Report — Comprehensive discrepancy documentation', () => {
   const storyFile = join(
     process.cwd(),
-    '_bmad-output',
+    '_scrum-output',
     'implementation-artifacts',
     '1-9-verify-align-artifact-contract.md',
   );
@@ -38,11 +38,11 @@ describe('AC4: Delta Report — Comprehensive discrepancy documentation', () => 
     expect(content).toMatch(/Delta.*Report|delta.*report|Delta Analysis Report/i);
   });
 
-  // Test 4.2: Delta report documents the _scrum-output vs _bmad-output delta
-  test('[P0] Delta report should document the directory structure delta (_scrum-output vs _bmad-output)', () => {
+  // Test 4.2: Delta report documents the _scrum-output vs _scrum-output delta
+  test('[P0] Delta report should document the directory structure delta (_scrum-output vs _scrum-output)', () => {
     const content = readFileSync(storyFile, 'utf8');
     expect(content).toMatch(/_scrum-output/);
-    expect(content).toMatch(/_bmad-output/);
+    expect(content).toMatch(/_scrum-output/);
     // Must document this as a delta/discrepancy
     expect(content).toMatch(/Delta 1|delta.*directory|directory.*delta|Directory.*Structure/i);
   });
@@ -87,7 +87,7 @@ describe('AC4: Delta Report — Comprehensive discrepancy documentation', () => 
 describe('AC4: Delta Report — Fixes applied and resolution decisions', () => {
   const storyFile = join(
     process.cwd(),
-    '_bmad-output',
+    '_scrum-output',
     'implementation-artifacts',
     '1-9-verify-align-artifact-contract.md',
   );
@@ -100,7 +100,7 @@ describe('AC4: Delta Report — Fixes applied and resolution decisions', () => {
   });
 
   // Test 4.8: Delta 1 resolution documented (directory naming variance)
-  test('[P0] Delta 1 (_scrum-output vs _bmad-output) should have documented resolution', () => {
+  test('[P0] Delta 1 (_scrum-output vs _scrum-output) should have documented resolution', () => {
     const content = readFileSync(storyFile, 'utf8');
     // Must explicitly state whether this is acceptable or requires a fix
     expect(content).toMatch(/ACCEPTABLE VARIANCE|acceptable.*variance|NO FIX REQUIRED|no.*fix.*required/i);
@@ -128,7 +128,7 @@ describe('AC4: Delta Report — Fixes applied and resolution decisions', () => {
 describe('AC4: FR-46 Compliance — Overall compliance status', () => {
   const storyFile = join(
     process.cwd(),
-    '_bmad-output',
+    '_scrum-output',
     'implementation-artifacts',
     '1-9-verify-align-artifact-contract.md',
   );
@@ -176,7 +176,7 @@ describe('AC4: FR-46 Compliance — Overall compliance status', () => {
 describe('AC4: Sprint Status Reflects Story 1.9 Completion', () => {
   const sprintStatusFile = join(
     process.cwd(),
-    '_bmad-output',
+    '_scrum-output',
     'implementation-artifacts',
     'sprint-status.yaml',
   );

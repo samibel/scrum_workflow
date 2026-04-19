@@ -22,9 +22,9 @@ import { join } from 'path';
 // ============================================================================
 
 describe('AC1: Delta Analysis against PRD FR-44', () => {
-  const storyFile = join(process.cwd(), '_bmad-output', 'implementation-artifacts', '1-7-verify-align-runtime-extension-model.md');
-  const architectureFile = join(process.cwd(), '_bmad-output', 'planning-artifacts', 'architecture.md');
-  const prdFile = join(process.cwd(), '_bmad-output', 'planning-artifacts', 'prd.md');
+  const storyFile = join(process.cwd(), '_scrum-output', 'implementation-artifacts', '1-7-verify-align-runtime-extension-model.md');
+  const architectureFile = join(process.cwd(), '_scrum-output', 'planning-artifacts', 'architecture.md');
+  const prdFile = join(process.cwd(), '_scrum-output', 'planning-artifacts', 'prd.md');
 
   // Test 1.1: Story implementation file exists
   test.skip('[P0] Story implementation file should exist', () => {

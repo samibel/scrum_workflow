@@ -114,13 +114,13 @@ describe('AC3: FAIL Flow - Actionable Guidance and Status Persistence', () => {
 
 describe('AC4: Write Boundary Enforcement', () => {
   test('[P0] Architecture.md must define /scrum-verify write boundaries', () => {
-    const archContent = readFileSync(join(REPO_ROOT, '_bmad-output', 'planning-artifacts', 'architecture.md'), 'utf8');
+    const archContent = readFileSync(join(REPO_ROOT, '_scrum-output', 'planning-artifacts', 'architecture.md'), 'utf8');
     const verifyBoundary = archContent.match(/\/scrum-verify[\s\S]*?verification-report\.md/);
     expect(verifyBoundary).not.toBeNull();
   });
 
   test('[P0] /scrum-verify must NOT be allowed to write source code', () => {
-     const archContent = readFileSync(join(REPO_ROOT, '_bmad-output', 'planning-artifacts', 'architecture.md'), 'utf8');
+     const archContent = readFileSync(join(REPO_ROOT, '_scrum-output', 'planning-artifacts', 'architecture.md'), 'utf8');
      const verifyBoundarySection = archContent.match(/\/scrum-verify[\s\S]*?(?=^\||\n## )/m);
      expect(verifyBoundarySection).not.toBeNull();
      // Should explicitly say it may NOT write source code

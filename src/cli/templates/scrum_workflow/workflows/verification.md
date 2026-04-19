@@ -14,7 +14,7 @@ Step-by-step workflow for the `/scrum-verify` command. This workflow runs automa
 
 ## Prerequisites
 
-- Story file exists at `_bmad-output/sprints/SW-XXX/story.md` with `status: in-progress`
+- Story file exists at `_scrum-output/sprints/SW-XXX/story.md` with `status: in-progress`
 - Implementation is complete or in-progress
 - Project has a valid `package.json` with `test` script
 - Verification report template exists at `scrum_workflow/templates/verification-report.md`
@@ -23,11 +23,11 @@ Step-by-step workflow for the `/scrum-verify` command. This workflow runs automa
 
 ### Step 1.1: Verify Story File Exists
 
-Check if `_bmad-output/sprints/SW-XXX/story.md` exists.
+Check if `_scrum-output/sprints/SW-XXX/story.md` exists.
 
 **If file does not exist**, halt with error:
 ```
-❌ Status Guard Violation: Story file '_bmad-output/sprints/SW-XXX/story.md' not found
+❌ Status Guard Violation: Story file '_scrum-output/sprints/SW-XXX/story.md' not found
 Fix: Ensure story exists before triggering verification
 ```
 
@@ -87,7 +87,7 @@ Use `scrum_workflow/templates/verification-report.md` to create the report.
 
 ### Step 3.3: Write Report
 
-Write the report to `_bmad-output/sprints/SW-XXX/verification-report.md`.
+Write the report to `_scrum-output/sprints/SW-XXX/verification-report.md`.
 - Use atomic write operation
 - Ensure directory exists
 
@@ -118,12 +118,12 @@ Write the report to `_bmad-output/sprints/SW-XXX/verification-report.md`.
 ## Write Boundary Rules
 
 ### Allowed Write Operations
-- `_bmad-output/sprints/SW-XXX/verification-report.md` (NEW file)
-- `_bmad-output/sprints/SW-XXX/story.md` (Status, updated, and status_history only)
+- `_scrum-output/sprints/SW-XXX/verification-report.md` (NEW file)
+- `_scrum-output/sprints/SW-XXX/story.md` (Status, updated, and status_history only)
 
 ### Prohibited Write Operations
 - Source code or test files
-- Any other files in `_bmad-output` or `scrum_workflow`
+- Any other files in `_scrum-output` or `scrum_workflow`
 
 ## Error Handling
 

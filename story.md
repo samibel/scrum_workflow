@@ -9,7 +9,7 @@ owner: ""
 # Restructure Project to Core / CLI Architecture
 
 ## Summary
-Reorganize the scrum_workflow project to explicitly separate the **core workflow engine** (`/core`) from the **CLI scaffolding tool** (`/cli`). This makes BMAD-independence clear, improves modularity, and enables future consumers (Web UI, integrations).
+Reorganize the scrum_workflow project to explicitly separate the **core workflow engine** (`/core`) from the **CLI scaffolding tool** (`/cli`). This improves modularity and enables future consumers (Web UI, integrations).
 
 ## Business Value
 - **Clarity**: Core logic is isolated and reusable
@@ -23,7 +23,6 @@ project-root/
   scrum_workflow/          ← the workflow engine (core logic)
   create-scrum-workflow/   ← the CLI installer + generator
   __tests__/               ← tests (scattered)
-  _bmad/                   ← BMAD dependency (stays)
   _scrum-output/           ← generated artifacts
   docs/, README.md, etc.   ← documentation
 ```
@@ -34,7 +33,6 @@ project-root/
   core/                    ← renamed from scrum_workflow
   cli/                     ← renamed from create-scrum-workflow
   __tests__/               ← remains (or reorganize)
-  _bmad/                   ← unchanged (explicit dependency)
   _scrum-output/           ← unchanged
   docs/, README.md, etc.   ← unchanged
 ```
@@ -168,7 +166,7 @@ If you choose **Option A**, this becomes a major Breaking Change — scope incre
 
 - [ ] **AC8 (Refined)**: Documentation updated and consistent
   - README.md clarifies:
-    - Repository structure: `/core` = workflow engine, `/cli` = scaffolder, `_bmad/` = dependency
+    - Repository structure: `/core` = workflow engine, `/cli` = scaffolder
     - User installations: Generated projects still use `scrum_workflow/` directory (per scope decision)
     - If migrating existing projects: Guide provided (if AC7 scope allows)
   - Architecture documentation updated with new workspace structure
@@ -232,7 +230,6 @@ If you choose **Option A**, this becomes a major Breaking Change — scope incre
 
 - **Template-duplification solution** (duplicate removal postponed to follow-up story)
 - **Breaking change to user-installed projects** — frameworkPath remains `scrum_workflow/` per scope decision
-- Refactoring `_bmad/` (stays as-is, explicit dependency)
 - Changes to generated artifacts in user projects beyond `frameworkPath` consistency
 - Performance optimization (migration task, not enhancement)
 - Web UI or integration consumers (architectural goal, not this story)

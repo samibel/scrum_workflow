@@ -23,7 +23,7 @@ import { readFileSync } from 'fs';
 import { join } from 'path';
 
 const REFINE_TICKET_WORKFLOW = join(process.cwd(), 'scrum_workflow', 'commands', 'refine-ticket.md');
-const STORY_FILE = join(process.cwd(), '_bmad-output', 'implementation-artifacts', '5-1-implement-manual-workflow-depth-override.md');
+const STORY_FILE = join(process.cwd(), '_scrum-output', 'implementation-artifacts', '5-1-implement-manual-workflow-depth-override.md');
 
 // ============================================================================
 // AC2: Light depth uses 1 agent (Developer only)

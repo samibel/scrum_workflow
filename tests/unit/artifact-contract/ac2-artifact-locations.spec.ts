@@ -208,7 +208,7 @@ describe('AC2: /scrum-research-* — RR-XXX.md artifact specification', () => {
 describe('AC2: Deferred Commands — /scrum-approve, /wrap-up, /session-start', () => {
   const storyFile = join(
     process.cwd(),
-    '_bmad-output',
+    '_scrum-output',
     'implementation-artifacts',
     '1-9-verify-align-artifact-contract.md',
   );

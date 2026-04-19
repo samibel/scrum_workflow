@@ -9,8 +9,8 @@ stepsCompleted:
 lastStep: step-05-validate-and-complete
 lastSaved: '2026-04-07T20:04:00Z'
 inputDocuments:
-  - _bmad-output/implementation-artifacts/1-6-verify-align-installation-onboarding.md
-  - _bmad-output/planning-artifacts/prd.md
+  - _scrum-output/implementation-artifacts/1-6-verify-align-installation-onboarding.md
+  - _scrum-output/planning-artifacts/prd.md
   - test/atdd/story-1-6-installation-onboarding.test.js
 ---
 

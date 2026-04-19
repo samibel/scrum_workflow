@@ -9,9 +9,9 @@ lastStep: 'step-05-gate-decision'
 lastSaved: '2026-04-07'
 storyId: '1-7'
 inputDocuments:
-  - '_bmad-output/planning-artifacts/prd.md (FR-44)'
-  - '_bmad-output/planning-artifacts/architecture.md (Section 2: Structure Patterns)'
-  - '_bmad-output/implementation-artifacts/1-7-verify-align-runtime-extension-model.md'
+  - '_scrum-output/planning-artifacts/prd.md (FR-44)'
+  - '_scrum-output/planning-artifacts/architecture.md (Section 2: Structure Patterns)'
+  - '_scrum-output/implementation-artifacts/1-7-verify-align-runtime-extension-model.md'
   - 'scrum_workflow/context/architecture-guidelines.md'
 ---
 
@@ -210,9 +210,9 @@ GATE: PASS - Release approved, coverage meets standards
 
 | File | Action | Description |
 |------|--------|-------------|
-| `_bmad-output/planning-artifacts/architecture.md` | Modified | Updated Framework Directory Structure to reflect actual implementation |
-| `_bmad-output/implementation-artifacts/1-7-verify-align-runtime-extension-model.md` | Modified | Updated status, tasks, and Dev Agent Record |
-| `_bmad-output/implementation-artifacts/sprint-status.yaml` | Modified | Updated story status to done |
+| `_scrum-output/planning-artifacts/architecture.md` | Modified | Updated Framework Directory Structure to reflect actual implementation |
+| `_scrum-output/implementation-artifacts/1-7-verify-align-runtime-extension-model.md` | Modified | Updated status, tasks, and Dev Agent Record |
+| `_scrum-output/implementation-artifacts/sprint-status.yaml` | Modified | Updated story status to done |
 | `scrum_workflow/__tests__/runtime-extension/traceability-report-1-7.md` | Created | This traceability report |
 
 ---

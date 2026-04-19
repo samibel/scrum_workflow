@@ -20,7 +20,7 @@ import { join } from 'path';
 
 const REFINE_STORY_WORKFLOW = join(process.cwd(), 'scrum_workflow', 'workflows', 'refine-story.md');
 const REFINE_STORY_CMD = join(process.cwd(), 'scrum_workflow', 'commands', 'refine-story.md');
-const STORY_FILE = join(process.cwd(), '_bmad-output', 'implementation-artifacts', '4-1-implement-story-readiness-validation-plan-generation.md');
+const STORY_FILE = join(process.cwd(), '_scrum-output', 'implementation-artifacts', '4-1-implement-story-readiness-validation-plan-generation.md');
 
 // ============================================================================
 // AC2: plan.md is generated on validation PASS

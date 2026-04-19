@@ -501,7 +501,7 @@ Complete delta analysis document with:
 // FAILING TEST - Feature not yet implemented
 test.skip('TC-10: Delta analysis documents all variances', async () => {
   // This test verifies the delta analysis document exists and is complete
-  const deltaDocPath = '_bmad-output/implementation-artifacts/1-7-verify-align-runtime-extension-model.md';
+  const deltaDocPath = '_scrum-output/implementation-artifacts/1-7-verify-align-runtime-extension-model.md';
 
   await expect(fs.exists(deltaDocPath)).resolves.toBe(true);
 

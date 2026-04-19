@@ -261,7 +261,7 @@ After completing validation, report results with:
 - **Skill Templates**: `templates/skill-registrations/`
 - **Validation Tests**: `test/integration/platform-validation.test.js`
 - **Validation Utilities**: `src/validation/validation-utils.js`
-- **Story 8-4**: `_bmad-output/implementation-artifacts/8-4-yolo.md`
+- **Story 8-4**: `_scrum-output/implementation-artifacts/8-4-yolo.md`
 
 ---
 

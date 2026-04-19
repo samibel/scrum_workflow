@@ -129,7 +129,7 @@ describe('AC3: Framework Directory Structure', () => {
   test.skip('[P1] Structural variance (flat files vs subdirectories) should be documented in story', () => {
     const storyPath = join(
       process.cwd(),
-      '_bmad-output',
+      '_scrum-output',
       'implementation-artifacts',
       '1-7-verify-align-runtime-extension-model.md',
     );

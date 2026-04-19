@@ -30,19 +30,19 @@ workflows/verification.md
 Ticket number in the format: `/scrum-verify SW-XXX`
 
 - **Ticket number**: `SW-XXX` format where XXX is a zero-padded 3-digit number
-- **Prerequisite**: The story file `_bmad-output/sprints/SW-XXX/story.md` must exist with `status: in-progress`
+- **Prerequisite**: The story file `_scrum-output/sprints/SW-XXX/story.md` must exist with `status: in-progress`
 - **Environment**: Working directory must be a valid project with `package.json` and configured test scripts
 
 ## Output
 
 ### On PASS (All checks pass):
-- `_bmad-output/sprints/SW-XXX/story.md` -- Updated with `status: review`
-- `_bmad-output/sprints/SW-XXX/verification-report.md` -- Verification record with PASS results
+- `_scrum-output/sprints/SW-XXX/story.md` -- Updated with `status: review`
+- `_scrum-output/sprints/SW-XXX/verification-report.md` -- Verification record with PASS results
 - Story `status_history` -- Updated with transition entry (actor: verification-skill)
 
 ### On FAIL (One or more checks fail):
-- `_bmad-output/sprints/SW-XXX/story.md` -- Status remains `in-progress`
-- `_bmad-output/sprints/SW-XXX/verification-report.md` -- Verification record with FAIL results and actionable errors
+- `_scrum-output/sprints/SW-XXX/story.md` -- Status remains `in-progress`
+- `_scrum-output/sprints/SW-XXX/verification-report.md` -- Verification record with FAIL results and actionable errors
 - No status transition occurs
 
 ## Status Transitions
@@ -79,7 +79,7 @@ If story is not in `in-progress` status:
 ### Missing Story File
 
 ```
-❌ Status Guard Violation: Story file '_bmad-output/sprints/SW-XXX/story.md' not found
+❌ Status Guard Violation: Story file '_scrum-output/sprints/SW-XXX/story.md' not found
 
 **Details:** The /scrum-verify command requires an existing story file to process.
 
@@ -89,8 +89,8 @@ If story is not in `in-progress` status:
 ## Write Boundary Rules
 
 This workflow may write:
-- `_bmad-output/sprints/SW-XXX/verification-report.md` - Verification report (NEW file)
-- `_bmad-output/sprints/SW-XXX/story.md` - Status field only (`status: review`), `status_history` array (append entry), and `updated` field
+- `_scrum-output/sprints/SW-XXX/verification-report.md` - Verification report (NEW file)
+- `_scrum-output/sprints/SW-XXX/story.md` - Status field only (`status: review`), `status_history` array (append entry), and `updated` field
 
 This workflow may NOT write:
 - Source code or test files in project directory

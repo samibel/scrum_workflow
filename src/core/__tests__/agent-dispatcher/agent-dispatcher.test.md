@@ -115,3 +115,55 @@ Story 9.3: Implement Dynamic Agent Dispatcher
 **And** `security-reviewer` is added (critical risk)
 **And** `contract-validator` is added (api tag)
 **And** the final set is `[architect, developer, qa, security-reviewer, contract-validator]` (after validation)
+
+### Scenario 16: OX domain tag dispatches ux-reviewer (new `ox` tag support)
+
+**Given** a story has `domain_tags: [ox]` in frontmatter
+**And** `type: feature` and `depth: standard`
+**When** the agent-dispatcher skill is invoked
+**Then** the dispatched agent set includes `ux-reviewer`
+**And** the dispatch_rationale references the `ox` tag matching the `ux_review` rule in `dispatch-rules.yaml`
+
+### Scenario 17: Story without UI/UX/OX tag does NOT dispatch ux-reviewer (negative case)
+
+**Given** a story has `domain_tags: [api, backend]` in frontmatter
+**And** `type: feature`, `risk_level: medium`, `depth: standard`
+**When** the agent-dispatcher skill is invoked
+**Then** the dispatched agent set does NOT include `ux-reviewer`
+**And** the dispatched agent set does NOT include `ux-draft-agent`
+**And** only `contract-validator` is added on top of the default set (via the `api` tag)
+
+### Scenario 18: UX tag + needs_draft:true dispatches ux-draft-agent before ux-reviewer (Reflection Loop)
+
+**Given** a story has `domain_tags: [ux]` in frontmatter
+**And** the story frontmatter sets `needs_draft: true`
+**And** `type: feature`, `depth: standard`
+**When** the agent-dispatcher skill is invoked
+**Then** the dispatched agent set includes both `ux-draft-agent` and `ux-reviewer`
+**And** `ux-draft-agent` appears **immediately before** `ux-reviewer` in the ordered set (per the `run_before` rule)
+**And** the dispatch_rationale mentions the `ux_draft` rule firing due to the `needs_draft` flag
+
+### Scenario 19: UX tag without needs_draft does NOT dispatch ux-draft-agent (flag gating)
+
+**Given** a story has `domain_tags: [ux]` in frontmatter
+**And** the story frontmatter does NOT set `needs_draft` (or sets it to `false`)
+**When** the agent-dispatcher skill is invoked
+**Then** the dispatched agent set includes `ux-reviewer`
+**And** the dispatched agent set does NOT include `ux-draft-agent`
+**And** the `ux_draft` rule is silently skipped due to the missing `requires_flag`
+
+### Scenario 20: OX tag + needs_draft:true also triggers Reflection Loop
+
+**Given** a story has `domain_tags: [ox]` in frontmatter
+**And** the story frontmatter sets `needs_draft: true`
+**When** the agent-dispatcher skill is invoked
+**Then** the dispatched agent set includes both `ux-draft-agent` and `ux-reviewer`
+**And** `ux-draft-agent` appears immediately before `ux-reviewer`
+
+### Scenario 21: ux-reviewer and ux-draft-agent are active in review-story as well as refine-ticket
+
+**Given** a story has `domain_tags: [ux]` and `needs_draft: true`
+**And** the agent-dispatcher is invoked by `/scrum-review-story` (supplementary UX perspective)
+**When** the dispatcher resolves the agent set
+**Then** both `ux-reviewer` and `ux-draft-agent` are in the returned set because their `active_in` frontmatter lists include `review-story`
+**And** `/scrum-review-story` only consumes agents whose `active_in` includes `review-story`; other agents the dispatcher returns for refinement (e.g., `architect`, `qa`) are ignored in the review context

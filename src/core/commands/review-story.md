@@ -54,6 +54,14 @@ The agent evaluates the implementation against these criteria:
 | 4 | Code Standards | Code follows project standards from `context/standards.md` |
 | 5 | Architecture Compliance | Implementation follows architecture patterns from Dev Notes |
 
+### Optional UX Supplementary Review
+
+When the story's `domain_tags` contain `ui`, `ux`, or `ox`, the review command additionally invokes the `ux-reviewer` agent to produce a supplementary UX perspective against the implemented artifact (flows, states, a11y). This is in addition to — not a replacement for — the primary review criteria above. The UX perspective is recorded as a separate section in `review-N.md` and does not block the primary verdict; it contributes findings only.
+
+If the story frontmatter also sets `needs_draft: true`, the `ux-draft-agent` runs **before** `ux-reviewer` in a post-implementation Reflection Loop: it produces a Mermaid flow reconstructed from the implemented behavior (default) or an Excalidraw link (`draft_format: excalidraw`), and `ux-reviewer` critiques that draft against the same rubric it uses in refinement. This catches UX drift between the original refinement draft and what actually shipped.
+
+Dispatch reuses the `agent-dispatcher` skill — see `scrum_workflow/skills/agent-dispatcher/SKILL.md`. Both agents' `active_in` lists include `review-story`, so they load automatically when tags match. If no UI/UX/OX tag is present, neither agent is spawned and review proceeds with the primary reviewer only.
+
 ## Status Transitions
 
 ```

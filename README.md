@@ -493,7 +493,7 @@ stateDiagram-v2
 | Command | Purpose |
 |---------|---------|
 | `/scrum-create-project-context` | Analyze codebase, generate project context and domain skills |
-| `/scrum-create-project-docs` | Generate business logic documentation |
+| `/scrum-create-project-docs` | Generate business logic documentation (Mermaid default; optional `--with-excalidraw` adds supplementary Excalidraw links) |
 | `/scrum-create-architecture-docs` | Generate architecture documentation |
 | `/scrum-research technical <topic>` | Technical research with web search |
 | `/scrum-research general <topic>` | Business/market/strategic research |
@@ -505,10 +505,31 @@ stateDiagram-v2
 | `/scrum-create-brief` | [Iterative Multi-Agent Brainstorming](https://www.agentic-patterns.com/patterns/iterative-multi-agent-brainstorming) + [Reflection Loop](https://www.agentic-patterns.com/patterns/reflection) | Parallel perspectives + aggressive open-question resolution |
 | `/scrum-decompose-epics` | [Plan-Then-Execute](https://www.agentic-patterns.com/patterns/plan-then-execute-pattern) | Single agent commits to the full epic graph upfront — no drift |
 | `/scrum-draft-stories` | [Orchestrator-Worker](https://www.agentic-patterns.com/patterns) | N parallel subagents draft one story each; map-reduce aggregation |
-| `/scrum-refine-ticket` | [Sub-Agent Spawning](https://www.agentic-patterns.com) | 3 isolated agents prevent groupthink |
+| `/scrum-refine-ticket` | [Sub-Agent Spawning](https://www.agentic-patterns.com) + [Reflection Loop](https://www.agentic-patterns.com/patterns/reflection/) (opt-in, UX only) | 3 isolated agents prevent groupthink; when `domain_tags` include `ui`/`ux`/`ox` and story frontmatter sets `needs_draft: true`, `ux-draft-agent` (generator) runs before `ux-reviewer` (critic) |
 | `/scrum-refine-story` | [Feature List as Immutable Contract](https://www.agentic-patterns.com/patterns/feature-list-as-immutable-contract) | Agent validates but cannot modify requirements |
 | `/scrum-dev-story` | [Inversion of Control](https://www.agentic-patterns.com/patterns/inversion-of-control) | Agent executes plan without self-review |
-| `/scrum-review-story` | [AI-Assisted Code Review](https://www.agentic-patterns.com/patterns/ai-assisted-code-review-verification) | Separate reviewer catches implementer blind spots |
+| `/scrum-review-story` | [AI-Assisted Code Review](https://www.agentic-patterns.com/patterns/ai-assisted-code-review-verification) + optional [Reflection Loop](https://www.agentic-patterns.com/patterns/reflection/) (UX supplementary) | Separate reviewer catches implementer blind spots; when `domain_tags` include `ui`/`ux`/`ox`, `ux-reviewer` runs as a supplementary perspective; with `needs_draft: true`, `ux-draft-agent` reconstructs the shipped flow first |
+
+### Domain Tags
+
+Story frontmatter uses `domain_tags:` to opt into supplementary agents. The dispatcher (`scrum_workflow/data/dispatch-rules.yaml`) matches these tags:
+
+| Tag | Meaning | Effect |
+|-----|---------|--------|
+| `frontend` | Frontend work (UI code) | Adds `ux-reviewer` |
+| `ui` | User-interface concerns | Adds `ux-reviewer` |
+| `ux` | End-user experience concerns | Adds `ux-reviewer` |
+| `ox` | Operator experience — internal/operator-facing UIs and tooling | Adds `ux-reviewer` |
+| `api` | Public or internal API changes | Adds `contract-validator` |
+| `contract` | API contract / schema / interface | Adds `contract-validator` |
+| `integration` | Cross-system integration | Adds `contract-validator` |
+
+Opt-in flags work alongside tags:
+
+| Flag | Meaning | Effect |
+|------|---------|--------|
+| `needs_draft: true` | Request a low-fidelity UX draft before review | Adds `ux-draft-agent`, run **before** `ux-reviewer` (Reflection Loop) |
+| `draft_format: excalidraw` | Prefer Excalidraw over the default Mermaid draft | Switches `ux-draft-agent` output mode; falls back to Mermaid if Excalidraw MCP is unavailable |
 
 ---
 
@@ -576,7 +597,7 @@ your-project/
 │           ├── review-1.md            # Code review findings
 │           └── approval.md            # Human approval record
 ├── scrum_workflow/                     # Framework (read-only during execution)
-│   ├── agents/                        # Agent definitions (architect, developer, qa)
+│   ├── agents/                        # Agent definitions (architect, developer, qa; optional: ux-reviewer, ux-draft-agent, security-reviewer, contract-validator)
 │   ├── commands/                      # Command orchestrations
 │   ├── workflows/                     # Phase-specific workflows
 │   ├── skills/                        # Internal skills (validation, synthesis)

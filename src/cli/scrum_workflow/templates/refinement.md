@@ -11,53 +11,243 @@ agents:
 
 # Refinement: {{story_title}}
 
-## Architect Perspective
+## Document Discovery
 
-### Findings
+<!-- Documents provided by user during doc-discovery phase (Story 10.1) -->
+<!-- Auto-detected context from _scrum-output/context/ is always included -->
 
-| # | Finding | Severity | Category |
-|---|---------|----------|----------|
-| 1 | {{finding}} | {{severity}} | {{category}} |
+### Auto-Detected Context
 
-### Recommendations
+- `_scrum-output/context/index.md` (project overview)
+- `_scrum-output/context/{{domain}}.md` (domain-specific context, if applicable)
 
-- {{recommendation_1}}
+### Additional Documents Provided
 
-### Proposed Acceptance Criteria
+<!-- List of user-provided documents, or "None (user skipped)" -->
 
-- [ ] {{proposed_ac_1}}
+**File Paths:**
+- {{file_path_or_"None provided"}}
 
-## Developer Perspective
+**URLs:**
+- {{url_or_"None provided"}}
 
-### Findings
+**OX/UX Board (Optional):**
+- {{ox_board_url_or_"None provided"}}
 
-| # | Finding | Severity | Category |
-|---|---------|----------|----------|
-| 1 | {{finding}} | {{severity}} | {{category}} |
+**Excalidraw Draft (Optional):**
+- {{excalidraw_draft_url_or_"None provided"}}
 
-### Recommendations
+## Round 0: Initial Perspectives
 
-- {{recommendation_1}}
+<!-- Agent analyses from isolated spawns, stored in temp files -->
 
-### Proposed Acceptance Criteria
-
-- [ ] {{proposed_ac_1}}
-
-## QA Perspective
-
-### Findings
+### Architect Initial Analysis
 
 | # | Finding | Severity | Category |
 |---|---------|----------|----------|
 | 1 | {{finding}} | {{severity}} | {{category}} |
 
-### Recommendations
-
+**Recommendations:**
 - {{recommendation_1}}
 
-### Proposed Acceptance Criteria
-
+**Proposed Acceptance Criteria:**
 - [ ] {{proposed_ac_1}}
+
+### Developer Initial Analysis
+
+| # | Finding | Severity | Category |
+|---|---------|----------|----------|
+| 1 | {{finding}} | {{severity}} | {{category}} |
+
+**Recommendations:**
+- {{recommendation_1}}
+
+**Proposed Acceptance Criteria:**
+- [ ] {{proposed_ac_1}}
+
+### QA Initial Analysis
+
+| # | Finding | Severity | Category |
+|---|---------|----------|----------|
+| 1 | {{finding}} | {{severity}} | {{category}} |
+
+**Recommendations:**
+- {{recommendation_1}}
+
+**Proposed Acceptance Criteria:**
+- [ ] {{proposed_ac_1}}
+
+{{#if ux_draft_dispatched}}
+### UX Draft Perspective
+
+<!-- Only present when domain_tags contain ui/ux/ox AND needs_draft: true. -->
+<!-- The ux-draft-agent runs BEFORE ux-reviewer (Reflection Loop / Generator–Critic pairing). -->
+
+**Flow (Mermaid by default; Excalidraw only if `draft_format: excalidraw`):**
+
+```mermaid
+{{ux_draft_mermaid_or_"flowchart TD\n  Placeholder[Replace with draft flow]"}}
+```
+
+**Assumptions:**
+- {{ux_draft_assumption_1}}
+
+**Open Questions for Reviewer:**
+- [ ] {{ux_draft_open_question_1}}
+
+**Excalidraw (optional):**
+- `excalidraw_url:` {{excalidraw_draft_url_or_"Not requested"}}
+{{/if}}
+
+{{#if ux_reviewer_dispatched}}
+### UX Reviewer Perspective
+
+<!-- Only present when domain_tags contain ui/ux/ox. -->
+<!-- When a UX Draft Perspective is present, this section critiques it directly (Reflection Loop). -->
+
+| # | Finding | Severity | Category |
+|---|---------|----------|----------|
+| 1 | {{ux_finding}} | {{ux_severity}} | {{ux_category}} |
+
+**Recommendations:**
+- {{ux_recommendation_1}}
+
+**Proposed Acceptance Criteria:**
+- [ ] {{ux_proposed_ac_1}}
+{{/if}}
+
+## Discussion Rounds
+
+<!-- Cross-talk discussion rounds where agents see and comment on each other's perspectives -->
+<!-- Progressive truncation: Round 1 (400 words), Round 2 (300 words), Round 3 (200 words) -->
+
+### Round 1 (400 words per agent)
+
+**Architect Comments:**
+- **Agrees with:** {{agreement_1}}
+- **Disagrees with:** {{disagreement_1}} (Blocker: {{yes/no}})
+- **Blind spots identified:** {{blind_spot_1}}
+
+**Developer Comments:**
+- **Agrees with:** {{agreement_1}}
+- **Disagrees with:** {{disagreement_1}} (Blocker: {{yes/no}})
+- **Blind spots identified:** {{blind_spot_1}}
+
+**QA Comments:**
+- **Agrees with:** {{agreement_1}}
+- **Disagrees with:** {{disagreement_1}} (Blocker: {{yes/no}})
+- **Blind spots identified:** {{blind_spot_1}}
+
+**Round 1 Summary:**
+- Blockers: {{blocker_count}}
+- Non-Blockers: {{non_blocker_count}}
+
+### Round 2 (300 words per agent)
+
+**Architect Comments:**
+- **Agrees with:** {{agreement_1}}
+- **Disagrees with:** {{disagreement_1}} (Blocker: {{yes/no}})
+- **Blind spots identified:** {{blind_spot_1}}
+
+**Developer Comments:**
+- **Agrees with:** {{agreement_1}}
+- **Disagrees with:** {{disagreement_1}} (Blocker: {{yes/no}})
+- **Blind spots identified:** {{blind_spot_1}}
+
+**QA Comments:**
+- **Agrees with:** {{agreement_1}}
+- **Disagrees with:** {{disagreement_1}} (Blocker: {{yes/no}})
+- **Blind spots identified:** {{blind_spot_1}}
+
+**Round 2 Summary:**
+- Blockers: {{blocker_count}}
+- Non-Blockers: {{non_blocker_count}}
+
+### Round 3 (200 words per agent)
+
+**Architect Comments:**
+- **Agrees with:** {{agreement_1}}
+- **Disagrees with:** {{disagreement_1}} (Blocker: {{yes/no}})
+- **Blind spots identified:** {{blind_spot_1}}
+
+**Developer Comments:**
+- **Agrees with:** {{agreement_1}}
+- **Disagrees with:** {{disagreement_1}} (Blocker: {{yes/no}})
+- **Blind spots identified:** {{blind_spot_1}}
+
+**QA Comments:**
+- **Agrees with:** {{agreement_1}}
+- **Disagrees with:** {{disagreement_1}} (Blocker: {{yes/no}})
+- **Blind spots identified:** {{blind_spot_1}}
+
+**Round 3 Summary:**
+- Blockers: {{blocker_count}}
+- Non-Blockers: {{non_blocker_count}}
+
+### Deadlock Resolution
+
+<!-- Only shown if blockers remain after max rounds -->
+
+{{#if deadlock}}
+⚠️ **REFINEMENT DEADLOCK after {{max_rounds}} rounds**
+
+Blocking Issues:
+{{#each blockers}}
+{{@index}}. {{this.description}} [{{this.agent}}'s proposal]
+{{/each}}
+
+**Resolution Options:**
+1. Accept [Agent]'s proposal
+2. Provide alternative
+3. Cancel and revert story to Draft
+
+**User Decision:** {{deadlock_resolution}}
+{{/if}}
+
+### Early Consensus Exit
+
+{{#if early_exit}}
+✅ **Early Consensus Reached**
+
+All blockers resolved. Proceeding to synthesis without further rounds.
+- Rounds completed: {{rounds_completed}}
+- Remaining non-blockers: {{non_blocker_count}}
+{{/if}}
+
+## Estimation
+
+<!-- Wideband Delphi estimation (Story 10.3) -->
+
+### Initial Estimates
+
+| Agent | Estimate (SP) | Rationale |
+|-------|---------------|-----------|
+| Architect | {{architect_estimate}} | {{architect_rationale}} |
+| Developer | {{developer_estimate}} | {{developer_rationale}} |
+| QA | {{qa_estimate}} | {{qa_rationale}} |
+
+**Variance:** {{variance}} points
+**Threshold:** {{threshold}} points (configurable via `estimation_variance_threshold`)
+
+### Re-Estimation (if variance > threshold)
+
+{{#if re_estimation_needed}}
+**Discussion Round:** {{re_estimation_discussion}}
+
+| Agent | Revised Estimate (SP) | Rationale |
+|-------|----------------------|-----------|
+| Architect | {{architect_revised}} | {{architect_revised_rationale}} |
+| Developer | {{developer_revised}} | {{developer_revised_rationale}} |
+| QA | {{qa_revised}} | {{qa_revised_rationale}} |
+
+**New Variance:** {{new_variance}} points
+{{/if}}
+
+### Final Estimate
+
+**Median:** {{final_estimate}} SP
+**Method:** Wideband Delphi
+**Confidence Level:** {{confidence_level}}
 
 ## Feedback Record
 

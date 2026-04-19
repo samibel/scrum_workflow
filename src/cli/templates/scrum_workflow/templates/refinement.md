@@ -31,6 +31,12 @@ agents:
 **URLs:**
 - {{url_or_"None provided"}}
 
+**OX/UX Board (Optional):**
+- {{ox_board_url_or_"None provided"}}
+
+**Excalidraw Draft (Optional):**
+- {{excalidraw_draft_url_or_"None provided"}}
+
 ## Round 0: Initial Perspectives
 
 <!-- Agent analyses from isolated spawns, stored in temp files -->
@@ -70,6 +76,45 @@ agents:
 
 **Proposed Acceptance Criteria:**
 - [ ] {{proposed_ac_1}}
+
+{{#if ux_draft_dispatched}}
+### UX Draft Perspective
+
+<!-- Only present when domain_tags contain ui/ux/ox AND needs_draft: true. -->
+<!-- The ux-draft-agent runs BEFORE ux-reviewer (Reflection Loop / Generator–Critic pairing). -->
+
+**Flow (Mermaid by default; Excalidraw only if `draft_format: excalidraw`):**
+
+```mermaid
+{{ux_draft_mermaid_or_"flowchart TD\n  Placeholder[Replace with draft flow]"}}
+```
+
+**Assumptions:**
+- {{ux_draft_assumption_1}}
+
+**Open Questions for Reviewer:**
+- [ ] {{ux_draft_open_question_1}}
+
+**Excalidraw (optional):**
+- `excalidraw_url:` {{excalidraw_draft_url_or_"Not requested"}}
+{{/if}}
+
+{{#if ux_reviewer_dispatched}}
+### UX Reviewer Perspective
+
+<!-- Only present when domain_tags contain ui/ux/ox. -->
+<!-- When a UX Draft Perspective is present, this section critiques it directly (Reflection Loop). -->
+
+| # | Finding | Severity | Category |
+|---|---------|----------|----------|
+| 1 | {{ux_finding}} | {{ux_severity}} | {{ux_category}} |
+
+**Recommendations:**
+- {{ux_recommendation_1}}
+
+**Proposed Acceptance Criteria:**
+- [ ] {{ux_proposed_ac_1}}
+{{/if}}
 
 ## Discussion Rounds
 

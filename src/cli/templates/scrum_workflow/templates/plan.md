@@ -41,6 +41,8 @@ This plan guides the implementation of {{ticket_id}} based on the refined story 
 - Resolve dependencies before proceeding to dependent tasks
 - Reference the source agent/user for clarification on task origin
 - Validate each acceptance criterion before marking story complete
+- OX/UX board input is optional; include related tasks only when an OX/UX board link is provided in refinement
+- Excalidraw draft links are optional supporting context; do not block planning if absent
 
 ## Readiness Check
 

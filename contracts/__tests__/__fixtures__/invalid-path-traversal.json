@@ -1,0 +1,20 @@
+{
+  "schemaVersion": "1.0.0",
+  "name": "example-pattern",
+  "version": "1.0.0",
+  "phases": [
+    {
+      "name": "execute"
+    }
+  ],
+  "hooks": {},
+  "binds": {
+    "declares": []
+  },
+  "artifacts": [
+    {
+      "name": "output",
+      "path": "../etc/passwd"
+    }
+  ]
+}

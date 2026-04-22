@@ -1,0 +1,34 @@
+{
+  "name": "@scrum-workflow/contracts",
+  "version": "1.0.0",
+  "description": "Pattern runtime contract type and manifest JSON-Schema for the Scrum Workflow framework",
+  "private": true,
+  "sideEffects": false,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts"
+    },
+    "./schemas/pattern.manifest.schema.json": "./schemas/pattern.manifest.schema.json"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "test": "tsc --noEmit",
+    "test:runtime": "vitest run"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "json-schema-to-ts": "^3.1.1",
+    "typescript": "^6.0.2",
+    "vitest": "^4.1.3"
+  },
+  "files": [
+    "src",
+    "schemas"
+  ]
+}

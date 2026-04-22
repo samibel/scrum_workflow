@@ -136,18 +136,24 @@ export type MigrationStrategy = "noop" | "script" | "manual";
  * - `script`: `path` is required
  * - `manual`: `instructions` is required
  */
-export interface PatternMigration {
-  /** Migration version this applies to. */
-  readonly version: SemVerString;
-  /** Migration strategy. */
-  readonly strategy: MigrationStrategy;
-  /** Path to migration script (required for `script` strategy). */
-  readonly path?: string;
-  /** Human-readable instructions (required for `manual` strategy). */
-  readonly instructions?: string;
-  /** Optional description. */
-  readonly description?: string;
-}
+export type PatternMigration =
+  | {
+      readonly version: SemVerString;
+      readonly strategy: "noop";
+      readonly description?: string;
+    }
+  | {
+      readonly version: SemVerString;
+      readonly strategy: "script";
+      readonly path: string;
+      readonly description?: string;
+    }
+  | {
+      readonly version: SemVerString;
+      readonly strategy: "manual";
+      readonly instructions: string;
+      readonly description?: string;
+    };
 
 /**
  * Phase declaration.

@@ -1,6 +1,6 @@
 ---
 domain: architecture
-generated: "2026-04-03"
+generated: "2026-04-19T00:00:00Z"
 ---
 
 # Architecture Context

@@ -1,0 +1,14 @@
+{
+  "schemaVersion": "1.0.0",
+  "name": "pattern‑auth",
+  "version": "1.0.0",
+  "phases": [
+    {
+      "name": "execute"
+    }
+  ],
+  "hooks": {},
+  "binds": {
+    "declares": []
+  }
+}

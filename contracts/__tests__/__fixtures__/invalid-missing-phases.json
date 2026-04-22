@@ -1,0 +1,9 @@
+{
+  "schemaVersion": "1.0.0",
+  "name": "example-pattern",
+  "version": "1.0.0",
+  "hooks": {},
+  "binds": {
+    "declares": []
+  }
+}

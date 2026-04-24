@@ -21,6 +21,7 @@ workflow-name.md
 ## Planned Workflows
 
 - **project-context.md**: Two-phase codebase analysis and context generation
+- **concept-creation.md**: Graph-based technical concept creation from repository evidence
 - **ticket-creation.md**: Story generation from user requirements
 - **refinement.md**: Multi-agent perspective gathering and synthesis
 - **readiness-check.md**: Story completeness validation before implementation

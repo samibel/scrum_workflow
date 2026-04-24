@@ -15,6 +15,7 @@ templates/
 ├── context-*.md          # Project context file templates
 ├── skill-*.md            # Project skill definition templates
 ├── story.md              # Story file template
+├── concept.md            # Technical concept template
 ├── refinement.md         # Refinement output template
 ├── plan.md               # Execution plan template
 ├── review.md             # Review findings template
@@ -39,7 +40,8 @@ templates/
 - `skill-project-architect.md`: Architecture skill
 
 ### Workflow Templates
-- `story.md`: Story file with YAML frontmatter (includes optional `parent_epic` and `epic_index` for greenfield-origin stories)
+- `story.md`: Story file with YAML frontmatter
+- `concept.md`: Technical concept document with analysis graph and solution options
 - `refinement.md`: Agent refinement output
 - `plan.md`: Implementation plan
 - `review.md`: Code review findings

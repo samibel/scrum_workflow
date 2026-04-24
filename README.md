@@ -1,7 +1,7 @@
 # Scrum Workflow
 
-**Version:** 1.3.0  
-**Status:** Production-Ready with 23 Commands  
+**Version:** 1.3.0
+**Status:** Production-Ready with 24 Commands
 **Platform Support:** Claude Code, Cursor, Windsurf, GitHub Copilot, Cline, Universal
 
 A spec-first, AI-assisted development workflow with human oversight at critical gates. Built for Claude Code and compatible AI coding assistants.
@@ -136,6 +136,15 @@ create-scrum-workflow install
 ```
 
 **That's it!** Your story is created. Now refine it, develop it, review it, and approve it using the commands below.
+
+### 3a. Optional: Create a Technical Concept First
+
+```bash
+/scrum-create-concept "Analyze how to migrate this module from Maven to Gradle"
+```
+
+This generates a technical concept artifact at `_scrum-output/concepts/<slug>/concept.md` using codebase research, options, trade-offs, recommendation, and test strategy.
+
 
 ---
 

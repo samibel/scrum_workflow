@@ -19,6 +19,7 @@ command-name.md
 ## Planned Commands
 
 - **create-project-context.md**: Analyze codebase and generate project context files
+- **create-concept.md**: Create a technical solution concept from project analysis before implementation
 - **create-ticket.md**: Create new story tickets from specifications
 - **refine-ticket.md**: Multi-agent refinement of story requirements
 - **dev-story.md**: Implement story from specification

@@ -44,14 +44,32 @@ Build a graph with these nodes:
 - Constraints
 - Possible Root Causes
 - Solution Options
-- Trade-offs
+- Trade-off Analysis
 - Recommended Solution
-- Implementation Steps
+- Implementation Plan
 - Test Strategy
 - Risks
 - Open Questions
 
 The graph does not need to be stored as JSON unless the project already supports that. It must be represented in the final Markdown document.
+
+### Graph Edge Consistency
+
+Represent relationships consistently in the concept output:
+
+- Problem Statement → Relevant Files
+- Problem Statement → Relevant Modules
+- Relevant Files + Relevant Modules → Current Behavior
+- Current Behavior → Constraints
+- Constraints → Possible Root Causes
+- Possible Root Causes → Solution Options
+- Solution Options → Trade-off Analysis
+- Trade-off Analysis → Recommended Solution
+- Recommended Solution → Implementation Plan
+- Recommended Solution → Test Strategy
+- Recommended Solution → Risks
+- Risks → Open Questions
+
 
 ## Phase 4: Solution Exploration
 
@@ -70,6 +88,12 @@ Prefer three options when useful:
 - minimal solution
 - balanced solution
 - robust/long-term solution
+
+### Option Count by Depth
+
+- `light`: exactly 2 options (Option A and Option B)
+- `standard`: at least 2 options, prefer 3 options when they add meaningful trade-off clarity
+- `deep`: at least 3 options; include additional options when justified
 
 ## Phase 5: Recommendation
 
@@ -108,6 +132,13 @@ Define:
 ## Phase 8: Concept File Creation
 
 Render the concept using `templates/concept.md`.
+
+### Template Rendering Rules
+
+- Always render Option A and Option B.
+- Render Option C only when a third option is part of the analysis.
+- For `deep` analysis with more than three options, append additional option blocks (Option D, Option E, ...) under the same "Solution Options" section.
+- Remove unused option placeholders; do not leave empty template fields in the final concept artifact.
 
 Write to:
 - `_scrum-output/concepts/<slug>/concept.md`

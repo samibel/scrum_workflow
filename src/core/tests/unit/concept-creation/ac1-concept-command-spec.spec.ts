@@ -41,6 +41,8 @@ describe('AC1: /scrum-create-concept specification artifacts', () => {
     const content = readFileSync(coreWorkflow, 'utf8');
     expect(content).toMatch(/Phase 3: Analysis Graph Construction/);
     expect(content).toMatch(/Phase 4: Solution Exploration/);
+    expect(content).toMatch(/Option Count by Depth/);
+    expect(content).toMatch(/Graph Edge Consistency/);
     expect(content).toMatch(/Phase 6: Implementation Plan/);
     expect(content).toMatch(/Phase 7: Test Strategy/);
     expect(content).toMatch(/Phase 8: Concept File Creation/);
@@ -51,9 +53,12 @@ describe('AC1: /scrum-create-concept specification artifacts', () => {
     expect(content).toMatch(/kind:\s*"concept"/);
     expect(content).toMatch(/## 3\. Analysis Graph/);
     expect(content).toMatch(/```mermaid/);
-    expect(content).toMatch(/## 10\. Recommended Solution/);
-    expect(content).toMatch(/## 12\. Test Strategy/);
-    expect(content).toMatch(/## 13\. Risks/);
-    expect(content).toMatch(/## 14\. Open Questions/);
+    expect(content).toMatch(/Possible Root Causes/);
+    expect(content).toMatch(/Option C \(Optional\)/);
+    expect(content).toMatch(/Additional Options \(Optional\)/);
+    expect(content).toMatch(/## 11\. Recommended Solution/);
+    expect(content).toMatch(/## 13\. Test Strategy/);
+    expect(content).toMatch(/## 14\. Risks/);
+    expect(content).toMatch(/## 15\. Open Questions/);
   });
 });

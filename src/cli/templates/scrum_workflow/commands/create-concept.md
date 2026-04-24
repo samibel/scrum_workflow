@@ -81,9 +81,9 @@ Required graph nodes:
 - Constraints
 - Possible Root Causes
 - Solution Options
-- Trade-offs
+- Trade-off Analysis
 - Recommended Solution
-- Implementation Steps
+- Implementation Plan
 - Test Strategy
 - Risks
 - Open Questions

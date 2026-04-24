@@ -30,13 +30,14 @@ flowchart TD
     B --> D[Current Behavior]
     C --> D
     D --> E[Constraints]
-    E --> F[Solution Options]
-    F --> G[Trade-off Analysis]
-    G --> H[Recommended Solution]
-    H --> I[Implementation Plan]
-    H --> J[Test Strategy]
-    H --> K[Risks]
-    K --> L[Open Questions]
+    E --> F[Possible Root Causes]
+    F --> G[Solution Options]
+    G --> H[Trade-off Analysis]
+    H --> I[Recommended Solution]
+    I --> J[Implementation Plan]
+    I --> K[Test Strategy]
+    I --> L[Risks]
+    L --> M[Open Questions]
 ```
 
 ## 4. Relevant Files and Modules
@@ -55,7 +56,11 @@ flowchart TD
 
 {{constraints}}
 
-## 8. Solution Options
+## 8. Possible Root Causes
+
+{{possible_root_causes}}
+
+## 9. Solution Options
 
 ### Option A: {{option_a_title}}
 
@@ -101,7 +106,7 @@ flowchart TD
 
 ---
 
-### Option C: {{option_c_title}}
+### Option C (Optional): {{option_c_title}}
 
 {{option_c_description}}
 
@@ -121,30 +126,36 @@ flowchart TD
 
 {{option_c_risk}}
 
-## 9. Trade-off Analysis
+> Remove this Option C block when only two options are analyzed.
+
+### Additional Options (Optional)
+
+{{additional_options}}
+
+## 10. Trade-off Analysis
 
 {{tradeoff_analysis}}
 
-## 10. Recommended Solution
+## 11. Recommended Solution
 
 {{recommended_solution}}
 
-## 11. Implementation Plan
+## 12. Implementation Plan
 
 {{implementation_plan}}
 
-## 12. Test Strategy
+## 13. Test Strategy
 
 {{test_strategy}}
 
-## 13. Risks
+## 14. Risks
 
 {{risks}}
 
-## 14. Open Questions
+## 15. Open Questions
 
 {{open_questions}}
 
-## 15. Suggested Follow-up Ticket
+## 16. Suggested Follow-up Ticket
 
 {{suggested_followup_ticket}}

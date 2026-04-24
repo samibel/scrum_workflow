@@ -497,6 +497,7 @@ stateDiagram-v2
 | `/scrum-create-architecture-docs` | Generate architecture documentation |
 | `/scrum-research technical <topic>` | Technical research with web search |
 | `/scrum-research general <topic>` | Business/market/strategic research |
+| `/scrum-create-concept "<problem>"` | Analyze an existing project problem and produce a technical concept with solution options, trade-off analysis, and implementation plan — before writing code or creating a ticket |
 
 ### Agentic Patterns Used
 
@@ -509,6 +510,7 @@ stateDiagram-v2
 | `/scrum-refine-story` | [Feature List as Immutable Contract](https://www.agentic-patterns.com/patterns/feature-list-as-immutable-contract) | Agent validates but cannot modify requirements |
 | `/scrum-dev-story` | [Inversion of Control](https://www.agentic-patterns.com/patterns/inversion-of-control) | Agent executes plan without self-review |
 | `/scrum-review-story` | [AI-Assisted Code Review](https://www.agentic-patterns.com/patterns/ai-assisted-code-review-verification) + optional [Reflection Loop](https://www.agentic-patterns.com/patterns/reflection/) (UX supplementary) | Separate reviewer catches implementer blind spots; when `domain_tags` include `ui`/`ux`/`ox`, `ux-reviewer` runs as a supplementary perspective; with `needs_draft: true`, `ux-draft-agent` reconstructs the shipped flow first |
+| `/scrum-create-concept` | Graph-Based Project Analysis | Builds an analysis graph (problem → files → patterns → options → recommendation) before any solution is proposed; grounds all recommendations in observed codebase evidence |
 
 ### Domain Tags
 

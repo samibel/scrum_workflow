@@ -16,6 +16,7 @@ export function resolveInstallPaths(config, registry) {
 
   const outputDirs = [
     join(config.directory, '_scrum-output', 'context'),
+    join(config.directory, '_scrum-output', 'concepts'),
     join(config.directory, '_scrum-output', 'docs'),
     join(config.directory, '_scrum-output', 'skills'),
     join(config.directory, '_scrum-output', 'sprints')

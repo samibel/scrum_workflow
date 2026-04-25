@@ -1,7 +1,7 @@
 # Scrum Workflow
 
 **Version:** 1.3.0  
-**Status:** Production-Ready with 23 Commands  
+**Status:** Production-Ready with 24 Commands  
 **Platform Support:** Claude Code, Cursor, Windsurf, GitHub Copilot, Cline, Universal
 
 A spec-first, AI-assisted development workflow with human oversight at critical gates. Built for Claude Code and compatible AI coding assistants.
@@ -16,7 +16,7 @@ The repository is organized as an npm monorepo with clear separation of concerns
 scrum-workflow/                 # Root — clean, minimal
 ├── src/                        # Application source code
 │   ├── core/                   # @scrum-workflow/core (workflow engine)
-│   │   ├── skills/             # 20+ workflow skills
+│   │   ├── skills/             # 23 workflow skills
 │   │   ├── commands/           # CLI commands
 │   │   ├── templates/          # Installation templates
 │   │   ├── context/            # Framework context & standards
@@ -114,7 +114,7 @@ create-scrum-workflow install
 ```
 
 **What gets installed:**
-- 20 workflow commands (skill shims)
+- 23 workflow commands (skill shims)
 - Framework files (read-only)
 - Configuration files (your customizations)
 - Output directories for artifacts
@@ -362,7 +362,7 @@ The approval workflow presents the review findings and asks for a clear APPROVE 
 
 ## Status State Machine
 
-### All 9 Valid Status Values
+### All 10 Valid Status Values
 
 | Status | Set By | Guard | Meaning |
 |--------|--------|-------|---------|
@@ -375,6 +375,7 @@ The approval workflow presents the review findings and asks for a clear APPROVE 
 | `approved` | `/scrum-review-story` | verdict == APPROVED | Review passed |
 | `changes-needed` | `/scrum-review-story` | verdict == CHANGES-NEEDED | Review found issues |
 | `done` | Human approval | explicit sign-off | Human approved, story complete |
+| `cancelled` | Human decision | explicit cancellation | Story cancelled, terminal state |
 
 ### All Valid Transitions
 
@@ -399,6 +400,7 @@ stateDiagram-v2
     approved --> done
     
     done --> [*]
+    cancelled --> [*]
     
     note right of draft
         Status: draft
@@ -444,6 +446,11 @@ stateDiagram-v2
         Status: done
         Human approved, story complete
     end note
+    
+    note right of cancelled
+        Status: cancelled
+        Terminal state — story was cancelled
+    end note
 ```
 
 | From | To | Trigger | Guard |
@@ -465,7 +472,7 @@ stateDiagram-v2
 
 ## Commands Reference
 
-**Visual Overview:** See [ALL-COMMANDS.md](./src/docs/ALL-COMMANDS.md) for all 20 commands as Mermaid diagrams
+**Visual Overview:** See [ALL-COMMANDS.md](./src/docs/ALL-COMMANDS.md) for all 24 commands as Mermaid diagrams
 
 ### Greenfield (3 Commands, optional Phase 0)
 
@@ -487,6 +494,12 @@ stateDiagram-v2
 | `/scrum-dev-story SW-XXX review` | Submit | `in-progress` → `review` |
 | `/scrum-review-story SW-XXX` | Review | `review` → `approved` / `changes-needed` |
 | `/scrum-approve SW-XXX` | Approve | `approved` → `done` |
+
+### Automation (1 Command)
+
+| Command | Purpose | Modes |
+|---------|---------|-------|
+| `/scrum-pipeline SW-XXX` | Automate the story lifecycle by routing stories through the full command chain using a data-driven routing matrix | Single story, multi-story, epic (`EP-XXX`), `--to <status>`, `--pending`, `--resume` |
 
 ### Documentation & Research
 
@@ -511,6 +524,7 @@ stateDiagram-v2
 | `/scrum-dev-story` | [Inversion of Control](https://www.agentic-patterns.com/patterns/inversion-of-control) | Agent executes plan without self-review |
 | `/scrum-review-story` | [AI-Assisted Code Review](https://www.agentic-patterns.com/patterns/ai-assisted-code-review-verification) + optional [Reflection Loop](https://www.agentic-patterns.com/patterns/reflection/) (UX supplementary) | Separate reviewer catches implementer blind spots; when `domain_tags` include `ui`/`ux`/`ox`, `ux-reviewer` runs as a supplementary perspective; with `needs_draft: true`, `ux-draft-agent` reconstructs the shipped flow first |
 | `/scrum-create-concept` | Graph-Based Project Analysis | Builds an analysis graph (problem → files → patterns → options → recommendation) before any solution is proposed; grounds all recommendations in observed codebase evidence |
+| `/scrum-pipeline` | [Sequential Orchestrator](https://www.agentic-patterns.com/patterns) | Reads a data-driven routing matrix (`pipeline-routing.yaml`) and delegates to existing commands without modifying their behavior or write boundaries; supports review loops (max 3) and checkpoint/resume |
 
 ### Domain Tags
 
@@ -586,7 +600,7 @@ your-project/
 │   ├── scrum-refine-story/SKILL.md
 │   ├── scrum-dev-story/SKILL.md
 │   ├── scrum-review-story/SKILL.md
-│   └── ... (10 skills total)
+│   └── ... (23 skills total)
 ├── _scrum-output/
 │   ├── context/                       # Project context files
 │   ├── docs/                          # Generated documentation
@@ -605,7 +619,7 @@ your-project/
 │   ├── skills/                        # Internal skills (validation, synthesis)
 │   ├── templates/                     # Output templates
 │   ├── context/                       # Standards and guidelines
-│   ├── data/                          # Reference data (estimation scale)
+│   ├── data/                          # Reference data (estimation scale, pipeline routing matrix, classification rules)
 │   └── config.yaml                    # Framework configuration
 └── .scrum-workflow-lock.json          # Installation integrity tracking
 ```
@@ -621,6 +635,7 @@ Each command can only write specific files. This prevents phases from interferin
 | `/scrum-refine-story` | `plan.md`, `story.md` (status only) | `refinement.md`, `review-*.md` |
 | `/scrum-dev-story` | Code files, `story.md` (status only) | `refinement.md`, `plan.md`, `approval.md` |
 | `/scrum-review-story` | `review-N.md`, `story.md` (status only) | `refinement.md`, `plan.md`, code files |
+| `/scrum-pipeline` | `.pipeline-state.json` (checkpoint) | Everything — delegates all writes to sub-commands |
 | Approval | `approval.md`, `story.md` (status only) | Everything else |
 
 ---
@@ -690,7 +705,7 @@ keep_agent_temp_files: false       # Keep agent temp files for debugging
 
 ```
 core/                       # Workflow Engine (@scrum-workflow/core package)
-  ├── commands/             # /scrum-* commands (20+ workflow commands)
+  ├── commands/             # /scrum-* commands (24 workflow commands)
   ├── agents/               # AI agent definitions (Architect, Developer, QA, etc.)
   ├── skills/               # Command implementations
   ├── templates/            # Installation templates (for user projects)
@@ -790,7 +805,7 @@ npm -w src/cli run sync-templates
 
 ---
 
-**Last Updated:** 2026-04-18  
+**Last Updated:** 2026-04-25  
 **Version:** 1.3.0 (Production-Ready)  
 **Master Documentation:** [docs/index.md](./src/docs/index.md)  
 **Quick Navigation:** [DOCUMENTATION-GUIDE.md](./src/docs/DOCUMENTATION-GUIDE.md)

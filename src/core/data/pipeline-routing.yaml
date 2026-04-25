@@ -1,0 +1,162 @@
+# Pipeline Routing Matrix
+# Referenced by: /scrum-pipeline command
+# Purpose: Data-driven status-to-command routing for automated story lifecycle
+# Pattern: The pipeline reads this file at startup — no hardcoded routing logic
+#
+# Fields per entry:
+#   current_status  — the story's current status (or "_not_found" for missing stories)
+#   next_command    — the scrum command to invoke next
+#   target_status   — the expected status after command completes
+#   action          — "route" (execute command), "stop" (human gate), "skip" (no action)
+#   command_args    — (optional) additional arguments appended after the ticket ID
+#   description     — human-readable explanation
+
+# ─── Status-to-Command Routing ─────────────────────────────────────────────────
+
+routing_matrix:
+  - current_status: "_not_found"
+    next_command: "/scrum-create-ticket"
+    target_status: "draft"
+    action: "route"
+    description: "Story file does not exist — create it first"
+
+  - current_status: "draft"
+    next_command: "/scrum-refine-ticket"
+    target_status: "refined"
+    action: "route"
+    description: "Story is a draft — run multi-agent refinement"
+
+  - current_status: "refinement"
+    next_command: null
+    target_status: null
+    action: "skip"
+    description: "Ephemeral sub-state during refine-ticket — wait for completion"
+
+  - current_status: "refined"
+    next_command: "/scrum-refine-story"
+    target_status: "ready-for-dev"
+    action: "route"
+    description: "Story refined — validate against 5-criterion checklist"
+
+  - current_status: "ready-for-dev"
+    next_command: "/scrum-dev-story"
+    target_status: "in-progress"
+    action: "route"
+    description: "Story validated — implement following execution plan (transitions to in-progress)"
+
+  - current_status: "in-progress"
+    next_command: "/scrum-dev-story"
+    target_status: "review"
+    command_args: "review"
+    action: "route"
+    description: "Implementation complete — trigger review submission via dev-story review subcommand"
+
+  - current_status: "review"
+    next_command: "/scrum-review-story"
+    target_status: "approved"
+    action: "route"
+    description: "Implementation complete — run AI-assisted code review"
+
+  - current_status: "changes-needed"
+    next_command: "/scrum-dev-story"
+    target_status: "review"
+    action: "route"
+    description: "Review found issues — re-implement and re-review (loop)"
+
+  - current_status: "approved"
+    next_command: null
+    target_status: null
+    action: "stop"
+    description: "Human gate — story awaits /scrum-approve sign-off"
+
+  - current_status: "done"
+    next_command: null
+    target_status: null
+    action: "skip"
+    description: "Terminal state — story is complete, no further processing"
+
+  - current_status: "cancelled"
+    next_command: null
+    target_status: null
+    action: "skip"
+    description: "Terminal state — story was cancelled"
+
+# ─── Review Loop Configuration ──────────────────────────────────────────────────
+
+review_loop:
+  max_iterations: 3
+  loop_statuses:
+    - "changes-needed"
+  blocked_behavior: "report"
+  blocked_description: "After max iterations, story remains in changes-needed and is reported as blocked"
+
+# ─── Terminal and Gate Statuses ─────────────────────────────────────────────────
+
+terminal_statuses:
+  - "done"
+  - "cancelled"
+
+human_gate_statuses:
+  - "approved"
+
+# ─── --to Flag: Valid Stop Points ───────────────────────────────────────────────
+
+valid_stop_points:
+  - "refined"
+  - "ready-for-dev"
+  - "review"
+  - "approved"
+
+# ─── --pending Flag: Inclusion/Exclusion ────────────────────────────────────────
+
+pending_filter:
+  include_statuses:
+    - "draft"
+    - "refinement"
+    - "refined"
+    - "ready-for-dev"
+    - "in-progress"
+    - "review"
+    - "changes-needed"
+  exclude_statuses:
+    - "done"
+    - "approved"
+  sort_order: "ticket_number_ascending"
+
+# ─── Input Validation Patterns ──────────────────────────────────────────────────
+
+input_validation:
+  ticket_id_pattern: "^SW-\\d{3}$"
+  epic_id_pattern: "^EP-\\d{3}$"
+  mutually_exclusive_flags:
+    - ["--pending", "explicit_story_input"]
+    - ["--pending", "explicit_epic_input"]
+
+# ─── Error Classification ──────────────────────────────────────────────────────
+
+error_classification:
+  recoverable:
+    description: "Per-story errors — log, skip story, continue to next"
+    examples:
+      - "Missing story.md file"
+      - "Wrong status for current command"
+      - "Malformed YAML frontmatter"
+      - "Missing status field"
+      - "Story creation failure in epic mode"
+  fatal:
+    description: "Framework errors — halt entire pipeline immediately"
+    examples:
+      - "Missing pipeline-routing.yaml"
+      - "Missing skill files"
+      - "Invalid routing matrix format"
+      - "File system write failure"
+
+# ─── Progress Reporting ─────────────────────────────────────────────────────────
+
+progress_symbols:
+  success: "✓"
+  error: "✗"
+  human_gate: "●"
+  skipped: "○"
+
+summary_format: "Fertig: {completed} | Human Gate: {gated} ({gated_ids}) | Blockiert: {blocked} ({blocked_ids}) | Uebersprungen: {skipped}"

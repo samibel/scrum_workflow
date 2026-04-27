@@ -17,6 +17,7 @@
 | `options.maxHunkLines` | no, default `60` | CLI flag `--max-hunk-lines`. |
 | `options.include[]` | no | Repeatable `--include <glob>`. |
 | `options.exclude[]` | no | Repeatable `--exclude <glob>`. Defaults: `package-lock.json`, `pnpm-lock.yaml`, `dist/**`, `build/**`, `**/*.{png,jpg,jpeg,gif,pdf,zip}`. |
+| `options.diagrams` | no, default `true` | CLI flag `--no-diagrams` flips this to `false`. When `true`, the renderer infers an optional Mermaid diagram per step from the whitelist below. |
 | `options.since` | no | ISO 8601 date string from `--since`. |
 | `options.bundleName` | no | String from `--bundle`. |
 
@@ -153,6 +154,11 @@ type TutorialStep = {
   title: string;             // derived from plan step or commit subject (no "feat:" prefix)
   goal: string;              // one sentence
   edits: FileEdit[];         // stable order: by path then newStart ascending
+  diagram: {                 // null when options.diagrams === false or no whitelist match
+    type: "flowchart" | "sequence" | "stateDiagram" | "classDiagram";
+    body: string;            // raw Mermaid source, no fence
+    rationale: string;       // which whitelist rule fired (for debugging / determinism)
+  } | null;
   verify: string;            // concrete check derived from the step
   commits: string[];         // short SHAs that contributed to the step
 };
@@ -196,6 +202,25 @@ type TutorialModel = {
    - hunk touches the last 5 lines of the file → `"at the bottom of the file"`.
    - otherwise → `"around line {{newStart}}"`.
 6. **Snippet splitting**: a hunk longer than 30 lines is split into multiple `snippetBlocks` of ≤ 30 lines each on the nearest blank line, joined by short connector prose so the reader doesn't face one wall of code.
+
+#### Diagram inference
+
+Only runs when `options.diagrams === true`. Pick at most **one** diagram per step from the whitelist below by walking the rules in priority order — the first rule that matches wins. If no rule matches, the step's `diagram` field is `null` and no Mermaid block is rendered.
+
+| # | Rule | Diagram type | Body content |
+|---|------|--------------|--------------|
+| 1 | Step touches **≥ 2 files** in `**/services/**`, `**/clients/**`, `**/api/**`, or any pair of files where one calls the other across a network boundary (heuristic: `fetch(`, `axios.`, `http.request`, gRPC stubs in After snippets) | `sequence` | One participant per service; one arrow per call detected in the hunks (caller → callee, label is the function/endpoint name). |
+| 2 | Step's combined snippet content matches **two or more** of the regex set: `\bstate\b`, `\bstatus\b`, `\btransition\b`, `\b(from\|to)\s*[:=]\s*['"]?[a-z][\w-]+`, OR the step touches a path with one of `state`, `status`, `lifecycle`, `state-machine` in its name | `stateDiagram` | Each `from → to` pair detected in the snippets becomes a transition; states without a detected entry get a `[*] --> <state>` initial marker. |
+| 3 | Step's snippets contain **at least one** `class\s+[A-Z]\w*\s+(extends\|implements)\s+`, OR add/modify a path matching `**/{models,entities,domain}/**/*.{ts,js,py,rb,kt,java,cs}` | `classDiagram` | One class per touched declaration; arrows for `extends` (`<|--`) and `implements` (`<|..`). Fields/methods limited to what the hunk touched, max 5 each, to keep the diagram readable. |
+| 4 | Step touches a path matching `**/{routes,controllers,handlers,middleware}/**`, OR the snippets contain control-flow keywords `\b(if\|switch\|case\|return)\b` AND no rule above fired | `flowchart` | `flowchart TD` with one node per branch / early return / function call detected in the hunk; default to LR direction when more than 6 nodes are produced. |
+
+Determinism rules for diagram bodies:
+
+- Node and participant identifiers MUST be derived deterministically from the source: function names, file basenames, or status string literals — never random or LLM-generated.
+- The body MUST be ≤ 25 lines. If the inferred graph would be larger, keep only the top-level nodes / first-class transitions and append a single `note over <node>: …more…` placeholder.
+- The body MUST NOT include styling (`style`, `classDef`, theme directives) — the renderer keeps it plain so it remains diff-friendly.
+- The body MUST be syntactically valid Mermaid for the chosen `type`. The agent SHOULD mentally validate against the Mermaid syntax for that diagram type before emitting; if validation fails, set `diagram = null` rather than emitting a broken block.
+- The `rationale` field records which rule (`"rule-1-sequence"`, `"rule-2-state"`, …) fired, so re-runs over an unchanged tree pick the same diagram type.
 
 #### Intro derivation
 
@@ -251,6 +276,15 @@ For every `TutorialStep`, render the following template:
 **What this does:** {{whatThisDoes}}
 
 {{/each}}
+
+{{#if diagram}}
+**Diagram:**
+
+```mermaid
+{{diagram.body}}
+```
+
+{{/if}}
 
 **Verify:** {{verify}}
 ````

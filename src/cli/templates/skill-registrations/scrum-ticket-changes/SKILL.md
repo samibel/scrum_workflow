@@ -9,8 +9,9 @@ The command file contains the full workflow orchestration including:
 - Discovering ticket commits via `git log --grep=SW-XXX` (subject + trailers)
 - Extracting hunks per file with configurable context (`--context-lines`, `--max-hunk-lines`, `--include`, `--exclude`)
 - Grouping the raw changes into ordered tutorial **steps** (one per logical change, plan-step-aligned when possible)
-- Rendering each step in second-person prose: Goal → Open / Create file → Locate → imperative Action sentence → typeable code snippet(s) → "What this does" paragraph → Verify checkpoint
+- Rendering each step in second-person prose: Goal → Open / Create file → Locate → imperative Action sentence → typeable code snippet(s) → "What this does" paragraph → optional Mermaid diagram → Verify checkpoint
 - Auto-derived Introduction (What you'll build / Why / Prerequisites / What you'll learn) and Reference (files touched table, commit list, totals)
+- Mermaid diagrams **on by default** — one per step, picked deterministically from a 4-type whitelist (flowchart for routing/control flow, sequence for cross-service calls, stateDiagram for status/lifecycle code, classDiagram for OOP structure). Disable with `--no-diagrams`. Steps without a whitelist match get no diagram (never invented to fill the slot).
 - Single-ticket, multi-ticket, `--epic N`, `--all`, `--bundle`, and `--split` (one file per step) modes
 - Output paths under the ticket directory: `_scrum-output/sprints/SW-XXX/tutorials/{tutorial.md,README.md,00-introduction.md,steps/NN-<slug>.md,98-recap.md,99-reference.md,assets/diffs/*.diff}`
 - Markdown (default) and JSON output formats

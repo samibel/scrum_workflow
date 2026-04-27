@@ -60,6 +60,7 @@ workflows/ticket-changes.md
 | `--max-hunk-lines <N>` | Hunks longer than this are summarised and the full diff moved to `assets/diffs/<short-sha>.diff` (or inlined behind a `<details>` block in single-file mode). Default: `60`. |
 | `--include <glob>` | Only include files matching the glob (repeatable). |
 | `--exclude <glob>` | Exclude files matching the glob (repeatable). Defaults: lock files, `dist/`, `build/`, binary assets. |
+| `--no-diagrams` | Disable the auto-generated Mermaid diagrams per step. By default the renderer emits one Mermaid block per step that fits a small whitelist (flowchart for routing/control flow, sequence for cross-service calls, stateDiagram for status/lifecycle code, classDiagram for OOP structure). Steps that don't fit any category get no diagram. |
 | `--bundle <name>` | When multiple tickets are requested, write a single combined file `_scrum-output/tutorials/<name>-tutorial.md` instead of one file per ticket. Mutually exclusive with `--split`. |
 | `--since <ISO-date>` | Only include commits authored on or after the given ISO 8601 timestamp. |
 
@@ -146,6 +147,7 @@ Every generated tutorial follows the layout below. The voice is second person ("
        - rename only → "Rename `<old>` to `<new>`."
      - **Code block** — the *new* code (or the deleted code for pure deletions), fenced with the language tag inferred from the file extension. When the hunk is too large to type comfortably, split it into multiple back-to-back code blocks separated by short prose ("…and right below, paste:").
      - **What this does** — one to three sentences in plain language explaining the snippet. Combine the plan step text, commit subject, and any matching acceptance criterion into a flowing paragraph; do **not** simply paste raw commit metadata.
+   - **Diagram** *(default on; suppressed by `--no-diagrams`)* — at most one Mermaid block per step, placed once after all edits in the step and before the Verify line. Picked from a small deterministic whitelist (flowchart / sequence / stateDiagram / classDiagram) based on the step's touched paths and snippet content. Steps that don't match any whitelist signal emit no diagram — never invent one to fill the slot.
    - **Verify** — checkpoint with a concrete check derived from the step:
      - if a test file was touched in the step → `Run \`<test runner> <test path>\` — it should now pass.`
      - if the step touches a CLI command → `Try \`<command>\` and confirm <expected output>.`

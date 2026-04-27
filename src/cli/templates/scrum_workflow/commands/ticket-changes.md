@@ -9,16 +9,17 @@ model_recommendation: "haiku"
 
 ## Purpose
 
-Generate a **code-change tutorial** for a ticket (or a set of tickets): for every file the ticket touched, render a *before / after / why* block so a reader can learn what was changed in the codebase and the reasoning behind it without opening a single git diff manually.
+Generate a **follow-along coding tutorial** for a ticket (or a set of tickets) so a reader can re-implement the change step by step by reading the document and typing the code into their own editor.
 
-The result is intentionally written as a **tutorial**, not a diff log. Each modified file gets:
+The output is **prose**, not an annotated diff. The agent reorganises the raw git changes into a numbered sequence of *steps*, where each step:
 
-- a short prose intro explaining the goal of the change,
-- a `Before` code block showing the relevant pre-change snippet,
-- an `After` code block showing the post-change snippet,
-- a `Why` paragraph that combines the commit message, the relevant section of `plan.md`, and any acceptance criterion the change satisfies.
+- introduces a goal in plain language,
+- tells the reader **which file to open** and **where in the file** to make the change (function name, class, region near a recognisable line),
+- presents the **new code** as small, retypeable snippets with imperative instructions ("Add the following…", "Replace the body of `handleLogin` with…", "Delete the legacy block at the top of the file"),
+- explains, between snippets, **what the code does** and **why it is needed** in everyday language,
+- finishes with a **Verify** checkpoint so the reader can confirm they implemented the step correctly.
 
-Pure lifecycle metadata (status transitions, refinement perspectives, review rounds) is **not** the focus of this command — those belong to `/scrum-audit-trail`.
+The reader should be able to clone an empty repository, follow the steps in order, and end up with a working version of the same change. Pure lifecycle metadata (status transitions, refinement perspectives, review rounds) is **not** the focus of this command — those belong to `/scrum-audit-trail`.
 
 ## Agentic Pattern
 
@@ -74,23 +75,24 @@ _scrum-output/sprints/SW-XXX/tutorials/tutorial.md
 
 ### Single Ticket — Split (`--split`)
 
-One file per touched source file plus a `README.md` landing page. Raw diffs are written under `assets/`:
+One file per **tutorial step** (not per file change), plus a `README.md` landing page. Raw diffs are written under `assets/`:
 
 ```
 _scrum-output/sprints/SW-XXX/tutorials/
-├── README.md              # landing page; links to every per-file chapter and the summary
-├── 00-overview.md         # goal of the ticket + why summary
-├── files/
-│   ├── 01-src-auth-login.ts.md
-│   ├── 02-src-auth-session.ts.md
-│   └── 03-tests-auth.test.ts.md
-├── 99-summary.md          # files touched, lines added/removed, commit list
+├── README.md              # landing page; introduction + ordered links to every step
+├── 00-introduction.md     # What you'll build / Why / Prerequisites / What you'll learn
+├── steps/
+│   ├── 01-wire-up-login-route.md
+│   ├── 02-store-session-token.md
+│   └── 03-cover-with-tests.md
+├── 98-recap.md            # Putting it all together + What you learned
+├── 99-reference.md        # Files touched table + commit list + totals
 └── assets/
     └── diffs/
         └── <short-sha>.diff   # full raw diffs for hunks that exceeded --max-hunk-lines
 ```
 
-Each `files/NN-<safe-path>.md` contains: the goal recap, then one `Before / After / Why` section per hunk in the file.
+Each `steps/NN-<slug>.md` is a self-contained mini-tutorial with the same Open / Locate / Action / What this does / Verify layout described above, so a reader can complete a single step in one sitting and come back later for the next one.
 
 ### Multiple Tickets (default)
 
@@ -116,21 +118,49 @@ _scrum-output/tutorials/release-1-tutorial.md
 
 ## Tutorial Structure (Markdown)
 
-Every generated tutorial follows the layout below.
+Every generated tutorial follows the layout below. The voice is second person ("you'll add", "open the file"), the tone is friendly and explanatory, and code snippets are kept small enough to type. Steps are organised by **logical change**, not by file — one step may touch several files when the change requires it.
 
 1. **Frontmatter** — `ticket`, `title`, `final_status`, `generated`, `commit_count`, `files_changed`, `additions`, `deletions`.
-2. **Overview** — title + the original goal taken verbatim from `story.md` description.
-3. **The Why** — short paragraph synthesised from `plan.md` (when available) and acceptance criteria explaining the rationale behind the code change in plain language.
-4. **Files Changed** — for each touched file, in stable path order:
-   - **Heading**: `### \`<relative path>\``
-   - **Goal of this change**: one sentence derived from the linked plan step or commit message.
-   - For each hunk in the file:
-     - **Before** — fenced code block with the language tag inferred from the file extension.
-     - **After** — fenced code block with the language tag inferred from the file extension.
-     - **Why** — one paragraph combining the commit subject, plan step text, and acceptance criterion (when matchable).
-5. **Summary** — files-changed table (`File | + | − | Commits`), commit list (`<short-sha> <subject>`), and a one-line `Total: N files, +X / -Y lines` footer.
 
-For binary or oversized files, replace `Before` / `After` with `_(binary file — diff omitted)_` or `_(diff truncated, see assets/diffs/<sha>.diff)_`.
+2. **Introduction** (`## Introduction`)
+   - **What you'll build**: one paragraph derived from `story.md` description, rephrased in second person.
+   - **Why it matters**: one paragraph derived from `plan.md` rationale or the first acceptance criterion.
+   - **Prerequisites**: bullet list inferred from the touched files (language/runtime, frameworks, test runners, CLI tools). When unsure, add `*(adapt to your stack)*` rather than guessing.
+   - **What you'll learn**: 2–4 bullets that summarise the takeaways.
+
+3. **Steps** (`## Step N — <title>`) — one step per logical change. Map commits to steps in this order of preference:
+   - When `plan.md` exists and its plan steps reference the same files as a single commit, use the plan step text as the step title.
+   - Otherwise, use the commit subject (without the `feat:`/`fix:` prefix) as the step title.
+   - Squash trivial follow-up commits ("typo", "lint", "format") into the previous step.
+
+   Each step contains:
+
+   - **Goal** — one sentence ("In this step you'll wire up the login route so the form posts to the new endpoint.").
+   - For every file change in the step, in stable path order:
+     - **Open `<relative path>`** — short header. When `changeType === "added"` say *Create a new file at* instead.
+     - **Locate** — one sentence telling the reader where in the file to make the change. Derived from the unified-diff context: enclosing function/class/section name (parsed from hunk headers `@@ … @@`), or "near the top of the file" / "below the existing imports" when no enclosing scope is present. Skip this for newly-created files.
+     - **Action** — imperative sentence with a verb chosen from the hunk shape:
+       - pure addition (`oldLines === 0`) → "Add the following:"
+       - pure deletion (`newLines === 0`) → "Delete this block:" (show the removed code so the reader recognises what to delete)
+       - modification → "Replace it with:"
+       - rename only → "Rename `<old>` to `<new>`."
+     - **Code block** — the *new* code (or the deleted code for pure deletions), fenced with the language tag inferred from the file extension. When the hunk is too large to type comfortably, split it into multiple back-to-back code blocks separated by short prose ("…and right below, paste:").
+     - **What this does** — one to three sentences in plain language explaining the snippet. Combine the plan step text, commit subject, and any matching acceptance criterion into a flowing paragraph; do **not** simply paste raw commit metadata.
+   - **Verify** — checkpoint with a concrete check derived from the step:
+     - if a test file was touched in the step → `Run \`<test runner> <test path>\` — it should now pass.`
+     - if the step touches a CLI command → `Try \`<command>\` and confirm <expected output>.`
+     - otherwise → `Reload the app / re-run the build and confirm <observable behaviour from the AC>.`
+
+4. **Putting it all together** (`## Putting it all together`) — one paragraph that explains how the steps fit together end-to-end and points to the affected acceptance criteria.
+
+5. **What you learned** (`## What you learned`) — 3–6 bullets with the takeaways (patterns, APIs, idioms used).
+
+6. **Reference** (`## Reference`)
+   - **Files touched** — table `File | + | − | Step(s)`.
+   - **Commits** — bullet list `<short-sha> — <subject>`.
+   - **Total** — single line `Total: N files, +X / -Y lines across M commits`.
+
+For binary or oversized hunks, replace the code block with `_(binary file — open it in your editor)_` or `_(snippet truncated — see [assets/diffs/<sha>.diff](./assets/diffs/<sha>.diff) for the full hunk)_`. Always keep the surrounding prose (Open / Locate / Action / What this does / Verify) so the step still reads as a tutorial.
 
 ### On Success
 

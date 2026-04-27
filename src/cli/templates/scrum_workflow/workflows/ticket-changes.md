@@ -1,6 +1,6 @@
 # Ticket Code-Change Tutorial Workflow
 
-**Purpose:** Define the deterministic transformation that turns the *code changes* belonging to a ticket into a Before / After / Why tutorial under `_scrum-output/tutorials/`.
+**Purpose:** Define the deterministic transformation that turns the *code changes* belonging to a ticket into a follow-along, step-by-step coding tutorial written in second-person prose, stored under `_scrum-output/sprints/SW-XXX/tutorials/`. The reader should be able to re-implement the change by reading the tutorial and typing the snippets into their editor.
 
 **Referenced by:** `/scrum-ticket-changes` (`commands/ticket-changes.md`).
 
@@ -131,65 +131,166 @@ Aggregate `FileChange` records across all commits, keyed by path. Sort by path a
 
 ### Step 5 — Build the Tutorial Model
 
-Combine the snapshots and file changes into the structure the renderer consumes:
+Group the file changes into ordered **tutorial steps** and combine them with the snapshots:
 
 ```ts
-{
-  ticket: "SW-XXX",
-  title: snapshot?.frontmatter.title ?? "(unknown)",
-  finalStatus: snapshot?.frontmatter.status ?? "(unknown)",
-  generated: <ISO timestamp>,
-  goal: snapshot?.description ?? null,
-  why: deriveWhy(snapshot, plan),
-  files: FileChange[],
-  commits: CommitRecord[],
-  totals: { filesChanged, additions, deletions }
-}
+type FileEdit = {
+  file: FileChange;
+  hunk: Hunk;
+  action: "add" | "remove" | "replace" | "rename" | "create";
+  // "create" when the whole file is new; "remove" when whole file is deleted
+  locate: string | null;     // enclosing function/class/section parsed from "@@ … @@"
+                             // null when changeType === "added"
+  snippetBlocks: Array<{     // the new code split into typeable chunks
+    code: string;
+    leadIn: string | null;   // optional connector prose ("…and right below, paste:")
+  }>;
+  whatThisDoes: string;      // 1–3 sentences in plain language
+};
+
+type TutorialStep = {
+  index: number;             // 1-based
+  title: string;             // derived from plan step or commit subject (no "feat:" prefix)
+  goal: string;              // one sentence
+  edits: FileEdit[];         // stable order: by path then newStart ascending
+  verify: string;            // concrete check derived from the step
+  commits: string[];         // short SHAs that contributed to the step
+};
+
+type TutorialModel = {
+  ticket: "SW-XXX";
+  title: string;
+  finalStatus: string;
+  generated: string;             // ISO timestamp
+  intro: {
+    whatYoullBuild: string;      // from story.md description, rephrased in 2nd person
+    whyItMatters: string;        // from plan.md rationale or first acceptance criterion
+    prerequisites: string[];     // inferred from touched-file extensions / known frameworks
+    whatYoullLearn: string[];    // 2–4 bullets
+  };
+  steps: TutorialStep[];
+  recap: {
+    puttingItAllTogether: string;
+    whatYouLearned: string[];    // 3–6 bullets
+  };
+  reference: {
+    files: Array<{ path: string; additions: number; deletions: number; steps: number[] }>;
+    commits: Array<{ shortSha: string; subject: string }>;
+    totals: { filesChanged: number; additions: number; deletions: number; commitCount: number };
+  };
+};
 ```
 
-`deriveWhy()` rules:
+#### Step grouping rules
 
-1. If `plan.md` exists, take the first plan step's text as the high-level rationale.
-2. Otherwise, take the first commit subject of the ticket.
-3. If neither exists, set `why = null` and the renderer prints `*No rationale recorded.*`.
+1. **One commit → one step** is the default mapping.
+2. **Plan step alignment**: when `plan.md` is available and a plan step's referenced files match the files touched by a single commit, use the plan step's title and text as the step title and as the seed for `whatThisDoes`.
+3. **Squash trivial commits**: commits whose subject matches the regex `^(chore|style|fix)\s*[:(]\s*(typo|lint|format|whitespace|comment)` are merged into the previous step rather than producing their own.
+4. **Action verb selection** per hunk:
+   - `oldLines === 0` → `"add"` if file already existed; `"create"` if the whole file is new (changeType === `"added"`).
+   - `newLines === 0` → `"remove"` if file still exists; `"delete"` is rendered as the same `"remove"` action with whole-file note when the entire file was removed.
+   - `oldLines > 0 && newLines > 0` → `"replace"`.
+   - `changeType === "renamed"` with no content change → `"rename"`.
+5. **Locate string** is parsed from the unified-diff hunk header: the `@@ -… +… @@ <context>` tail is the enclosing scope. Fallbacks when no context is present:
+   - `newStart <= 5` → `"near the top of the file"`.
+   - hunk touches the last 5 lines of the file → `"at the bottom of the file"`.
+   - otherwise → `"around line {{newStart}}"`.
+6. **Snippet splitting**: a hunk longer than 30 lines is split into multiple `snippetBlocks` of ≤ 30 lines each on the nearest blank line, joined by short connector prose so the reader doesn't face one wall of code.
+
+#### Intro derivation
+
+- `whatYoullBuild`: rephrase `story.md` description in second person using a deterministic rewrite (e.g., "Implement X" → "you'll implement X"). When `story.md` is missing, fall back to the first commit subject.
+- `whyItMatters`: take the first plan step's rationale paragraph. When `plan.md` is missing, fall back to the first acceptance criterion of `story.md`. When neither exists, emit `*Rationale not recorded for this ticket.*`.
+- `prerequisites`: derive deterministically from the set of file extensions and well-known config files touched (e.g., `.ts` → `Node.js + a TypeScript toolchain`, `package.json` → `npm or pnpm`, `vitest.config.*` → `Vitest`, `Dockerfile` → `Docker`, `.py` → `Python 3.x`). When the inference is uncertain, append `*(adapt to your stack)*`.
+- `whatYoullLearn`: take the unique plan step titles in order; when fewer than 2 exist, pad with the unique commit subjects (without `feat:`/`fix:` prefix).
+
+#### Verify checkpoint derivation
+
+Per step, derive a concrete check in this order of preference:
+
+1. If any edit in the step touches a test file (path matches `**/*.{test,spec}.{ts,tsx,js,jsx,py,rb}` or `__tests__/**`), emit: `Run \`<runner-hint> <test-path>\` — it should now pass.` Pick the runner from `package.json` scripts when available; otherwise emit `\`<test-path>\``.
+2. Else, if the step touches a CLI command file (entry under `bin/` or a path matching `**/cli/**`), emit: `Try \`<inferred command>\` and confirm <observable behaviour>.`
+3. Else, if `story.md` has acceptance criteria, pick the first AC whose text mentions any path touched by the step and emit: `Reload the app and confirm: <AC text>.`
+4. Otherwise emit a generic prompt: `Re-run your build / dev server and confirm the change is reflected.`
 
 ### Step 6 — Render
 
 #### 6a. Markdown (default)
 
-For each `FileChange`, render:
+The renderer is **prose-first**. It walks the `TutorialModel` and emits the layout documented in `commands/ticket-changes.md` (Frontmatter → Introduction → Steps → Putting it all together → What you learned → Reference). The voice is second person, the tone is friendly and explanatory.
+
+For every `TutorialStep`, render the following template:
 
 ````
-### `path/to/file.ext`
+## Step {{index}} — {{title}}
 
-**Goal of this change:** {{plan-step text or commit subject}}
+**Goal:** {{goal}}
 
-#### Hunk 1 (lines {{oldStart}}–{{oldStart + oldLines - 1}} → {{newStart}}–{{newStart + newLines - 1}})
+{{#each edits}}
+{{actionHeader}}                                  ← e.g. "### Open `src/auth/login.ts`"
+                                                       or "### Create a new file at `src/auth/session.ts`"
 
-**Before**
+{{#unless action === "create"}}
+**Locate:** {{locate}}.
+{{/unless}}
+
+{{actionSentence}}                                ← imperative line ending with a colon, e.g.
+                                                       "Add the following near the imports:"
+                                                       "Replace the body of `handleLogin` with:"
+                                                       "Delete this block:"
+
+{{#each snippetBlocks}}
+{{#if leadIn}}{{leadIn}}{{/if}}
 
 ```{{language}}
-{{hunk.before}}
+{{code}}
 ```
 
-**After**
+{{/each}}
 
-```{{language}}
-{{hunk.after}}
-```
+**What this does:** {{whatThisDoes}}
 
-**Why:** {{plan-step text + commit subject + matched AC, joined into one paragraph}}
+{{/each}}
+
+**Verify:** {{verify}}
 ````
 
-For oversized hunks (`hunk.oversized === true`) in single-file mode, wrap the After block in `<details><summary>Show full hunk</summary> … </details>` and also write the full hunk to `assets/diffs/<short-sha>.diff` so the user can open it in a diff viewer. In split mode, always emit `assets/diffs/<short-sha>.diff` and link to it from the file chapter.
+Rules for the renderer:
 
-For binary files, replace both blocks with `_(binary file — diff omitted)_`.
+- `actionHeader` uses `### Open` for existing files, `### Create a new file at` for new files, `### Remove` for whole-file deletions, and `### Rename` for renames.
+- `actionSentence` MUST be an imperative sentence chosen from `action`:
+  - `add` → `"Add the following:"` (or `"Add the following near the imports:"` / `"…at the top of the file:"` / `"…at the bottom of the file:"` based on `locate`).
+  - `replace` → `"Replace it with:"` when `locate` already named the target, otherwise `"Replace the surrounding block with:"`.
+  - `remove` → `"Delete this block:"` followed by the *removed* code in the snippet block (so the reader can recognise what to remove). This is the only case where the code shown is the *Before* content rather than the *After* content.
+  - `rename` → no snippet block; render `Rename \`<oldPath>\` to \`<newPath>\`.` and skip the code block.
+  - `create` → `"Create the file with the following contents:"`.
+- `whatThisDoes` MUST be derived from the plan step text + commit subject + matching acceptance criterion. The renderer concatenates them into a flowing paragraph and runs a simple deduplication pass; it MUST NOT just paste raw commit metadata or include a sha.
+- For oversized hunks (`hunk.oversized === true`):
+  - **Single-file mode:** wrap the snippet block in `<details><summary>Show the full snippet</summary> … </details>` and append a sentence: `If you'd rather copy the diff verbatim, see [assets/diffs/<short-sha>.diff](./assets/diffs/<short-sha>.diff).`
+  - **Split mode:** always emit `assets/diffs/<short-sha>.diff` and replace the inline snippet with `_(snippet truncated — see [assets/diffs/<short-sha>.diff](../assets/diffs/<short-sha>.diff))_`.
+- For binary files, replace the snippet block with `_(binary file — open it in your editor and replace it with the version from commit \`<short-sha>\`.)_`.
 
-The top-level document layout matches the structure documented in `commands/ticket-changes.md` (Frontmatter → Overview → The Why → Files Changed → Summary).
+The Reference section at the end of the document is rendered as:
+
+````
+## Reference
+
+### Files touched
+
+| File | + | − | Step(s) |
+|------|---|---|---------|
+| `<path>` | <additions> | <deletions> | <comma-separated step indices> |
+
+### Commits
+
+- `<short-sha>` — <subject>
+
+**Total:** <filesChanged> files, +<additions> / -<deletions> across <commitCount> commits.
+````
 
 #### 6b. JSON (`--format json`)
 
-Skip the rendering loop and emit the model from step 5 directly. With `--split`, write one `<safe-path>.json` per file plus a top-level `metadata.json` (same `tutorials/` subdirectory as the Markdown variant). Without `--split`, write a single `_scrum-output/sprints/SW-XXX/tutorials/tutorial.json`.
+Skip the rendering loop and emit the `TutorialModel` from step 5 directly. With `--split`, write one `steps/NN-<slug>.json` per step plus a top-level `metadata.json` (same `tutorials/` subdirectory as the Markdown variant). Without `--split`, write a single `_scrum-output/sprints/SW-XXX/tutorials/tutorial.json`.
 
 ### Step 7 — Write Output
 
@@ -207,27 +308,29 @@ After every per-ticket write (single- or multi-ticket runs, no bundle), regenera
 
 #### 7b. Split mode (`--split`)
 
-For each ticket, materialise the model into the ticket's `tutorials/` subdirectory:
+In split mode the unit of splitting is a **tutorial step**, not a file. For each ticket, materialise the model into the ticket's `tutorials/` subdirectory:
 
 ```
 _scrum-output/sprints/SW-XXX/tutorials/
-├── README.md              # landing page; links every file chapter and the summary
-├── 00-overview.md         # Overview + The Why
-├── files/
-│   ├── 01-<safe-path>.md  # one file per FileChange in stable order
+├── README.md               # landing page; introduction summary + ordered links to every step
+├── 00-introduction.md      # What you'll build / Why / Prerequisites / What you'll learn
+├── steps/
+│   ├── 01-<slug>.md        # one self-contained mini-tutorial per TutorialStep
 │   └── ...
-├── 99-summary.md          # files-changed table + commit list + totals
-└── assets/                # only created if at least one asset is needed
+├── 98-recap.md             # Putting it all together + What you learned
+├── 99-reference.md         # Files touched table + commit list + totals
+└── assets/                 # only created if at least one asset is needed
     └── diffs/<short-sha>.diff
 ```
 
 Rules:
 
 1. Before writing, the agent MAY remove the existing `_scrum-output/sprints/SW-XXX/tutorials/` directory contents to ensure a clean, deterministic re-run. It MUST NOT touch any other file inside `sprints/SW-XXX/` (story.md, plan.md, etc.) and MUST NOT touch sibling tickets.
-2. `<safe-path>` is the file path with `/` replaced by `-` and any character outside `[A-Za-z0-9._-]` replaced by `_`.
-3. If a `FileChange` has zero hunks (binary or pure-rename), still emit a chapter file containing the goal and the binary/rename notice.
-4. The `README.md` landing page lists every chapter in order (`00-overview.md`, every `files/NN-*.md`, `99-summary.md`).
-5. Per-commit raw diffs are written under `assets/diffs/<short-sha>.diff` whenever any hunk in that commit was flagged oversized; the file chapter links to them with relative paths.
+2. `<slug>` is `step.title` lowercased, with non-alphanumerics replaced by `-`, collapsed runs of `-`, trimmed, and truncated to 60 characters. The step index prefix (`01-`, `02-`, …) preserves ordering.
+3. Each `steps/NN-<slug>.md` opens with a back-link to `../README.md` and a one-line breadcrumb `Step N of M`, then renders the same Goal / Open / Locate / Action / What this does / Verify layout as in single-file mode. The reader should be able to complete a single step without scrolling through unrelated content.
+4. The `README.md` landing page lists every chapter in order (`00-introduction.md`, every `steps/NN-*.md`, `98-recap.md`, `99-reference.md`) and shows a short summary line per step (the step `goal`).
+5. Per-commit raw diffs are written under `assets/diffs/<short-sha>.diff` whenever any hunk in that commit was flagged oversized; the step files link to them with relative paths (`../assets/diffs/<short-sha>.diff`).
+6. If a step has zero edits (e.g., merged-in trivial commits with no remaining hunks), it MUST be dropped from the output entirely — never emit an empty step file.
 
 For multi-ticket runs in split mode, also write `_scrum-output/sprints/tutorials-index.md` linking to each per-ticket `tutorials/README.md`.
 
@@ -273,11 +376,12 @@ Links are relative to `_scrum-output/sprints/`. In split mode the link target is
 
 ## Determinism Rules
 
-1. Files MUST be sorted by path ascending.
-2. Hunks within a file MUST be sorted by `newStart` ascending.
-3. Commits MUST be listed in author-date ascending order.
-4. The renderer MUST NOT reorder acceptance criteria or plan steps relative to their source files.
-5. Re-running the command with identical inputs and an unchanged repository MUST produce a byte-for-byte identical Markdown output, except for the `generated` timestamp in the frontmatter.
+1. Tutorial steps MUST be ordered by the author date of their first contributing commit, ascending.
+2. Within a step, edits MUST be sorted by file path ascending and then by `newStart` ascending.
+3. Commits MUST be listed in author-date ascending order in the Reference section.
+4. Step slugs MUST be derived deterministically from the step title (see split-mode rule 2). When two steps would collide on the same slug, append `-2`, `-3`, … in step-index order.
+5. The renderer MUST NOT reorder acceptance criteria or plan steps relative to their source files.
+6. Re-running the command with identical inputs and an unchanged repository MUST produce a byte-for-byte identical Markdown output, except for the `generated` timestamp in the frontmatter.
 
 ---
 

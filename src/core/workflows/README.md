@@ -36,6 +36,11 @@ workflow-name.md
 - **review.md**: Code review with structured findings
 - **approval.md**: Human approval gate and story completion
 
+### Observability
+
+- **audit.md**: Append-only audit trail of every transition, action, and artifact event (`/scrum-audit-trail`)
+- **ticket-changes.md**: Follow-along, retypeable code-change tutorial with auto-Mermaid diagrams and a default-on full diff appendix per file (`/scrum-ticket-changes`)
+
 ## Design Principles
 
 - Workflows are declarative (specify WHAT, not HOW)

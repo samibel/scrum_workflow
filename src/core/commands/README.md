@@ -34,7 +34,7 @@ command-name.md
 ### Observability
 
 - **audit-trail.md**: Read-only query of the append-only audit trail for a story
-- **ticket-changes.md**: Generate a tutorial-style Markdown that walks through every change a ticket went through (Idea → Refinement → Plan → Implementation → Verification → Review → Timeline → Lessons)
+- **ticket-changes.md**: Generate a follow-along, retypeable code-change tutorial for a ticket — second-person prose with Open / Locate / Action / What this does / Verify per step, an auto-inferred Mermaid diagram per step (whitelist of 4 types; disable with `--no-diagrams`), and a default-on full diff appendix per file (disable with `--no-diff-appendix`). Output lives next to `story.md` under `_scrum-output/sprints/SW-XXX/tutorials/`. Supports `--split` for one file per step.
 
 ## Usage
 

@@ -18,9 +18,12 @@ key:
   - item3
 ```
 
-## Planned Data Files
+## Data Files
 
 - **estimation-reference.yaml**: Story point estimation guidance and complexity factors
+- **classification-rules.yaml**: Keywords and rules for the `story-classifier` skill (type + risk_level assignment)
+- **dispatch-rules.yaml**: Dynamic agent-dispatch rules for `/scrum-refine-ticket`
+- **epic-decomposition-rules.yaml**: Size heuristics (min/max/target stories per epic), clustering strategies, ordering rules, and output constraints used by the `epic-decomposer` agent during `/scrum-decompose-epics`
 
 ## Usage
 

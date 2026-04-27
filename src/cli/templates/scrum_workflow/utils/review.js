@@ -359,9 +359,12 @@ export function updateApprovalTemplateWithReviewRound(templatePath, reviewRefere
  * @returns {Object} { compliant: boolean, violations: string[] }
  */
 export function verifyReviewWriteBoundaryCompliance(ticketId, modifiedFiles) {
+  // Anchor to known output roots (_scrum-output for real sprints,
+  // _test-output for integration fixtures) so arbitrary directories named
+  // "sprints" elsewhere in the tree cannot be written to.
   const allowedPatterns = [
-    new RegExp(`_scrum-output/sprints/${ticketId}/review-\\d+\\.md$`),
-    new RegExp(`_scrum-output/sprints/${ticketId}/story\\.md$`)
+    new RegExp(`(?:^|[/\\\\])(_scrum-output|_test-output)[/\\\\]sprints[/\\\\]${ticketId}[/\\\\]review-\\d+\\.md$`),
+    new RegExp(`(?:^|[/\\\\])(_scrum-output|_test-output)[/\\\\]sprints[/\\\\]${ticketId}[/\\\\]story\\.md$`)
   ];
 
   const prohibitedPatterns = [

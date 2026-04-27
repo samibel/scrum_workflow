@@ -64,12 +64,12 @@ workflows/ticket-changes.md
 
 ## Output
 
-The agent MAY create multiple files per run when the chosen mode requires it (split mode, multi-ticket runs, large-diff extraction). All writes are confined to `_scrum-output/tutorials/`.
+The agent MAY create multiple files per run when the chosen mode requires it (split mode, large-diff extraction). Per-ticket tutorials always live **inside the ticket's own directory** (`_scrum-output/sprints/SW-XXX/tutorials/`), next to `story.md`, `plan.md`, etc. Cross-ticket bundles are the only exception — they aggregate multiple tickets and live under `_scrum-output/tutorials/`.
 
 ### Single Ticket — Single File (default)
 
 ```
-_scrum-output/tutorials/SW-XXX-tutorial.md
+_scrum-output/sprints/SW-XXX/tutorials/tutorial.md
 ```
 
 ### Single Ticket — Split (`--split`)
@@ -77,7 +77,7 @@ _scrum-output/tutorials/SW-XXX-tutorial.md
 One file per touched source file plus a `README.md` landing page. Raw diffs are written under `assets/`:
 
 ```
-_scrum-output/tutorials/SW-XXX/
+_scrum-output/sprints/SW-XXX/tutorials/
 ├── README.md              # landing page; links to every per-file chapter and the summary
 ├── 00-overview.md         # goal of the ticket + why summary
 ├── files/
@@ -94,9 +94,19 @@ Each `files/NN-<safe-path>.md` contains: the goal recap, then one `Before / Afte
 
 ### Multiple Tickets (default)
 
-One tutorial per ticket in `_scrum-output/tutorials/`, plus an `index.md` linking them.
+Each ticket gets its own tutorial inside its own ticket directory — there is no shared output folder. A combined index is written at `_scrum-output/sprints/tutorials-index.md` linking to every per-ticket tutorial:
+
+```
+_scrum-output/sprints/tutorials-index.md
+_scrum-output/sprints/SW-001/tutorials/tutorial.md
+_scrum-output/sprints/SW-002/tutorials/tutorial.md
+```
+
+In `--split` mode, each ticket's directory uses the layout shown above and the index links to every per-ticket `README.md`.
 
 ### Bundled (`--bundle release-1`)
+
+A bundle aggregates several tickets into one document and therefore cannot live under a single ticket directory. Bundles are the only artifact this command writes outside `sprints/`:
 
 ```
 _scrum-output/tutorials/release-1-tutorial.md
@@ -127,7 +137,7 @@ For binary or oversized files, replace `Before` / `After` with `_(binary file �
 ```
 ✓ Tutorial generated for SW-XXX
 
-  File:    _scrum-output/tutorials/SW-XXX-tutorial.md
+  File:    _scrum-output/sprints/SW-XXX/tutorials/tutorial.md
   Commits: 4
   Files:   7  (+218 / -42)
 
@@ -172,16 +182,18 @@ If `plan.md` or `story.md` is missing, the *Why* paragraph falls back to the com
 
 ## Write Boundary Rules
 
-This command MAY write multiple files per run, all confined to `_scrum-output/tutorials/`:
+This command MAY write multiple files per run. Per-ticket output is confined to **`_scrum-output/sprints/SW-XXX/tutorials/`** (one subdirectory per ticket, next to `story.md`/`plan.md`/etc.). The cross-ticket bundle and the multi-ticket index are the only writes that fall outside any individual ticket directory.
 
-- `_scrum-output/tutorials/SW-XXX-tutorial.md` — overwrite per run (default single-file mode).
-- `_scrum-output/tutorials/SW-XXX/**` — overwrite per run (split mode); the agent creates the directory plus per-file chapter files, the `README.md` landing page, the `99-summary.md`, and any required `assets/diffs/<sha>.diff`. Stale files from a previous run inside this subdirectory MAY be removed before writing so the output is deterministic.
-- `_scrum-output/tutorials/index.md` — overwrite per run when multiple tickets are requested.
-- `_scrum-output/tutorials/<bundle-name>-tutorial.md` — overwrite per run when `--bundle` is used.
+Allowed writes:
+
+- `_scrum-output/sprints/SW-XXX/tutorials/tutorial.md` — overwrite per run (default single-file mode).
+- `_scrum-output/sprints/SW-XXX/tutorials/**` — overwrite per run (split mode); the agent creates the `tutorials/` subdirectory plus per-file chapter files, the `README.md` landing page, the `00-overview.md`, the `99-summary.md`, and any required `assets/diffs/<sha>.diff`. Stale files from a previous run inside this `tutorials/` subdirectory MAY be removed before writing so the output is deterministic.
+- `_scrum-output/sprints/tutorials-index.md` — overwrite per run when multiple tickets are requested without `--bundle`.
+- `_scrum-output/tutorials/<bundle-name>-tutorial.md` — overwrite per run when `--bundle` is used (bundles aggregate tickets, so they don't fit under a single ticket directory).
 
 This command MUST NOT:
-- Write outside `_scrum-output/tutorials/`.
-- Modify or delete any file inside `_scrum-output/sprints/`, `_scrum-output/audit/`, or the working tree.
+- Write inside `_scrum-output/sprints/SW-XXX/` outside the `tutorials/` subdirectory — `story.md`, `plan.md`, `refinement.md`, `verification-report.md`, `review-*.md`, and `approval-*.md` are off-limits.
+- Modify or delete any file inside `_scrum-output/audit/` or the working tree.
 - Mutate `status_history` or any story frontmatter.
 - Run any git command that mutates state (`commit`, `checkout`, `reset`, etc.).
 

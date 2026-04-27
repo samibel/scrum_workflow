@@ -189,24 +189,28 @@ The top-level document layout matches the structure documented in `commands/tick
 
 #### 6b. JSON (`--format json`)
 
-Skip the rendering loop and emit the model from step 5 directly. With `--split`, write one `<safe-path>.json` per file plus a top-level `metadata.json`. Without `--split`, write a single `_scrum-output/tutorials/SW-XXX-tutorial.json`.
+Skip the rendering loop and emit the model from step 5 directly. With `--split`, write one `<safe-path>.json` per file plus a top-level `metadata.json` (same `tutorials/` subdirectory as the Markdown variant). Without `--split`, write a single `_scrum-output/sprints/SW-XXX/tutorials/tutorial.json`.
 
 ### Step 7 — Write Output
 
-The agent MAY write multiple files per run. All writes stay inside `_scrum-output/tutorials/`. Use an atomic write pattern (`temp file → rename`) for every file to avoid partial writes.
+The agent MAY write multiple files per run. Per-ticket output stays inside the ticket's own directory: **`_scrum-output/sprints/SW-XXX/tutorials/`**. The cross-ticket bundle and the multi-ticket index are the only writes that fall outside any individual ticket directory. Use an atomic write pattern (`temp file → rename`) for every file to avoid partial writes.
+
+`mkdir -p` the per-ticket `tutorials/` subdirectory on demand — the installer does **not** pre-create it because each ticket's directory is itself created lazily by `/scrum-create-ticket`.
 
 #### 7a. Single-file mode (default)
 
-- Multiple tickets or single ticket: write/update `_scrum-output/tutorials/index.md` by scanning the directory for all `*-tutorial.md` files, listing them in chronological order of `last_updated`.
-- `--bundle <name>`: concatenate per-ticket outputs into `_scrum-output/tutorials/<name>-tutorial.md`, separated by `\n---\n` rules.
-- Multiple tickets without `--bundle`: write each per-ticket file, then write `_scrum-output/tutorials/index.md` listing all generated tutorials (sorted by ticket ID).
+- Single ticket: `_scrum-output/sprints/SW-XXX/tutorials/tutorial.md` (overwrite).
+- Multiple tickets without `--bundle`: write each ticket's tutorial under its own `_scrum-output/sprints/SW-XXX/tutorials/tutorial.md`.
+- `--bundle <name>`: concatenate per-ticket outputs into `_scrum-output/tutorials/<name>-tutorial.md`, separated by `\n---\n` rules. Bundles are the only artifact written outside `_scrum-output/sprints/`.
+
+After every per-ticket write (single- or multi-ticket runs, no bundle), regenerate the index file `_scrum-output/sprints/tutorials-index.md` by **scanning** `_scrum-output/sprints/` for all directories that contain a `tutorials/tutorial.md` (single-file mode) or a `tutorials/README.md` (split mode) and listing them sorted by ticket ID. This keeps the index accurate even when the command was invoked for a single ticket — previously generated tutorials remain listed.
 
 #### 7b. Split mode (`--split`)
 
-For each ticket, materialise the model into a directory:
+For each ticket, materialise the model into the ticket's `tutorials/` subdirectory:
 
 ```
-_scrum-output/tutorials/SW-XXX/
+_scrum-output/sprints/SW-XXX/tutorials/
 ├── README.md              # landing page; links every file chapter and the summary
 ├── 00-overview.md         # Overview + The Why
 ├── files/
@@ -219,19 +223,19 @@ _scrum-output/tutorials/SW-XXX/
 
 Rules:
 
-1. Before writing, the agent MAY remove the existing `_scrum-output/tutorials/SW-XXX/` directory contents to ensure a clean, deterministic re-run. It MUST NOT touch sibling tickets.
+1. Before writing, the agent MAY remove the existing `_scrum-output/sprints/SW-XXX/tutorials/` directory contents to ensure a clean, deterministic re-run. It MUST NOT touch any other file inside `sprints/SW-XXX/` (story.md, plan.md, etc.) and MUST NOT touch sibling tickets.
 2. `<safe-path>` is the file path with `/` replaced by `-` and any character outside `[A-Za-z0-9._-]` replaced by `_`.
 3. If a `FileChange` has zero hunks (binary or pure-rename), still emit a chapter file containing the goal and the binary/rename notice.
 4. The `README.md` landing page lists every chapter in order (`00-overview.md`, every `files/NN-*.md`, `99-summary.md`).
 5. Per-commit raw diffs are written under `assets/diffs/<short-sha>.diff` whenever any hunk in that commit was flagged oversized; the file chapter links to them with relative paths.
 
-For multi-ticket runs in split mode, also write `_scrum-output/tutorials/index.md` linking to each per-ticket `README.md`.
+For multi-ticket runs in split mode, also write `_scrum-output/sprints/tutorials-index.md` linking to each per-ticket `tutorials/README.md`.
 
 ---
 
 ## Index File Format
 
-When multiple tickets are generated and `--bundle` is **not** used, also emit:
+When multiple tickets are generated and `--bundle` is **not** used, also emit `_scrum-output/sprints/tutorials-index.md`:
 
 ```markdown
 ---
@@ -241,11 +245,13 @@ count: <N>
 
 # Code-Change Tutorials
 
-| Ticket | Title | Files | + | − | Commits | File |
-|--------|-------|-------|---|---|---------|------|
-| SW-001 | … | 7 | 218 | 42 | 4 | [SW-001-tutorial.md](./SW-001-tutorial.md) |
-| SW-002 | … | 2 |  31 |  5 | 1 | [SW-002-tutorial.md](./SW-002-tutorial.md) |
+| Ticket | Title | Files | + | − | Commits | Tutorial |
+|--------|-------|-------|---|---|---------|----------|
+| SW-001 | … | 7 | 218 | 42 | 4 | [SW-001/tutorials/tutorial.md](./SW-001/tutorials/tutorial.md) |
+| SW-002 | … | 2 |  31 |  5 | 1 | [SW-002/tutorials/tutorial.md](./SW-002/tutorials/tutorial.md) |
 ```
+
+Links are relative to `_scrum-output/sprints/`. In split mode the link target is `./SW-XXX/tutorials/README.md` instead.
 
 ---
 
@@ -256,7 +262,9 @@ count: <N>
 | Invalid ticket ID format | Halt before any file access; print the formatted error from `commands/ticket-changes.md`. |
 | Both `--split` and `--bundle` passed | Halt before any file access with: `❌ --split and --bundle are mutually exclusive.` |
 | Ticket has neither commits nor `story.md` | Skip the ticket and emit the `Nothing to tutor` notice. In multi-ticket mode the run continues for the remaining IDs. |
-| `_scrum-output/tutorials/` missing | Create it (the installer creates it, but defensively `mkdir -p`). In split mode also `mkdir -p` the per-ticket subdirectory and `assets/diffs/` on demand. |
+| `_scrum-output/sprints/SW-XXX/` missing | The ticket directory is created by `/scrum-create-ticket`. If it does not exist, skip the ticket with the `Nothing to tutor` notice — do not create it from this command. |
+| `_scrum-output/sprints/SW-XXX/tutorials/` missing | `mkdir -p` it on demand (it is not pre-created by the installer). In split mode also `mkdir -p` `tutorials/files/` and `tutorials/assets/diffs/` on demand. |
+| `_scrum-output/tutorials/` missing (bundle mode only) | `mkdir -p` it on demand. |
 | Concurrent write conflict | Retry up to 3 times with backoff 1s/2s/4s. After that, halt. |
 | `git log` / `git show` fails on a single rev | Emit a warning, drop that commit from the model, and continue. Never abort the tutorial because of git issues. |
 | Repository is not a git working tree | Halt with: `❌ Not a git repository — /scrum-ticket-changes needs git history to extract code changes.` |

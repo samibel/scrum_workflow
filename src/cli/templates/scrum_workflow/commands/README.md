@@ -16,12 +16,25 @@ command-name.md
 └── Markdown body (command implementation)
 ```
 
-## Planned Commands
+## Commands
+
+### Greenfield / Idea-to-Tickets (3)
+
+- **create-brief.md**: Capture a raw idea into a structured product brief (Iterative Multi-Agent Brainstorming + aggressive Reflection Loop)
+- **decompose-epics.md**: Decompose a completed brief into a deterministic epic graph (Plan-Then-Execute, single agent)
+- **draft-stories.md**: Generate N candidate story drafts for an epic in parallel (Orchestrator-Worker)
+
+### Story Lifecycle
 
 - **create-project-context.md**: Analyze codebase and generate project context files
-- **create-ticket.md**: Create new story tickets from specifications
+- **create-ticket.md**: Create new story tickets from specifications — supports `--from-epic EP-XXX --from-draft N` to promote a greenfield draft
 - **refine-ticket.md**: Multi-agent refinement of story requirements
 - **dev-story.md**: Implement story from specification
+
+### Observability
+
+- **audit-trail.md**: Read-only query of the append-only audit trail for a story
+- **ticket-changes.md**: Generate a tutorial-style Markdown that walks through every change a ticket went through (Idea → Refinement → Plan → Implementation → Verification → Review → Timeline → Lessons)
 
 ## Usage
 

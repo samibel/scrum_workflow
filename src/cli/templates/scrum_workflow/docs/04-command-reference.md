@@ -69,11 +69,13 @@ Provide file paths or URLs (one per line), or type **skip** to proceed.
 ```
 
 #### Phase 2: Initial Perspectives (Round 0)
-1. Spawns 3 agents (Architect, Developer, QA) in **parallel** with **isolated context**
+1. Spawns the dispatched agent set (default: Architect, Developer, QA) in **parallel** with **isolated context**
 2. Each agent receives: story.md + discovered documents + role-specific instructions ONLY
 3. Each agent writes analysis to temp files in `sprints/SW-XXX/temp/`
 
 **Isolation principle:** Agents do NOT see each other's perspectives in Round 0.
+
+**Optional UX Reflection Loop:** When `domain_tags` include `ui`/`ux`/`ox`, `ux-reviewer` is added to the set. When the story frontmatter also sets `needs_draft: true`, `ux-draft-agent` is dispatched and runs **before** `ux-reviewer` in Round 0 — the draft agent produces a Mermaid flow (default) or Excalidraw link (`draft_format: excalidraw`), and the reviewer critiques it. This is a Generator–Critic pairing and is the only Round-0 cross-dependency in the otherwise isolated parallel spawns.
 
 #### Phase 3: Cross-Talk Discussion Rounds
 Iterative discussion rounds where agents see and debate each other's positions:

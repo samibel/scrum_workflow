@@ -49,13 +49,51 @@ If any validation fails, halt the workflow immediately. Do not proceed to input 
 
 ## Step 1: Input Parsing
 
-Parse the user input to extract the ticket number and description.
+Parse the user input to extract the ticket number, invocation mode, and either a description (Mode A) or epic/draft references (Mode B).
 
-**Expected input format:** `/scrum-create-ticket SW-XXX "description"`
+**Expected input formats:**
+- **Mode A (freeform):** `/scrum-create-ticket SW-XXX "description" [--depth ...]`
+- **Mode B (from draft):** `/scrum-create-ticket SW-XXX --from-epic EP-XXX --from-draft <N> [--depth ...]`
+
+### Step 1.0: Detect Mode
+
+If `--from-epic` OR `--from-draft` is present: **Mode B** (both flags required together; error if only one is provided).
+
+Otherwise: **Mode A**.
+
+**Error — incomplete Mode B invocation:**
+
+```
+Error: --from-epic requires --from-draft (and vice versa). Both flags must be present.
+Fix: /scrum-create-ticket SW-XXX --from-epic EP-XXX --from-draft <index>
+```
+
+### Step 1.0a: Mode B — Load Draft
+
+If Mode B:
+
+1. Validate `EP-XXX` format (regex: `^EP-\d{3}$`)
+2. Check `_scrum-output/epics/EP-XXX/draft-stories.md` exists. If missing:
+   ```
+   Error: Draft stories file '_scrum-output/epics/EP-XXX/draft-stories.md' not found.
+   Fix: Run '/scrum-draft-stories EP-XXX' first.
+   ```
+3. Check epic frontmatter `status` ∈ {`drafted`, `in-progress`}. Otherwise:
+   ```
+   Error: Epic EP-XXX has status '{status}', expected 'drafted' or 'in-progress'.
+   Fix: Run '/scrum-draft-stories EP-XXX' if status is 'planned' or 'drafting'.
+   ```
+4. Parse `draft-stories.md` frontmatter, select `drafts[N-1]` (1-based)
+5. If index out of range:
+   ```
+   Error: Draft index {N} is out of range. Epic EP-XXX has {draft_count} drafts (indices 1..{draft_count}).
+   Fix: Check _scrum-output/epics/EP-XXX/draft-stories.md for valid indices.
+   ```
+6. Extract draft's `title`, `description`, `type`, `risk_level`, `domain_tags`, and candidate acceptance criteria — these become the seed for story generation (skip vagueness check, skip AI title derivation)
 
 ### Step 1.1: Extract Ticket Number and Description
 
-Extract the ticket number (e.g., `SW-103`) and the natural language description string from the user input.
+Extract the ticket number (e.g., `SW-103`). In Mode A, also extract the natural language description string. In Mode B, the description is pre-loaded from the draft (skip to Step 1.2).
 
 ### Step 1.1a: Validate Description Non-Empty
 
@@ -92,7 +130,9 @@ Fix: Provide a ticket number in the format SW-XXX where XXX is a zero-padded 3-d
 
 ## Step 2: Vagueness Check
 
-Evaluate the quality of the user's description to determine whether guided mode is needed.
+**Mode B skips this entire step** — drafts from `/scrum-draft-stories` are already enriched with capability context and acceptance criteria. Proceed directly to Step 3.
+
+In Mode A, evaluate the quality of the user's description to determine whether guided mode is needed.
 
 ### Step 2.1: Invoke Guided Mode Skill
 
@@ -188,6 +228,14 @@ Produce acceptance criteria in **Given/When/Then** format:
 - Cover key edge cases and error scenarios
 - Reference project-specific components and patterns where applicable
 
+**Mandatory Final AC (always append last, never omit):**
+
+After generating all other acceptance criteria, always append the following as the **last** acceptance criterion, regardless of story type or content:
+
+```
+- [ ] **[DOC]** Document changes: describe the state **before** and **after** this story, explain the reasoning why these changes were made. Mermaid diagrams may be used for visual clarity.
+```
+
 ### Step 4.4: Generate Subtasks
 
 Break the story into implementation subtasks:
@@ -267,6 +315,8 @@ Replace template placeholders with generated content:
 | `type` | `"<inferred type>"` (from Step 7.2a) |
 | `risk_level` | `"<assigned risk>"` (from Step 7.2b) |
 | `domain_tags` | `<tags array>` (from Step 7.2c) |
+| `parent_epic` | `"EP-XXX"` in Mode B (from `--from-epic`), `null` in Mode A |
+| `epic_index` | `"N/total"` in Mode B — the **story's position within its parent epic**. Compute from `--from-draft N` (numerator) and the length of `drafts` in `_scrum-output/epics/EP-XXX/draft-stories.md` (denominator). Do **not** copy `epic_index` from the epic's frontmatter — that value represents the epic's position within the brief, not the story's position within the epic. `null` in Mode A. |
 | `estimation` | `<calculated>` (from Step 5.3) |
 | `created` | `<today>` (ISO 8601 UTC format: YYYY-MM-DDTHH:mm:ssZ) |
 | `updated` | `<today>` (ISO 8601 UTC format: YYYY-MM-DDTHH:mm:ssZ) |
@@ -328,6 +378,15 @@ Write the complete story file to `_scrum-output/sprints/SW-XXX/story.md` in a **
 
 **Critical (NFR1):** The entire file content -- YAML frontmatter and Markdown body -- must be written atomically. No partial writes that could leave the file in an inconsistent state or corrupt the frontmatter.
 
+### Step 7.4: Update Epic Status (Mode B only)
+
+If Mode B, update the parent epic's status from `drafted` to `in-progress`:
+
+1. Read `_scrum-output/epics/EP-XXX/epic.md` frontmatter
+2. If `status == drafted`: set `status: in-progress`, append `status_history` entry (`trigger: /scrum-create-ticket`, `actor: human`), update `updated` timestamp, atomic write
+3. If `status` already `in-progress`: skip (only the first story promotion flips the status)
+4. If `status` is any other value: log warning, do not modify
+
 ## Step 8: Confirmation
 
 Display the created story summary to the user.
@@ -356,6 +415,7 @@ Suggest next steps to the user:
 This workflow may write:
 
 - `_scrum-output/sprints/SW-XXX/story.md` -- The generated story file
+- `_scrum-output/epics/EP-XXX/epic.md` -- **Status field only** (Mode B only), transitioning `drafted` → `in-progress` on first story promotion
 
 This workflow may NOT write:
 
@@ -369,7 +429,9 @@ This workflow may NOT write:
 ## Validation Rules
 
 - Generated `story.md` must have valid YAML frontmatter with all required fields
-- YAML frontmatter field order must match: `schema_version`, `ticket`, `title`, `status`, `type`, `risk_level`, `domain_tags`, `estimation`, `created`, `updated`, `status_history`
+- YAML frontmatter field order must match: `schema_version`, `ticket`, `title`, `status`, `type`, `risk_level`, `depth`, `depth_source`, `domain_tags`, `parent_epic`, `epic_index`, `estimation`, `created`, `updated`, `status_history`
+- `parent_epic` must be `null` or match pattern `EP-\d{3}`
+- `epic_index` must be `null` or a string like `"N/total"` (e.g., `"2/5"`)
 - `schema_version` must be `"1.0.0"` (semver string, per Architecture spec)
 - `type` must be one of: `feature`, `bugfix`, `refactor`, `infrastructure`
 - `risk_level` must be one of: `low`, `medium`, `high`, `critical`

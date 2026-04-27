@@ -190,15 +190,21 @@ type TutorialModel = {
 
 type AppendixEntry = {
   path: string;
-  oldPath?: string;                   // for renames
+  oldPath: string | null;             // populated only when changeType === "renamed"
   changeType: "added" | "modified" | "deleted" | "renamed";
-  language: string;                   // inferred from extension
+  language: string;                   // inferred from extension; "" when unknown
   isBinary: boolean;
-  before: string;                     // full pre-change snippet, hunks joined by "\n// ...\n"
-                                      // "" for added files; the renderer prints "_(new file)_"
-  after: string;                      // full post-change snippet, hunks joined by "\n// ...\n"
-                                      // "" for deleted files; the renderer prints "_(file deleted)_"
-  why: string;                        // per-file rationale paragraph (plan step + commit subjects + matching AC)
+  commits: string[];                  // short SHAs that touched the file, in author-date order
+  before: string;                     // full pre-change snippet, hunks joined by the separator
+                                      // chosen from the language table; "" for added files
+                                      // (the renderer substitutes "_(new file)_") or for
+                                      // binary files (renderer substitutes the binary placeholder)
+  after: string;                      // full post-change snippet, hunks joined by the same
+                                      // separator; "" for deleted files (renderer substitutes
+                                      // "_(file deleted)_") or for binary files
+  why: string;                        // per-file rationale paragraph; the literal string
+                                      // "*Rationale not recorded for this file.*" when the
+                                      // derivation rules below produce no content
   totals: { additions: number; deletions: number };
 };
 ```
@@ -256,17 +262,47 @@ Per step, derive a concrete check in this order of preference:
 
 #### Appendix derivation
 
-Only runs when `options.diffAppendix === true`. Walk the aggregated `FileChange` records from step 4 (sorted by path) and produce one `AppendixEntry` per file:
+Only runs when `options.diffAppendix === true`. Walk the aggregated `FileChange` records from step 4 (sorted by path) and produce one `AppendixEntry` per file. `entry.commits` is the list of short SHAs that touched the file, sorted in author-date ascending order — the renderer uses the **last** entry as the link target for the binary placeholder.
 
-- `before` is built by concatenating the `hunk.before` strings of every hunk in the file in `oldStart` order, joined by `\n// ...\n` (use `# ...` for languages where `//` is not a comment, e.g., `.py`, `.rb`, `.sh`, `.yaml`). For added files set `before = ""` — the renderer substitutes `_(new file)_`.
-- `after` is built the same way from `hunk.after` strings in `newStart` order. For deleted files set `after = ""` — the renderer substitutes `_(file deleted)_`.
-- `why` is one paragraph synthesised per file:
-  1. If exactly one plan step references the path, take that step's text as the seed.
-  2. Else, concatenate the unique commit subjects (without conventional-commit prefixes) that touched the file.
-  3. If any acceptance criterion text contains the file's basename or any function/class name appearing in the hunks, append `Satisfies AC: "<AC text>".`
-  4. If none of the above produces content, emit `*Rationale not recorded for this file.*`.
-- `isBinary === true` files set `before = after = ""` and the renderer substitutes the binary placeholder.
-- Hunks oversized in step 4 (`oversized === true`) are still included in full in the appendix — the appendix is the complete reference, so the per-step truncation rule does **not** apply here. The renderer still wraps the section in `<details>` so the file size is not visually overwhelming.
+##### Hunk separator by language
+
+`before` and `after` are built by concatenating the `hunk.before` / `hunk.after` strings of every hunk in the file (sorted by `oldStart` / `newStart` respectively) joined by a language-appropriate separator surrounded by single `\n` newlines. Pick the separator from the table below using `language` (or, when language is empty, the file extension):
+
+| Language category | Extensions / filenames | Separator |
+|-------------------|------------------------|-----------|
+| C-style | `.ts`, `.tsx`, `.js`, `.jsx`, `.mjs`, `.cjs`, `.java`, `.kt`, `.kts`, `.scala`, `.go`, `.rs`, `.swift`, `.cs`, `.cpp`, `.cc`, `.c`, `.h`, `.hpp`, `.dart`, `.php`, `.groovy` | `// ...` |
+| Hash | `.py`, `.rb`, `.sh`, `.bash`, `.zsh`, `.fish`, `.yaml`, `.yml`, `.toml`, `.ini`, `.conf`, `.r`, `.pl`, `.tcl`, `Dockerfile`, `Makefile`, `.gitignore`, `.dockerignore`, `.env`, `.env.*` | `# ...` |
+| Markup | `.html`, `.htm`, `.xml`, `.svg`, `.vue`, `.md`, `.mdx` | `<!-- ... -->` |
+| SQL | `.sql` | `-- ...` |
+| CSS-block | `.css`, `.scss`, `.sass`, `.less` | `/* ... */` |
+| Lisp-style | `.lisp`, `.clj`, `.cljs`, `.cljc`, `.scm`, `.el` | `;; ...` |
+| Lua / Haskell / Ada | `.lua`, `.hs`, `.ada`, `.adb`, `.ads` | `-- ...` |
+| Batch | `.bat`, `.cmd` | `:: ...` |
+| Erlang | `.erl`, `.hrl` | `% ...` |
+| Plain text / unknown | everything else (including `.txt`, `.log`, no extension) | `... (omitted lines) ...` |
+
+The separator is rendered on its own line, e.g. `// ...` or `<!-- ... -->`. When the file has only one hunk no separator is emitted. The plain-text fallback is intentionally non-syntactic so it never accidentally compiles into the surrounding code block when the language isn't recognised.
+
+##### Binary files
+
+When `isBinary === true`:
+
+- Set `before = after = ""`.
+- Ensure `assets/diffs/<short-sha>.diff` exists for every commit in `entry.commits`. Reuse the file if it was already emitted because of an oversized hunk; otherwise write the per-commit raw diff with `git show --no-color <sha>` so the link in the renderer is never broken.
+- The renderer substitutes the binary placeholder built from `entry.commits[entry.commits.length - 1]`.
+
+##### Why paragraph
+
+Synthesise `why` per file:
+
+1. If exactly one plan step references the path, take that step's text as the seed.
+2. Else, concatenate the unique commit subjects (without conventional-commit prefixes such as `feat:`, `fix:`, `chore(scope):`) that touched the file, separated by `; `.
+3. If any acceptance criterion text contains the file's basename or any function / class name appearing in the hunks, append `Satisfies AC: "<AC text>".`
+4. If none of the above produces content, set `why` to the literal string `*Rationale not recorded for this file.*`.
+
+##### Oversized hunks
+
+Hunks oversized in step 4 (`oversized === true`) are still included in full in the appendix — the appendix is the complete reference, so the per-step truncation rule does **not** apply here. The renderer still wraps the whole appendix in `<details>` so the file size is not visually overwhelming.
 
 ### Step 6 — Render
 
@@ -352,53 +388,67 @@ The Reference section at the end of the document is rendered as:
 **Total:** <filesChanged> files, +<additions> / -<deletions> across <commitCount> commits.
 ````
 
-When `model.appendix` is non-null, render the appendix immediately after the Reference section as:
+When `model.appendix` is non-null, render the appendix immediately after the Reference section. When `model.appendix` is `null` (because `--no-diff-appendix` was passed), skip this section entirely.
 
-````
-## Appendix — Full diff per file
+The outer `<details>` element opens at the start of the section and closes after the last entry — the renderer MUST emit it exactly once per tutorial. Inner entries are separated by an `---` horizontal rule **between** entries; no rule is emitted after the last entry.
 
-<details>
-<summary>Full diff per file ({{appendix.length}} files)</summary>
+Pseudo-code (the agent must produce a faithful rendering of this; the syntax below is illustrative, not Handlebars):
 
-{{#each appendix}}
-### `{{path}}`{{#if oldPath}} (renamed from `{{oldPath}}`){{/if}}
-
-`+{{totals.additions}} / -{{totals.deletions}}`
-
-**Before**
-
-{{#if isBinary}}
-_(binary file — see assets/diffs/<sha>.diff)_
-{{else if before === ""}}
-_(new file)_
-{{else}}
-```{{language}}
-{{before}}
 ```
-{{/if}}
+emit "## Appendix — Full diff per file"
+emit ""
+emit "<details>"
+emit "<summary>Full diff per file (" + appendix.length + " files)</summary>"
+emit ""
 
-**After**
+for i, entry in appendix:
+    if i > 0:
+        emit "---"
+        emit ""
 
-{{#if isBinary}}
-_(binary file — see assets/diffs/<sha>.diff)_
-{{else if after === ""}}
-_(file deleted)_
-{{else}}
-```{{language}}
-{{after}}
+    if entry.changeType === "renamed":
+        emit "### `" + entry.oldPath + "` → `" + entry.path + "`"
+    else:
+        emit "### `" + entry.path + "`"
+    emit ""
+    emit "`+" + entry.totals.additions + " / -" + entry.totals.deletions + "`"
+    emit ""
+
+    emit "**Before**"
+    emit ""
+    if entry.isBinary:
+        sha = entry.commits[entry.commits.length - 1]
+        emit "_(binary file — see [assets/diffs/" + sha + ".diff](./assets/diffs/" + sha + ".diff))_"
+    elif entry.before === "":
+        emit "_(new file)_"
+    else:
+        emit "```" + entry.language
+        emit entry.before
+        emit "```"
+    emit ""
+
+    emit "**After**"
+    emit ""
+    if entry.isBinary:
+        sha = entry.commits[entry.commits.length - 1]
+        emit "_(binary file — see [assets/diffs/" + sha + ".diff](./assets/diffs/" + sha + ".diff))_"
+    elif entry.after === "":
+        emit "_(file deleted)_"
+    else:
+        emit "```" + entry.language
+        emit entry.after
+        emit "```"
+    emit ""
+
+    emit "**Why:** " + entry.why
+    emit ""
+
+emit "</details>"
 ```
-{{/if}}
 
-**Why:** {{why}}
+The outer `<details>` block keeps the appendix collapsed by default in GitHub and most Markdown viewers — the prose tutorial above stays scannable while the complete reference remains one click away.
 
----
-
-{{/each}}
-
-</details>
-````
-
-The outer `<details>` block keeps the appendix collapsed by default in GitHub and most Markdown viewers — the prose tutorial above stays scannable while the complete reference remains one click away. The `---` separators between entries are dropped after the last entry.
+In **split mode**, the same pseudo-code runs, but the output is written to `100-appendix-diffs.md` instead of being appended to the main tutorial file. The relative paths in the binary placeholder remain `./assets/diffs/<sha>.diff` because the appendix file lives next to `assets/`.
 
 #### 6b. JSON (`--format json`)
 

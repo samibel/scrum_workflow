@@ -165,13 +165,14 @@ Every generated tutorial follows the layout below. The voice is second person ("
    - **Commits** — bullet list `<short-sha> — <subject>`.
    - **Total** — single line `Total: N files, +X / -Y lines across M commits`.
 
-7. **Appendix — Full diff per file** (`## Appendix — Full diff per file`) — *default on; suppressed by `--no-diff-appendix`*. After the prose tutorial, every touched file is rendered once more, this time as a complete reference rather than a teachable step. For each file in stable path order, in a collapsible `<details>` block:
-   - **Header**: `### \`<relative path>\`` (or `### \`<oldPath>\` → \`<newPath>\`` for renames).
-   - **Before** — the full pre-change snippet of every hunk in the file, concatenated with `// ...` separators between non-adjacent hunks. For newly-added files this section reads `_(new file)_`.
-   - **After** — the full post-change snippet, formatted the same way. For deleted files this section reads `_(file deleted)_`.
-   - **Why** — one paragraph synthesised from the matching plan step, the commit subject(s) that touched the file, and any acceptance criterion whose text references the path. This is a per-file rationale, distinct from the per-step *What this does* paragraphs.
+7. **Appendix — Full diff per file** (`## Appendix — Full diff per file`) — *default on; suppressed by `--no-diff-appendix`*. After the prose tutorial, every touched file is rendered once more as a complete reference rather than a teachable step. The whole section is wrapped in a single `<details><summary>Full diff per file (N files)</summary> … </details>` block so it stays collapsed in GitHub and most Markdown viewers; readers can expand it on demand. For each file, in stable path order:
+   - **Header** — `### \`<path>\`` for added / modified / deleted files; `### \`<oldPath>\` → \`<path>\`` for renames.
+   - **Diff size** — single inline code line `+<additions> / -<deletions>` directly under the header.
+   - **Before** — the full pre-change snippet of every hunk in the file, concatenated with a language-appropriate single-line separator between non-adjacent hunks (e.g. `// ...` for C-style, `# ...` for hash-comment languages, `<!-- ... -->` for markup, `... (omitted lines) ...` for unknown extensions). For newly-added files this section reads `_(new file)_`. For binary files it reads `_(binary file — see [assets/diffs/<short-sha>.diff](./assets/diffs/<short-sha>.diff))_` where `<short-sha>` is the latest commit that touched the file.
+   - **After** — the full post-change snippet, formatted the same way. For deleted files this section reads `_(file deleted)_`. For binary files, the same binary placeholder as in **Before**.
+   - **Why** — one paragraph synthesised from the matching plan step, the commit subject(s) that touched the file, and any acceptance criterion whose text references the path. This is a per-file rationale, distinct from the per-step *What this does* paragraphs. When no source produces content, the literal string `*Rationale not recorded for this file.*` is emitted instead.
 
-   The whole section is wrapped in a single `<details><summary>Full diff per file (N files)</summary> … </details>` block so it stays collapsed in GitHub and most Markdown viewers; readers can expand it on demand. For binary files, both `Before` and `After` read `_(binary file — see assets/diffs/<sha>.diff)_`.
+   Entries are separated by a `---` horizontal rule **between** entries; no rule is emitted after the last entry. Hunks that were truncated in the per-step body are shown in **full** in the appendix — the appendix is the complete reference, the per-step truncation rule does not apply here.
 
 For binary or oversized hunks **inside the steps**, replace the code block with `_(binary file — open it in your editor)_` or `_(snippet truncated — see [assets/diffs/<sha>.diff](./assets/diffs/<sha>.diff) for the full hunk)_`. Always keep the surrounding prose (Open / Locate / Action / What this does / Verify) so the step still reads as a tutorial.
 

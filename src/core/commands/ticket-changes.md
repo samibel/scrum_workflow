@@ -47,18 +47,44 @@ workflows/ticket-changes.md
 |--------|-------------|
 | `--format markdown` | Render as Markdown tutorial (default). |
 | `--format json` | Emit structured JSON for downstream tooling. |
-| `--include-diffs` | Embed git diffs of files changed by `/scrum-dev-story` cycles. |
+| `--split` | Multi-file mode: write each chapter as its own file under `_scrum-output/tutorials/SW-XXX/`, plus a `README.md` landing page. The agent MAY also emit auxiliary asset files (Mermaid sources, extracted diffs) under `assets/`. |
+| `--include-diffs` | Embed git diffs of files changed by `/scrum-dev-story` cycles. In `--split` mode, large diffs MAY be written to dedicated files under `assets/diffs/` and linked from the implementation chapter. |
 | `--no-timeline` | Skip the Mermaid Gantt/timeline chapter. |
-| `--bundle <name>` | When multiple tickets are requested, write a single combined file `_scrum-output/tutorials/<name>-tutorial.md` instead of one file per ticket. |
+| `--bundle <name>` | When multiple tickets are requested, write a single combined file `_scrum-output/tutorials/<name>-tutorial.md` instead of one file per ticket. Mutually exclusive with `--split`. |
 | `--since <ISO-date>` | Only include audit entries on or after the given ISO 8601 timestamp. |
 
 ## Output
 
-### Single Ticket
+The agent MAY create multiple files per run when the chosen mode requires it (split mode, multi-ticket runs, asset extraction). All writes are confined to `_scrum-output/tutorials/`.
+
+### Single Ticket — Single File (default)
 
 ```
 _scrum-output/tutorials/SW-XXX-tutorial.md
 ```
+
+### Single Ticket — Split (`--split`)
+
+One file per chapter plus a `README.md` landing page. Auxiliary assets (Mermaid sources, extracted diffs) live under `assets/`:
+
+```
+_scrum-output/tutorials/SW-XXX/
+├── README.md              # landing page; links to every chapter in order
+├── 01-the-idea.md
+├── 02-refinement.md
+├── 03-planning.md
+├── 04-implementation.md
+├── 05-verification.md
+├── 06-review-approval.md
+├── 07-timeline.md
+├── 08-lessons.md
+└── assets/                # created on demand
+    ├── timeline.mmd       # raw Mermaid source for chapter 7
+    └── diffs/             # one file per commit when --include-diffs is set
+        └── <short-sha>.diff
+```
+
+Chapters whose source data is missing MUST still produce a file containing the `*No data recorded for this phase.*` placeholder so the per-chapter file count is stable across runs.
 
 ### Multiple Tickets (default)
 
@@ -70,11 +96,29 @@ _scrum-output/tutorials/SW-001-tutorial.md
 _scrum-output/tutorials/SW-002-tutorial.md
 ```
 
+### Multiple Tickets — Split (`--split`)
+
+Each ticket gets its own subdirectory (same layout as the single-ticket split mode), and a top-level `index.md` links to every per-ticket `README.md`:
+
+```
+_scrum-output/tutorials/
+├── index.md
+├── SW-001/
+│   ├── README.md
+│   ├── 01-the-idea.md
+│   └── ...
+└── SW-002/
+    ├── README.md
+    └── ...
+```
+
 ### Bundled (`--bundle release-1`)
 
 ```
 _scrum-output/tutorials/release-1-tutorial.md
 ```
+
+`--bundle` is mutually exclusive with `--split` — if both are passed, halt with a clear error.
 
 ### Tutorial Structure
 
@@ -143,12 +187,15 @@ Missing sources are tolerated — chapters whose source file is absent are rende
 
 ## Write Boundary Rules
 
-This command MAY write:
-- `_scrum-output/tutorials/SW-XXX-tutorial.md` — overwrite per run.
+This command MAY write multiple files per run, all confined to `_scrum-output/tutorials/`:
+
+- `_scrum-output/tutorials/SW-XXX-tutorial.md` — overwrite per run (default single-file mode).
+- `_scrum-output/tutorials/SW-XXX/**` — overwrite per run (split mode); the agent creates the directory plus chapter files, the `README.md` landing page, and any required `assets/` files (Mermaid sources, per-commit diffs). Stale files from a previous run inside this subdirectory MAY be removed before writing so the output is deterministic.
 - `_scrum-output/tutorials/index.md` — overwrite per run when multiple tickets are requested.
 - `_scrum-output/tutorials/<bundle-name>-tutorial.md` — overwrite per run when `--bundle` is used.
 
 This command MUST NOT:
+- Write outside `_scrum-output/tutorials/`.
 - Modify or delete any file inside `_scrum-output/sprints/`.
 - Modify or delete any file inside `_scrum-output/audit/`.
 - Mutate `status_history` or any story frontmatter.

@@ -201,25 +201,48 @@ entry_count: {{auditEntries}}
 
 ### Step 7 — Write Output
 
-Write the rendered Markdown to:
+The agent MAY write multiple files per run. All writes stay inside `_scrum-output/tutorials/`. Use the same atomic write pattern as `utils/audit.js` (`temp file → rename`) for every file to avoid partial writes.
+
+#### 7a. Single-file mode (default)
 
 - Single ticket: `_scrum-output/tutorials/SW-XXX-tutorial.md` (overwrite).
 - `--bundle <name>`: concatenate per-ticket outputs into `_scrum-output/tutorials/<name>-tutorial.md`, separated by `\n---\n` rules.
 - Multiple tickets without `--bundle`: write each per-ticket file, then write `_scrum-output/tutorials/index.md` listing all generated tutorials in chronological order of `last_updated`.
 
-Use the same atomic write pattern as `utils/audit.js` (`temp file → rename`) to avoid partial writes.
+#### 7b. Split mode (`--split`)
 
----
-
-## JSON Output (`--format json`)
-
-When `--format json` is set, skip step 6 and emit the chapter model from step 4 directly. The file extension changes accordingly:
+For each ticket, materialise the chapter model from step 4 into a directory:
 
 ```
-_scrum-output/tutorials/SW-XXX-tutorial.json
+_scrum-output/tutorials/SW-XXX/
+├── README.md              # landing page
+├── 01-the-idea.md
+├── 02-refinement.md
+├── 03-planning.md
+├── 04-implementation.md
+├── 05-verification.md
+├── 06-review-approval.md
+├── 07-timeline.md
+├── 08-lessons.md
+└── assets/                # only created if at least one asset is needed
+    ├── timeline.mmd
+    └── diffs/<short-sha>.diff
 ```
 
-This format is intended for downstream tooling such as dashboards or release-note generators.
+Rules:
+
+1. Before writing, the agent MAY remove the existing `_scrum-output/tutorials/SW-XXX/` directory contents to ensure a clean, deterministic re-run. It MUST NOT touch sibling tickets.
+2. Every chapter file is created even if the source data is missing — its body is the `*No data recorded for this phase.*` placeholder. This guarantees a stable file count between runs.
+3. The `README.md` landing page contains the frontmatter, a short overview paragraph, and an ordered list linking to each chapter file.
+4. Chapter 7 (`07-timeline.md`) embeds the Mermaid block. When `--split` is used, the agent SHOULD also write the raw diagram source to `assets/timeline.mmd` so it can be edited or rendered with external tools.
+5. With `--include-diffs`, large diffs (>200 lines) MUST be written to `assets/diffs/<short-sha>.diff` and linked from `04-implementation.md`. Smaller diffs MAY be inlined.
+6. `--bundle` is mutually exclusive with `--split`. If both are passed, halt with a clear error before any file is written.
+
+For multi-ticket runs in split mode, also write `_scrum-output/tutorials/index.md` linking to each per-ticket `README.md`.
+
+#### 7c. JSON mode (`--format json`)
+
+Skip steps 5–6 and emit the chapter model from step 4 directly. With `--split`, write one `<chapter>.json` per chapter alongside a top-level `metadata.json`. Without `--split`, write a single `_scrum-output/tutorials/SW-XXX-tutorial.json`.
 
 ---
 
@@ -248,10 +271,11 @@ count: <N>
 | Scenario | Behavior |
 |----------|----------|
 | Invalid ticket ID format | Halt before any file access; print the formatted error from `commands/ticket-changes.md`. |
+| Both `--split` and `--bundle` passed | Halt before any file access with: `❌ --split and --bundle are mutually exclusive.` |
 | Ticket has no story.md and no audit trail | Skip the ticket and emit the `Nothing to tutor` notice. In multi-ticket mode the run continues for the remaining IDs. |
-| `_scrum-output/tutorials/` missing | Create it (created by the installer, but defensively `mkdir -p`). |
+| `_scrum-output/tutorials/` missing | Create it (created by the installer, but defensively `mkdir -p`). In split mode, also `mkdir -p` the per-ticket subdirectory and `assets/`, `assets/diffs/` on demand. |
 | Concurrent write conflict | Retry up to 3 times with backoff 1s/2s/4s. After that, halt. |
-| Git commands fail when `--include-diffs` is set | Emit a warning, omit the diff sub-chapter, and continue. Never abort the tutorial because of git issues. |
+| Git commands fail when `--include-diffs` is set | Emit a warning, omit the diff sub-chapter (or skip writing `assets/diffs/` in split mode), and continue. Never abort the tutorial because of git issues. |
 
 ---
 

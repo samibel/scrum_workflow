@@ -197,7 +197,7 @@ The agent MAY write multiple files per run. All writes stay inside `_scrum-outpu
 
 #### 7a. Single-file mode (default)
 
-- Single ticket: `_scrum-output/tutorials/SW-XXX-tutorial.md` (overwrite).
+- Multiple tickets or single ticket: write/update `_scrum-output/tutorials/index.md` by scanning the directory for all `*-tutorial.md` files, listing them in chronological order of `last_updated`.
 - `--bundle <name>`: concatenate per-ticket outputs into `_scrum-output/tutorials/<name>-tutorial.md`, separated by `\n---\n` rules.
 - Multiple tickets without `--bundle`: write each per-ticket file, then write `_scrum-output/tutorials/index.md` listing all generated tutorials (sorted by ticket ID).
 

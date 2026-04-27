@@ -1,4 +1,4 @@
-# 🎯 All 21 Scrum Workflow Commands
+# 🎯 All 20 Scrum Workflow Commands
 
 Complete visual overview of all commands organized by category.
 
@@ -103,7 +103,7 @@ graph TD
 
 ---
 
-## Audit & Session Commands (3)
+## Audit & Session Commands (2)
 
 ```mermaid
 graph LR
@@ -111,17 +111,13 @@ graph LR
     
     B["/scrum-wrap-up<br/>━━━━━━<br/>Session summary<br/>Work completed<br/>Next steps"]
     
-    C["/scrum-ticket-changes<br/>━━━━━━<br/>Tutorial-style changelog<br/>Idea → Refinement → Plan<br/>Implementation → Verification<br/>Review → Timeline → Lessons"]
-    
-    Output["📝 Audit Log<br/>📋 Session Summary<br/>📖 Ticket Tutorials"]
+    Output["📝 Audit Log<br/>📋 Session Summary"]
     
     A --> Output
     B --> Output
-    C --> Output
     
     style A fill:#f8bbd0
     style B fill:#f8bbd0
-    style C fill:#f8bbd0
     style Output fill:#c8e6c9
 ```
 
@@ -131,7 +127,7 @@ graph LR
 
 ```mermaid
 graph TD
-    A["create-scrum-workflow install<br/>━━━━━━━━━━━━━━━━<br/>Interactive installation<br/>Detect platform<br/>Install 21 commands"]
+    A["create-scrum-workflow install<br/>━━━━━━━━━━━━━━━━<br/>Interactive installation<br/>Detect platform<br/>Install 20 commands"]
     
     B["create-scrum-workflow install -y<br/>━━━━━━━━━━━━━━<br/>Non-interactive<br/>Default answers"]
     
@@ -143,7 +139,7 @@ graph TD
     
     F["create-scrum-workflow validate<br/>━━━━━━━━━━━<br/>Full verification<br/>6-point checklist<br/>Installation OK?"]
     
-    A --> Output1["✅ 21 commands installed"]
+    A --> Output1["✅ 20 commands installed"]
     B --> Output1
     C --> Output1
     D --> Output2["✅ Framework updated"]
@@ -164,7 +160,7 @@ graph TD
 
 ---
 
-## All 21 Commands Summary
+## All 20 Commands Summary
 
 ```mermaid
 graph TB
@@ -194,10 +190,9 @@ graph TB
         S3["/scrum-policy-check"]
     end
     
-    subgraph Audit["📝 Audit (3)"]
+    subgraph Audit["📝 Audit (2)"]
         A1["/scrum-audit-trail"]
         A2["/scrum-wrap-up"]
-        A3["/scrum-ticket-changes"]
     end
     
     subgraph Install["⚙️ Installation (4)"]
@@ -231,7 +226,6 @@ graph TB
     
     style A1 fill:#f8bbd0
     style A2 fill:#f8bbd0
-    style A3 fill:#f8bbd0
     
     style I1 fill:#b2dfdb
     style I2 fill:#b2dfdb
@@ -251,10 +245,10 @@ graph TB
 | **Documentation** | 3 | project-context, project-docs, architecture-docs |
 | **Research** | 2 | research (technical), research (general) |
 | **Status & Validation** | 3 | sprint-status, delivery-health, policy-check |
-| **Audit & Session** | 3 | audit-trail, wrap-up, ticket-changes |
+| **Audit & Session** | 2 | audit-trail, wrap-up |
 | **Installation** | 4 | install, update, status, validate |
 | **Other** | 1 | session-start |
-| **TOTAL** | **21** | All commands |
+| **TOTAL** | **20** | All commands |
 
 ---
 
@@ -276,7 +270,6 @@ Periodic Use (Weekly/Monthly):
   /scrum-delivery-health           — Health check
   /scrum-policy-check              — Compliance
   /scrum-audit-trail               — Audit
-  /scrum-ticket-changes SW-XXX     — Tutorial-style changelog per ticket
 
 One-time Setup:
   create-scrum-workflow install    — Initial setup

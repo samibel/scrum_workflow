@@ -31,6 +31,11 @@ command-name.md
 - **refine-ticket.md**: Multi-agent refinement of story requirements
 - **dev-story.md**: Implement story from specification
 
+### Observability
+
+- **audit-trail.md**: Read-only query of the append-only audit trail for a story
+- **ticket-changes.md**: Generate a tutorial-style Markdown that walks through every change a ticket went through (Idea → Refinement → Plan → Implementation → Verification → Review → Timeline → Lessons)
+
 ## Usage
 
 Commands are invoked through the AI coding assistant's slash command interface, referencing the framework via platform-specific adapters.

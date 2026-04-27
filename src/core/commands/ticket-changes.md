@@ -9,18 +9,25 @@ model_recommendation: "haiku"
 
 ## Purpose
 
-Generate a tutorial-style Markdown document that walks through every change a ticket (or a set of tickets) went through during its lifecycle. The command aggregates audit trail entries, status transitions, and lifecycle artifacts (refinement, plan, verification, review, approval) into a chronological, narrative tutorial that newcomers and stakeholders can read top-to-bottom.
+Generate a **code-change tutorial** for a ticket (or a set of tickets): for every file the ticket touched, render a *before / after / why* block so a reader can learn what was changed in the codebase and the reasoning behind it without opening a single git diff manually.
 
-The result is intentionally written as a **tutorial**, not a raw log: each phase is introduced with context, the reasoning behind transitions is summarized, and the final output explains *what* happened, *why* it happened, and *what was learned*.
+The result is intentionally written as a **tutorial**, not a diff log. Each modified file gets:
+
+- a short prose intro explaining the goal of the change,
+- a `Before` code block showing the relevant pre-change snippet,
+- an `After` code block showing the post-change snippet,
+- a `Why` paragraph that combines the commit message, the relevant section of `plan.md`, and any acceptance criterion the change satisfies.
+
+Pure lifecycle metadata (status transitions, refinement perspectives, review rounds) is **not** the focus of this command — those belong to `/scrum-audit-trail`.
 
 ## Agentic Pattern
 
-**Pattern:** [Plan-Then-Execute] + [Observability & Audit]
+**Pattern:** [Plan-Then-Execute] + [Observability]
 
 **Key Principles:**
-- **Aggregate, don't reinvent:** Reuse the existing audit trail (`/scrum-audit-trail`), `status_history`, and lifecycle artifacts as the single source of truth.
-- **Narrative over log:** Convert raw events into chapters with prose, headings, and a Mermaid timeline so the output reads as a tutorial.
-- **Read-mostly:** Only writes happen inside `_scrum-output/tutorials/` — never modify the source artifacts.
+- **Code-first:** The unit of explanation is a file change (or a hunk), not a status transition.
+- **Reuse, don't reinvent:** Pull diffs from git, rationale from `plan.md` / commit messages, intent from `story.md` description and acceptance criteria.
+- **Read-mostly:** Only writes happen inside `_scrum-output/tutorials/` — never modify source artifacts or the working tree.
 - **Idempotent:** Re-running the command on the same ticket overwrites the previous tutorial deterministically.
 
 ## Workflow Reference
@@ -39,23 +46,25 @@ workflows/ticket-changes.md
 - **Ticket number(s)**: One or more `SW-XXX` IDs (zero-padded, three digits).
 - **`--epic N`**: Generate a tutorial for every story tagged with `epic: N` in `story.md` frontmatter.
 - **`--all`**: Generate tutorials for every story directory under `_scrum-output/sprints/`.
-- **Prerequisite**: At least one of `_scrum-output/sprints/SW-XXX/story.md` or `_scrum-output/audit/SW-XXX-audit.md` must exist for each requested ticket.
+- **Prerequisite**: At least one of `_scrum-output/sprints/SW-XXX/story.md` or commits referencing the ticket ID must exist. If neither is present the ticket is skipped with a notice.
 
 ## Options
 
 | Option | Description |
 |--------|-------------|
 | `--format markdown` | Render as Markdown tutorial (default). |
-| `--format json` | Emit structured JSON for downstream tooling. |
-| `--split` | Multi-file mode: write each chapter as its own file under `_scrum-output/tutorials/SW-XXX/`, plus a `README.md` landing page. The agent MAY also emit auxiliary asset files (Mermaid sources, extracted diffs) under `assets/`. |
-| `--include-diffs` | Embed git diffs of files changed by `/scrum-dev-story` cycles. In `--split` mode, large diffs MAY be written to dedicated files under `assets/diffs/` and linked from the implementation chapter. |
-| `--no-timeline` | Skip the Mermaid Gantt/timeline chapter. |
+| `--format json` | Emit structured JSON of the file-change model for downstream tooling. |
+| `--split` | Multi-file mode: write one file per changed source file under `_scrum-output/tutorials/SW-XXX/files/`, plus a `README.md` landing page that links them all. Auxiliary assets (full raw diffs) live under `assets/diffs/`. |
+| `--context-lines <N>` | Number of unchanged lines to include around each hunk in the Before/After blocks. Default: `5`. |
+| `--max-hunk-lines <N>` | Hunks longer than this are summarised and the full diff moved to `assets/diffs/<short-sha>.diff` (or inlined behind a `<details>` block in single-file mode). Default: `60`. |
+| `--include <glob>` | Only include files matching the glob (repeatable). |
+| `--exclude <glob>` | Exclude files matching the glob (repeatable). Defaults: lock files, `dist/`, `build/`, binary assets. |
 | `--bundle <name>` | When multiple tickets are requested, write a single combined file `_scrum-output/tutorials/<name>-tutorial.md` instead of one file per ticket. Mutually exclusive with `--split`. |
-| `--since <ISO-date>` | Only include audit entries on or after the given ISO 8601 timestamp. |
+| `--since <ISO-date>` | Only include commits authored on or after the given ISO 8601 timestamp. |
 
 ## Output
 
-The agent MAY create multiple files per run when the chosen mode requires it (split mode, multi-ticket runs, asset extraction). All writes are confined to `_scrum-output/tutorials/`.
+The agent MAY create multiple files per run when the chosen mode requires it (split mode, multi-ticket runs, large-diff extraction). All writes are confined to `_scrum-output/tutorials/`.
 
 ### Single Ticket — Single File (default)
 
@@ -65,52 +74,27 @@ _scrum-output/tutorials/SW-XXX-tutorial.md
 
 ### Single Ticket — Split (`--split`)
 
-One file per chapter plus a `README.md` landing page. Auxiliary assets (Mermaid sources, extracted diffs) live under `assets/`:
+One file per touched source file plus a `README.md` landing page. Raw diffs are written under `assets/`:
 
 ```
 _scrum-output/tutorials/SW-XXX/
-├── README.md              # landing page; links to every chapter in order
-├── 01-the-idea.md
-├── 02-refinement.md
-├── 03-planning.md
-├── 04-implementation.md
-├── 05-verification.md
-├── 06-review-approval.md
-├── 07-timeline.md
-├── 08-lessons.md
-└── assets/                # created on demand
-    ├── timeline.mmd       # raw Mermaid source for chapter 7
-    └── diffs/             # one file per commit when --include-diffs is set
-        └── <short-sha>.diff
+├── README.md              # landing page; links to every per-file chapter and the summary
+├── 00-overview.md         # goal of the ticket + why summary
+├── files/
+│   ├── 01-src-auth-login.ts.md
+│   ├── 02-src-auth-session.ts.md
+│   └── 03-tests-auth.test.ts.md
+├── 99-summary.md          # files touched, lines added/removed, commit list
+└── assets/
+    └── diffs/
+        └── <short-sha>.diff   # full raw diffs for hunks that exceeded --max-hunk-lines
 ```
 
-Chapters whose source data is missing MUST still produce a file containing the `*No data recorded for this phase.*` placeholder so the per-chapter file count is stable across runs.
+Each `files/NN-<safe-path>.md` contains: the goal recap, then one `Before / After / Why` section per hunk in the file.
 
 ### Multiple Tickets (default)
 
-One tutorial per ticket in `_scrum-output/tutorials/`, plus an index file:
-
-```
-_scrum-output/tutorials/index.md
-_scrum-output/tutorials/SW-001-tutorial.md
-_scrum-output/tutorials/SW-002-tutorial.md
-```
-
-### Multiple Tickets — Split (`--split`)
-
-Each ticket gets its own subdirectory (same layout as the single-ticket split mode), and a top-level `index.md` links to every per-ticket `README.md`:
-
-```
-_scrum-output/tutorials/
-├── index.md
-├── SW-001/
-│   ├── README.md
-│   ├── 01-the-idea.md
-│   └── ...
-└── SW-002/
-    ├── README.md
-    └── ...
-```
+One tutorial per ticket in `_scrum-output/tutorials/`, plus an `index.md` linking them.
 
 ### Bundled (`--bundle release-1`)
 
@@ -118,21 +102,25 @@ _scrum-output/tutorials/
 _scrum-output/tutorials/release-1-tutorial.md
 ```
 
-`--bundle` is mutually exclusive with `--split` — if both are passed, halt with a clear error.
+`--bundle` is mutually exclusive with `--split` — passing both halts with an error.
 
-### Tutorial Structure
+## Tutorial Structure (Markdown)
 
-Each generated tutorial follows the template defined in `workflows/ticket-changes.md` and contains the following chapters in order:
+Every generated tutorial follows the layout below.
 
-1. **Frontmatter** — `ticket`, `title`, `final_status`, `generated`, `entry_count`.
-2. **Chapter 1 — The Idea** — title, description, acceptance criteria from `story.md`.
-3. **Chapter 2 — Refinement** — distilled multi-agent perspectives from `refinement.md`.
-4. **Chapter 3 — Planning** — execution plan highlights from `plan.md`.
-5. **Chapter 4 — Implementation** — what changed during `dev-story` cycles, plus optional git diffs (`--include-diffs`).
-6. **Chapter 5 — Verification** — pass/fail summary from `verification-report.md`.
-7. **Chapter 6 — Review & Approval** — review and approval rounds from `review-N.md` / `approval-N.md`.
-8. **Chapter 7 — Timeline** — Mermaid Gantt chart of every transition and artifact event.
-9. **Chapter 8 — Lessons Learned** — bullet summary of risks raised, decisions taken, and follow-ups.
+1. **Frontmatter** — `ticket`, `title`, `final_status`, `generated`, `commit_count`, `files_changed`, `additions`, `deletions`.
+2. **Overview** — title + the original goal taken verbatim from `story.md` description.
+3. **The Why** — short paragraph synthesised from `plan.md` (when available) and acceptance criteria explaining the rationale behind the code change in plain language.
+4. **Files Changed** — for each touched file, in stable path order:
+   - **Heading**: `### \`<relative path>\``
+   - **Goal of this change**: one sentence derived from the linked plan step or commit message.
+   - For each hunk in the file:
+     - **Before** — fenced code block with the language tag inferred from the file extension.
+     - **After** — fenced code block with the language tag inferred from the file extension.
+     - **Why** — one paragraph combining the commit subject, plan step text, and acceptance criterion (when matchable).
+5. **Summary** — files-changed table (`File | + | − | Commits`), commit list (`<short-sha> <subject>`), and a one-line `Total: N files, +X / -Y lines` footer.
+
+For binary or oversized files, replace `Before` / `After` with `_(binary file — diff omitted)_` or `_(diff truncated, see assets/diffs/<sha>.diff)_`.
 
 ### On Success
 
@@ -140,8 +128,8 @@ Each generated tutorial follows the template defined in `workflows/ticket-change
 ✓ Tutorial generated for SW-XXX
 
   File:    _scrum-output/tutorials/SW-XXX-tutorial.md
-  Events:  12 audit entries
-  Chapters: 8
+  Commits: 4
+  Files:   7  (+218 / -42)
 
 Next Step: Open the file or share it with stakeholders.
 ```
@@ -156,16 +144,16 @@ Next Step: Open the file or share it with stakeholders.
 **Next Step:** Provide a valid ticket ID, or use --epic N / --all.
 ```
 
-### On Error (No Data Available)
+### On Error (No Code Changes Found)
 
 ```
 ℹ️ Nothing to tutor for SW-XXX
 
-No story.md or audit trail was found. The story has not produced any
-recorded events yet.
+No commits referencing this ticket were found and no story.md description
+is available to derive a tutorial from.
 
-**Next Step:** Run /scrum-create-ticket SW-XXX, then re-run this command
-once events have been recorded.
+**Next Step:** Make sure commit messages reference SW-XXX (subject or
+trailer), then re-run this command.
 ```
 
 ## Data Sources
@@ -174,48 +162,49 @@ The command reads (read-only) from:
 
 | Source | Used For |
 |--------|----------|
-| `_scrum-output/sprints/SW-XXX/story.md` | Title, description, acceptance criteria, frontmatter, `status_history`. |
-| `_scrum-output/audit/SW-XXX-audit.md` | Full chronological list of transitions, actions, and artifact events. |
-| `_scrum-output/sprints/SW-XXX/refinement.md` | Refinement perspectives summary. |
-| `_scrum-output/sprints/SW-XXX/plan.md` | Execution plan highlights. |
-| `_scrum-output/sprints/SW-XXX/verification-report.md` | Verification summary. |
-| `_scrum-output/sprints/SW-XXX/review-*.md` | Review round summaries. |
-| `_scrum-output/sprints/SW-XXX/approval-*.md` | Approval round summaries. |
-| `git log` (optional, with `--include-diffs`) | Embedded code diffs scoped to the ticket. |
+| `git log --grep=SW-XXX` (subject + trailer) | Discover the commits that belong to the ticket. |
+| `git show <sha>` / `git diff <base>..<head>` | Extract the actual hunks (Before / After). |
+| `_scrum-output/sprints/SW-XXX/story.md` | Title, description, acceptance criteria for the *Why* paragraph. |
+| `_scrum-output/sprints/SW-XXX/plan.md` | Per-step rationale, mapped to files via path or commit message references. |
+| Commit messages (subject + body) | Per-hunk *Why* paragraph. |
 
-Missing sources are tolerated — chapters whose source file is absent are rendered with `*No data recorded for this phase.*` so the tutorial remains complete.
+If `plan.md` or `story.md` is missing, the *Why* paragraph falls back to the commit message subject only.
 
 ## Write Boundary Rules
 
 This command MAY write multiple files per run, all confined to `_scrum-output/tutorials/`:
 
 - `_scrum-output/tutorials/SW-XXX-tutorial.md` — overwrite per run (default single-file mode).
-- `_scrum-output/tutorials/SW-XXX/**` — overwrite per run (split mode); the agent creates the directory plus chapter files, the `README.md` landing page, and any required `assets/` files (Mermaid sources, per-commit diffs). Stale files from a previous run inside this subdirectory MAY be removed before writing so the output is deterministic.
+- `_scrum-output/tutorials/SW-XXX/**` — overwrite per run (split mode); the agent creates the directory plus per-file chapter files, the `README.md` landing page, the `99-summary.md`, and any required `assets/diffs/<sha>.diff`. Stale files from a previous run inside this subdirectory MAY be removed before writing so the output is deterministic.
 - `_scrum-output/tutorials/index.md` — overwrite per run when multiple tickets are requested.
 - `_scrum-output/tutorials/<bundle-name>-tutorial.md` — overwrite per run when `--bundle` is used.
 
 This command MUST NOT:
 - Write outside `_scrum-output/tutorials/`.
-- Modify or delete any file inside `_scrum-output/sprints/`.
-- Modify or delete any file inside `_scrum-output/audit/`.
+- Modify or delete any file inside `_scrum-output/sprints/`, `_scrum-output/audit/`, or the working tree.
 - Mutate `status_history` or any story frontmatter.
+- Run any git command that mutates state (`commit`, `checkout`, `reset`, etc.).
 
 ## Integration Points
 
-- **`/scrum-audit-trail`** is the primary upstream producer of events consumed here.
-- **`/scrum-sprint-status`** complements this command by showing live status, while `/scrum-ticket-changes` produces the historical narrative.
-- **`/scrum-delivery-health`** can link to generated tutorials for governance reporting.
+- **`/scrum-audit-trail`** is the lifecycle counterpart — it explains *when* status changes happened. `/scrum-ticket-changes` explains *what* changed in code and *why*.
+- **`/scrum-dev-story`** is the upstream producer of the commits this command consumes; commits SHOULD reference `SW-XXX` in the subject or as a trailer for clean discovery.
+- **`/scrum-refine-story`** produces the `plan.md` that supplies the *Why* paragraph.
 
 ## Error Handling
 
 ### Status Guard Violation
 
-N/A — the command works for stories in any status, including `draft` and `cancelled`.
+N/A — the command works for stories in any status.
 
-### Missing Source Files
+### No Commits Reference the Ticket
 
-Not an error. Each chapter falls back to a `*No data recorded for this phase.*` placeholder so the tutorial remains complete and valid Markdown.
+Not an error in multi-ticket mode — skip the ticket and emit the `Nothing to tutor` notice. Continue with the remaining IDs.
+
+### Git Command Failure
+
+If a git command fails (corrupt repo, missing rev), emit a warning, omit the affected hunk or commit, and continue. Never abort the tutorial because of git issues.
 
 ### Concurrent Writes
 
-If the target tutorial file is locked by another process, retry up to 3 times with exponential backoff (1s, 2s, 4s). After that, halt with a clear error.
+If the target tutorial file is locked, retry up to 3 times with exponential backoff (1s, 2s, 4s). After that, halt with a clear error.

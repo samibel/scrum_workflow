@@ -18,6 +18,7 @@ Step-by-step workflow for reviewing implemented code against story specification
 - Code has been implemented (files modified/created as documented in story.md File List)
 - `scrum_workflow/commands/review-story.md` exists
 - Review template exists at `scrum_workflow/templates/review.md` (if missing, log warning and use default format)
+- `scrum_workflow/agents/clean-code-reviewer.md` exists for the mandatory Clean Code supplementary review (if missing, the workflow logs a warning and skips Clean Code findings — it does not halt)
 
 ## Step 1: Load Story and Context
 
@@ -267,6 +268,75 @@ Check implementation against project standards:
 - Skip this step
 - Note in review report that this is the first review
 
+### Step 3.6: Mandatory Clean Code & Simplification Review (Sub-Agent)
+
+**This step always runs at the end of evaluation, regardless of story `type`, `risk_level`, or `domain_tags`.** It exists because the primary review pass (Steps 3.1–3.5) is focused on spec alignment, ACs, tests, standards, and architecture, and routinely overlooks Clean Code and Simplification concerns.
+
+#### Step 3.6.1: Dispatch the clean-code-reviewer Agent
+
+Invoke the `agent-dispatcher` skill with `workflow: review-story`. The dispatcher reads `data/dispatch-rules.yaml` and unconditionally appends every agent listed under `always_in_review_story` — currently `clean-code-reviewer` — to the dispatched set. The agent's `active_in` list includes `review-story`, so it loads here.
+
+**Failure Handling:**
+- If `agent-dispatcher` is unavailable, fall back to spawning `clean-code-reviewer` directly using its agent file at `scrum_workflow/agents/clean-code-reviewer.md`.
+- If the agent file itself is missing, log a warning ("`clean-code-reviewer` agent unavailable — Clean Code findings skipped this run") and continue with the primary findings only. **Do NOT halt the review** — Clean Code review is a quality enhancement, not a blocker.
+
+#### Step 3.6.2: Provide Context to the Agent
+
+The `clean-code-reviewer` agent receives:
+- The full content of every file in `story.md` File List (the review target)
+- `scrum_workflow/context/standards.md` (especially the `## Best Practices` section: Readability, Simplicity, Consistency)
+- All previous `review-N.md` files in the sprint folder (so it can mark Clean Code findings as resolved/persistent)
+
+The agent is **read-only** — it MUST NOT modify any source file, `story.md`, `plan.md`, `refinement.md`, or any review file. Boundary violations halt the workflow with the standard write-boundary error.
+
+#### Step 3.6.3: Evaluation Dimensions
+
+The agent evaluates against these 10 dimensions (full list in `agents/clean-code-reviewer.md`):
+
+1. Naming clarity (functions, variables, classes, files)
+2. Function & method size (single-purpose, depth ≤ 3, params ≤ 4)
+3. Duplication / DRY (repeated logic, magic numbers, magic strings)
+4. Simplicity / KISS (no over-engineering, no unnecessary indirection)
+5. YAGNI / Dead code (unused exports, speculative configurability, commented-out code)
+6. Comments (WHY not WHAT, no stale or trivial comments)
+7. Error handling discipline (at boundaries, not scattered defensively)
+8. Cohesion & coupling (single responsibility, no feature envy)
+9. Side effects & purity (localized mutations, no hidden global state)
+10. Severity classification (Critical / Major / Minor) per maintainability impact
+
+#### Step 3.6.4: Capture the Agent's Perspective
+
+The agent returns a structured perspective with the standard format:
+
+```
+## Clean Code Reviewer Perspective
+
+### Findings
+| # | Finding | Severity | Category |
+| ... |
+
+### Recommendations
+1. ...
+
+### Proposed Acceptance Criteria
+- [ ] ...
+```
+
+Store the perspective verbatim — it will be embedded as a dedicated section in `review-N.md` (see Step 5.2).
+
+#### Step 3.6.5: Merge Clean Code Findings into the Findings Table
+
+For each Clean Code finding:
+- Append it to the master findings list with the `Category` value preserved (e.g., "Function Size", "Duplication", "Dead Code")
+- Add a `(Clean Code)` suffix to the Category column to distinguish it from primary-reviewer findings, e.g., `Function Size (Clean Code)`
+- Map to AC reference: if a finding relates to an AC, use that AC; otherwise use `Project Standards` as the reference
+- Preserve the agent's `File:Line` precision
+
+**Verdict Influence:**
+- A `Critical` Clean Code finding (e.g., a 200-line god-function blocking maintenance, severe systemic duplication) MAY independently drive the verdict to `CHANGES-NEEDED` — apply the same rule as Critical primary findings (see Step 5.1).
+- `Major` Clean Code findings count toward the "multiple Major findings" threshold for `CHANGES-NEEDED`.
+- `Minor` Clean Code findings are reported and counted but do not block approval on their own.
+
 ## Step 4: Generate Review Findings
 
 ### Step 4.1: Identify Issues and Assign Severity
@@ -328,18 +398,20 @@ For each finding, provide actionable fix:
 Based on findings:
 
 **APPROVED if:**
-- No Critical findings
+- No Critical findings (primary OR Clean Code)
 - Zero or few Minor findings
 - All ACs satisfied
 - Adequate test coverage
 - Code follows standards
+- No severe Clean Code violations (no god-functions, no systemic duplication, no critical over-engineering)
 
 **CHANGES-NEEDED if:**
-- Any Critical findings exist
-- Multiple Major findings exist
+- Any Critical findings exist (primary OR Clean Code)
+- Multiple Major findings exist (primary + Clean Code combined)
 - ACs not fully satisfied
 - Inadequate test coverage
 - Significant standards violations
+- Severe Clean Code violations that will compound maintenance cost
 
 ### Step 5.2: Create Review File
 
@@ -392,6 +464,10 @@ verdict: approved  # MUST be either: "approved" or "changes-needed" (validated a
 
 ### Code Quality
 [Adherence to standards, patterns, best practices]
+
+## Clean Code Reviewer Perspective
+
+[Verbatim perspective returned by the clean-code-reviewer sub-agent in Step 3.6, including its Findings table, Recommendations, and Proposed Acceptance Criteria. If the agent was unavailable for this run, replace with the line: "Clean Code Reviewer agent unavailable for this run — Clean Code findings skipped."]
 ```
 
 ### Step 5.3: Populate Summary Table

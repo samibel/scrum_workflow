@@ -155,6 +155,26 @@ domain_tag_additions:
     description: "API/Contract/Integration domain tags add contract-validator for API contract review"
 
 # =============================================================================
+# Always-On Review Agents
+# =============================================================================
+# These agents are appended to the dispatched set for the /scrum-review-story
+# workflow regardless of story type, risk_level, or domain_tags.
+# They run AFTER the primary review evaluation as a final supplementary pass.
+#
+# Unlike `domain_tag_additions`, these rules are unconditional for the named
+# workflow context. They apply only when the dispatcher is invoked with
+# `workflow: review-story` (i.e., from /scrum-review-story).
+
+always_in_review_story:
+  # Clean Code & Simplification reviewer — always runs at the end of every
+  # /scrum-review-story to catch readability, complexity, and over-engineering
+  # issues that the primary reviewer (focused on spec/AC/tests/architecture)
+  # routinely overlooks.
+  clean_code_review:
+    add_agent: clean-code-reviewer
+    description: "Always run clean-code-reviewer at end of /scrum-review-story regardless of type/risk/tags"
+
+# =============================================================================
 # Customization Guide
 # =============================================================================
 # To add a new dispatch rule:

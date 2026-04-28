@@ -53,6 +53,22 @@ The agent evaluates the implementation against these criteria:
 | 3 | Test Coverage | Adequate test coverage for the changes |
 | 4 | Code Standards | Code follows project standards from `context/standards.md` |
 | 5 | Architecture Compliance | Implementation follows architecture patterns from Dev Notes |
+| 6 | Clean Code & Simplification | Code is readable, simple, free of duplication, dead code, and unnecessary complexity (KISS, DRY, YAGNI) |
+
+### Mandatory Clean Code Supplementary Review
+
+Every `/scrum-review-story` invocation **always** dispatches the `clean-code-reviewer` agent at the end of the evaluation phase, regardless of story `type`, `risk_level`, or `domain_tags`. This guarantees that Clean Code and Simplification concerns — which the primary reviewer routinely overlooks while focused on spec alignment, ACs, tests, and architecture — are evaluated on every story.
+
+The `clean-code-reviewer` agent produces a separate `## Clean Code Reviewer Perspective` section in `review-N.md` with findings on:
+
+- Naming clarity, function/method size, and cohesion
+- Duplication (DRY) and magic numbers/strings
+- Over-engineering, premature abstraction, unnecessary indirection (KISS)
+- Dead code, unused parameters, speculative configurability (YAGNI)
+- Comments that explain WHAT instead of WHY
+- Error-handling discipline and side-effect localization
+
+Dispatch is handled by the `agent-dispatcher` skill via the `always_in_review_story` section of `data/dispatch-rules.yaml` — see `scrum_workflow/skills/agent-dispatcher/SKILL.md` for details. The agent's `active_in` list includes `review-story`, so it is loaded automatically. Critical Clean Code findings (e.g., severe duplication, god-functions blocking maintenance) MAY drive the verdict to `CHANGES-NEEDED`; minor and major findings are reported and counted in the summary table.
 
 ### Optional UX Supplementary Review
 

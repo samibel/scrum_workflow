@@ -23,7 +23,7 @@ This skill implements FR-34: dynamic agent dispatch based on story type, risk, a
 
 ## Dispatch Algorithm
 
-The dispatcher uses a layered rule composition approach. Rules are applied in a specific order: light depth short-circuit, then default set, then type-based override (replaces), then risk-based addition (appends), then domain-tag-based addition (appends), then deduplication, then agent file validation.
+The dispatcher uses a layered rule composition approach. Rules are applied in a specific order: light depth short-circuit, then default set, then type-based override (replaces), then risk-based addition (appends), then domain-tag-based addition (appends), then always-on review additions (appends, only when workflow is `review-story`), then deduplication, then agent file validation.
 
 ### Step 1: Check Depth — Light Depth Short-Circuit
 
@@ -84,6 +84,16 @@ A rule MAY declare `run_before: <other_agent>`. When present:
 - The added agent is inserted into the dispatch list **immediately before** the named agent, preserving Reflection-Loop-style ordering (e.g., `ux-draft-agent` must run before `ux-reviewer`).
 - If the named agent is not in the current set (for any reason), the added agent is appended to the end.
 - This affects only ordering for the refinement workflow's Round 0 spawning; later steps (deduplication, validation) still apply.
+
+### Step 5c: Apply Always-On Review Additions (Appends to Current Set)
+
+If the dispatcher is invoked with workflow context `review-story` (i.e., from `/scrum-review-story`), append every agent listed under the `always_in_review_story` section of `dispatch-rules.yaml` to the current set. These additions are unconditional — they ignore `type`, `risk_level`, `domain_tags`, and `depth` — because they exist to guarantee a consistent supplementary review pass on every story.
+
+- For each rule under `always_in_review_story`, add its `add_agent` to the current set.
+- This step is skipped entirely for non-`review-story` workflow contexts (e.g., `refine-ticket`).
+- If the section is missing or empty, this step is a no-op — no error.
+
+Example: `clean_code_review` adds `clean-code-reviewer` for every `/scrum-review-story` invocation, ensuring Clean Code & Simplification findings are produced on every review regardless of story attributes.
 
 ### Step 6: Deduplicate Agent List
 

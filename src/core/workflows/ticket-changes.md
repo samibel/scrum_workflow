@@ -18,6 +18,7 @@
 | `options.include[]` | no | Repeatable `--include <glob>`. |
 | `options.exclude[]` | no | Repeatable `--exclude <glob>`. Defaults: `package-lock.json`, `pnpm-lock.yaml`, `dist/**`, `build/**`, `**/*.{png,jpg,jpeg,gif,pdf,zip}`. |
 | `options.diagrams` | no, default `true` | CLI flag `--no-diagrams` flips this to `false`. When `true`, the renderer infers an optional Mermaid diagram per step from the whitelist below. |
+| `options.diffAppendix` | no, default `true` | CLI flag `--no-diff-appendix` flips this to `false`. When `true`, the renderer emits a `## Appendix — Full diff per file` section at the end of the tutorial (single-file mode) or a `100-appendix-diffs.md` file (split mode). |
 | `options.since` | no | ISO 8601 date string from `--since`. |
 | `options.bundleName` | no | String from `--bundle`. |
 
@@ -184,6 +185,27 @@ type TutorialModel = {
     commits: Array<{ shortSha: string; subject: string }>;
     totals: { filesChanged: number; additions: number; deletions: number; commitCount: number };
   };
+  appendix: AppendixEntry[] | null;   // null when options.diffAppendix === false
+};
+
+type AppendixEntry = {
+  path: string;
+  oldPath: string | null;             // populated only when changeType === "renamed"
+  changeType: "added" | "modified" | "deleted" | "renamed";
+  language: string;                   // inferred from extension; "" when unknown
+  isBinary: boolean;
+  commits: string[];                  // short SHAs that touched the file, in author-date order
+  before: string;                     // full pre-change snippet, hunks joined by the separator
+                                      // chosen from the language table; "" for added files
+                                      // (the renderer substitutes "_(new file)_") or for
+                                      // binary files (renderer substitutes the binary placeholder)
+  after: string;                      // full post-change snippet, hunks joined by the same
+                                      // separator; "" for deleted files (renderer substitutes
+                                      // "_(file deleted)_") or for binary files
+  why: string;                        // per-file rationale paragraph; the literal string
+                                      // "*Rationale not recorded for this file.*" when the
+                                      // derivation rules below produce no content
+  totals: { additions: number; deletions: number };
 };
 ```
 
@@ -237,6 +259,50 @@ Per step, derive a concrete check in this order of preference:
 2. Else, if the step touches a CLI command file (entry under `bin/` or a path matching `**/cli/**`), emit: `Try \`<inferred command>\` and confirm <observable behaviour>.`
 3. Else, if `story.md` has acceptance criteria, pick the first AC whose text mentions any path touched by the step and emit: `Reload the app and confirm: <AC text>.`
 4. Otherwise emit a generic prompt: `Re-run your build / dev server and confirm the change is reflected.`
+
+#### Appendix derivation
+
+Only runs when `options.diffAppendix === true`. Walk the aggregated `FileChange` records from step 4 (sorted by path) and produce one `AppendixEntry` per file. `entry.commits` is the list of short SHAs that touched the file, sorted in author-date ascending order — the renderer uses the **last** entry as the link target for the binary placeholder.
+
+##### Hunk separator by language
+
+`before` and `after` are built by concatenating the `hunk.before` / `hunk.after` strings of every hunk in the file (sorted by `oldStart` / `newStart` respectively) joined by a language-appropriate separator surrounded by single `\n` newlines. Pick the separator from the table below using `language` (or, when language is empty, the file extension):
+
+| Language category | Extensions / filenames | Separator |
+|-------------------|------------------------|-----------|
+| C-style | `.ts`, `.tsx`, `.js`, `.jsx`, `.mjs`, `.cjs`, `.java`, `.kt`, `.kts`, `.scala`, `.go`, `.rs`, `.swift`, `.cs`, `.cpp`, `.cc`, `.c`, `.h`, `.hpp`, `.dart`, `.php`, `.groovy` | `// ...` |
+| Hash | `.py`, `.rb`, `.sh`, `.bash`, `.zsh`, `.fish`, `.yaml`, `.yml`, `.toml`, `.ini`, `.conf`, `.r`, `.pl`, `.tcl`, `Dockerfile`, `Makefile`, `.gitignore`, `.dockerignore`, `.env`, `.env.*` | `# ...` |
+| Markup | `.html`, `.htm`, `.xml`, `.svg`, `.vue`, `.md`, `.mdx` | `<!-- ... -->` |
+| SQL | `.sql` | `-- ...` |
+| CSS-block | `.css`, `.scss`, `.sass`, `.less` | `/* ... */` |
+| Lisp-style | `.lisp`, `.clj`, `.cljs`, `.cljc`, `.scm`, `.el` | `;; ...` |
+| Lua / Haskell / Ada | `.lua`, `.hs`, `.ada`, `.adb`, `.ads` | `-- ...` |
+| Batch | `.bat`, `.cmd` | `:: ...` |
+| Erlang | `.erl`, `.hrl` | `% ...` |
+| Plain text / unknown | everything else (including `.txt`, `.log`, no extension) | `... (omitted lines) ...` |
+
+The separator is rendered on its own line, e.g. `// ...` or `<!-- ... -->`. When the file has only one hunk no separator is emitted. The plain-text fallback is intentionally non-syntactic so it never accidentally compiles into the surrounding code block when the language isn't recognised.
+
+##### Binary files
+
+When `isBinary === true`:
+
+- Set `before = after = ""`.
+- Ensure `assets/diffs/<short-sha>.diff` exists for every commit in `entry.commits`. Reuse the file if it was already emitted because of an oversized hunk; otherwise write the per-commit raw diff with `git show --no-color <sha>` so the link in the renderer is never broken.
+- The renderer substitutes the binary placeholder built from `entry.commits[entry.commits.length - 1]`.
+
+##### Why paragraph
+
+Synthesise `why` per file:
+
+1. If exactly one plan step references the path, take that step's text as the seed.
+2. Else, concatenate the unique commit subjects (without conventional-commit prefixes such as `feat:`, `fix:`, `chore(scope):`) that touched the file, separated by `; `.
+3. If any acceptance criterion text contains the file's basename or any function / class name appearing in the hunks, append `Satisfies AC: "<AC text>".`
+4. If none of the above produces content, set `why` to the literal string `*Rationale not recorded for this file.*`.
+
+##### Oversized hunks
+
+Hunks oversized in step 4 (`oversized === true`) are still included in full in the appendix — the appendix is the complete reference, so the per-step truncation rule does **not** apply here. The renderer still wraps the whole appendix in `<details>` so the file size is not visually overwhelming.
 
 ### Step 6 — Render
 
@@ -322,6 +388,68 @@ The Reference section at the end of the document is rendered as:
 **Total:** <filesChanged> files, +<additions> / -<deletions> across <commitCount> commits.
 ````
 
+When `model.appendix` is non-null, render the appendix immediately after the Reference section. When `model.appendix` is `null` (because `--no-diff-appendix` was passed), skip this section entirely.
+
+The outer `<details>` element opens at the start of the section and closes after the last entry — the renderer MUST emit it exactly once per tutorial. Inner entries are separated by an `---` horizontal rule **between** entries; no rule is emitted after the last entry.
+
+Pseudo-code (the agent must produce a faithful rendering of this; the syntax below is illustrative, not Handlebars):
+
+```
+emit "## Appendix — Full diff per file"
+emit ""
+emit "<details>"
+emit "<summary>Full diff per file (" + appendix.length + " files)</summary>"
+emit ""
+
+for i, entry in appendix:
+    if i > 0:
+        emit "---"
+        emit ""
+
+    if entry.changeType === "renamed":
+        emit "### `" + entry.oldPath + "` → `" + entry.path + "`"
+    else:
+        emit "### `" + entry.path + "`"
+    emit ""
+    emit "`+" + entry.totals.additions + " / -" + entry.totals.deletions + "`"
+    emit ""
+
+    emit "**Before**"
+    emit ""
+    if entry.isBinary:
+        sha = entry.commits[entry.commits.length - 1]
+        emit "_(binary file — see [assets/diffs/" + sha + ".diff](./assets/diffs/" + sha + ".diff))_"
+    elif entry.before === "":
+        emit "_(new file)_"
+    else:
+        emit "```" + entry.language
+        emit entry.before
+        emit "```"
+    emit ""
+
+    emit "**After**"
+    emit ""
+    if entry.isBinary:
+        sha = entry.commits[entry.commits.length - 1]
+        emit "_(binary file — see [assets/diffs/" + sha + ".diff](./assets/diffs/" + sha + ".diff))_"
+    elif entry.after === "":
+        emit "_(file deleted)_"
+    else:
+        emit "```" + entry.language
+        emit entry.after
+        emit "```"
+    emit ""
+
+    emit "**Why:** " + entry.why
+    emit ""
+
+emit "</details>"
+```
+
+The outer `<details>` block keeps the appendix collapsed by default in GitHub and most Markdown viewers — the prose tutorial above stays scannable while the complete reference remains one click away.
+
+In **split mode**, the same pseudo-code runs, but the output is written to `100-appendix-diffs.md` instead of being appended to the main tutorial file. The relative paths in the binary placeholder remain `./assets/diffs/<sha>.diff` because the appendix file lives next to `assets/`.
+
 #### 6b. JSON (`--format json`)
 
 Skip the rendering loop and emit the `TutorialModel` from step 5 directly. With `--split`, write one `steps/NN-<slug>.json` per step plus a top-level `metadata.json` (same `tutorials/` subdirectory as the Markdown variant). Without `--split`, write a single `_scrum-output/sprints/SW-XXX/tutorials/tutorial.json`.
@@ -353,6 +481,8 @@ _scrum-output/sprints/SW-XXX/tutorials/
 │   └── ...
 ├── 98-recap.md             # Putting it all together + What you learned
 ├── 99-reference.md         # Files touched table + commit list + totals
+├── 100-appendix-diffs.md   # default-on; one collapsible <details> per file (Before / After / Why)
+                            # — omitted entirely when --no-diff-appendix is passed
 └── assets/                 # only created if at least one asset is needed
     └── diffs/<short-sha>.diff
 ```
@@ -362,9 +492,10 @@ Rules:
 1. Before writing, the agent MAY remove the existing `_scrum-output/sprints/SW-XXX/tutorials/` directory contents to ensure a clean, deterministic re-run. It MUST NOT touch any other file inside `sprints/SW-XXX/` (story.md, plan.md, etc.) and MUST NOT touch sibling tickets.
 2. `<slug>` is `step.title` lowercased, with non-alphanumerics replaced by `-`, collapsed runs of `-`, trimmed, and truncated to 60 characters. The step index prefix (`01-`, `02-`, …) preserves ordering.
 3. Each `steps/NN-<slug>.md` opens with a back-link to `../README.md` and a one-line breadcrumb `Step N of M`, then renders the same Goal / Open / Locate / Action / What this does / Verify layout as in single-file mode. The reader should be able to complete a single step without scrolling through unrelated content.
-4. The `README.md` landing page lists every chapter in order (`00-introduction.md`, every `steps/NN-*.md`, `98-recap.md`, `99-reference.md`) and shows a short summary line per step (the step `goal`).
+4. The `README.md` landing page lists every chapter in order (`00-introduction.md`, every `steps/NN-*.md`, `98-recap.md`, `99-reference.md`, and `100-appendix-diffs.md` when present) and shows a short summary line per step (the step `goal`).
 5. Per-commit raw diffs are written under `assets/diffs/<short-sha>.diff` whenever any hunk in that commit was flagged oversized; the step files link to them with relative paths (`../assets/diffs/<short-sha>.diff`).
 6. If a step has zero edits (e.g., merged-in trivial commits with no remaining hunks), it MUST be dropped from the output entirely — never emit an empty step file.
+7. When `options.diffAppendix === true`, write `100-appendix-diffs.md` containing the same appendix block produced for single-file mode (outer `<details>` wrapper, one `### \`<path>\`` entry per file with Before / After / Why). When `options.diffAppendix === false`, the file MUST NOT be created and any stale copy from a previous run MUST be removed during the per-ticket clean-up.
 
 For multi-ticket runs in split mode, also write `_scrum-output/sprints/tutorials-index.md` linking to each per-ticket `tutorials/README.md`.
 

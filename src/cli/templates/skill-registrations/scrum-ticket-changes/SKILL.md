@@ -12,6 +12,7 @@ The command file contains the full workflow orchestration including:
 - Rendering each step in second-person prose: Goal → Open / Create file → Locate → imperative Action sentence → typeable code snippet(s) → "What this does" paragraph → optional Mermaid diagram → Verify checkpoint
 - Auto-derived Introduction (What you'll build / Why / Prerequisites / What you'll learn) and Reference (files touched table, commit list, totals)
 - Mermaid diagrams **on by default** — one per step, picked deterministically from a 4-type whitelist (flowchart for routing/control flow, sequence for cross-service calls, stateDiagram for status/lifecycle code, classDiagram for OOP structure). Disable with `--no-diagrams`. Steps without a whitelist match get no diagram (never invented to fill the slot).
+- Full diff appendix **on by default** — at the end of every tutorial, one collapsible `<details>` block per touched file with the complete Before / After / Why so the reader has a full reference without re-walking the steps. Disable with `--no-diff-appendix`. In split mode the appendix is its own file at `100-appendix-diffs.md`.
 - Single-ticket, multi-ticket, `--epic N`, `--all`, `--bundle`, and `--split` (one file per step) modes
 - Output paths under the ticket directory: `_scrum-output/sprints/SW-XXX/tutorials/{tutorial.md,README.md,00-introduction.md,steps/NN-<slug>.md,98-recap.md,99-reference.md,assets/diffs/*.diff}`
 - Markdown (default) and JSON output formats

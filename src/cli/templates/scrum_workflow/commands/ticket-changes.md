@@ -61,6 +61,7 @@ workflows/ticket-changes.md
 | `--include <glob>` | Only include files matching the glob (repeatable). |
 | `--exclude <glob>` | Exclude files matching the glob (repeatable). Defaults: lock files, `dist/`, `build/`, binary assets. |
 | `--no-diagrams` | Disable the auto-generated Mermaid diagrams per step. By default the renderer emits one Mermaid block per step that fits a small whitelist (flowchart for routing/control flow, sequence for cross-service calls, stateDiagram for status/lifecycle code, classDiagram for OOP structure). Steps that don't fit any category get no diagram. |
+| `--no-diff-appendix` | Disable the per-file *Before / After / Why* appendix at the end of the tutorial. By default every tutorial ends with `## Appendix — Full diff per file`, where each touched file is rendered as a collapsible `<details>` block containing its full Before snippet, full After snippet, and a one-paragraph rationale, so the reader has a complete reference of what changed without re-walking the steps. |
 | `--bundle <name>` | When multiple tickets are requested, write a single combined file `_scrum-output/tutorials/<name>-tutorial.md` instead of one file per ticket. Mutually exclusive with `--split`. |
 | `--since <ISO-date>` | Only include commits authored on or after the given ISO 8601 timestamp. |
 
@@ -88,12 +89,14 @@ _scrum-output/sprints/SW-XXX/tutorials/
 │   └── 03-cover-with-tests.md
 ├── 98-recap.md            # Putting it all together + What you learned
 ├── 99-reference.md        # Files touched table + commit list + totals
+├── 100-appendix-diffs.md  # default-on; one <details> block per touched file (Before / After / Why)
+                           # — omitted entirely when --no-diff-appendix is passed
 └── assets/
     └── diffs/
         └── <short-sha>.diff   # full raw diffs for hunks that exceeded --max-hunk-lines
 ```
 
-Each `steps/NN-<slug>.md` is a self-contained mini-tutorial with the same Open / Locate / Action / What this does / Verify layout described above, so a reader can complete a single step in one sitting and come back later for the next one.
+Each `steps/NN-<slug>.md` is a self-contained mini-tutorial with the same Open / Locate / Action / What this does / Verify layout described above, so a reader can complete a single step in one sitting and come back later for the next one. The `100-appendix-diffs.md` file mirrors the appendix described in the Tutorial Structure section above and is linked from `README.md` underneath the step list.
 
 ### Multiple Tickets (default)
 
@@ -162,7 +165,16 @@ Every generated tutorial follows the layout below. The voice is second person ("
    - **Commits** — bullet list `<short-sha> — <subject>`.
    - **Total** — single line `Total: N files, +X / -Y lines across M commits`.
 
-For binary or oversized hunks, replace the code block with `_(binary file — open it in your editor)_` or `_(snippet truncated — see [assets/diffs/<sha>.diff](./assets/diffs/<sha>.diff) for the full hunk)_`. Always keep the surrounding prose (Open / Locate / Action / What this does / Verify) so the step still reads as a tutorial.
+7. **Appendix — Full diff per file** (`## Appendix — Full diff per file`) — *default on; suppressed by `--no-diff-appendix`*. After the prose tutorial, every touched file is rendered once more as a complete reference rather than a teachable step. The whole section is wrapped in a single `<details><summary>Full diff per file (N files)</summary> … </details>` block so it stays collapsed in GitHub and most Markdown viewers; readers can expand it on demand. For each file, in stable path order:
+   - **Header** — `### \`<path>\`` for added / modified / deleted files; `### \`<oldPath>\` → \`<path>\`` for renames.
+   - **Diff size** — single inline code line `+<additions> / -<deletions>` directly under the header.
+   - **Before** — the full pre-change snippet of every hunk in the file, concatenated with a language-appropriate single-line separator between non-adjacent hunks (e.g. `// ...` for C-style, `# ...` for hash-comment languages, `<!-- ... -->` for markup, `... (omitted lines) ...` for unknown extensions). For newly-added files this section reads `_(new file)_`. For binary files it reads `_(binary file — see [assets/diffs/<short-sha>.diff](./assets/diffs/<short-sha>.diff))_` where `<short-sha>` is the latest commit that touched the file.
+   - **After** — the full post-change snippet, formatted the same way. For deleted files this section reads `_(file deleted)_`. For binary files, the same binary placeholder as in **Before**.
+   - **Why** — one paragraph synthesised from the matching plan step, the commit subject(s) that touched the file, and any acceptance criterion whose text references the path. This is a per-file rationale, distinct from the per-step *What this does* paragraphs. When no source produces content, the literal string `*Rationale not recorded for this file.*` is emitted instead.
+
+   Entries are separated by a `---` horizontal rule **between** entries; no rule is emitted after the last entry. Hunks that were truncated in the per-step body are shown in **full** in the appendix — the appendix is the complete reference, the per-step truncation rule does not apply here.
+
+For binary or oversized hunks **inside the steps**, replace the code block with `_(binary file — open it in your editor)_` or `_(snippet truncated — see [assets/diffs/<sha>.diff](./assets/diffs/<sha>.diff) for the full hunk)_`. Always keep the surrounding prose (Open / Locate / Action / What this does / Verify) so the step still reads as a tutorial.
 
 ### On Success
 

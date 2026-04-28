@@ -172,6 +172,8 @@ Group code changes by type:
 
 ## Step 3: Evaluate Against Specification
 
+> **Priority Order — AC Verification is the Primary Gate.** Steps 3.1–3.5 evaluate the existing review criteria (Specification Alignment, Acceptance Criteria, Test Coverage, Standards, Architecture) and define the verdict. **Step 3.6 (Clean Code) is purely additive — it extends and optimizes the existing review with maintainability findings, but it does NOT have independent veto power over an AC-satisfying implementation.** Clean Code findings flow into the standard severity rules in Step 5.1 just like any other finding; they do not bypass them.
+
 ### Step 3.1: Specification Alignment Check
 
 Evaluate implementation against story specification:
@@ -345,13 +347,18 @@ For each Clean Code finding NOT marked `[DUP]`:
 - Map to AC reference: if a finding relates to an AC, use that AC; otherwise use `Project Standards` as the reference
 - Preserve the agent's `file:line` precision
 
-**Verdict Influence:**
+**Verdict Influence — Additive, No Independent Veto:**
 
-- Clean Code `FAIL-WITH-CRITICAL` → primary verdict becomes `CHANGES-NEEDED` independently of the primary reviewer's opinion (apply the same rule as Critical primary findings — see Step 5.1)
-- Clean Code `FAIL` → counts as "multiple Major findings" toward `CHANGES-NEEDED`
-- Clean Code `PASS` → no influence on primary verdict
+Clean Code findings are **additive** to the primary review's findings list. They are evaluated by the **same** severity rules in Step 5.1 as any other finding — Clean Code does NOT have an independent veto path:
 
-When a Dissent paragraph is present, it is preserved verbatim in `review-N.md` so the human approver can see the disagreement.
+- Each Clean Code `Critical` finding counts as one Critical finding for Step 5.1's "any Critical finding → CHANGES-NEEDED" rule
+- Each Clean Code `Major` finding counts toward the "multiple Major findings → CHANGES-NEEDED" threshold
+- Each Clean Code `Minor` finding is reported in the summary table but does not block approval on its own
+- Clean Code `PASS` adds no findings
+
+**The primary gate remains AC verification (Step 3.2).** If ACs are not satisfied, the verdict is `CHANGES-NEEDED` regardless of Clean Code score. If ACs are satisfied and the only Clean Code finding is a single Major issue, the implementation may still be `APPROVED` — the standard severity threshold applies uniformly.
+
+The Clean Code Reviewer's `PASS` / `FAIL` / `FAIL-WITH-CRITICAL` verdict is recorded in `review-N.md` for visibility but does NOT bypass the standard verdict logic. When the agent's verdict disagrees with the primary verdict (e.g., agent says `FAIL-WITH-CRITICAL` but ACs are satisfied and only one Critical Clean Code finding exists), the **Dissent paragraph** is preserved verbatim so the human approver can weigh it during `/scrum-approve`.
 
 ## Step 4: Generate Review Findings
 
@@ -413,22 +420,28 @@ For each finding, provide actionable fix:
 
 Based on findings:
 
+**Primary Gate (evaluate first):**
+
+1. **All ACs satisfied** — if any AC is not fully implemented, verdict is `CHANGES-NEEDED` regardless of any other criteria
+2. **Adequate test coverage** for the implementation
+3. **No significant standards violations**
+
+If the primary gate fails, the verdict is `CHANGES-NEEDED` and Clean Code findings are still reported for visibility but do not change the verdict path.
+
+**If the primary gate passes, apply severity rules (Clean Code findings counted alongside primary findings):**
+
 **APPROVED if:**
-- No Critical findings (primary OR Clean Code)
+- No Critical findings (primary or Clean Code count uniformly)
 - Zero or few Minor findings
 - All ACs satisfied
 - Adequate test coverage
 - Code follows standards
-- Clean Code Reviewer verdict is `PASS` (not `FAIL` or `FAIL-WITH-CRITICAL`)
 
 **CHANGES-NEEDED if:**
-- Any Critical findings exist (primary OR Clean Code)
-- Multiple Major findings exist (primary + Clean Code combined)
-- ACs not fully satisfied
-- Inadequate test coverage
-- Significant standards violations
-- Clean Code Reviewer verdict is `FAIL-WITH-CRITICAL` (drives `CHANGES-NEEDED` independently)
-- Clean Code Reviewer verdict is `FAIL` AND there is at least one other Major finding from the primary reviewer
+- Any Critical findings exist (primary or Clean Code count uniformly)
+- Multiple Major findings exist across primary + Clean Code combined
+
+> **Note:** Clean Code findings are additive — they extend the findings list and are evaluated by the same severity rules above. The Clean Code Reviewer's own `PASS` / `FAIL` / `FAIL-WITH-CRITICAL` label is recorded in `review-N.md` for visibility (and any Dissent paragraph is preserved verbatim) but does NOT bypass this standard verdict logic. Clean Code is an **extension/optimization** of the existing review, not an independent veto.
 
 ### Step 5.2: Create Review File
 

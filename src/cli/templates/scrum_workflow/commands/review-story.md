@@ -73,11 +73,14 @@ The `clean-code-reviewer` produces a `## Clean Code Reviewer Perspective` sectio
 - A **findings table** with severity, dimension, `file:line`, and concrete fix
 - A **dissent paragraph** when its verdict disagrees with the primary reviewer's
 
-**Verdict influence** on the primary `/scrum-review-story` verdict:
+**Verdict influence — additive, no independent veto.** AC verification (criterion #2 above) remains the **primary gate**. Clean Code findings are added to the master findings list and evaluated by the **same** severity rules in `workflows/review-story.md` Step 5.1 as any other finding:
 
-- `FAIL-WITH-CRITICAL` → drives the primary verdict to `CHANGES-NEEDED` independently
-- `FAIL` → counts as "multiple Major findings" toward `CHANGES-NEEDED`
-- `PASS` → no influence on the primary verdict
+- Each `Critical` Clean Code finding counts as one Critical finding for the standard "any Critical finding → CHANGES-NEEDED" rule
+- Each `Major` Clean Code finding counts toward the "multiple Major findings → CHANGES-NEEDED" threshold
+- Each `Minor` Clean Code finding is reported but does not block approval on its own
+- The agent's `PASS` / `FAIL` / `FAIL-WITH-CRITICAL` label is recorded for visibility but does NOT bypass the standard verdict logic
+
+Clean Code is an **extension/optimization** of the existing review — it does not have independent veto power over an AC-satisfying implementation. When the agent's verdict disagrees with the primary verdict, its Dissent paragraph is preserved verbatim in `review-N.md` so the human approver can weigh it at `/scrum-approve`.
 
 Dispatch is handled by the `agent-dispatcher` skill via the `always_in_review_story` section of `data/dispatch-rules.yaml` — see `scrum_workflow/skills/agent-dispatcher/SKILL.md`. The agent's `active_in` list includes `review-story`, so it loads automatically.
 

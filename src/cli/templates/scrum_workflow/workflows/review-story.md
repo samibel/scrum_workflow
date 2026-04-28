@@ -268,9 +268,15 @@ Check implementation against project standards:
 - Skip this step
 - Note in review report that this is the first review
 
-### Step 3.6: Mandatory Clean Code & Simplification Review (Sub-Agent)
+### Step 3.6: Mandatory Clean Code & Simplification Review (Adversarial Sub-Agent)
 
-**This step always runs at the end of evaluation, regardless of story `type`, `risk_level`, or `domain_tags`.** It exists because the primary review pass (Steps 3.1–3.5) is focused on spec alignment, ACs, tests, standards, and architecture, and routinely overlooks Clean Code and Simplification concerns.
+**This step always runs at the end of evaluation, regardless of story `type`, `risk_level`, or `domain_tags`.** The Clean Code Reviewer is an **adversarial critic** modeled on three composable agentic patterns:
+
+- [AI-Assisted Code Review / Verification](https://www.agentic-patterns.com/patterns/ai-assisted-code-review-verification) — separate critic, never the implementer
+- [Adversarial Code Review (ASDLC)](https://asdlc.io/patterns/adversarial-code-review/) — fresh session, adversarial framing, structured `PASS` / `FAIL` verdict
+- [Inference-Healed Code Review Reward](https://agentic-patterns.com/patterns/inference-healed-code-review-reward/) — decompose quality into independent sub-scores with chain-of-thought justification
+
+It exists because the primary review (Steps 3.1–3.5) is structurally biased toward "does it work / does it match spec" and routinely under-weights "is it readable / is it simple / will future-me hate this".
 
 #### Step 3.6.1: Dispatch the clean-code-reviewer Agent
 
@@ -280,62 +286,72 @@ Invoke the `agent-dispatcher` skill with `workflow: review-story`. The dispatche
 - If `agent-dispatcher` is unavailable, fall back to spawning `clean-code-reviewer` directly using its agent file at `scrum_workflow/agents/clean-code-reviewer.md`.
 - If the agent file itself is missing, log a warning ("`clean-code-reviewer` agent unavailable — Clean Code findings skipped this run") and continue with the primary findings only. **Do NOT halt the review** — Clean Code review is a quality enhancement, not a blocker.
 
-#### Step 3.6.2: Provide Context to the Agent
+#### Step 3.6.2: Provide Phase-1 Context (Independent Read)
 
-The `clean-code-reviewer` agent receives:
+The agent runs in two phases. Phase 1 is an **independent read** — it MUST NOT see the primary reviewer's findings yet. Provide ONLY:
+
+- `_scrum-output/sprints/SW-XXX/story.md` — Acceptance Criteria and Dev Notes only
 - The full content of every file in `story.md` File List (the review target)
-- `scrum_workflow/context/standards.md` (especially the `## Best Practices` section: Readability, Simplicity, Consistency)
-- All previous `review-N.md` files in the sprint folder (so it can mark Clean Code findings as resolved/persistent)
+- `scrum_workflow/context/standards.md` — `## Best Practices` section
 
 The agent is **read-only** — it MUST NOT modify any source file, `story.md`, `plan.md`, `refinement.md`, or any review file. Boundary violations halt the workflow with the standard write-boundary error.
 
-#### Step 3.6.3: Evaluation Dimensions
+#### Step 3.6.3: Sub-Score Evaluation (Inference-Healed Pattern)
 
-The agent evaluates against these 10 dimensions (full list in `agents/clean-code-reviewer.md`):
+The agent scores each of eight Clean Code dimensions on a 0–10 scale with a per-dimension chain-of-thought justification (one sentence + `file:line` citation):
 
-1. Naming clarity (functions, variables, classes, files)
-2. Function & method size (single-purpose, depth ≤ 3, params ≤ 4)
-3. Duplication / DRY (repeated logic, magic numbers, magic strings)
-4. Simplicity / KISS (no over-engineering, no unnecessary indirection)
-5. YAGNI / Dead code (unused exports, speculative configurability, commented-out code)
-6. Comments (WHY not WHAT, no stale or trivial comments)
-7. Error handling discipline (at boundaries, not scattered defensively)
-8. Cohesion & coupling (single responsibility, no feature envy)
-9. Side effects & purity (localized mutations, no hidden global state)
-10. Severity classification (Critical / Major / Minor) per maintainability impact
+| Dim | Dimension | Weight |
+|---|---|---|
+| D1 | Naming clarity | 1.0 |
+| D2 | Function size & cohesion | 1.5 |
+| D3 | Duplication (DRY) | 1.5 |
+| D4 | Simplicity (KISS) | 1.5 |
+| D5 | YAGNI / Dead code | 1.0 |
+| D6 | Comments discipline | 0.5 |
+| D7 | Error handling | 1.0 |
+| D8 | Side effects & purity | 1.0 |
 
-#### Step 3.6.4: Capture the Agent's Perspective
+**Weighted Overall Clean Code Score** = `sum(score_i × weight_i) / sum(weight_i)` — rounded to 1 decimal.
 
-The agent returns a structured perspective with the standard format:
+#### Step 3.6.4: Verdict (Adversarial Pattern: PASS / FAIL)
 
-```
-## Clean Code Reviewer Perspective
+The agent produces a strict verdict:
 
-### Findings
-| # | Finding | Severity | Category |
-| ... |
+- **PASS** — Overall score ≥7.5 AND no Critical findings AND no dimension scored ≤3
+- **FAIL-WITH-CRITICAL** — At least one Critical finding, regardless of score
+- **FAIL** — Overall score <7.5 OR any dimension scored ≤3 (without a Critical finding)
 
-### Recommendations
-1. ...
+#### Step 3.6.5: Phase-2 Context (Cross-Check Against Primary Reviewer)
 
-### Proposed Acceptance Criteria
-- [ ] ...
-```
+Only after the agent has recorded its independent verdict and findings, provide:
 
-Store the perspective verbatim — it will be embedded as a dedicated section in `review-N.md` (see Step 5.2).
+- The primary reviewer's findings from Steps 3.1–3.5
+- Previous `review-N.md` files in the sprint folder
 
-#### Step 3.6.5: Merge Clean Code Findings into the Findings Table
+The agent then:
+- Marks duplicates `[DUP]` and removes them from its findings list
+- Writes a `Dissent` paragraph if its verdict disagrees with the primary reviewer's verdict (e.g., primary says `APPROVED` but Clean Code says `FAIL-WITH-CRITICAL`)
+- Marks Clean Code findings from previous reviews as `Resolved` / `Persistent` / `New` / `Regression`
 
-For each Clean Code finding:
-- Append it to the master findings list with the `Category` value preserved (e.g., "Function Size", "Duplication", "Dead Code")
+#### Step 3.6.6: Capture the Agent's Perspective
+
+Store the perspective verbatim — it will be embedded as a dedicated section in `review-N.md` (see Step 5.2). The captured perspective MUST include: `Verdict`, `Overall Clean Code Score`, `Sub-Scores` table, `Findings` table, `Verdict Rationale`, `Dissent` (if present), `Recommendations`, and (optionally) `Proposed Acceptance Criteria`.
+
+#### Step 3.6.7: Merge Clean Code Findings into the Findings Table
+
+For each Clean Code finding NOT marked `[DUP]`:
+- Append it to the master findings list with the `Dimension` value preserved (e.g., `D2 — Function Size`)
 - Add a `(Clean Code)` suffix to the Category column to distinguish it from primary-reviewer findings, e.g., `Function Size (Clean Code)`
 - Map to AC reference: if a finding relates to an AC, use that AC; otherwise use `Project Standards` as the reference
-- Preserve the agent's `File:Line` precision
+- Preserve the agent's `file:line` precision
 
 **Verdict Influence:**
-- A `Critical` Clean Code finding (e.g., a 200-line god-function blocking maintenance, severe systemic duplication) MAY independently drive the verdict to `CHANGES-NEEDED` — apply the same rule as Critical primary findings (see Step 5.1).
-- `Major` Clean Code findings count toward the "multiple Major findings" threshold for `CHANGES-NEEDED`.
-- `Minor` Clean Code findings are reported and counted but do not block approval on their own.
+
+- Clean Code `FAIL-WITH-CRITICAL` → primary verdict becomes `CHANGES-NEEDED` independently of the primary reviewer's opinion (apply the same rule as Critical primary findings — see Step 5.1)
+- Clean Code `FAIL` → counts as "multiple Major findings" toward `CHANGES-NEEDED`
+- Clean Code `PASS` → no influence on primary verdict
+
+When a Dissent paragraph is present, it is preserved verbatim in `review-N.md` so the human approver can see the disagreement.
 
 ## Step 4: Generate Review Findings
 
@@ -403,7 +419,7 @@ Based on findings:
 - All ACs satisfied
 - Adequate test coverage
 - Code follows standards
-- No severe Clean Code violations (no god-functions, no systemic duplication, no critical over-engineering)
+- Clean Code Reviewer verdict is `PASS` (not `FAIL` or `FAIL-WITH-CRITICAL`)
 
 **CHANGES-NEEDED if:**
 - Any Critical findings exist (primary OR Clean Code)
@@ -411,7 +427,8 @@ Based on findings:
 - ACs not fully satisfied
 - Inadequate test coverage
 - Significant standards violations
-- Severe Clean Code violations that will compound maintenance cost
+- Clean Code Reviewer verdict is `FAIL-WITH-CRITICAL` (drives `CHANGES-NEEDED` independently)
+- Clean Code Reviewer verdict is `FAIL` AND there is at least one other Major finding from the primary reviewer
 
 ### Step 5.2: Create Review File
 
@@ -467,7 +484,17 @@ verdict: approved  # MUST be either: "approved" or "changes-needed" (validated a
 
 ## Clean Code Reviewer Perspective
 
-[Verbatim perspective returned by the clean-code-reviewer sub-agent in Step 3.6, including its Findings table, Recommendations, and Proposed Acceptance Criteria. If the agent was unavailable for this run, replace with the line: "Clean Code Reviewer agent unavailable for this run — Clean Code findings skipped."]
+[Verbatim perspective returned by the clean-code-reviewer sub-agent in Step 3.6, including:
+- **Verdict** (PASS / FAIL / FAIL-WITH-CRITICAL)
+- **Overall Clean Code Score** (X.X / 10)
+- **Sub-Scores** table (D1–D8 with per-dimension score and chain-of-thought)
+- **Findings** table (only non-`[DUP]` findings, with file:line and concrete fixes)
+- **Verdict Rationale**
+- **Dissent** paragraph (if the agent's verdict disagrees with the primary reviewer's)
+- **Recommendations**
+- **Proposed Acceptance Criteria** (optional)
+
+If the agent was unavailable for this run, replace this entire section with the line: "Clean Code Reviewer agent unavailable for this run — Clean Code findings skipped."]
 ```
 
 ### Step 5.3: Populate Summary Table

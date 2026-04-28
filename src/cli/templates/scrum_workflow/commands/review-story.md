@@ -55,20 +55,31 @@ The agent evaluates the implementation against these criteria:
 | 5 | Architecture Compliance | Implementation follows architecture patterns from Dev Notes |
 | 6 | Clean Code & Simplification | Code is readable, simple, free of duplication, dead code, and unnecessary complexity (KISS, DRY, YAGNI) |
 
-### Mandatory Clean Code Supplementary Review
+### Mandatory Clean Code Supplementary Review (Adversarial Critic)
 
 Every `/scrum-review-story` invocation **always** dispatches the `clean-code-reviewer` agent at the end of the evaluation phase, regardless of story `type`, `risk_level`, or `domain_tags`. This guarantees that Clean Code and Simplification concerns — which the primary reviewer routinely overlooks while focused on spec alignment, ACs, tests, and architecture — are evaluated on every story.
 
-The `clean-code-reviewer` agent produces a separate `## Clean Code Reviewer Perspective` section in `review-N.md` with findings on:
+**Pattern composition** — the agent is built on three composable agentic patterns:
 
-- Naming clarity, function/method size, and cohesion
-- Duplication (DRY) and magic numbers/strings
-- Over-engineering, premature abstraction, unnecessary indirection (KISS)
-- Dead code, unused parameters, speculative configurability (YAGNI)
-- Comments that explain WHAT instead of WHY
-- Error-handling discipline and side-effect localization
+- [AI-Assisted Code Review / Verification](https://www.agentic-patterns.com/patterns/ai-assisted-code-review-verification) — separate critic, never the implementer
+- [Adversarial Code Review (ASDLC)](https://asdlc.io/patterns/adversarial-code-review/) — fresh session, **adversarial framing**, structured `PASS` / `FAIL` / `FAIL-WITH-CRITICAL` verdict, two-phase protocol (independent read first, primary-reviewer cross-check after)
+- [Inference-Healed Code Review Reward](https://agentic-patterns.com/patterns/inference-healed-code-review-reward/) — quality decomposed into **eight weighted sub-scores** (Naming, Function Size, DRY, KISS, YAGNI, Comments, Error Handling, Side Effects) with chain-of-thought justification per dimension
 
-Dispatch is handled by the `agent-dispatcher` skill via the `always_in_review_story` section of `data/dispatch-rules.yaml` — see `scrum_workflow/skills/agent-dispatcher/SKILL.md` for details. The agent's `active_in` list includes `review-story`, so it is loaded automatically. Critical Clean Code findings (e.g., severe duplication, god-functions blocking maintenance) MAY drive the verdict to `CHANGES-NEEDED`; minor and major findings are reported and counted in the summary table.
+The `clean-code-reviewer` produces a `## Clean Code Reviewer Perspective` section in `review-N.md` containing:
+
+- A strict **verdict** — `PASS`, `FAIL`, or `FAIL-WITH-CRITICAL`
+- An **overall Clean Code score** (0–10, weighted average of the eight dimensions)
+- A **sub-score table** with per-dimension score and a one-sentence chain-of-thought citing `file:line`
+- A **findings table** with severity, dimension, `file:line`, and concrete fix
+- A **dissent paragraph** when its verdict disagrees with the primary reviewer's
+
+**Verdict influence** on the primary `/scrum-review-story` verdict:
+
+- `FAIL-WITH-CRITICAL` → drives the primary verdict to `CHANGES-NEEDED` independently
+- `FAIL` → counts as "multiple Major findings" toward `CHANGES-NEEDED`
+- `PASS` → no influence on the primary verdict
+
+Dispatch is handled by the `agent-dispatcher` skill via the `always_in_review_story` section of `data/dispatch-rules.yaml` — see `scrum_workflow/skills/agent-dispatcher/SKILL.md`. The agent's `active_in` list includes `review-story`, so it loads automatically.
 
 ### Optional UX Supplementary Review
 

@@ -53,6 +53,36 @@ The agent evaluates the implementation against these criteria:
 | 3 | Test Coverage | Adequate test coverage for the changes |
 | 4 | Code Standards | Code follows project standards from `context/standards.md` |
 | 5 | Architecture Compliance | Implementation follows architecture patterns from Dev Notes |
+| 6 | Clean Code & Simplification | Code is readable, simple, free of duplication, dead code, and unnecessary complexity (KISS, DRY, YAGNI) |
+
+### Mandatory Clean Code Supplementary Review (Adversarial Critic)
+
+Every `/scrum-review-story` invocation **always** dispatches the `clean-code-reviewer` agent at the end of the evaluation phase, regardless of story `type`, `risk_level`, or `domain_tags`. This guarantees that Clean Code and Simplification concerns — which the primary reviewer routinely overlooks while focused on spec alignment, ACs, tests, and architecture — are evaluated on every story.
+
+**Pattern composition** — the agent is built on three composable agentic patterns:
+
+- [AI-Assisted Code Review / Verification](https://www.agentic-patterns.com/patterns/ai-assisted-code-review-verification) — separate critic, never the implementer
+- [Adversarial Code Review (ASDLC)](https://asdlc.io/patterns/adversarial-code-review/) — fresh session, **adversarial framing**, structured `PASS` / `FAIL` / `FAIL-WITH-CRITICAL` verdict, two-phase protocol (independent read first, primary-reviewer cross-check after)
+- [Inference-Healed Code Review Reward](https://agentic-patterns.com/patterns/inference-healed-code-review-reward/) — quality decomposed into **eight weighted sub-scores** (Naming, Function Size, DRY, KISS, YAGNI, Comments, Error Handling, Side Effects) with chain-of-thought justification per dimension
+
+The `clean-code-reviewer` produces a `## Clean Code Reviewer Perspective` section in `review-N.md` containing:
+
+- A strict **verdict** — `PASS`, `FAIL`, or `FAIL-WITH-CRITICAL`
+- An **overall Clean Code score** (0–10, weighted average of the eight dimensions)
+- A **sub-score table** with per-dimension score and a one-sentence chain-of-thought citing `file:line`
+- A **findings table** with severity, dimension, `file:line`, and concrete fix
+- A **dissent paragraph** when its verdict disagrees with the primary reviewer's
+
+**Verdict influence — additive, no independent veto.** AC verification (criterion #2 above) remains the **primary gate**. Clean Code findings are added to the master findings list and evaluated by the **same** severity rules in `workflows/review-story.md` Step 5.1 as any other finding:
+
+- Each `Critical` Clean Code finding counts as one Critical finding for the standard "any Critical finding → CHANGES-NEEDED" rule
+- Each `Major` Clean Code finding counts toward the "multiple Major findings → CHANGES-NEEDED" threshold
+- Each `Minor` Clean Code finding is reported but does not block approval on its own
+- The agent's `PASS` / `FAIL` / `FAIL-WITH-CRITICAL` label is recorded for visibility but does NOT bypass the standard verdict logic
+
+Clean Code is an **extension/optimization** of the existing review — it does not have independent veto power over an AC-satisfying implementation. When the agent's verdict disagrees with the primary verdict, its Dissent paragraph is preserved verbatim in `review-N.md` so the human approver can weigh it at `/scrum-approve`.
+
+Dispatch is handled by the `agent-dispatcher` skill via the `always_in_review_story` section of `data/dispatch-rules.yaml` — see `scrum_workflow/skills/agent-dispatcher/SKILL.md`. The agent's `active_in` list includes `review-story`, so it loads automatically.
 
 ### Optional UX Supplementary Review
 

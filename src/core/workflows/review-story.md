@@ -341,11 +341,13 @@ Store the perspective verbatim — it will be embedded as a dedicated section in
 
 #### Step 3.6.7: Merge Clean Code Findings into the Findings Table
 
+The master findings table (defined in Step 5.2) has columns: `# | Finding | Severity | AC Reference | File:Line | Suggested Fix`. There is no `Category` column. To preserve dimension provenance, encode it inside the existing columns:
+
 For each Clean Code finding NOT marked `[DUP]`:
-- Append it to the master findings list with the `Dimension` value preserved (e.g., `D2 — Function Size`)
-- Add a `(Clean Code)` suffix to the Category column to distinguish it from primary-reviewer findings, e.g., `Function Size (Clean Code)`
-- Map to AC reference: if a finding relates to an AC, use that AC; otherwise use `Project Standards` as the reference
-- Preserve the agent's `file:line` precision
+- Prefix the **Finding** text with `[Clean Code: D{n}]` so the source and dimension are visible at a glance, e.g., `[Clean Code: D2] processRequest() is 106 lines and mixes parsing, validation, and persistence`
+- Set **AC Reference**: if a finding relates to an AC, use that AC; otherwise use `Project Standards`
+- Preserve the agent's `file:line` precision in the **File:Line** column
+- Use the agent's concrete fix verbatim in the **Suggested Fix** column
 
 **Verdict Influence — Additive, No Independent Veto:**
 

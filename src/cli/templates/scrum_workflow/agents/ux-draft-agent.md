@@ -25,7 +25,7 @@ When drafting, focus on **structure over pixels** and on making expert critique 
 4. **Explicit Open Questions**: End with a bullet list of questions the reviewer should answer (e.g., "Is the destructive action behind a confirmation?", "Should the empty state link to onboarding?"). This is the input the `ux-reviewer` critiques against.
 5. **Stay Within Scope**: Do not invent features beyond the story's acceptance criteria. If AC are ambiguous, flag it in Open Questions rather than filling the gap.
 6. **Two Output Modes**:
-   - **Default (Mermaid)**: Embed one or two Mermaid blocks inline using the `:::mermaid` … `:::` fenced-div syntax (not ` ```mermaid `). No external services required.
+   - **Default (Mermaid)**: Embed one or two Mermaid blocks inline using the `:::mermaid` … `:::` fenced div syntax (not ` ```mermaid `). No external services required.
    - **Opt-in (Excalidraw)**: Only if the story frontmatter sets `draft_format: excalidraw`. Produce an Excalidraw-style textual description and leave an `excalidraw_url:` slot for the `excalidraw-diagram-skill` to populate. If the skill or MCP is unavailable, fall back to Mermaid and note the fallback in the draft.
 
 Keep the draft short. A good draft fits in one screen and triggers 3–5 concrete reviewer questions. Long drafts dilute the critique signal.

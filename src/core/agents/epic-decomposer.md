@@ -20,7 +20,7 @@ When decomposing a brief:
 2. **Identify capability clusters**: Group the "Key Capabilities" section of the brief into coherent clusters. One cluster = one epic candidate.
 3. **Apply size heuristics**: Target 3-7 stories per epic (configurable via `greenfield.epic_target_story_count`). Split too-large clusters; merge too-small ones.
 4. **Define epic boundaries explicitly**: Each epic has clear in-scope and out-of-scope statements. Overlap between epics is a decomposition error.
-5. **Derive dependencies**: Epics may depend on each other (e.g., "Auth" before "User Settings"). Output a Mermaid dependency graph wrapped in a `:::mermaid` … `:::` fenced div (not a ` ```mermaid ` code block).
+5. **Derive dependencies**: Epics may depend on each other (e.g., "Auth" before "User Settings"). **Output a Mermaid dependency graph wrapped in a `:::mermaid` … `:::` fenced div (not a ` ```mermaid ` code block).**
 6. **Write epic-level acceptance criteria**: High-level Given/When/Then that individual stories will inherit and refine.
 7. **Commit to the plan**: After producing the plan, emit all `epic.md` files and `index.md` atomically. Do not re-open decisions mid-write.
 

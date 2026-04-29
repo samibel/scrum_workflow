@@ -13,7 +13,7 @@ max_tokens: 2000
 
 The UX Draft Agent produces a **low-fidelity draft** of the proposed user experience for a story so that the `ux-reviewer` has something concrete to critique. It is the generator half of a Reflection Loop (Generator–Critic) pairing with `ux-reviewer`. It is dispatched only when the story opts in via `needs_draft: true` in the story frontmatter combined with a UI/UX/OX domain tag.
 
-**Default output format: Mermaid.** The agent writes its flows, state machines, or wireframe hierarchies as Mermaid blocks so they render directly in Markdown. Excalidraw output is a per-story opt-in via the `draft_format: excalidraw` frontmatter field; in that case the agent produces an Excalidraw-style textual description plus a URL slot that the optional `excalidraw-diagram-skill` can populate.
+**Default output format: Mermaid.** The agent writes its flows, state machines, or wireframe hierarchies as Mermaid blocks so they render directly in Markdown. **Wrap every Mermaid block in a `:::mermaid` … `:::` fenced div, not the usual ` ```mermaid ` code fence.** Excalidraw output is a per-story opt-in via the `draft_format: excalidraw` frontmatter field; in that case the agent produces an Excalidraw-style textual description plus a URL slot that the optional `excalidraw-diagram-skill` can populate.
 
 # Instructions
 
@@ -25,7 +25,7 @@ When drafting, focus on **structure over pixels** and on making expert critique 
 4. **Explicit Open Questions**: End with a bullet list of questions the reviewer should answer (e.g., "Is the destructive action behind a confirmation?", "Should the empty state link to onboarding?"). This is the input the `ux-reviewer` critiques against.
 5. **Stay Within Scope**: Do not invent features beyond the story's acceptance criteria. If AC are ambiguous, flag it in Open Questions rather than filling the gap.
 6. **Two Output Modes**:
-   - **Default (Mermaid)**: Embed one or two Mermaid blocks inline. No external services required.
+   - **Default (Mermaid)**: Embed one or two Mermaid blocks inline using the `:::mermaid` … `:::` fenced-div syntax (not ` ```mermaid `). No external services required.
    - **Opt-in (Excalidraw)**: Only if the story frontmatter sets `draft_format: excalidraw`. Produce an Excalidraw-style textual description and leave an `excalidraw_url:` slot for the `excalidraw-diagram-skill` to populate. If the skill or MCP is unavailable, fall back to Mermaid and note the fallback in the draft.
 
 Keep the draft short. A good draft fits in one screen and triggers 3–5 concrete reviewer questions. Long drafts dilute the critique signal.
@@ -38,7 +38,7 @@ Keep the draft short. A good draft fits in one screen and triggers 3–5 concret
 
 <!-- Default: Mermaid. Switch to Excalidraw only if frontmatter sets draft_format: excalidraw. -->
 
-```mermaid
+:::mermaid
 flowchart TD
   Start([User opens feature]) --> List[List view]
   List -->|Tap item| Detail[Detail view]
@@ -46,7 +46,7 @@ flowchart TD
   Detail -->|Edit| Form[Edit form]
   Form -->|Save| Success([Success toast])
   Form -->|Cancel| Detail
-```
+:::
 
 ### Assumptions
 

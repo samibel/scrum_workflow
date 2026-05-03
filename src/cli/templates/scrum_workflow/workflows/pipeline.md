@@ -238,6 +238,16 @@ Loop:
            → Increment summary.blocked
            → BREAK (next story)
 
+  5.5. Pre-Status Bridge (if entry.pre_status is defined):
+     → Write story.md: update `status` field to entry.pre_status
+     → Append status_history entry:
+          from: {current_status}
+          to: {entry.pre_status}
+          timestamp: <current_ISO8601_UTC>
+          trigger: /scrum-pipeline
+          actor: pipeline
+     → Update current_status to entry.pre_status
+
   6. Execute the mapped command:
      → If entry.command_args is defined:
         Invoke {entry.next_command} SW-XXX {entry.command_args}
@@ -345,6 +355,8 @@ If all stories completed successfully (no pending entries):
 
 This workflow may write:
 - `_scrum-output/.pipeline-state.json` — checkpoint/resume state (owned by pipeline)
+- `_scrum-output/sprints/SW-XXX/story.md` — status field ONLY for `pre_status` bridge
+  transitions defined in pipeline-routing.yaml (e.g. in-progress → review)
 
 This workflow delegates writes to (each within their own boundaries):
 - `/scrum-create-ticket` → `_scrum-output/sprints/SW-XXX/story.md`

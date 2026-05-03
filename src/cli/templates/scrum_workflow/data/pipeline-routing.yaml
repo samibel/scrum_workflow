@@ -8,6 +8,7 @@
 #   next_command    — the scrum command to invoke next
 #   target_status   — the expected status after command completes
 #   action          — "route" (execute command), "stop" (human gate), "skip" (no action)
+#   pre_status      — (optional) status to write to story.md BEFORE executing next_command
 #   command_args    — (optional) additional arguments appended after the ticket ID
 #   description     — human-readable explanation
 
@@ -45,11 +46,11 @@ routing_matrix:
     description: "Story validated — implement following execution plan (transitions to in-progress)"
 
   - current_status: "in-progress"
-    next_command: "/scrum-dev-story"
-    target_status: "review"
-    command_args: "review"
+    next_command: "/scrum-review-story"
+    target_status: "approved"
+    pre_status: "review"
     action: "route"
-    description: "Implementation complete — trigger review submission via dev-story review subcommand"
+    description: "Implementation complete — bridge in-progress→review, then run code review"
 
   - current_status: "review"
     next_command: "/scrum-review-story"
@@ -59,9 +60,9 @@ routing_matrix:
 
   - current_status: "changes-needed"
     next_command: "/scrum-dev-story"
-    target_status: "review"
+    target_status: "in-progress"
     action: "route"
-    description: "Review found issues — re-implement and re-review (loop)"
+    description: "Review found issues — re-implement (pipeline bridges in-progress→review for re-review)"
 
   - current_status: "approved"
     next_command: null

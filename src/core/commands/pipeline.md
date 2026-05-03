@@ -240,6 +240,8 @@ When a story receives `changes-needed` from `/scrum-review-story`:
 
 ### This command may write:
 - `.pipeline-state.json` in `_scrum-output/` (checkpoint file)
+- `story.md` — status field ONLY when routing entry defines `pre_status`
+  (bridge transition, e.g. in-progress → review before /scrum-review-story)
 
 ### This command delegates writes to:
 - `/scrum-create-ticket` — creates `story.md`
@@ -276,6 +278,6 @@ If a write boundary would be violated, halt with:
 | `/scrum-create-ticket` | Creates story from description (epic mode auto-create) |
 | `/scrum-refine-ticket` | Multi-agent refinement (draft → refined) |
 | `/scrum-refine-story` | Validation gate (refined → ready-for-dev) |
-| `/scrum-dev-story` | Implementation (ready-for-dev → in-progress) and review trigger (in-progress → review via `command_args: "review"`) |
+| `/scrum-dev-story` | Implementation (ready-for-dev/changes-needed → in-progress); pipeline bridges in-progress → review via `pre_status` |
 | `/scrum-review-story` | Code review (review → approved or changes-needed) |
 | `/scrum-approve` | NOT invoked by pipeline — human gate |

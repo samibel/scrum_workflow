@@ -269,6 +269,40 @@ If a write boundary would be violated, halt with:
 **Next Step:** Halt immediately. Do not write the file. Report this boundary violation to the user.
 ```
 
+
+## Human Approval Integrity (Fake-Done Prevention)
+
+To prevent **"FAKE DONE (Approval Records Only)"** incidents, `/scrum-pipeline` MUST enforce an output-verification loop at the approval boundary:
+
+1. The pipeline may route stories to `approved` only (human gate) and then **must stop** for that story.
+2. The pipeline must **never** mark a story `done` directly and must never bypass `/scrum-approve`.
+3. A story counts as shipped only after `/scrum-approve` records a human decision **APPROVED** and updates story status to `done`.
+4. `approval-N.md` by itself is **not sufficient**; status must be `done` with matching status-history transition from `approved` to `done`.
+5. If approval artifacts exist but status is not `done`, classify as `human_gate` (or `blocked` if inconsistent) and report: `⚠️ Approval pending real human sign-off (no done transition)`.
+
+If any inconsistency is detected (e.g., `approval-N.md` exists without a valid `approved -> done` transition), halt that story and emit:
+
+```
+❌ Approval Integrity Error: Potential FAKE DONE detected for SW-XXX
+
+**Details:** Approval artifact exists, but no verified human approval transition to 'done' was found.
+**Next Step:** Run '/scrum-approve SW-XXX' with explicit human decision and re-run '/scrum-pipeline --resume'.
+```
+
+
+## Real-Flow Mapping (Your 5-Phase + Human Gate Model)
+
+This pipeline aligns with your real flow and keeps `done` behind an explicit human gate:
+
+- **Phase 0 (optional): Greenfield** → handled before pipeline (`/scrum-create-concept`, `/scrum-create-brief`, `/scrum-decompose-epics`, `/scrum-draft-stories`)
+- **Phase 1: Create & Refine** → `/scrum-create-ticket` + `/scrum-refine-ticket`
+- **Phase 2: Validate** → `/scrum-refine-story` (criteria + plan gate to `ready-for-dev`)
+- **Phase 3: Develop** → `/scrum-dev-story`
+- **Phase 4: Review** → `/scrum-review-story` with loop back to development on `changes-needed`
+- **Phase 5: Approval (Human Gate)** → pipeline stops at `approved`; only `/scrum-approve` may transition to `done`
+
+**Important:** `approved` means "ready for human decision", not "shipped". `done` is only valid after explicit human approval evidence is verified.
+
 ## Relationship to Other Commands
 
 | Command | Role in Pipeline |

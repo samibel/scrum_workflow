@@ -300,7 +300,7 @@ After each story completes, emit a compact progress line:
 ```
 
 Symbol mapping (from `{routing_matrix}.progress_symbols`):
-- `✓` — completed successfully (reached --to target or approved)
+- `✓` — completed successfully (reached --to target only; **not** human approval completion)
 - `✗` — error or blocked
 - `●` — human gate (approved, awaiting /scrum-approve)
 - `○` — skipped (done, cancelled, or already at target)
@@ -424,3 +424,23 @@ Per-story errors are isolated. A failure in one story does not affect other stor
 - Review loop counter must be tracked per-story, not globally
 - `--pending` and explicit input are mutually exclusive
 - `--to` values must match `valid_stop_points` in routing matrix
+
+
+## Human Approval Integrity (Fake-Done Prevention)
+
+To prevent **"FAKE DONE (Approval Records Only)"** incidents, `/scrum-pipeline` MUST enforce an output-verification loop at the approval boundary:
+
+1. The pipeline may route stories to `approved` only (human gate) and then **must stop** for that story.
+2. The pipeline must **never** mark a story `done` directly and must never bypass `/scrum-approve`.
+3. A story counts as shipped only after `/scrum-approve` records a human decision **APPROVED** and updates story status to `done`.
+4. `approval-N.md` by itself is **not sufficient**; status must be `done` with matching status-history transition from `approved` to `done`.
+5. If approval artifacts exist but status is not `done`, classify as `human_gate` (or `blocked` if inconsistent) and report: `⚠️ Approval pending real human sign-off (no done transition)`.
+
+If any inconsistency is detected (e.g., `approval-N.md` exists without a valid `approved -> done` transition), halt that story and emit:
+
+```
+❌ Approval Integrity Error: Potential FAKE DONE detected for SW-XXX
+
+**Details:** Approval artifact exists, but no verified human approval transition to 'done' was found.
+**Next Step:** Run '/scrum-approve SW-XXX' with explicit human decision and re-run '/scrum-pipeline --resume'.
+```

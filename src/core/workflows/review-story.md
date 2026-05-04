@@ -19,6 +19,7 @@ Step-by-step workflow for reviewing implemented code against story specification
 - `scrum_workflow/commands/review-story.md` exists
 - Review template exists at `scrum_workflow/templates/review.md` (if missing, log warning and use default format)
 - `scrum_workflow/agents/clean-code-reviewer.md` exists for the mandatory Clean Code supplementary review (if missing, the workflow logs a warning and skips Clean Code findings — it does not halt)
+- `scrum_workflow/agents/karpathy-guidelines-reviewer.md` exists for the mandatory Karpathy Guidelines supplementary review (if missing, the workflow logs a warning and skips Karpathy findings — it does not halt)
 
 ## Step 1: Load Story and Context
 
@@ -362,6 +363,93 @@ Clean Code findings are **additive** to the primary review's findings list. They
 
 The Clean Code Reviewer's `PASS` / `FAIL` / `FAIL-WITH-CRITICAL` verdict is recorded in `review-N.md` for visibility but does NOT bypass the standard verdict logic. When the agent's verdict disagrees with the primary verdict (e.g., agent says `FAIL-WITH-CRITICAL` but ACs are satisfied and only one Critical Clean Code finding exists), the **Dissent paragraph** is preserved verbatim so the human approver can weigh it during `/scrum-approve`.
 
+### Step 3.7: Mandatory Karpathy Guidelines Review (Adversarial Sub-Agent)
+
+**This step always runs after Step 3.6 (Clean Code), regardless of story `type`, `risk_level`, or `domain_tags`.** The Karpathy Guidelines Reviewer is an **adversarial critic** that targets coding *discipline* rather than artifact quality, modeled on the same three composable agentic patterns as the Clean Code Reviewer:
+
+- [AI-Assisted Code Review / Verification](https://www.agentic-patterns.com/patterns/ai-assisted-code-review-verification) — separate critic, never the implementer
+- [Adversarial Code Review (ASDLC)](https://asdlc.io/patterns/adversarial-code-review/) — fresh session, adversarial framing, structured `PASS` / `FAIL` verdict
+- [Inference-Healed Code Review Reward](https://agentic-patterns.com/patterns/inference-healed-code-review-reward/) — decompose discipline into independent sub-scores with chain-of-thought justification
+
+It exists because the primary review (Steps 3.1–3.5) evaluates *spec/AC alignment*, the Clean Code Reviewer (Step 3.6) evaluates *artifact quality*, and neither systematically evaluates *whether the change itself was conducted with discipline* — i.e., were assumptions validated, was the diff surgical, was the simplest path chosen, does every line trace to a goal.
+
+#### Step 3.7.1: Dispatch the karpathy-guidelines-reviewer Agent
+
+Invoke the `agent-dispatcher` skill with `workflow: review-story`. The dispatcher reads `data/dispatch-rules.yaml` and unconditionally appends every agent listed under `always_in_review_story`. The Karpathy Guidelines Reviewer entry MUST be dispatched AFTER the Clean Code Reviewer so its Phase 5 cross-check can `[DUP]`-deduplicate against Clean Code findings.
+
+**Failure Handling:**
+- If `agent-dispatcher` is unavailable, fall back to spawning `karpathy-guidelines-reviewer` directly using its agent file at `scrum_workflow/agents/karpathy-guidelines-reviewer.md`.
+- If the agent file itself is missing, log a warning ("`karpathy-guidelines-reviewer` agent unavailable — Karpathy findings skipped this run") and continue. **Do NOT halt the review** — Karpathy review is a quality enhancement, not a blocker.
+
+#### Step 3.7.2: Provide Phase-1 Context (Independent Read)
+
+The agent runs in two phases. Phase 1 is an **independent read** — it MUST NOT see the primary reviewer's findings or the Clean Code Reviewer's perspective yet. Provide ONLY:
+
+- `_scrum-output/sprints/SW-XXX/story.md` — Acceptance Criteria, Dev Notes, and File List
+- `_scrum-output/sprints/SW-XXX/plan.md` — for assumption baseline (skip if absent; the agent treats absence as a K1 signal but not a blocker)
+- The full content of every file in `story.md` File List
+- The diff (or file-level changes) — K3 (Surgical Changes) lives in the diff *shape*, not the final files
+- `scrum_workflow/context/standards.md` — `## Best Practices` section
+
+The agent is **read-only** — it MUST NOT modify any source file, `story.md`, `plan.md`, `refinement.md`, or any review file. Boundary violations halt the workflow with the standard write-boundary error.
+
+#### Step 3.7.3: Sub-Score Evaluation (Inference-Healed Pattern)
+
+The agent scores each of four Karpathy dimensions on a 0–10 scale with a per-dimension chain-of-thought justification (one sentence + `file:line` or file-level citation):
+
+| Dim | Dimension | Weight |
+|---|---|---|
+| K1 | Think Before Coding (assumption discipline) | 1.0 |
+| K2 | Simplicity First | 1.5 |
+| K3 | Surgical Changes (diff shape) | 1.5 |
+| K4 | Goal-Driven Execution | 1.0 |
+
+**Weighted Overall Karpathy Score** = `sum(score_i × weight_i) / sum(weight_i)` — rounded to 1 decimal.
+
+#### Step 3.7.4: Verdict (Adversarial Pattern: PASS / FAIL)
+
+The agent produces a strict verdict:
+
+- **PASS** — Overall score ≥7.5 AND no Critical findings AND no dimension scored ≤3
+- **FAIL-WITH-CRITICAL** — At least one Critical finding, regardless of score
+- **FAIL** — Overall score <7.5 OR any dimension scored ≤3 (without a Critical finding)
+
+#### Step 3.7.5: Phase-2 Context (Cross-Check Against Primary Reviewer and Clean Code Reviewer)
+
+Only after the agent has recorded its independent verdict and findings, provide:
+
+- The primary reviewer's findings from Steps 3.1–3.5
+- The Clean Code Reviewer's perspective from Step 3.6 (used to deduplicate K2 ⇄ D4/D5 overlaps)
+- Previous `review-N.md` files in the sprint folder
+
+The agent then:
+- Marks duplicates `[DUP]` and removes them from its findings list. K2 (Simplicity First) overlaps with Clean Code D4 (KISS) and D5 (YAGNI); when both fire, the Karpathy agent keeps its K2 finding only if it adds a *process* angle ("this abstraction should not have been introduced in *this* story") that the artifact-level Clean Code finding does not capture. K3 (Surgical Changes) and K1 (Think Before Coding) are unique to this agent and cannot be `[DUP]`.
+- Writes a `Dissent` paragraph if its verdict disagrees with the primary reviewer's verdict
+- Marks Karpathy findings from previous reviews as `Resolved` / `Persistent` / `New` / `Regression`
+
+#### Step 3.7.6: Capture the Agent's Perspective
+
+Store the perspective verbatim — it will be embedded as a dedicated section in `review-N.md` (see Step 5.2). The captured perspective MUST include: `Verdict`, `Overall Karpathy Score`, `Sub-Scores` table, `Findings` table, `Verdict Rationale`, `Dissent` (if present), `Recommendations`, and (optionally) `Proposed Acceptance Criteria`.
+
+#### Step 3.7.7: Merge Karpathy Findings into the Findings Table
+
+For each Karpathy finding NOT marked `[DUP]`:
+- Prefix the **Finding** text with `[Karpathy: K{n}]` so the source and dimension are visible at a glance, e.g., `[Karpathy: K3] 14 unrelated files contain whitespace-only reformatting`
+- Set **AC Reference**: if a finding relates to an AC, use that AC; otherwise use `Project Standards` (or `Plan / Assumptions` for K1 findings about missing rationale)
+- Preserve the agent's `file:line` (or file-level) precision in the **File:Line** column
+- Use the agent's concrete fix verbatim in the **Suggested Fix** column
+
+**Verdict Influence — Additive, No Independent Veto:**
+
+Karpathy findings are **additive** to the primary review's findings list. They are evaluated by the **same** severity rules in Step 5.1 as any other finding — Karpathy does NOT have an independent veto path:
+
+- Each Karpathy `Critical` finding counts as one Critical finding for Step 5.1's "any Critical finding → CHANGES-NEEDED" rule
+- Each Karpathy `Major` finding counts toward the "multiple Major findings → CHANGES-NEEDED" threshold
+- Each Karpathy `Minor` finding is reported in the summary table but does not block approval on its own
+- Karpathy `PASS` adds no findings
+
+**The primary gate remains AC verification (Step 3.2).** The Karpathy Reviewer's `PASS` / `FAIL` / `FAIL-WITH-CRITICAL` verdict is recorded in `review-N.md` for visibility but does NOT bypass the standard verdict logic. When the agent's verdict disagrees with the primary verdict, the **Dissent paragraph** is preserved verbatim so the human approver can weigh it during `/scrum-approve`.
+
 ## Step 4: Generate Review Findings
 
 ### Step 4.1: Identify Issues and Assign Severity
@@ -430,20 +518,20 @@ Based on findings:
 
 If the primary gate fails, the verdict is `CHANGES-NEEDED` and Clean Code findings are still reported for visibility but do not change the verdict path.
 
-**If the primary gate passes, apply severity rules (Clean Code findings counted alongside primary findings):**
+**If the primary gate passes, apply severity rules (Clean Code and Karpathy findings counted alongside primary findings):**
 
 **APPROVED if:**
-- No Critical findings (primary or Clean Code count uniformly)
+- No Critical findings (primary, Clean Code, and Karpathy count uniformly)
 - Zero or few Minor findings
 - All ACs satisfied
 - Adequate test coverage
 - Code follows standards
 
 **CHANGES-NEEDED if:**
-- Any Critical findings exist (primary or Clean Code count uniformly)
-- Multiple Major findings exist across primary + Clean Code combined
+- Any Critical findings exist (primary, Clean Code, or Karpathy count uniformly)
+- Multiple Major findings exist across primary + Clean Code + Karpathy combined
 
-> **Note:** Clean Code findings are additive — they extend the findings list and are evaluated by the same severity rules above. The Clean Code Reviewer's own `PASS` / `FAIL` / `FAIL-WITH-CRITICAL` label is recorded in `review-N.md` for visibility (and any Dissent paragraph is preserved verbatim) but does NOT bypass this standard verdict logic. Clean Code is an **extension/optimization** of the existing review, not an independent veto.
+> **Note:** Clean Code and Karpathy findings are additive — they extend the findings list and are evaluated by the same severity rules above. Each reviewer's own `PASS` / `FAIL` / `FAIL-WITH-CRITICAL` label is recorded in `review-N.md` for visibility (and any Dissent paragraph is preserved verbatim) but does NOT bypass this standard verdict logic. Clean Code and Karpathy are **extensions/optimizations** of the existing review, not independent vetoes.
 
 ### Step 5.2: Create Review File
 
@@ -510,6 +598,20 @@ verdict: approved  # MUST be either: "approved" or "changes-needed" (validated a
 - **Proposed Acceptance Criteria** (optional)
 
 If the agent was unavailable for this run, replace this entire section with the line: "Clean Code Reviewer agent unavailable for this run — Clean Code findings skipped."]
+
+## Karpathy Guidelines Reviewer Perspective
+
+[Verbatim perspective returned by the karpathy-guidelines-reviewer sub-agent in Step 3.7, including:
+- **Verdict** (PASS / FAIL / FAIL-WITH-CRITICAL)
+- **Overall Karpathy Score** (X.X / 10)
+- **Sub-Scores** table (K1–K4 with per-dimension score and chain-of-thought)
+- **Findings** table (only non-`[DUP]` findings, with file:line and concrete fixes)
+- **Verdict Rationale**
+- **Dissent** paragraph (if the agent's verdict disagrees with the primary reviewer's)
+- **Recommendations**
+- **Proposed Acceptance Criteria** (optional)
+
+If the agent was unavailable for this run, replace this entire section with the line: "Karpathy Guidelines Reviewer agent unavailable for this run — Karpathy findings skipped."]
 ```
 
 ### Step 5.3: Populate Summary Table

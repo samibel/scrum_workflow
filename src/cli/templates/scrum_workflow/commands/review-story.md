@@ -84,6 +84,36 @@ Clean Code is an **extension/optimization** of the existing review — it does n
 
 Dispatch is handled by the `agent-dispatcher` skill via the `always_in_review_story` section of `data/dispatch-rules.yaml` — see `scrum_workflow/skills/agent-dispatcher/SKILL.md`. The agent's `active_in` list includes `review-story`, so it loads automatically.
 
+### Mandatory Karpathy Guidelines Supplementary Review (Adversarial Critic)
+
+Every `/scrum-review-story` invocation **always** dispatches the `karpathy-guidelines-reviewer` agent at the end of the evaluation phase, regardless of story `type`, `risk_level`, or `domain_tags`. This guarantees that coding-discipline concerns — which the primary reviewer (spec/AC focus) and the Clean Code Reviewer (artifact focus) both routinely under-evaluate — are checked on every story. Where Clean Code asks *is the code well-written?*, Karpathy asks *was the change well-conducted?*.
+
+**Pattern composition** — the agent reuses the same three composable patterns as `clean-code-reviewer` ([AI-Assisted Code Review / Verification](https://www.agentic-patterns.com/patterns/ai-assisted-code-review-verification), [Adversarial Code Review (ASDLC)](https://asdlc.io/patterns/adversarial-code-review/), [Inference-Healed Code Review Reward](https://agentic-patterns.com/patterns/inference-healed-code-review-reward/)) but evaluates four Karpathy dimensions:
+
+- **K1 — Think Before Coding** (assumptions stated and validated before writing code; rationale recorded in `plan.md` / Dev Notes)
+- **K2 — Simplicity First** (simplest solution that satisfies the AC; no premature abstraction introduced by *this* story)
+- **K3 — Surgical Changes** (diff touches only AC-relevant files; no drive-by refactors or whitespace churn; no mixed feature+refactor)
+- **K4 — Goal-Driven Execution** (every modified line traces to an AC, Task, or Dev Note; no gold-plating)
+
+The `karpathy-guidelines-reviewer` produces a `## Karpathy Guidelines Reviewer Perspective` section in `review-N.md` containing:
+
+- A strict **verdict** — `PASS`, `FAIL`, or `FAIL-WITH-CRITICAL`
+- An **overall Karpathy score** (0–10, weighted average of the four dimensions)
+- A **sub-score table** with per-dimension score and a one-sentence chain-of-thought citing `file:line` (or `file` + diff hunk)
+- A **findings table** with severity, dimension, `file:line`, and concrete fix
+- A **dissent paragraph** when its verdict disagrees with the primary reviewer's
+
+**Verdict influence — additive, no independent veto.** AC verification (criterion #2 above) remains the **primary gate**. Karpathy findings are added to the master findings list and evaluated by the **same** severity rules in `workflows/review-story.md` Step 5.1 as any other finding:
+
+- Each `Critical` Karpathy finding counts as one Critical finding for the standard "any Critical finding → CHANGES-NEEDED" rule
+- Each `Major` Karpathy finding counts toward the "multiple Major findings → CHANGES-NEEDED" threshold
+- Each `Minor` Karpathy finding is reported but does not block approval on its own
+- The agent's `PASS` / `FAIL` / `FAIL-WITH-CRITICAL` label is recorded for visibility but does NOT bypass the standard verdict logic
+
+**Boundary with the Clean Code Reviewer.** The Karpathy Reviewer runs *after* the Clean Code Reviewer so it can deduplicate against Clean Code findings in its Phase 5 cross-check. K2 (Simplicity First) overlaps with Clean Code D4 (KISS) and D5 (YAGNI); the Karpathy agent marks duplicates `[DUP]` and keeps a K2 finding only if it adds the *process* angle (this should not have been introduced in *this* story) on top of the artifact-level Clean Code finding. K3 (Surgical Changes — diff shape) and K1 (assumption discipline) are unique to this agent.
+
+Dispatch is handled by the same `agent-dispatcher` skill via the `always_in_review_story` section of `data/dispatch-rules.yaml`. The agent's `active_in` list includes `review-story`, so it loads automatically.
+
 ### Optional UX Supplementary Review
 
 When the story's `domain_tags` contain `ui`, `ux`, or `ox`, the review command additionally invokes the `ux-reviewer` agent to produce a supplementary UX perspective against the implemented artifact (flows, states, a11y). This is in addition to — not a replacement for — the primary review criteria above. The UX perspective is recorded as a separate section in `review-N.md` and does not block the primary verdict; it contributes findings only.

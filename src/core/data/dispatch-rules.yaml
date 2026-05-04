@@ -174,6 +174,16 @@ always_in_review_story:
     add_agent: clean-code-reviewer
     description: "Always run clean-code-reviewer at end of /scrum-review-story regardless of type/risk/tags"
 
+  # Karpathy Guidelines reviewer — always runs at the end of every
+  # /scrum-review-story to catch coding-discipline violations (assumption gaps,
+  # premature abstraction introduced by THIS story, drive-by refactors, scope
+  # creep) that neither the primary reviewer (spec/AC focus) nor the Clean Code
+  # reviewer (artifact focus) systematically evaluate. Runs AFTER the Clean
+  # Code reviewer so it can [DUP]-deduplicate K2 ⇄ D4/D5 overlaps.
+  karpathy_review:
+    add_agent: karpathy-guidelines-reviewer
+    description: "Always run karpathy-guidelines-reviewer at end of /scrum-review-story regardless of type/risk/tags"
+
 # =============================================================================
 # Customization Guide
 # =============================================================================

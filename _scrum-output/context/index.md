@@ -1,7 +1,7 @@
 ---
 domain: index
-generated: "2026-04-19T00:00:00Z"
-project: "Scrum Workflow Framework"
+generated: "2026-04-03"
+project: "scrum_workflow"
 ---
 
 # Project Context Index
@@ -27,5 +27,5 @@ Scrum Workflow is a Markdown-driven, multi-agent scrum framework for AI coding a
 
 ## Generated
 
-- **Date**: 2026-04-19
+- **Date**: 2026-04-03
 - **Source**: `/scrum-create-project-context`

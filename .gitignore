@@ -23,8 +23,3 @@ scrum_workflow/
 
 # Claude skills - scrum workflow
 .claude/skills/scrum-*/
-
-# Scan state files (local, not committed)
-_scrum-output/docs/.scan-state.json
-_scrum-output/docs/.arch-scan-state.json
-_scrum-output/

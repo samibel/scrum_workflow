@@ -434,7 +434,7 @@ To prevent **"FAKE DONE (Approval Records Only)"** incidents, `/scrum-pipeline` 
 2. The pipeline must **never** mark a story `done` directly and must never bypass `/scrum-approve`.
 3. A story counts as shipped only after `/scrum-approve` records a human decision **APPROVED** and updates story status to `done`.
 4. `approval-N.md` by itself is **not sufficient**; status must be `done` with matching status-history transition from `approved` to `done`.
-5. If approval artifacts exist but status is not `done`, classify as `human_gate` (or `blocked` if inconsistent) and report: `⚠️ Approval pending real human sign-off (no done transition)`.
+5. If approval artifacts exist but status is not `done`, classify as `blocked` (integrity error), halt that story, and report: `❌ Approval Integrity Error: approval artifact exists without verified approved -> done transition`.
 
 If any inconsistency is detected (e.g., `approval-N.md` exists without a valid `approved -> done` transition), halt that story and emit:
 

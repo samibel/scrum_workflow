@@ -139,7 +139,7 @@ Read the current `status` field from the story file's YAML frontmatter and valid
 
 **Details:** The /scrum-review-story command can only execute on stories in 'review' status. The story must first complete implementation.
 
-**Next Step:** Complete implementation first. Run '/scrum-dev-story SW-XXX' to implement the story and submit it for review. The status will automatically move to 'review' when implementation is complete.
+**Next Step:** Complete implementation first. Run '/scrum-dev-story SW-XXX' to implement the story, then run '/scrum-verify SW-XXX'. The status will move to 'review' only after verification passes and writes a valid `verification-report.md`.
 ```
 
 ### `/scrum-approve`
@@ -185,7 +185,7 @@ The `in-progress` → `review` transition is only valid after successful `/scrum
 
 ```markdown
 ---
-schema_version: "1"
+schema_version: 1
 ticket: SW-XXX
 status: passed
 verified_at: 2026-05-16T12:34:56Z
@@ -203,7 +203,7 @@ Optional human-readable details may follow the frontmatter.
 
 **Required frontmatter fields:**
 
-- `schema_version` — present and non-empty
+- `schema_version` — integer, present and non-empty (currently `1`)
 - `ticket` — exactly matches the story ticket ID (`SW-XXX`)
 - `status` — either `passed` or `failed`; only `passed` permits transition to `review`
 - `verified_at` — present and non-empty (ISO 8601 UTC timestamp recommended)
@@ -214,6 +214,7 @@ Optional human-readable details may follow the frontmatter.
 - `verification-report.md` is missing from the story sprint folder
 - YAML frontmatter is missing, malformed, or not parseable
 - `ticket` does not exactly match the story ticket ID
+- `schema_version` is missing or is not an integer
 - `status` is missing, not `passed`, or uses any value other than `passed`/`failed`
 - `tools` is missing, empty, not a list, or any tool entry is missing `name`, `command`, `exit_code`, or `summary`
 - Any tool has a non-successful `exit_code` (anything other than integer `0`)

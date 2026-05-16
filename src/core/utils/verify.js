@@ -86,13 +86,53 @@ export function createVerificationReport(reportData) {
   const overallVerdict = results.test.success && 
                         (results.lint.skipped || results.lint.success) && 
                         (results.build.skipped || results.build.success) ? 'PASS' : 'FAIL';
+  const verificationStatus = overallVerdict === 'PASS' ? 'passed' : 'failed';
+  const tools = [
+    {
+      name: 'test',
+      command: 'npm test',
+      exit_code: results.test.exitCode ?? (results.test.success ? 0 : 1),
+      summary: results.test.success ? 'Tests passed' : 'Tests failed'
+    },
+    {
+      name: 'lint',
+      command: 'npm run lint',
+      exit_code: results.lint.skipped ? 0 : (results.lint.exitCode ?? (results.lint.success ? 0 : 1)),
+      summary: results.lint.skipped ? 'Skipped: lint script not configured' : (results.lint.success ? 'Lint passed' : 'Lint failed')
+    },
+    {
+      name: 'build',
+      command: 'npm run build',
+      exit_code: results.build.skipped ? 0 : (results.build.exitCode ?? (results.build.success ? 0 : 1)),
+      summary: results.build.skipped ? 'Skipped: build script not configured' : (results.build.success ? 'Build passed' : 'Build failed')
+    }
+  ];
+  const toolsYaml = yaml.dump(tools, { lineWidth: -1 })
+    .trimEnd()
+    .split('\n')
+    .map((line) => `  ${line}`)
+    .join('\n');
 
   let template = '';
   if (existsSync(templatePath)) {
     template = readFileSync(templatePath, 'utf8');
   } else {
     // Fallback template
-    template = '# Verification Report: {{story_title}}\n\nVerdict: {{verdict}}';
+    template = `---
+schema_version: 1
+ticket: {{ticket_id}}
+title: "{{story_title}}"
+status: {{verification_status}}
+verified_at: {{verified_at}}
+verification_date: {{verification_date}}
+verdict: {{verdict}}
+tools:
+{{tools_yaml}}
+---
+
+# Verification Report: {{story_title}}
+
+Verdict: {{verdict}}`;
   }
 
   const testStats = parseTestOutput(results.test.output);
@@ -111,7 +151,10 @@ export function createVerificationReport(reportData) {
     '{{ticket_id}}': ticketId,
     '{{story_title}}': storyTitle,
     '{{verification_date}}': timestamp,
+    '{{verified_at}}': timestamp,
+    '{{verification_status}}': verificationStatus,
     '{{verdict}}': overallVerdict,
+    '{{tools_yaml}}': toolsYaml,
     '{{test_result}}': results.test.success ? 'PASS' : 'FAIL',
     '{{lint_result}}': results.lint.skipped ? 'SKIPPED' : (results.lint.success ? 'PASS' : 'FAIL'),
     '{{build_result}}': results.build.skipped ? 'SKIPPED' : (results.build.success ? 'PASS' : 'FAIL'),

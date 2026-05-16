@@ -119,11 +119,12 @@ If the story file does not exist:
 
 This workflow may write:
 - Source code files and test files in the project directory (per plan.md guidance)
-- `_scrum-output/sprints/SW-XXX/story.md` - Status field only (`status: in-progress` or `status: review`); MUST NOT modify story content
+- `_scrum-output/sprints/SW-XXX/story.md` - Status field only (`status: in-progress`); MUST NOT modify story content or transition directly to `review`
 
 This workflow may NOT write:
 - `_scrum-output/sprints/SW-XXX/plan.md` - Read-only during implementation (created by `/scrum-refine-story`)
 - `_scrum-output/sprints/SW-XXX/refinement.md` - Read-only during implementation
+- `_scrum-output/sprints/SW-XXX/verification-report.md` - Managed by `/scrum-verify`
 - `_scrum-output/sprints/SW-XXX/review-*.md` - Managed by `/scrum-review-story`
 - `_scrum-output/sprints/SW-XXX/approval-N.md` - Managed by `/scrum-approve`
 - `scrum_workflow/` - Framework files are read-only during execution

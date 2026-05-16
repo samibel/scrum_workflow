@@ -14,9 +14,12 @@
  * 4. Write boundaries respected: only verification-report.md and story.md are modified.
  */
 
-import { existsSync, readFileSync } from 'fs';
+import { existsSync, mkdtempSync, readFileSync, rmSync } from 'fs';
 import { join, dirname } from 'path';
+import { tmpdir } from 'os';
 import { fileURLToPath } from 'url';
+import yaml from 'js-yaml';
+import { createVerificationReport } from '../utils/verify.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -81,6 +84,40 @@ describe('AC2: PASS Flow - Status Transition and Report Content', () => {
     expect(templateContent).toMatch(/Test Results|test_total/i);
     expect(templateContent).toMatch(/Linter|Lint/i);
     expect(templateContent).toMatch(/Build/i);
+  });
+
+  test('[P0] Generated report frontmatter should satisfy review gate contract', () => {
+    const outputDir = mkdtempSync(join(tmpdir(), 'verification-flow-'));
+
+    try {
+      const { reportFile, overallVerdict } = createVerificationReport({
+        ticketId: 'SW-123',
+        storyTitle: 'Generated Report Contract',
+        outputDir,
+        templatePath: join(TEMPLATES_DIR, 'verification-report.md'),
+        results: {
+          test: { success: true, exitCode: 0, output: 'Tests  2 passed | 0 failed | 2 total' },
+          lint: { success: true, exitCode: 0, output: '' },
+          build: { skipped: true, output: '' }
+        }
+      });
+      const report = readFileSync(reportFile, 'utf8');
+      const frontmatterMatch = report.match(/^---\n([\s\S]+?)\n---/);
+      expect(frontmatterMatch).not.toBeNull();
+
+      const frontmatter = yaml.load(frontmatterMatch![1]) as Record<string, any>;
+      expect(overallVerdict).toBe('PASS');
+      expect(frontmatter.schema_version).toBe(1);
+      expect(frontmatter.ticket).toBe('SW-123');
+      expect(frontmatter.status).toBe('passed');
+      expect(frontmatter.verified_at).toBeTruthy();
+      expect(Array.isArray(frontmatter.tools)).toBe(true);
+      expect(frontmatter.tools).toHaveLength(3);
+      expect(frontmatter.tools.every((tool: any) => tool.exit_code === 0)).toBe(true);
+      expect(frontmatter.tools.every((tool: any) => tool.name && tool.command && tool.summary)).toBe(true);
+    } finally {
+      rmSync(outputDir, { recursive: true, force: true });
+    }
   });
 });
 

@@ -107,6 +107,7 @@ Write the report to `_scrum-output/sprints/SW-XXX/verification-report.md`.
      timestamp: <current_iso_timestamp>
      trigger: /scrum-verify
      actor: verification-skill
+     artifact: verification-report.md
    ```
 4. Output success message to CLI
 

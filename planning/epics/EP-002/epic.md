@@ -109,7 +109,7 @@ Dies ist der größte Brocken der Roadmap und das Fundament für EP-004 (Reviewe
 
 ## Dependencies
 
-- **Vorgelagert:** EP-001 (Golden Path muss stabil sein, sonst validieren wir falsche Konvention), EP-008 (CI-Infrastruktur), EP-003 (Story-Template-Pflichtsektionen müssen vor Schema-Definition feststehen)
+- **Vorgelagert:** EP-001 (Golden Path muss stabil sein, sonst validieren wir falsche Konvention), EP-008 (CI-Infrastruktur), EP-003 (Story-Template-Pflichtsektionen müssen vor Schema-Definition feststehen), EP-009 (strategische Positionierung + ADRs dokumentieren die Schema-Entscheidungen, die EP-002 implementiert)
 - **Nachgelagert:** EP-004 (Findings-Schema), EP-005 (Traceability-Schema), EP-010 (Quality Scoring konsumiert Schemas), EP-011 (Self-Validation der Workflow-Files)
 
 ## Success Metrics

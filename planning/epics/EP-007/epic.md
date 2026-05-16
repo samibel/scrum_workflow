@@ -50,7 +50,7 @@ Dieses Epic reduziert die Token-Last: Skill-Größen-Audit, Lazy-Loading via `SK
 - Echte Streaming-Token-Reduktion (das ist Claude-Code-Plattform-Feature, nicht unseres)
 - Skill-Inhalts-Verschlankung (Skill-Splitting ja, aber kein inhaltliches Trimmen)
 - Caching von Sub-Agent-Outputs (außerhalb scrum_workflow-Scope)
-- Eigene Token-Zähl-Bibliothek (nutze bestehende, z. B. `gpt-tokenizer` als Approximation)
+- Eigene Token-Zähl-Bibliothek (nutze bestehende, z. B. `@anthropic-ai/tokenizer` für Claude-Modelle)
 
 ## Acceptance Criteria (Epic-Level)
 

@@ -109,13 +109,16 @@ graph TD
   EP001 --> EP002
   EP002 --> EP004
   EP002 --> EP005
+  EP003 --> EP005
   EP004 --> EP005
   EP002 --> EP010
   EP004 --> EP010
+  EP005 --> EP010
   EP002 --> EP011
   EP004 --> EP011
   EP006 -.optional.-> EP002
   EP007 -.optional.-> EP004
+  EP007 -.optional.-> EP011
 ```
 
 ## Decomposition Method

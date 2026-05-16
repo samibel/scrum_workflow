@@ -305,7 +305,7 @@ The story status state machine defines the lifecycle of a story from creation to
 | `refined` | /scrum-refine-ticket | refinement agents complete | Refinement complete, awaiting validation |
 | `ready-for-dev` | /scrum-refine-story | all 5 validation criteria PASS | Validated and ready for implementation |
 | `in-progress` | /scrum-dev-story | status == ready-for-dev OR status == changes-needed (FR17) | Implementation in progress (initial or re-implementation) |
-| `review` | /scrum-verify | status == in-progress AND verification-report.md status == passed | Code review requested after automated verification passes |
+| `review` | /scrum-dev-story review | status == in-progress | Code review requested |
 | `approved` | /scrum-review-story | verdict == APPROVED | Review passed, awaiting human sign-off |
 | `changes-needed` | /scrum-review-story | verdict == CHANGES-NEEDED | Review found issues, changes required |
 | `done` | /scrum-approve | explicit sign-off (FR28) | Human approval complete (terminal state) |
@@ -324,7 +324,7 @@ All transitions are explicit and guarded. No implicit status changes are permitt
 | `refined` | `ready-for-dev` | /scrum-refine-story | all 5 validation criteria PASS |
 | `refined` | `refined` | /scrum-refine-story | any validation criterion FAIL (status unchanged) |
 | `ready-for-dev` | `in-progress` | /scrum-dev-story | status == ready-for-dev (FR17) - initial implementation |
-| `in-progress` | `review` | /scrum-verify | status == in-progress AND verification-report.md exists with parseable YAML frontmatter, matching ticket, status == passed, and all tool exit_code values == 0 |
+| `in-progress` | `review` | /scrum-dev-story review | status == in-progress |
 | `review` | `approved` | /scrum-review-story | verdict == APPROVED |
 | `review` | `changes-needed` | /scrum-review-story | verdict == CHANGES-NEEDED |
 | `changes-needed` | `in-progress` | /scrum-dev-story | status == changes-needed - re-implementation with findings loaded |
@@ -341,8 +341,8 @@ All transitions are explicit and guarded. No implicit status changes are permitt
   ┌───────┐    ┌────────────┐    ┌─────────┐    ┌──────────────┐    ┌─────────────┐    ┌────────┐
   │ draft │───▶│ refinement │───▶│ refined │───▶│ ready-for-dev│───▶│ in-progress │───▶│ review │
   └───────┘    └────────────┘    └─────────┘    └──────────────┘    └─────────────┘    └────────┘
-     /refine-     agents           /refine-        /scrum-dev-story    /scrum-verify        │
-     ticket       complete         story PASS                          PASS                 │
+     /refine-     agents           /refine-        /scrum-dev-story    /scrum-dev-story     │
+     ticket       complete         story PASS                          review               │
                                                                               ┌─────────────┤
                                                                               │             │
                                                                               ▼             ▼
@@ -390,7 +390,7 @@ Error: Story SW-042 is in status 'draft', but '/scrum-dev-story' requires 'ready
 Fix: Run '/scrum-refine-ticket SW-042' to refine the story, then '/scrum-refine-story SW-042' to validate and pass readiness check
 
 Error: Story SW-089 is in status 'changes-needed', but '/scrum-review-story' requires 'review'
-Fix: Run '/scrum-dev-story SW-089' to address the review findings, then run '/scrum-verify SW-089' to generate a passing verification report before review
+Fix: Run '/scrum-dev-story SW-089' to address the review findings first, then mark as ready for review
 
 Error: File '_scrum-output/sprints/SW-101/story.md' not found. Run '/scrum-create-ticket SW-101' first
 Fix: Create the story file before attempting refinement
@@ -443,8 +443,7 @@ Each command has strict write boundaries. A command may only create or modify fi
 | /scrum-create-ticket | `story.md` | `refinement.md`, `plan.md`, `review-*.md`, `approval.md` |
 | /scrum-refine-ticket | `refinement.md`, `story.md` (update) | `plan.md`, `review-*.md`, `approval.md` |
 | /scrum-refine-story | `plan.md`, `story.md` (status update) | `refinement.md`, `review-*.md`, `approval.md` |
-| /scrum-dev-story | Code files, `story.md` (status update to `in-progress`) | `refinement.md`, `plan.md`, `verification-report.md`, `review-*.md`, `approval.md` |
-| /scrum-verify | `verification-report.md`, `story.md` (status update to `review` only on PASS) | Source code, test files, `refinement.md`, `plan.md`, `review-*.md`, `approval.md` |
+| /scrum-dev-story | Code files, `story.md` (status update) | `refinement.md`, `plan.md`, `review-*.md`, `approval.md` |
 | /scrum-review-story | `review-N.md`, `story.md` (status update) | `refinement.md`, `plan.md`, `approval.md` |
 | Approval | `approval.md`, `story.md` (status -> done) | `refinement.md`, `plan.md`, `review-*.md` |
 | Human (manual) | `story.md` (status -> cancelled) | All other files — no other changes permitted during cancellation |

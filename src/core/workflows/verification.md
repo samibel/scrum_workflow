@@ -79,7 +79,9 @@ Determine overall result:
 ### Step 3.2: Populate Template
 
 Use `scrum_workflow/templates/verification-report.md` to create the report.
-- Fill in ticket ID, title, timestamp
+- Fill in ticket ID, title, timestamp, `status` (`passed`/`failed`), and legacy `verdict` (`PASS`/`FAIL`)
+- Populate `verified_at` and `verification_date` with the same ISO 8601 timestamp
+- Populate `tools` frontmatter with one item per check, including `name`, `command`, `exit_code`, and `summary`
 - List result for each check (PASS/FAIL)
 - Include summary of test results (X/Y passed)
 - Include coverage summary if available

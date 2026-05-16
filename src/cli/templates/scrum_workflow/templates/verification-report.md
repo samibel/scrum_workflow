@@ -2,8 +2,12 @@
 schema_version: 1
 ticket: {{ticket_id}}
 title: "{{story_title}}"
+status: {{verification_status}}
+verified_at: {{verified_at}}
 verification_date: {{verification_date}}
 verdict: {{verdict}}
+tools:
+{{tools_yaml}}
 ---
 
 # Verification Report: {{story_title}}

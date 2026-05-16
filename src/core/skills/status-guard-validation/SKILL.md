@@ -22,6 +22,7 @@ Each command has a specific required status. The command may only execute when t
 | `/scrum-refine-ticket` | `draft` | Story must be in `draft` status |
 | `/scrum-refine-story` | `refined` | Story must be in `refined` status |
 | `/scrum-dev-story` | `ready-for-dev` OR `changes-needed` | Story must be in `ready-for-dev` or `changes-needed` status |
+| `/scrum-verify` | `in-progress` | Story must be in `in-progress` status; on PASS it may transition to `review` only when the verification report guard below passes |
 | `/scrum-review-story` | `review` | Story must be in `review` status |
 | `/scrum-approve` | `approved` | Story must be in `approved` status |
 
@@ -109,6 +110,22 @@ Read the current `status` field from the story file's YAML frontmatter and valid
 **Next Step:** Run '/scrum-refine-ticket SW-XXX' and '/scrum-refine-story SW-XXX' to complete refinement and validation before starting development. If the story was rejected after review, run '/scrum-review-story SW-XXX' to complete the review first.
 ```
 
+### Verify Command (`/scrum-verify`)
+
+**Guard condition**: Story status must be `in-progress`
+
+**Rationale**: Verification is the mandatory automated quality gate after implementation and before review. Only stories with implementation in progress can be verified and submitted for review.
+
+**On guard condition failure**, return an error:
+
+```
+❌ Status Guard Violation: Story SW-XXX requires 'in-progress' but is currently '{current_status}'
+
+**Details:** The /scrum-verify command can only execute on stories in 'in-progress' status.
+
+**Next Step:** Ensure implementation has started with '/scrum-dev-story SW-XXX', then run '/scrum-verify SW-XXX' once the implementation is ready for automated checks.
+```
+
 ### Review Story Command (`/scrum-review-story`)
 
 **Guard condition**: Story status must be `review`
@@ -122,7 +139,7 @@ Read the current `status` field from the story file's YAML frontmatter and valid
 
 **Details:** The /scrum-review-story command can only execute on stories in 'review' status. The story must first complete implementation.
 
-**Next Step:** Complete implementation first. Run '/scrum-dev-story SW-XXX' to implement the story and submit it for review. The status will automatically move to 'review' when implementation is complete.
+**Next Step:** Complete implementation first. Run '/scrum-dev-story SW-XXX' to implement the story, then run '/scrum-verify SW-XXX'. The status will move to 'review' only after verification passes and writes a valid `verification-report.md`.
 ```
 
 ### `/scrum-approve`
@@ -151,12 +168,69 @@ Ensure that status transitions only follow the defined state machine paths. The 
 - `refined` → `ready-for-dev` (via `/scrum-refine-story` PASS)
 - `refined` → `refined` (via `/scrum-refine-story` FAIL, status unchanged)
 - `ready-for-dev` → `in-progress` (via `/scrum-dev-story`)
-- `in-progress` → `review` (via `/scrum-dev-story review`)
+- `in-progress` → `review` (via `/scrum-verify` PASS; requires a valid `verification-report.md` gate)
 - `review` → `approved` (via `/scrum-review-story` APPROVED)
 - `review` → `changes-needed` (via `/scrum-review-story` CHANGES-NEEDED)
 - `changes-needed` → `in-progress` (via `/scrum-dev-story` fix findings)
 - `approved` → `done` (via `/scrum-approve` with explicit user sign-off)
 - `any` → `cancelled` (via manual decision, explicit user cancellation from any non-terminal state)
+
+**Additional guard for every transition to `review`:** Any requested status transition whose target status is `review` is valid only when the story's sprint folder contains `_scrum-output/sprints/SW-XXX/verification-report.md` and the report satisfies the verification report contract below. This guard applies to `in-progress` → `review` and to any future transition that targets `review`; no workflow may bypass it by writing `status: review` directly.
+
+### Verification Report Gate for `in-progress` → `review`
+
+The `in-progress` → `review` transition is only valid after successful `/scrum-verify SW-XXX` execution. Before allowing the transition, read `_scrum-output/sprints/SW-XXX/verification-report.md` from the same sprint folder as the story and validate its YAML frontmatter. Do not introduce or require a JSON Schema for this contract; JSON Schema validation is out of scope for EP-002.
+
+**Required `verification-report.md` convention:**
+
+```markdown
+---
+schema_version: 1
+ticket: SW-XXX
+status: passed
+verified_at: 2026-05-16T12:34:56Z
+tools:
+  - name: test
+    command: npm test
+    exit_code: 0
+    summary: All tests passed
+---
+
+# Verification Report
+
+Optional human-readable details may follow the frontmatter.
+```
+
+**Required frontmatter fields:**
+
+- `schema_version` — integer, present and non-empty (currently `1`)
+- `ticket` — exactly matches the story ticket ID (`SW-XXX`)
+- `status` — either `passed` or `failed`; only `passed` permits transition to `review`
+- `verified_at` — present and non-empty (ISO 8601 UTC timestamp recommended)
+- `tools` — non-empty list; each item contains `name`, `command`, `exit_code`, and `summary`
+
+**Blocking conditions:**
+
+- `verification-report.md` is missing from the story sprint folder
+- YAML frontmatter is missing, malformed, or not parseable
+- `ticket` does not exactly match the story ticket ID
+- `schema_version` is missing or is not an integer
+- `status` is missing, not `passed`, or uses any value other than `passed`/`failed`
+- `tools` is missing, empty, not a list, or any tool entry is missing `name`, `command`, `exit_code`, or `summary`
+- Any tool has a non-successful `exit_code` (anything other than integer `0`)
+
+**On verification report gate failure**, hard-halt with this standardized error block before any status write:
+
+```
+❌ Status Guard Violation: Cannot transition Story SW-XXX from 'in-progress' to 'review'
+
+**Details:** The transition to 'review' requires a valid `_scrum-output/sprints/SW-XXX/verification-report.md` with parseable YAML frontmatter, matching `ticket: SW-XXX`, `status: passed`, and successful tool results (`exit_code: 0` for every tool). Failure reason: {failure_reason}.
+
+**Next Step:**
+1. Run `/scrum-verify SW-XXX`.
+2. Fix any failed checks reported in `verification-report.md`.
+3. Run `/scrum-verify SW-XXX` again, then retry the transition after verification passes.
+```
 
 **Invalid transitions:**
 - Any transition not listed above (e.g., `draft` → `ready-for-dev` skipping refinement)
@@ -216,6 +290,7 @@ warning: null
 ## Reads
 
 - Story file (typically `_scrum-output/sprints/SW-XXX/story.md`) to read current status from YAML frontmatter
+- Verification report (typically `_scrum-output/sprints/SW-XXX/verification-report.md`) when validating any transition to `review`
 - State machine definitions: `scrum_workflow/context/standards.md`
 - Command being executed (to determine required status)
 

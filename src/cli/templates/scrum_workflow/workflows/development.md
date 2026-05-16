@@ -267,6 +267,7 @@ The dev agent MAY write:
 The dev agent MAY NOT write:
 - `_scrum-output/sprints/SW-XXX/refinement.md` -- Read-only during development
 - `_scrum-output/sprints/SW-XXX/plan.md` -- Read-only during development
+- `_scrum-output/sprints/SW-XXX/verification-report.md` -- Managed by verification workflow
 - `_scrum-output/sprints/SW-XXX/review-*.md` -- Managed by code review workflow
 - `_scrum-output/sprints/SW-XXX/approval.md` -- Managed by approval workflow
 - `scrum_workflow/` -- Framework files are read-only during execution
@@ -294,47 +295,46 @@ Before each file write:
 
 ## Step 7: Handle Review Trigger (FR20 Extension)
 
-### Step 7.1: Detect Review Command
+### Step 7.1: Prepare Verification Handoff
 
-Check if command includes `review` trigger:
-- Input format: `/scrum-dev-story SW-XXX review`
-- Trigger indicates implementation is complete and ready for review
+When implementation is complete, hand off to verification:
+- Input format: `/scrum-verify SW-XXX`
+- Trigger runs the mandatory automated verification gate after implementation is complete
 
-### Step 7.2: Validate Completion
+### Step 7.2: Validate Completion Before Verification
 
-Before transitioning to review:
+Before invoking verification:
 1. Verify ALL tasks/subtasks are marked complete [x] (normalize checkbox formats: [x], [X], [done] → complete)
-2. Verify ALL tests pass (no regressions)
-3. Verify ALL acceptance criteria are satisfied
-4. Verify File List is complete
-5. Verify Tasks/Subtasks section exists and is not empty
+2. Verify ALL acceptance criteria are satisfied
+3. Verify File List is complete
+4. Verify Tasks/Subtasks section exists and is not empty
 
 **If any validation fails**, halt with error:
 ```
-Error: Story not ready for review - incomplete tasks or failing tests
-Fix: Complete all tasks and ensure tests pass before triggering review
+Error: Story not ready for verification - incomplete tasks or acceptance criteria
+Fix: Complete all tasks and acceptance criteria before running /scrum-verify SW-XXX
 ```
 
-### Step 7.3: Update Status to review
+### Step 7.3: Run Verification Gate
 
-Update `_scrum-output/sprints/SW-XXX/story.md` YAML frontmatter:
-- Set `status` field to `review`
-- Update `updated` field to current date (ISO 8601 format)
-- Use atomic write operation (NFR1 compliance)
+Run `/scrum-verify SW-XXX`. The verification workflow owns:
+- Creating `_scrum-output/sprints/SW-XXX/verification-report.md`
+- Running automated checks
+- Updating `story.md` from `in-progress` to `review` only when verification passes
 
-### Step 7.4: Log Review Transition
+### Step 7.4: Log Verification Handoff
 
 ```
 ✅ Story SW-XXX implementation complete
-Status updated: in-progress → review
-Ready for code review
+Status remains: in-progress
+Next Step: Run /scrum-verify SW-XXX to generate verification-report.md and move to review on PASS
 ```
 
 ## Write Boundaries
 
 This workflow may write:
 
-- `_scrum-output/sprints/SW-XXX/story.md` -- Status updates (in-progress, review) only
+- `_scrum-output/sprints/SW-XXX/story.md` -- Status update to `in-progress` only
 - Code files in project directory -- Implementation outputs
 - Test files -- Validation and regression tests
 
@@ -342,6 +342,7 @@ This workflow may NOT write:
 
 - `_scrum-output/sprints/SW-XXX/refinement.md` -- Read-only during development
 - `_scrum-output/sprints/SW-XXX/plan.md` -- Read-only during development
+- `_scrum-output/sprints/SW-XXX/verification-report.md` -- Managed by verification workflow
 - `_scrum-output/sprints/SW-XXX/review-*.md` -- Managed by code review workflow
 - `_scrum-output/sprints/SW-XXX/approval.md` -- Managed by approval workflow
 - `scrum_workflow/` -- Framework files are read-only during execution
@@ -373,6 +374,6 @@ Story implementation is complete when:
 2. ALL acceptance criteria are satisfied
 3. ALL tests pass (no regressions)
 4. File List includes all changed files
-5. Story status transitions to `review` (via review trigger)
+5. Story status remains `in-progress` until `/scrum-verify SW-XXX` passes and transitions it to `review`
 
-**Note:** Regular `/scrum-dev-story SW-XXX` updates status to `in-progress` and begins implementation. `/scrum-dev-story SW-XXX review` updates status to `review` after implementation is complete.
+**Note:** `/scrum-dev-story SW-XXX` updates status to `in-progress` and performs implementation. `/scrum-verify SW-XXX` owns the `in-progress` → `review` transition after generating a passing `verification-report.md`.

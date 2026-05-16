@@ -305,7 +305,7 @@ The story status state machine defines the lifecycle of a story from creation to
 | `refined` | /scrum-refine-ticket | refinement agents complete | Refinement complete, awaiting validation |
 | `ready-for-dev` | /scrum-refine-story | all 5 validation criteria PASS | Validated and ready for implementation |
 | `in-progress` | /scrum-dev-story | status == ready-for-dev OR status == changes-needed (FR17) | Implementation in progress (initial or re-implementation) |
-| `review` | /scrum-dev-story review | status == in-progress | Code review requested |
+| `review` | /scrum-verify | status == in-progress and automated verification PASS | Automated verification passed; code review requested |
 | `approved` | /scrum-review-story | verdict == APPROVED | Review passed, awaiting human sign-off |
 | `changes-needed` | /scrum-review-story | verdict == CHANGES-NEEDED | Review found issues, changes required |
 | `done` | /scrum-approve | explicit sign-off (FR28) | Human approval complete (terminal state) |
@@ -324,7 +324,7 @@ All transitions are explicit and guarded. No implicit status changes are permitt
 | `refined` | `ready-for-dev` | /scrum-refine-story | all 5 validation criteria PASS |
 | `refined` | `refined` | /scrum-refine-story | any validation criterion FAIL (status unchanged) |
 | `ready-for-dev` | `in-progress` | /scrum-dev-story | status == ready-for-dev (FR17) - initial implementation |
-| `in-progress` | `review` | /scrum-dev-story review | status == in-progress |
+| `in-progress` | `review` | /scrum-verify | status == in-progress and automated verification PASS |
 | `review` | `approved` | /scrum-review-story | verdict == APPROVED |
 | `review` | `changes-needed` | /scrum-review-story | verdict == CHANGES-NEEDED |
 | `changes-needed` | `in-progress` | /scrum-dev-story | status == changes-needed - re-implementation with findings loaded |
@@ -341,8 +341,8 @@ All transitions are explicit and guarded. No implicit status changes are permitt
   ┌───────┐    ┌────────────┐    ┌─────────┐    ┌──────────────┐    ┌─────────────┐    ┌────────┐
   │ draft │───▶│ refinement │───▶│ refined │───▶│ ready-for-dev│───▶│ in-progress │───▶│ review │
   └───────┘    └────────────┘    └─────────┘    └──────────────┘    └─────────────┘    └────────┘
-     /refine-     agents           /refine-        /scrum-dev-story    /scrum-dev-story     │
-     ticket       complete         story PASS                          review               │
+     /refine-     agents           /refine-        /scrum-dev-story    /scrum-verify       │
+     ticket       complete         story PASS                          PASS                 │
                                                                               ┌─────────────┤
                                                                               │             │
                                                                               ▼             ▼

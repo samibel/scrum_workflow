@@ -33,6 +33,8 @@ Ticket number in the format: `/scrum-dev-story SW-XXX`
 - Implemented code changes following the plan and story specification
 - Code files in the project directory (specific to story requirements)
 
+`/scrum-dev-story` never transitions a story to `review`; completed implementation remains `in-progress` until `/scrum-verify` passes the mandatory automated verification gate and sets `status: review`.
+
 ## Guard Condition Enforcement
 
 **FR17 Compliance:** This command enforces the readiness check guard condition:
@@ -119,7 +121,7 @@ If the story file does not exist:
 
 This workflow may write:
 - Source code files and test files in the project directory (per plan.md guidance)
-- `_scrum-output/sprints/SW-XXX/story.md` - Status field only (`status: in-progress` or `status: review`); MUST NOT modify story content
+- `_scrum-output/sprints/SW-XXX/story.md` - Status field only (`status: in-progress`); MUST NOT modify story content
 
 This workflow may NOT write:
 - `_scrum-output/sprints/SW-XXX/plan.md` - Read-only during implementation (created by `/scrum-refine-story`)
@@ -132,7 +134,7 @@ This workflow may NOT write:
 
 **Spec Drift:** The implementation agent MUST NOT modify story.md content (only the status field). Modifying acceptance criteria, tasks, or other story body content during implementation is a Spec Drift violation — halt and report to the user.
 
-**Self-Fix:** The implementation agent MUST NOT validate its own work. Validation is performed by separate commands (`/scrum-review-story`, `/scrum-refine-story`). Self-validation bypasses the multi-agent quality gate.
+**Self-Fix:** The implementation agent MUST NOT validate its own work. Validation is performed by separate commands (`/scrum-verify`, `/scrum-review-story`, `/scrum-refine-story`). Self-validation bypasses the multi-agent quality gate.
 
 If a write boundary would be violated, halt with:
 ```

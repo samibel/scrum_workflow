@@ -9,14 +9,14 @@ model_recommendation: "flash"
 
 ## Purpose
 
-Implement the mandatory automated verification gate (tests, lint, build) before a story can be marked as `review`. This command ensures that all automated checks pass, providing an objective quality signal and managing the status transition to `review`.
+Run the mandatory automated verification gate (tests, lint, build) before review. `/scrum-verify` is the only command that transitions an implemented story from `in-progress` to `review`, ensuring automated checks pass before AI-assisted or human review begins.
 
 ## Agentic Pattern
 
 **Pattern:** [Automated Verification Gate]
 
 **Key Principles:**
-- **Automated Quality Signal:** Objective checks (test, lint, build) must pass before human/AI review
+- **Mandatory Review Gate:** `/scrum-verify` must pass before a story can enter `review`
 - **Objective Reporting:** Results are captured in a structured `verification-report.md`
 - **Status Guard:** Verification is only allowed from `in-progress` status
 - **Write Boundary:** Verification may only write the verification report and update story status

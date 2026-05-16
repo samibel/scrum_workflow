@@ -2,7 +2,7 @@
  * Utility for tracking story status history
  */
 
-export function appendStatusHistory(story, trigger, newStatus) {
+export function appendStatusHistory(story, trigger, newStatus, metadata = {}) {
   const timestamp = new Date().toISOString();
   const history = story.frontmatter.status_history || [];
   
@@ -11,17 +11,20 @@ export function appendStatusHistory(story, trigger, newStatus) {
     // legacy initialization
   }
 
-  let actor = 'human';
-  if (trigger.includes('agent')) actor = 'agent';
-  else if (trigger.includes('skill')) actor = 'skill';
-  else if (trigger === 'system') actor = 'system';
+  let actor = metadata.actor || 'human';
+  if (!metadata.actor) {
+    if (trigger.includes('agent')) actor = 'agent';
+    else if (trigger.includes('skill')) actor = 'skill';
+    else if (trigger === 'system') actor = 'system';
+  }
 
   const entry = {
     from: story.frontmatter.status || null,
     to: newStatus,
     timestamp,
     trigger,
-    actor
+    actor,
+    ...metadata
   };
 
   return {

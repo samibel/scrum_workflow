@@ -194,6 +194,61 @@ Verdict: {{verdict}}`;
 }
 
 /**
+ * Validates whether an in-progress story may transition to review.
+ * The transition is only allowed after a verification-report.md exists and
+ * its frontmatter records a passed verification status.
+ *
+ * @param {Object} story - Story object with parsed frontmatter
+ * @param {string} storyDir - Directory containing the story artifacts
+ * @returns {Object} { allowed: boolean, reason?: string }
+ */
+export function validateReviewTransitionGuard(story, storyDir) {
+  const status = story?.frontmatter?.status;
+  if (status !== 'in-progress') {
+    return {
+      allowed: false,
+      reason: `Review transition requires story status 'in-progress', got '${status}'`
+    };
+  }
+
+  const reportPath = join(storyDir, 'verification-report.md');
+  if (!existsSync(reportPath)) {
+    return {
+      allowed: false,
+      reason: 'verification-report.md not found; run /scrum-verify before moving to review'
+    };
+  }
+
+  const reportContent = readFileSync(reportPath, 'utf8');
+  const frontmatterMatch = reportContent.match(/^---\r?\n([\s\S]+?)\r?\n---/);
+  if (!frontmatterMatch) {
+    return {
+      allowed: false,
+      reason: 'verification-report.md is missing YAML frontmatter with passed status'
+    };
+  }
+
+  let frontmatter;
+  try {
+    frontmatter = yaml.load(frontmatterMatch[1]);
+  } catch (err) {
+    return {
+      allowed: false,
+      reason: `verification-report.md YAML parsing failed: ${err.message}`
+    };
+  }
+
+  if (frontmatter?.status !== 'passed') {
+    return {
+      allowed: false,
+      reason: `verification-report.md status is '${frontmatter?.status}', not passed`
+    };
+  }
+
+  return { allowed: true };
+}
+
+/**
  * Executes the /scrum-verify command
  * @param {string} ticketId - Ticket ID
  * @param {Object} options - Options
@@ -291,7 +346,15 @@ export function executeScrumVerify(ticketId, options) {
     }
 
     const story = { frontmatter: latestFrontmatter, content: latestStoryContent };
-    const updatedStory = appendStatusHistory(story, '/scrum-verify', 'review');
+    const reviewGuard = validateReviewTransitionGuard(story, outputDir);
+    if (!reviewGuard.allowed) {
+      return { success: false, error: `Status Guard Violation: ${reviewGuard.reason}` };
+    }
+
+    const updatedStory = appendStatusHistory(story, '/scrum-verify', 'review', {
+      actor: 'verification-skill',
+      artifact: 'verification-report.md'
+    });
 
     const fmString = `---\n${yaml.dump(updatedStory.frontmatter)}---`;
     const newStoryContent = latestStoryContent.replace(/^---\n[\s\S]+?\n---/, fmString);

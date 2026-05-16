@@ -1,40 +1,20 @@
 # Pipeline Discrepancy Audit
 
-Datum: 2026-05-16
+Date: 2026-05-16
 
-Zweck: Dieser Audit ist die Referenz für Folge-Stories, die Pipeline-, Command- und Template-Mirror-Dateien wieder auf eine einheitliche Story-Status-State-Machine bringen. Die authoritative Quelle ist `src/core/context/standards.md`, Abschnitt **Story Status State Machine**; Abweichungen in Routing, Command-Frontmatter oder Mirror-Dateien müssen gegen diesen Audit behoben oder bewusst als Design-Ausnahme dokumentiert werden.
+Purpose: This audit is the reference for follow-up stories that bring the pipeline, command, and template mirror files back to a consistent story status state machine. The authoritative source is `src/core/context/standards.md`, section **Story Status State Machine**; discrepancies in routing, command frontmatter, or mirror files must be remediated against this audit or explicitly documented as intentional design exceptions.
 
-## Scope und geprüfte Quellen
+## Scope and audited sources
 
-| Bereich | Primärdatei | Mirror-Datei | Prüfumfang |
+| Area | Primary file | Mirror file | Audit scope |
 |---|---|---|---|
-| Pipeline Routing | `src/core/data/pipeline-routing.yaml` | `src/cli/templates/scrum_workflow/data/pipeline-routing.yaml` | `routing_matrix` mit `current_status`, `next_command`, `target_status`, `action`, `command_args` |
-| State Machine | `src/core/context/standards.md` | `src/cli/templates/scrum_workflow/context/standards.md` | Abschnitt `Story Status State Machine`, insbesondere `Valid Transitions` |
-| Commands | `src/core/commands/*.md` | `src/cli/templates/scrum_workflow/commands/*.md` | Frontmatter-Felder `trigger`, `requires_status`, `sets_status` |
+| Pipeline Routing | `src/core/data/pipeline-routing.yaml` | `src/cli/templates/scrum_workflow/data/pipeline-routing.yaml` | `routing_matrix` with `current_status`, `next_command`, `target_status`, `action`, `command_args` |
+| State Machine | `src/core/context/standards.md` | `src/cli/templates/scrum_workflow/context/standards.md` | `Story Status State Machine` section, especially `Valid Transitions` |
+| Commands | `src/core/commands/*.md` | `src/cli/templates/scrum_workflow/commands/*.md` | Frontmatter fields `trigger`, `requires_status`, `sets_status` |
 
-## 1. Pipeline-Routing: Core
+## 1. Pipeline routing: Core
 
-Quelle: `src/core/data/pipeline-routing.yaml`.
-
-| current_status | next_command | target_status | action | command_args |
-|---|---|---|---|---|
-| `_not_found` | `/scrum-create-ticket` | `draft` | `route` | — |
-| `draft` | `/scrum-refine-ticket` | `refined` | `route` | — |
-| `refinement` | — | — | `skip` | — |
-| `refined` | `/scrum-refine-story` | `ready-for-dev` | `route` | — |
-| `ready-for-dev` | `/scrum-dev-story` | `in-progress` | `route` | — |
-| `in-progress` | `/scrum-dev-story` | `review` | `route` | `review` |
-| `review` | `/scrum-review-story` | `approved` | `route` | — |
-| `changes-needed` | `/scrum-dev-story` | `review` | `route` | — |
-| `approved` | — | — | `stop` | — |
-| `done` | — | — | `skip` | — |
-| `cancelled` | — | — | `skip` | — |
-
-## 2. Pipeline-Routing: Mirror
-
-Quelle: `src/cli/templates/scrum_workflow/data/pipeline-routing.yaml`.
-
-Die Mirror-Datei ist inhaltlich identisch zur Core-Datei. Damit sind alle Core-Routing-Abweichungen auch im Template-Mirror vorhanden.
+Source: `src/core/data/pipeline-routing.yaml`.
 
 | current_status | next_command | target_status | action | command_args |
 |---|---|---|---|---|
@@ -50,9 +30,29 @@ Die Mirror-Datei ist inhaltlich identisch zur Core-Datei. Damit sind alle Core-R
 | `done` | — | — | `skip` | — |
 | `cancelled` | — | — | `skip` | — |
 
-## 3. Gültige Transitions aus `Story Status State Machine`
+## 2. Pipeline routing: Mirror
 
-Quelle: `src/core/context/standards.md`, Abschnitt `Story Status State Machine`. Die Mirror-Datei `src/cli/templates/scrum_workflow/context/standards.md` enthält dieselben Transitions.
+Source: `src/cli/templates/scrum_workflow/data/pipeline-routing.yaml`.
+
+The mirror file is content-identical to the core file. Therefore, every core routing discrepancy is also present in the template mirror.
+
+| current_status | next_command | target_status | action | command_args |
+|---|---|---|---|---|
+| `_not_found` | `/scrum-create-ticket` | `draft` | `route` | — |
+| `draft` | `/scrum-refine-ticket` | `refined` | `route` | — |
+| `refinement` | — | — | `skip` | — |
+| `refined` | `/scrum-refine-story` | `ready-for-dev` | `route` | — |
+| `ready-for-dev` | `/scrum-dev-story` | `in-progress` | `route` | — |
+| `in-progress` | `/scrum-dev-story` | `review` | `route` | `review` |
+| `review` | `/scrum-review-story` | `approved` | `route` | — |
+| `changes-needed` | `/scrum-dev-story` | `review` | `route` | — |
+| `approved` | — | — | `stop` | — |
+| `done` | — | — | `skip` | — |
+| `cancelled` | — | — | `skip` | — |
+
+## 3. Valid transitions from `Story Status State Machine`
+
+Source: `src/core/context/standards.md`, section `Story Status State Machine`. The mirror file `src/cli/templates/scrum_workflow/context/standards.md` contains the same transitions.
 
 | From | To | Trigger | Guard Condition |
 |---|---|---|---|
@@ -68,123 +68,123 @@ Quelle: `src/core/context/standards.md`, Abschnitt `Story Status State Machine`.
 | `approved` | `done` | `/scrum-approve` | explicit user sign-off |
 | `any` | `cancelled` | Manual decision | explicit user cancellation from any non-terminal state |
 
-> Audit-Hinweis: Obwohl die aktuelle State-Machine noch `in-progress → review` über `/scrum-dev-story review` aufführt, existiert mit `/scrum-verify` bereits ein Command-Frontmatter-Vertrag für `in-progress → review`. Für Folge-Stories gilt der Zielzustand: `in-progress → review` darf nicht mehr über `/scrum-dev-story review` laufen, sondern über `/scrum-verify`.
+> Audit note: Although the current state machine still lists `in-progress → review` via `/scrum-dev-story review`, the `/scrum-verify` command frontmatter already defines the contract for `in-progress → review`. For follow-up stories, the target state is: `in-progress → review` must no longer run through `/scrum-dev-story review`; it must run through `/scrum-verify`.
 
-## 4. Command-Frontmatter: Core
+## 4. Command frontmatter: Core
 
-Quelle: alle Markdown-Dateien in `src/core/commands/`.
+Source: all Markdown files in `src/core/commands/`.
 
-| Command-Datei | trigger | requires_status | sets_status | Audit-Notiz |
+| Command file | trigger | requires_status | sets_status | Audit note |
 |---|---|---|---|---|
-| `approve.md` | `/scrum-approve` | `approved` | `done` | Story-Lifecycle-Command |
-| `audit-trail.md` | `/scrum-audit-trail` | `any` | `none` | Observability; keine Story-Transition |
-| `create-architecture-docs.md` | `/scrum-create-architecture-docs` | `null` | `null` | Kein Story-Status-Vertrag |
-| `create-brief.md` | `/scrum-create-brief` | `null` | `complete` | Projekt-/Brief-Status, nicht Story-Lifecycle |
-| `create-concept.md` | `/scrum-create-concept` | `null` | `null` | Kein Story-Status-Vertrag |
-| `create-project-context.md` | `/scrum-create-project-context` | `null` | `null` | Kein Story-Status-Vertrag |
-| `create-project-docs.md` | `/scrum-create-project-docs` | `null` | `null` | Kein Story-Status-Vertrag |
-| `create-ticket.md` | `/scrum-create-ticket` | `null` | `draft` | Story-Erzeugung; Pipeline nutzt `_not_found → draft` |
-| `decompose-epics.md` | `/scrum-decompose-epics` | `complete` | `decomposed` | Epic-/Planungsstatus, nicht Story-Lifecycle |
-| `dev-story.md` | `/scrum-dev-story` | `ready-for-dev \| changes-needed` | `in-progress` | Story-Lifecycle-Command; kein `review`-Setzen im Frontmatter |
-| `draft-stories.md` | `/scrum-draft-stories` | `planned` | `drafted` | Epic-/Planungsstatus, nicht Story-Lifecycle |
-| `pipeline.md` | `/scrum-pipeline` | `*` | `varies per story` | Orchestrator; muss Routing-Matrix folgen |
-| `refine-story.md` | `/scrum-refine-story` | `refined` | `ready-for-dev` | Story-Lifecycle-Command |
-| `refine-ticket.md` | `/scrum-refine-ticket` | `draft` | `refinement → refined` | Story-Lifecycle-Command mit Zwischenstatus |
-| `research-general.md` | `/research-general` | `null` | `null` | Kein Story-Status-Vertrag |
-| `research-technical.md` | `/research-technical` | `null` | `null` | Kein Story-Status-Vertrag |
-| `review-story.md` | `/scrum-review-story` | `review` | `approved \| changes-needed` | Story-Lifecycle-Command mit zwei Ausgängen |
-| `session-start.md` | `/session-start` | `N/A` | `N/A` | Read-only Session-Command |
-| `ticket-changes.md` | `/scrum-ticket-changes` | `any` | `none` | Observability; keine Story-Transition |
-| `verify.md` | `/scrum-verify` | `in-progress` | `review` | Story-Lifecycle-Command; Ziel für Review-Submission |
-| `README.md` | — | — | — | Kein Frontmatter gefunden |
-| `delivery-health.md` | — | — | — | Kein Frontmatter gefunden |
-| `policy-check.md` | — | — | — | Kein Frontmatter gefunden; enthält nur textuellen Status Guard |
-| `sprint-status.md` | — | — | — | Kein Frontmatter gefunden |
-| `wrap-up.md` | — | — | — | Kein Frontmatter gefunden |
+| `approve.md` | `/scrum-approve` | `approved` | `done` | Story lifecycle command |
+| `audit-trail.md` | `/scrum-audit-trail` | `any` | `none` | Observability; no story transition |
+| `create-architecture-docs.md` | `/scrum-create-architecture-docs` | `null` | `null` | No story status contract |
+| `create-brief.md` | `/scrum-create-brief` | `null` | `complete` | Project/brief status, not story lifecycle |
+| `create-concept.md` | `/scrum-create-concept` | `null` | `null` | No story status contract |
+| `create-project-context.md` | `/scrum-create-project-context` | `null` | `null` | No story status contract |
+| `create-project-docs.md` | `/scrum-create-project-docs` | `null` | `null` | No story status contract |
+| `create-ticket.md` | `/scrum-create-ticket` | `null` | `draft` | Story creation; pipeline uses `_not_found → draft` |
+| `decompose-epics.md` | `/scrum-decompose-epics` | `complete` | `decomposed` | Epic/planning status, not story lifecycle |
+| `dev-story.md` | `/scrum-dev-story` | `ready-for-dev \| changes-needed` | `in-progress` | Story lifecycle command; does not set `review` in frontmatter |
+| `draft-stories.md` | `/scrum-draft-stories` | `planned` | `drafted` | Epic/planning status, not story lifecycle |
+| `pipeline.md` | `/scrum-pipeline` | `*` | `varies per story` | Orchestrator; must follow the routing matrix |
+| `refine-story.md` | `/scrum-refine-story` | `refined` | `ready-for-dev` | Story lifecycle command |
+| `refine-ticket.md` | `/scrum-refine-ticket` | `draft` | `refinement → refined` | Story lifecycle command with intermediate status |
+| `research-general.md` | `/research-general` | `null` | `null` | No story status contract |
+| `research-technical.md` | `/research-technical` | `null` | `null` | No story status contract |
+| `review-story.md` | `/scrum-review-story` | `review` | `approved \| changes-needed` | Story lifecycle command with two outcomes |
+| `session-start.md` | `/session-start` | `N/A` | `N/A` | Read-only session command |
+| `ticket-changes.md` | `/scrum-ticket-changes` | `any` | `none` | Observability; no story transition |
+| `verify.md` | `/scrum-verify` | `in-progress` | `review` | Story lifecycle command; target for review submission |
+| `README.md` | — | — | — | No frontmatter found |
+| `delivery-health.md` | — | — | — | No frontmatter found |
+| `policy-check.md` | — | — | — | No frontmatter found; contains only textual status guard |
+| `sprint-status.md` | — | — | — | No frontmatter found |
+| `wrap-up.md` | — | — | — | No frontmatter found |
 
-## 5. Command-Frontmatter: Mirror
+## 5. Command frontmatter: Mirror
 
-Quelle: alle Markdown-Dateien in `src/cli/templates/scrum_workflow/commands/`.
+Source: all Markdown files in `src/cli/templates/scrum_workflow/commands/`.
 
-Die Mirror-Command-Dateien sind für die geprüften Frontmatter-Felder identisch zu den Core-Command-Dateien. Damit gelten dieselben Status-Verträge und dieselben Abweichungen.
+The mirror command files are identical to the core command files for the audited frontmatter fields. Therefore, they have the same status contracts and the same discrepancies.
 
-| Command-Datei | trigger | requires_status | sets_status | Audit-Notiz |
+| Command file | trigger | requires_status | sets_status | Audit note |
 |---|---|---|---|---|
-| `approve.md` | `/scrum-approve` | `approved` | `done` | Story-Lifecycle-Command |
-| `audit-trail.md` | `/scrum-audit-trail` | `any` | `none` | Observability; keine Story-Transition |
-| `create-architecture-docs.md` | `/scrum-create-architecture-docs` | `null` | `null` | Kein Story-Status-Vertrag |
-| `create-brief.md` | `/scrum-create-brief` | `null` | `complete` | Projekt-/Brief-Status, nicht Story-Lifecycle |
-| `create-concept.md` | `/scrum-create-concept` | `null` | `null` | Kein Story-Status-Vertrag |
-| `create-project-context.md` | `/scrum-create-project-context` | `null` | `null` | Kein Story-Status-Vertrag |
-| `create-project-docs.md` | `/scrum-create-project-docs` | `null` | `null` | Kein Story-Status-Vertrag |
-| `create-ticket.md` | `/scrum-create-ticket` | `null` | `draft` | Story-Erzeugung; Pipeline nutzt `_not_found → draft` |
-| `decompose-epics.md` | `/scrum-decompose-epics` | `complete` | `decomposed` | Epic-/Planungsstatus, nicht Story-Lifecycle |
-| `dev-story.md` | `/scrum-dev-story` | `ready-for-dev \| changes-needed` | `in-progress` | Story-Lifecycle-Command; kein `review`-Setzen im Frontmatter |
-| `draft-stories.md` | `/scrum-draft-stories` | `planned` | `drafted` | Epic-/Planungsstatus, nicht Story-Lifecycle |
-| `pipeline.md` | `/scrum-pipeline` | `*` | `varies per story` | Orchestrator; muss Routing-Matrix folgen |
-| `refine-story.md` | `/scrum-refine-story` | `refined` | `ready-for-dev` | Story-Lifecycle-Command |
-| `refine-ticket.md` | `/scrum-refine-ticket` | `draft` | `refinement → refined` | Story-Lifecycle-Command mit Zwischenstatus |
-| `research-general.md` | `/research-general` | `null` | `null` | Kein Story-Status-Vertrag |
-| `research-technical.md` | `/research-technical` | `null` | `null` | Kein Story-Status-Vertrag |
-| `review-story.md` | `/scrum-review-story` | `review` | `approved \| changes-needed` | Story-Lifecycle-Command mit zwei Ausgängen |
-| `session-start.md` | `/session-start` | `N/A` | `N/A` | Read-only Session-Command |
-| `ticket-changes.md` | `/scrum-ticket-changes` | `any` | `none` | Observability; keine Story-Transition |
-| `verify.md` | `/scrum-verify` | `in-progress` | `review` | Story-Lifecycle-Command; Ziel für Review-Submission |
-| `README.md` | — | — | — | Kein Frontmatter gefunden |
-| `delivery-health.md` | — | — | — | Kein Frontmatter gefunden |
-| `policy-check.md` | — | — | — | Kein Frontmatter gefunden; enthält nur textuellen Status Guard |
-| `sprint-status.md` | — | — | — | Kein Frontmatter gefunden |
-| `wrap-up.md` | — | — | — | Kein Frontmatter gefunden |
+| `approve.md` | `/scrum-approve` | `approved` | `done` | Story lifecycle command |
+| `audit-trail.md` | `/scrum-audit-trail` | `any` | `none` | Observability; no story transition |
+| `create-architecture-docs.md` | `/scrum-create-architecture-docs` | `null` | `null` | No story status contract |
+| `create-brief.md` | `/scrum-create-brief` | `null` | `complete` | Project/brief status, not story lifecycle |
+| `create-concept.md` | `/scrum-create-concept` | `null` | `null` | No story status contract |
+| `create-project-context.md` | `/scrum-create-project-context` | `null` | `null` | No story status contract |
+| `create-project-docs.md` | `/scrum-create-project-docs` | `null` | `null` | No story status contract |
+| `create-ticket.md` | `/scrum-create-ticket` | `null` | `draft` | Story creation; pipeline uses `_not_found → draft` |
+| `decompose-epics.md` | `/scrum-decompose-epics` | `complete` | `decomposed` | Epic/planning status, not story lifecycle |
+| `dev-story.md` | `/scrum-dev-story` | `ready-for-dev \| changes-needed` | `in-progress` | Story lifecycle command; does not set `review` in frontmatter |
+| `draft-stories.md` | `/scrum-draft-stories` | `planned` | `drafted` | Epic/planning status, not story lifecycle |
+| `pipeline.md` | `/scrum-pipeline` | `*` | `varies per story` | Orchestrator; must follow the routing matrix |
+| `refine-story.md` | `/scrum-refine-story` | `refined` | `ready-for-dev` | Story lifecycle command |
+| `refine-ticket.md` | `/scrum-refine-ticket` | `draft` | `refinement → refined` | Story lifecycle command with intermediate status |
+| `research-general.md` | `/research-general` | `null` | `null` | No story status contract |
+| `research-technical.md` | `/research-technical` | `null` | `null` | No story status contract |
+| `review-story.md` | `/scrum-review-story` | `review` | `approved \| changes-needed` | Story lifecycle command with two outcomes |
+| `session-start.md` | `/session-start` | `N/A` | `N/A` | Read-only session command |
+| `ticket-changes.md` | `/scrum-ticket-changes` | `any` | `none` | Observability; no story transition |
+| `verify.md` | `/scrum-verify` | `in-progress` | `review` | Story lifecycle command; target for review submission |
+| `README.md` | — | — | — | No frontmatter found |
+| `delivery-health.md` | — | — | — | No frontmatter found |
+| `policy-check.md` | — | — | — | No frontmatter found; contains only textual status guard |
+| `sprint-status.md` | — | — | — | No frontmatter found |
+| `wrap-up.md` | — | — | — | No frontmatter found |
 
-## 6. Abweichungen mit Schweregrad und Zielzustand
+## 6. Discrepancies by severity and target state
 
-Schweregrade:
+Severities:
 
-- **Critical**: Führt zu falschem Command-Aufruf oder überspringt einen verpflichtenden Lifecycle-Gate.
-- **Major**: Repräsentiert den Lifecycle unvollständig oder verliert erlaubte Ausgänge, ist aber nicht zwingend ein falscher Command-Aufruf im Happy Path.
-- **Minor**: Dokumentations-/Metadaten-Drift ohne unmittelbare falsche Pipeline-Ausführung.
-- **Info**: Bewusste Ergänzung oder Human-Gate-Verhalten, das außerhalb der automatischen State-Machine liegt.
+- **Critical**: Causes an incorrect command invocation or bypasses a required lifecycle gate.
+- **Major**: Represents the lifecycle incompletely or loses allowed outcomes, but does not necessarily invoke the wrong command on the happy path.
+- **Minor**: Documentation/metadata drift without immediate incorrect pipeline execution.
+- **Info**: Intentional extension or human-gate behavior outside the automated state machine.
 
-| ID | Bereich | Ist-Zustand | Abweichung | Schweregrad | Zielzustand / Folge-Story-Referenz |
+| ID | Area | Current state | Discrepancy | Severity | Target state / follow-up story reference |
 |---|---|---|---|---|---|
-| PD-001 | Core + Mirror Pipeline | `in-progress` routet zu `/scrum-dev-story` mit `command_args: review` und `target_status: review`. | Review-Submission darf nicht mehr über `/scrum-dev-story review` laufen. Das Command-Frontmatter von `/scrum-verify` definiert bereits `requires_status: in-progress` und `sets_status: review`. | **Critical** | Pipeline und Standards auf `in-progress → review` via `/scrum-verify` umstellen; `command_args: review` entfernen. |
-| PD-002 | Core + Mirror Pipeline | `changes-needed` routet zu `/scrum-dev-story` mit `target_status: review`. | `/scrum-dev-story` setzt laut Frontmatter nur `in-progress`; die State-Machine definiert `changes-needed → in-progress`. Die Pipeline überspringt dadurch den separaten Verify-Gate. | **Critical** | Pipeline auf `changes-needed → in-progress` via `/scrum-dev-story` ändern; danach eigener Pipeline-Schritt `in-progress → review` via `/scrum-verify`. |
-| PD-003 | Core + Mirror Standards | State-Machine nennt für `in-progress → review` noch `/scrum-dev-story review`. | Standards widersprechen dem Zielzustand und dem vorhandenen `/scrum-verify`-Command-Vertrag. | **Critical** | Standards und Mirror-Standards auf `/scrum-verify` als Trigger für `in-progress → review` ändern; Diagramm und Status-Wert-Tabelle mitziehen. |
-| PD-004 | Core + Mirror Pipeline | `draft` routet direkt zu `target_status: refined`; `refinement` ist nur `skip`. | Die State-Machine und `refine-ticket.md` modellieren `draft → refinement → refined`. Die Pipeline beschreibt nur den Endzustand des Commands und verliert den expliziten Zwischenstatus. | **Major** | Entweder Routing-Ziel als mehrstufige Transition dokumentieren (`refinement → refined`) oder Orchestrator-/Pipeline-Semantik klar als Command-Endzustand definieren. |
-| PD-005 | Core + Mirror Pipeline | `review` routet zu `/scrum-review-story` mit `target_status: approved`. | `/scrum-review-story` kann laut Standards und Frontmatter `approved` oder `changes-needed` setzen. Die Pipeline bildet nur den Happy Path ab, obwohl `changes-needed` Teil des Review-Loops ist. | **Major** | `target_status` als `approved | changes-needed` oder als dynamisches Ergebnis modellieren; Review-Loop explizit daran koppeln. |
-| PD-006 | Core + Mirror Pipeline | `refined` routet zu `/scrum-refine-story` mit `target_status: ready-for-dev`. | Die State-Machine erlaubt auch `refined → refined` bei Validierungsfehlern. Die Pipeline bildet nur PASS ab. | **Major** | `target_status` als `ready-for-dev | refined` oder dynamisches Ergebnis modellieren; FAIL muss als bewusstes Wiederholen/Blockieren ausgewiesen sein. |
-| PD-007 | Core + Mirror Commands/Docs | `dev-story.md` Frontmatter setzt nur `in-progress`, aber Command- und Review-Dokumentation enthalten weiterhin Stellen, die `/scrum-dev-story` als Weg bis `review` beschreiben. | Dokumentations-Drift erhöht das Risiko, dass Folgeänderungen die alte `/scrum-dev-story review`-Semantik beibehalten. | **Minor** | Textstellen in Core und Mirror bereinigen: `/scrum-dev-story` implementiert/re-implementiert bis `in-progress`; `/scrum-verify` submitted nach `review`. |
-| PD-008 | Core + Mirror Pipeline | `_not_found → draft` via `/scrum-create-ticket` ist in der State-Machine nicht als Transition enthalten. | `_not_found` ist ein Pipeline-Sentinel, kein Story-Status. | **Info** | Beibehalten, aber als Sentinel außerhalb der State-Machine dokumentieren. |
-| PD-009 | Core + Mirror Pipeline | `approved` hat `action: stop` statt Route zu `/scrum-approve`. | Dies weicht von der automatischen Transition `approved → done` ab, ist aber als Human Gate dokumentiert. | **Info** | Beibehalten, solange `/scrum-pipeline` bewusst vor menschlicher Freigabe stoppt; UX sollte klar auf `/scrum-approve` als nächsten manuellen Schritt verweisen. |
+| PD-001 | Core + Mirror Pipeline | `in-progress` routes to `/scrum-dev-story` with `command_args: review` and `target_status: review`. | Review submission must no longer run through `/scrum-dev-story review`. The `/scrum-verify` command frontmatter already defines `requires_status: in-progress` and `sets_status: review`. | **Critical** | Change pipeline and standards to `in-progress → review` via `/scrum-verify`; remove `command_args: review`. |
+| PD-002 | Core + Mirror Pipeline | `changes-needed` routes to `/scrum-dev-story` with `target_status: review`. | `/scrum-dev-story` only sets `in-progress` according to frontmatter; the state machine defines `changes-needed → in-progress`. The pipeline therefore bypasses the separate verify gate. | **Critical** | Change pipeline to `changes-needed → in-progress` via `/scrum-dev-story`; then use a separate pipeline step `in-progress → review` via `/scrum-verify`. |
+| PD-003 | Core + Mirror Standards | The state machine still lists `/scrum-dev-story review` for `in-progress → review`. | Standards conflict with the target state and the existing `/scrum-verify` command contract. | **Critical** | Change standards and mirror standards to `/scrum-verify` as the trigger for `in-progress → review`; update diagram and status value table accordingly. |
+| PD-004 | Core + Mirror Pipeline | `draft` routes directly to `target_status: refined`; `refinement` is only `skip`. | The state machine and `refine-ticket.md` model `draft → refinement → refined`. The pipeline describes only the command end state and loses the explicit intermediate status. | **Major** | Either document the routing target as a multi-step transition (`refinement → refined`) or clearly define orchestrator/pipeline semantics as command end state. |
+| PD-005 | Core + Mirror Pipeline | `review` routes to `/scrum-review-story` with `target_status: approved`. | `/scrum-review-story` can set `approved` or `changes-needed` according to standards and frontmatter. The pipeline models only the happy path, although `changes-needed` is part of the review loop. | **Major** | Model `target_status` as `approved | changes-needed` or as a dynamic outcome; explicitly couple the review loop to that outcome. |
+| PD-006 | Core + Mirror Pipeline | `refined` routes to `/scrum-refine-story` with `target_status: ready-for-dev`. | The state machine also allows `refined → refined` on validation failure. The pipeline models only PASS. | **Major** | Model `target_status` as `ready-for-dev | refined` or as a dynamic outcome; FAIL must be shown as an intentional repeat/blocking outcome. |
+| PD-007 | Core + Mirror Commands/Docs | `dev-story.md` frontmatter only sets `in-progress`, but command and review documentation still contain text that describes `/scrum-dev-story` as the path to `review`. | Documentation drift increases the risk that follow-up changes preserve the old `/scrum-dev-story review` semantics. | **Minor** | Clean up text in core and mirror files: `/scrum-dev-story` implements/re-implements to `in-progress`; `/scrum-verify` submits to `review`. |
+| PD-008 | Core + Mirror Pipeline | `_not_found → draft` via `/scrum-create-ticket` is not listed as a transition in the state machine. | `_not_found` is a pipeline sentinel, not a story status. | **Info** | Keep it, but document it as a sentinel outside the state machine. |
+| PD-009 | Core + Mirror Pipeline | `approved` has `action: stop` instead of routing to `/scrum-approve`. | This differs from the automated transition `approved → done`, but is documented as a human gate. | **Info** | Keep it as long as `/scrum-pipeline` intentionally stops before human sign-off; UX should clearly point to `/scrum-approve` as the next manual step. |
 
-## 7. Ziel-State-Machine für Folge-Stories
+## 7. Target state machine for follow-up stories
 
-Diese Zielmatrix soll für Implementierungs-Folge-Stories als Referenz dienen. Sie ersetzt nicht automatisch die aktuellen Dateien, beschreibt aber den zu erreichenden konsistenten Zustand.
+This target matrix is intended as a reference for implementation follow-up stories. It does not automatically replace the current files, but describes the consistent state that should be reached.
 
-| From | To | Trigger | Quelle / Begründung |
+| From | To | Trigger | Source / rationale |
 |---|---|---|---|
-| `_not_found` | `draft` | `/scrum-create-ticket` | Pipeline-Sentinel, Story-Erzeugung |
+| `_not_found` | `draft` | `/scrum-create-ticket` | Pipeline sentinel, story creation |
 | `draft` | `refinement` | `/scrum-refine-ticket` | Standards + `refine-ticket.md` |
 | `refinement` | `refined` | `/scrum-refine-ticket` | Standards + `refine-ticket.md` |
 | `refined` | `ready-for-dev` | `/scrum-refine-story` | PASS |
-| `refined` | `refined` | `/scrum-refine-story` | FAIL, Status unverändert |
-| `ready-for-dev` | `in-progress` | `/scrum-dev-story` | initiale Implementierung |
-| `changes-needed` | `in-progress` | `/scrum-dev-story` | Re-Implementierung nach Review-Findings |
-| `in-progress` | `review` | `/scrum-verify` | automatisierter Verification-Gate; ersetzt `/scrum-dev-story review` |
+| `refined` | `refined` | `/scrum-refine-story` | FAIL, status unchanged |
+| `ready-for-dev` | `in-progress` | `/scrum-dev-story` | Initial implementation |
+| `changes-needed` | `in-progress` | `/scrum-dev-story` | Re-implementation after review findings |
+| `in-progress` | `review` | `/scrum-verify` | Automated verification gate; replaces `/scrum-dev-story review` |
 | `review` | `approved` | `/scrum-review-story` | Review verdict `APPROVED` |
 | `review` | `changes-needed` | `/scrum-review-story` | Review verdict `CHANGES-NEEDED` |
 | `approved` | `done` | `/scrum-approve` | Human approval gate |
-| `any` | `cancelled` | Manual decision | Terminale manuelle Entscheidung |
+| `any` | `cancelled` | Manual decision | Terminal manual decision |
 
-## 8. Mirror-Abgleich-Ergebnis
+## 8. Mirror comparison result
 
-- `src/cli/templates/scrum_workflow/data/pipeline-routing.yaml` ist identisch zu `src/core/data/pipeline-routing.yaml`; jede Pipeline-Abweichung ist daher doppelt zu beheben.
-- `src/cli/templates/scrum_workflow/context/standards.md` enthält dieselben State-Machine-Transitions wie `src/core/context/standards.md`; jede Standards-Abweichung ist daher doppelt zu beheben.
-- Die geprüften `commands/*.md` Mirror-Dateien haben dieselben `requires_status`-/`sets_status`-Werte wie die Core-Dateien; jede Command-Text- oder Frontmatter-Korrektur ist daher doppelt zu spiegeln.
+- `src/cli/templates/scrum_workflow/data/pipeline-routing.yaml` is identical to `src/core/data/pipeline-routing.yaml`; every pipeline discrepancy must therefore be fixed in both places.
+- `src/cli/templates/scrum_workflow/context/standards.md` contains the same state-machine transitions as `src/core/context/standards.md`; every standards discrepancy must therefore be fixed in both places.
+- The audited `commands/*.md` mirror files have the same `requires_status`/`sets_status` values as the core files; every command text or frontmatter correction must therefore be mirrored.
 
-## 9. Empfohlene Reihenfolge für Folge-Stories
+## 9. Recommended order for follow-up stories
 
-1. **Standards korrigieren**: `in-progress → review` auf `/scrum-verify` ändern; Diagramm, Status-Tabelle und Beispiele aktualisieren.
-2. **Pipeline korrigieren**: Core und Mirror Routing für `in-progress` und `changes-needed` anpassen; dynamische Zielzustände für `review` und `refined` prüfen.
-3. **Command-Dokumentation bereinigen**: Alte `/scrum-dev-story review`-Hinweise in Core und Mirror entfernen oder auf `/scrum-verify` umbiegen.
-4. **Tests/Policy ergänzen**: Eine maschinelle Prüfung ergänzen, die Core/Mirror-Synchronität und erlaubte Trigger gegen die State-Machine validiert.
+1. **Correct standards**: Change `in-progress → review` to `/scrum-verify`; update the diagram, status table, and examples.
+2. **Correct pipeline**: Adjust core and mirror routing for `in-progress` and `changes-needed`; review dynamic target states for `review` and `refined`.
+3. **Clean up command documentation**: Remove old `/scrum-dev-story review` references in core and mirror files or redirect them to `/scrum-verify`.
+4. **Add tests/policy**: Add a machine check that validates core/mirror synchronization and allowed triggers against the state machine.

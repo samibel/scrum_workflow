@@ -46,7 +46,7 @@ Source: `src/core/context/standards.md`, section `Story Status State Machine`. T
 | `refined` | `ready-for-dev` | `/scrum-refine-story` | all 5 validation criteria PASS |
 | `refined` | `refined` | `/scrum-refine-story` | any validation criterion FAIL; status unchanged |
 | `ready-for-dev` | `in-progress` | `/scrum-dev-story` | `status == ready-for-dev`; initial implementation |
-| `in-progress` | `review` | `/scrum-dev-story review` | `status == in-progress` |
+| in-progress | review | /scrum-verify | status == in-progress and automated verification PASS |
 | `review` | `approved` | `/scrum-review-story` | verdict `APPROVED` |
 | `review` | `changes-needed` | `/scrum-review-story` | verdict `CHANGES-NEEDED` |
 | `changes-needed` | `in-progress` | `/scrum-dev-story` | `status == changes-needed`; re-implementation with findings loaded |

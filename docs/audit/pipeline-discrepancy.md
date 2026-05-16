@@ -52,7 +52,7 @@ Source: `src/core/context/standards.md`, section `Story Status State Machine`. T
 | `changes-needed` | `in-progress` | `/scrum-dev-story` | `status == changes-needed`; re-implementation with findings loaded |
 | `approved` | `done` | `/scrum-approve` | explicit user sign-off |
 | `any` | `cancelled` | Manual decision | explicit user cancellation from any non-terminal state |
-> Audit note: Although the current state machine still lists `in-progress → review` via `/scrum-dev-story review`, the `/scrum-verify` command frontmatter already defines the contract for `in-progress → review`. For follow-up stories, the target state is: `in-progress → review` must no longer run through `/scrum-dev-story review`; it must run through `/scrum-verify`.
+> Audit note: The /scrum-verify command frontmatter defines the contract for in-progress → review. The target state is now enforced: in-progress → review must run through /scrum-verify.
 ## 4. Command frontmatter: Core
 Source: all Markdown files in `src/core/commands/`.
 | Command file | trigger | requires_status | sets_status | Audit note |

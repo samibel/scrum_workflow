@@ -16,9 +16,9 @@ Source: `src/core/data/pipeline-routing.yaml`.
 | `refinement` | — | — | `skip` | — |
 | `refined` | `/scrum-refine-story` | `ready-for-dev` | `route` | — |
 | `ready-for-dev` | `/scrum-dev-story` | `in-progress` | `route` | — |
-| `in-progress` | `/scrum-dev-story` | `review` | `route` | `review` |
-| `review` | `/scrum-review-story` | `approved` | `route` | — |
-| `changes-needed` | `/scrum-dev-story` | `review` | `route` | — |
+| in-progress | /scrum-verify | review | route | — |
+| review | /scrum-review-story | approved | route | — |
+| changes-needed | /scrum-dev-story | in-progress | route | — |
 | `approved` | — | — | `stop` | — |
 | `done` | — | — | `skip` | — |
 | `cancelled` | — | — | `skip` | — |

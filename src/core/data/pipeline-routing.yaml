@@ -45,11 +45,10 @@ routing_matrix:
     description: "Story validated — implement following execution plan (transitions to in-progress)"
 
   - current_status: "in-progress"
-    next_command: "/scrum-dev-story"
+    next_command: "/scrum-verify"
     target_status: "review"
-    command_args: "review"
     action: "route"
-    description: "Implementation complete — trigger review submission via dev-story review subcommand"
+    description: "Implementation complete — run mandatory automated verification gate before review"
 
   - current_status: "review"
     next_command: "/scrum-review-story"
@@ -59,9 +58,9 @@ routing_matrix:
 
   - current_status: "changes-needed"
     next_command: "/scrum-dev-story"
-    target_status: "review"
+    target_status: "in-progress"
     action: "route"
-    description: "Review found issues — re-implement and re-review (loop)"
+    description: "Review found issues — re-implement fixes, then route through mandatory verification before review"
 
   - current_status: "approved"
     next_command: null

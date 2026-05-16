@@ -220,7 +220,7 @@ export function validateReviewTransitionGuard(story, storyDir) {
   }
 
   const reportContent = readFileSync(reportPath, 'utf8');
-  const frontmatterMatch = reportContent.match(/^---\n([\s\S]+?)\n---/);
+  const frontmatterMatch = reportContent.match(/^---\r?\n([\s\S]+?)\r?\n---/);
   if (!frontmatterMatch) {
     return {
       allowed: false,
